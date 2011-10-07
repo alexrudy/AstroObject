@@ -37,3 +37,4 @@ class FITSSpectra(AstroImage.FITSImage):
         axis = get_padding((x,y))
         plt.plot(x,y,'k-')
         plt.axis(axis)
+        plt.gca().ticklabel_format(style="sci",scilimits=(3,3))
