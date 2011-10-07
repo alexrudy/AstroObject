@@ -7,7 +7,7 @@
 # 
 import logging,time,sys
 
-logging.basicConfig(filename=__name__+"-"+time.strftime("%Y-%m-%d")+".log",format="%(asctime)s : %(levelname)-8s : %(name)-20s : %(message)s",datefmt="%Y-%m-%d-%H:%M:%S",level=logging.DEBUG,filemode='w')
+logging.basicConfig(filename="Logs/AstroObject-"+time.strftime("%Y-%m-%d")+".log",format="%(asctime)s : %(levelname)-8s : %(name)-20s : %(message)s",datefmt="%Y-%m-%d-%H:%M:%S",level=logging.DEBUG,filemode='w')
 
 console = logging.StreamHandler()
 console.setLevel(logging.INFO)
