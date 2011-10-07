@@ -57,7 +57,7 @@ class FITSImage(object):
         # Activate the saved state as the current state
         self.statename = statename
     
-    def load(self,statename=None):
+    def data(self,statename=None):
         """Returns the numpy image for this object"""
         # Load the current stat if no state provided
         if not statename:
@@ -67,7 +67,7 @@ class FITSImage(object):
         else:
             raise KeyError("Image not instantiated with any data...")
     
-    def set(self,image):
+    def select(self,image):
         """Sets the default image to the given name"""
         if image not in self.states:
             raise IndexError("Image %s does not exist!" % image)
@@ -91,11 +91,11 @@ class FITSImage(object):
     #####################
     # Loading Functions #
     #####################
-    def loadFromFile(self,filename=None):
+    def loadFromFile(self,filename=None,statename=None):
         """docstring for loadFromFile"""
         if not filename:
             filename = self.filename
-        self.save(mpimage.imread(filename))
+        self.save(mpimage.imread(filename),statename)
     
     
     ##########################
