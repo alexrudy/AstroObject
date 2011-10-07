@@ -14,6 +14,7 @@ from scipy import ndimage
 from scipy.spatial.distance import cdist
 from scipy.linalg import norm
 import numpy as np
+import pyfits
 import math, copy, sys, time, logging, os
 
 LOG = logging.getLogger(__name__)
@@ -121,7 +122,7 @@ class FITSImage(object):
             statename = os.path.basename(filename)
             LOG.debug("Set statename for image from filename: %s" % statename)
         self.save(mpimage.imread(filename),statename)
-        LOG.debug("Loaded Image from file: "+filename)
+        LOG.info("Loaded Image from file: "+filename)
     
     def loadFromFITS(self,filename=None,statename=None):
         """Load a FITS File into the image object"""
@@ -130,8 +131,34 @@ class FITSImage(object):
         if statename == None:
             statename = os.path.basename(filename)
             LOG.debug("Set statename for image from filename: %s" % statename)
-        self.save(mpimage.imread(filename),statename)
-        LOG.debug("Loaded Image from file: "+filename)
+        HDUList = pyfits.open(filename)
+        self.save(HDUList[0].data,statename)
+        HDUList.close()
+        LOG.info("Loaded Image from FITS file: "+filename)
+    
+    ##########################
+    # File Writing Functions #
+    ##########################
+    
+    def FITS(self,filename=None,statename=None):
+        """Generates a FITS file of the specified filename, and returns that filename for convenience. This function will only include the specified statename."""
+        if not statename:
+            statename = self.statename
+        if not filename:
+            if self.filename == None:
+                filename = statename
+                LOG.warning("Setting Filename from statename %s. No filename validation was performed." % filename)
+            else:
+                filename = self.filename
+                LOG.warning("Setting filename from default %s. No filename validation was performed" % filename)
+        
+        LOG.debug("Generating FITS File from state %s with filename %s" % (statename,filename))
+        HDU = pyfits.PrimaryHDU(self.states[statename].data)
+        HDUList = pyfits.HDUList([HDU])
+        HDUList.writeto(filename)
+        LOG.info("Wrote FITS File %s" % filename)
+        return filename
+    
     
     ##########################
     # Manipulating Functions #
