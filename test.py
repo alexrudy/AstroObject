@@ -12,9 +12,9 @@ import logging,os
 import Utilities
 from AstroImage import plt,np
 import AstroImage, AstroSpectra
+import matplotlib as mpl
 
-
-LOG = logging.getLogger("TESTING")
+LOG = logging.getLogger("AstroObject Tests")
 result = True
 
 FileName = "Tests/Hong-Kong.jpg"
@@ -65,6 +65,9 @@ x = np.linspace(0.1e-6,2e-6,1000)[1:]
 TestSpectra.save(np.array([x,Utilities.BlackBody(x,5000)]),"BlackBody")
 LOG.info("Displaying a Spectrum")
 plt.figure(4)
+
 TestSpectra.showSpectrum()
+plt.xlabel("Wavelength")
+plt.ylabel("Flux (Joules)")
 
 plt.show()
