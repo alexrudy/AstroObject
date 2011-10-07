@@ -1,5 +1,5 @@
 # 
-#  image.py
+#  AstroImage.py
 #  Astronomy ObjectModel
 #  
 #  Created by Alexander Rudy on 2011-04-28.
