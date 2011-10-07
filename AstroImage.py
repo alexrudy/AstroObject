@@ -14,7 +14,30 @@ from scipy import ndimage
 from scipy.spatial.distance import cdist
 from scipy.linalg import norm
 import numpy as np
-import math, copy
+import math, copy, sys, time, logging, os
+
+LOG = logging.getLogger(__name__)
+
+class FITSFrame(object):
+    """A single frame of a FITS image"""
+    def __init__(self, array, label, header=None, metadata=None):
+        super(FITSFrame, self).__init__()
+        self.data = array # The image data
+        self.label = label # A label for this frame, for selection in parent object
+        self.size = array.size # The size of this image
+        self.shape = array.shape # The shape of this image
+        self.header = header # A dictionary of header keys and values for use in 
+        self.metadata = metadata # An optional metadata dictionary
+        self.time = time.strftime("%Y-%m-%dT%H:%M:%S")
+        
+        if self.metadata == None:
+            self.metadata = {}
+        if self.header == None:
+            self.header = {}
+        
+        return
+    
+
 
 class FITSImage(object):
     """Holds on to a regular numpy-formated feature list image."""
@@ -23,11 +46,8 @@ class FITSImage(object):
         # Image data variables.
         self.DIMEN = dimensions     # Total number of dimensions, i.e. x and y, or wavelength
         self.states = {}            # Storage for all of the images
-        self.format = {}            # Format for each image
-        self.sides = {}             # Length of the sides on each image, should be of the format np.shape()
-        self.sizes = {}             # The total size of the image (should be equivalent to np.prod(sides))
         self.statename = None       # The active state name
-        self.filename = filename    # The filename to use for file loading
+        self.filename = filename    # The filename to use for file loading and writing
         self.plt = plt
         
         if array != None:
@@ -37,25 +57,19 @@ class FITSImage(object):
     ##############################
     # Basic Image Mode Functions #
     ##############################
-    def save(self,array,statename="Original",side=None):
+    def save(self,array,statename="Original"):
         """Saves the given image to this object"""
         # Error checking for provided arguments
         if statename in self.states:
             raise IndexError("Cannot Duplicate State Name: %s \nUse remove(\'%s\') to clear" % (statename,statename))
         if type(array) != np.ndarray:
             raise TypeError("Array to be saved is not a numpy array \nCheck that you are saving a numpy image array \nType: %s" % type(array))
-        if side != None and type(side) != tuple:
-            raise TypeError("Side must be a tuple. Side: %s" % side)        
-        
-        # Set the format and size
-        self.format[statename] = format
-        self.sizes[statename] = array.size
-        self.sides[statename] = array.shape
         
         # Save the actual state
-        self.states[statename] = array
+        self.states[statename] = FITSFrame(array,statename)
         # Activate the saved state as the current state
-        self.statename = statename
+        self.select(statename)
+        LOG.debug("Saved image of size %d with label %s" % (self.states[statename].size,statename))
     
     def data(self,statename=None):
         """Returns the numpy image for this object"""
@@ -63,40 +77,61 @@ class FITSImage(object):
         if not statename:
             statename = self.statename
         if statename != None and statename in self.states:
+            return self.states[statename].data
+        else:
+            raise KeyError("Image not instantiated with any data...")
+    
+    def object(self,statename=None):
+        """Returns the FITSFrame Specfied"""
+        if not statename:
+            statename = self.statename
+        if statename != None and statename in self.states:
             return self.states[statename]
         else:
             raise KeyError("Image not instantiated with any data...")
     
-    def select(self,image):
+    def select(self,statename):
         """Sets the default image to the given name"""
-        if image not in self.states:
-            raise IndexError("Image %s does not exist!" % image)
-        self.statename = image
+        if statename not in self.states:
+            raise IndexError("Image %s does not exist!" % statename)
+        self.statename = statename
+        LOG.debug("Selected state %s" % statename)
         return
     
     def list(self):
         """Provides a list of the available images"""
         return self.states.keys()
     
-    def remove(self,image):
+    def remove(self,statename):
         """Removes the specified image from the object"""
         if image not in self.states:
-            raise IndexError("Image %s does not exist!" % image)
-        self.states.pop(image)
-        self.sizes.pop(image)
-        self.format.pop(image)
-        self.sides.pop(image)
+            raise IndexError("Image %s does not exist!" % statename)
+        LOG.debug("Removing image with label %s" % (statename))
+        self.states.pop(statename)
     
     
     #####################
     # Loading Functions #
     #####################
     def loadFromFile(self,filename=None,statename=None):
-        """docstring for loadFromFile"""
+        """Load a regular image file into the object"""
         if not filename:
             filename = self.filename
+        if statename == None:
+            statename = os.path.basename(filename)
+            LOG.debug("Set statename for image from filename: %s" % statename)
         self.save(mpimage.imread(filename),statename)
+        LOG.debug("Loaded Image from file: "+filename)
     
+    def loadFromFITS(self,filename=None,statename=None):
+        """Load a FITS File into the image object"""
+        if not filename:
+            filename = self.filename
+        if statename == None:
+            statename = os.path.basename(filename)
+            LOG.debug("Set statename for image from filename: %s" % statename)
+        self.save(mpimage.imread(filename),statename)
+        LOG.debug("Loaded Image from file: "+filename)
     
     ##########################
     # Manipulating Functions #
@@ -108,14 +143,16 @@ class FITSImage(object):
         if not bottom:
             bottom = top
         shape  = self.states[self.statename].shape
-        masked = self.states[self.statename][left:shape[0]-right,top:shape[1]-bottom]
+        masked = self.states[self.statename].data[left:shape[0]-right,top:shape[1]-bottom]
+        LOG.debug("Masked masked and saved image")
         self.save(masked,"Masked")
     
     def crop(self,x,y,xsize,ysize=None):
         """Crops the provided image to twice the specified size, centered around the x and y coordinates provided."""
         if not ysize:
             ysize = xsize
-        cropped = self.states[self.statename][x-xsize:x+xsize,y-ysize:y+ysize]
+        cropped = self.states[self.statename].data[x-xsize:x+xsize,y-ysize:y+ysize]
+        LOG.debug("Cropped and Saved Image")
         self.save(cropped,"Cropped")
     
     
@@ -124,21 +161,20 @@ class FITSImage(object):
     ######################
     def show(self):
         """Shows the image"""
-        plt.imshow(self.states[self.statename],interpolation="nearest")
+        plt.imshow(self.states[self.statename].data,interpolation="nearest")
         plt.colorbar()
+        LOG.debug("Plot Image using IMSHOW: %s" % self.statename)
     
     def show3D(self):
         """Shows a 3D contour of the image"""
         X = np.arange(self.states[self.statename].shape[0])
         Y = np.arange(self.states[self.statename].shape[1])
         X,Y = np.meshgrid(X,Y)
-        Z = self.states[self.statename]
+        Z = self.states[self.statename].data
         ax = plt.gca(projection='3d')
         surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.jet,linewidth=0, antialiased=False)
         plt.colorbar(surf, shrink=0.5, aspect=5)
+        LOG.debug("Plot Image in 3D: %s" % self.statename)
     
-
-
-
 
                 
