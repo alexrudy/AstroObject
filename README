@@ -1,0 +1,8 @@
+
+ README
+ Astronomy ObjectModel
+ 
+ Created by Alexander Rudy on 2011-10-07.
+ Copyright 2011 Alexander Rudy. All rights reserved.
+
+This program consists of a few simple objects for the repersentation and manipulation of astronomical objects. It allows python programs to interact with FITS files and Raw Data without constantly re-saving such data to the system. It provides a consistent object model, and stores object history for all of your data so that you won't lose data unintentionally.
