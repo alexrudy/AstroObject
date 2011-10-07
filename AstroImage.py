@@ -171,8 +171,9 @@ class FITSImage(object):
         Y = np.arange(self.states[self.statename].shape[1])
         X,Y = np.meshgrid(X,Y)
         Z = self.states[self.statename].data
+        LOG.debug("3D Plotting: Axis Size %s %s %s" % (X.size, Y.size, Z.size))
         ax = plt.gca(projection='3d')
-        surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.jet,linewidth=0, antialiased=False)
+        surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.jet, linewidth=0, antialiased=False)
         plt.colorbar(surf, shrink=0.5, aspect=5)
         LOG.debug("Plot Image in 3D: %s" % self.statename)
     
