@@ -10,15 +10,10 @@
 execfile("__init__.py")
 import logging,os
 import Utilities
-<<<<<<< Updated upstream
-from AstroImage import plt
-import AstroImage
-=======
 from AstroImage import plt,np
-import AstroImage, AstroSpectra
+import AstroImage
 import matplotlib as mpl
 from pyraf import iraf
->>>>>>> Stashed changes
 
 
 LOG = logging.getLogger("TESTING")
@@ -65,20 +60,3 @@ TestImage.show()
 LOG.info("== Image Tests Complete ==")
 
 LOG.info("Result = %s" % ("Passed" if result else "Failed"))
-
-LOG.info("== Spectra Tests Starting ==")
-
-TestSpectra = AstroSpectra.FITSSpectra()
-
-LOG.info("Generating a Blackbody Spectrum at 5000K...")
-x = np.linspace(0.1e-6,2e-6,1000)[1:]
-TestSpectra.save(np.array([x,Utilities.BlackBody(x,5000)]),"BlackBody")
-LOG.info("Displaying a Spectrum")
-plt.figure(5)
-
-TestSpectra.showSpectrum()
-plt.xlabel("Wavelength")
-plt.ylabel("Flux (Joules)")
-
-
-plt.show()
