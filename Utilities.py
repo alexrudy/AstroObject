@@ -47,3 +47,9 @@ def BlackBody(wl,T):
     flux = (2.0 * h * c**2.0)/(wl**5.0) * (1.0)/(np.exp(exponent)-1.0)
     return flux
 
+
+def validate_filename(string,extension=".fit"):
+    """Validates a string as an acceptable filename, stripping path components,etc."""
+    return string.replace("/","").rstrip(extension).replace(".","") + extension
+    
+
