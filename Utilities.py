@@ -35,3 +35,9 @@ def set_axis_padding(xytup,*otherxy):
     
 
 
+
+def validate_filename(string,extension=".fit"):
+    """Validates a string as an acceptable filename, stripping path components,etc."""
+    return string.replace("/","").rstrip(extension).replace(".","") + extension
+    
+
