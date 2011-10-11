@@ -8,7 +8,7 @@
 # 
 
 execfile("__init__.py")
-import logging,os
+import logging,os,sys
 import Utilities
 from AstroImage import plt,np
 import AstroImage, AstroSpectra
@@ -17,6 +17,10 @@ from pyraf import iraf
 
 LOG = logging.getLogger("AstroObject Tests")
 result = True
+
+if __name__ != '__main__':
+    LOG.critical(__name__+" is not a module, do not run it as one!")
+    sys.exit(1)
 
 FileName = "Tests/Hong-Kong.jpg"
 TestImage = AstroImage.FITSImage()
