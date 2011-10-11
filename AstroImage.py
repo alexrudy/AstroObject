@@ -16,6 +16,7 @@ from scipy.linalg import norm
 import numpy as np
 import pyfits
 import math, copy, sys, time, logging, os
+from Utilities import *
 
 LOG = logging.getLogger(__name__)
 
@@ -30,6 +31,7 @@ class FITSFrame(object):
         self.header = header # A dictionary of header keys and values for use in 
         self.metadata = metadata # An optional metadata dictionary
         self.time = time.strftime("%Y-%m-%dT%H:%M:%S")
+        
         
         if self.metadata == None:
             self.metadata = {}
@@ -50,6 +52,9 @@ class FITSImage(object):
         self.statename = None       # The active state name
         self.filename = filename    # The filename to use for file loading and writing
         self.plt = plt
+        self.outputData = False
+        self.inputData = False
+        
         
         if array != None:
             self.save(array)        # Save the initializing data
@@ -152,12 +157,65 @@ class FITSImage(object):
                 filename = self.filename
                 LOG.warning("Setting filename from default %s. No filename validation was performed" % filename)
         
+        filename = validate_filename(filename)
         LOG.debug("Generating FITS File from state %s with filename %s" % (statename,filename))
         HDU = pyfits.PrimaryHDU(self.states[statename].data)
         HDUList = pyfits.HDUList([HDU])
         HDUList.writeto(filename)
         LOG.info("Wrote FITS File %s" % filename)
         return filename
+    
+    def outFITS(self,filename=None,statename=None):
+        """This creates a FITS file designed for output from an IRAF function.
+        This function creates the FITS file, and requests that at the next opportune moment,
+        the object should re-read the created FITS file, re-incorportating it in the object
+        model and deleting the original file."""
+        
+        if not statename:
+            statename = self.statename
+        if not filename:
+            if self.filename == None:
+                filename = statename
+                LOG.warning("Setting Filename from statename %s. No filename validation was performed." % filename)
+            else:
+                filename = self.filename
+                LOG.warning("Setting filename from default %s. No filename validation was performed" % filename)
+                
+        filename = validate_filename(filename)
+        if os.access(filename,os.F_OK):
+            LOG.critical("FITS File %s Exists, and is scheduled to be over-written...")
+        
+        if not self.outputData:
+            self.outputData = []
+        self.outputData += [(filename,statename)]
+        
+        return filename
+    
+    def inFITS(self,filename=None,statename=None):
+        """similar to outFITS, handles fits files used for IRAF routines"""
+        filename = self.FITS(filename,statename)
+        if not self.inputData:
+            self.inputData = []
+        self.inputData += [filename]
+        
+        return filename
+    
+    def reloadFITS(self):
+        """Reloads the last created temporary FITS file from an action."""
+        if self.outputData:
+            for filename,statename in self.outputData:
+                self.outputData = False
+                self.loadFromFITS(filename,statename)
+                if os.access(filename,os.F_OK):
+                    os.remove(filename)
+                    LOG.info("Deleted FITS file %s" % filename)
+        if self.inputData:
+            for filename in self.inputData:
+                self.inputData = False
+                if os.access(filename,os.F_OK):
+                    os.remove(filename)
+                    LOG.info("Deleted FITS file %s" % filename)
+                
     
     
     ##########################

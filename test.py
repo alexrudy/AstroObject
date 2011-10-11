@@ -13,6 +13,7 @@ import Utilities
 from AstroImage import plt,np
 import AstroImage, AstroSpectra
 import matplotlib as mpl
+from pyraf import iraf
 
 LOG = logging.getLogger("AstroObject Tests")
 result = True
@@ -71,3 +72,15 @@ plt.xlabel("Wavelength")
 plt.ylabel("Flux (Joules)")
 
 plt.show()
+
+LOG.info("== IRAF Interaction Tests Starting ==")
+
+iraf.imarith(TestImage.inFITS(),"/",2,TestImage.outFITS(statename="Half"))
+TestImage.reloadFITS()
+plt.figure(4)
+TestImage.show()
+
+
+LOG.info("== Image Tests Complete ==")
+
+LOG.info("Result = %s" % ("Passed" if result else "Failed"))
