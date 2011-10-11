@@ -29,3 +29,6 @@ In the future, I will add the ability to import output fits files back in to the
 - Untested IRAF Interaction Lines
 - Basic FITS File Writing
 - NO Metadata and Header Features
+0.1.1
+- Fixed a log message formatting error in AstroImage which caused a printing error
+- Removed the "Logs/" folder requirement from the module
