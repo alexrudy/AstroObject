@@ -1,5 +1,0 @@
-- Build full FITS writing and reading with multiple HDUs
-- Write FITS Header and Metadata Operations
-- Build FITS Table Support
-- Make API for reduction routines built later
-- Documentation
