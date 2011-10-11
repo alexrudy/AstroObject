@@ -183,7 +183,7 @@ class FITSImage(object):
                 
         filename = validate_filename(filename)
         if os.access(filename,os.F_OK):
-            LOG.critical("FITS File %s Exists, and is scheduled to be over-written...")
+            LOG.critical("FITS File %s Exists, and is scheduled to be over-written..." % filename)
         
         if not self.outputData:
             self.outputData = []
