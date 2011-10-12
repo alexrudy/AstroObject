@@ -48,9 +48,9 @@ def BlackBody(wl,T):
     return flux
 
 
-def Gaussian(x,mean,stdev):
+def Gaussian(x,mean,stdev,height):
     """Rertun a gaussian at postion x"""
-    return np.exp(-(x-mean)**2.0/(2.0*stdev**2.0))
+    return height*np.exp(-(x-mean)**2.0/(2.0*stdev**2.0))
 
 def validate_filename(string,extension=".fit"):
     """Validates a string as an acceptable filename, stripping path components,etc."""

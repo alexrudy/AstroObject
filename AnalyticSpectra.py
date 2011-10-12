@@ -21,10 +21,10 @@ import numpy as np
 import pyfits
 import math, copy, sys, time, logging, os
 
-class AnalyticSpectra(AstroSpectra.SpectraFrame):
+class AnalyticSpectrum(AstroSpectra.SpectraFrame):
     """A functional spectrum object for spectrum generation. The default implementation is a flat spectrum."""
     def __init__(self,label,wavelengths=None,units=None):
-        super(AnalyticSpectra, self).__init__(None,label)
+        super(AnalyticSpectrum, self).__init__(None,label)
         self.wavelengths = wavelengths
         self.units = units #Future will be used for enforcing unit behaviors
         
@@ -59,7 +59,7 @@ class AnalyticSpectra(AstroSpectra.SpectraFrame):
             wavelengths = self.wavelengths
         return np.ones(wavelengths.shape)
     
-class CompositeSpectra(AnalyticSpectra):
+class CompositeSpectra(AnalyticSpectrum):
     """Binary composition of two functional spectra"""
     def __init__(self, partA, partB, operation):
         label = partA.label + " " + operation + " " + partB.label

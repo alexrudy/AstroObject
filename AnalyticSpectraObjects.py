@@ -21,7 +21,7 @@ import numpy as np
 import pyfits
 import math, copy, sys, time, logging, os
 
-class BlackBodySpectrum(AnalyticSpectra.AnalyticSpectra):
+class BlackBodySpectrum(AnalyticSpectra.AnalyticSpectrum):
     """An analytic representation of a Blackbody Spectrum at a Kelvin Tempertaure"""
     def __init__(self, temperature, label=None):
         if label == None:
@@ -34,17 +34,18 @@ class BlackBodySpectrum(AnalyticSpectra.AnalyticSpectra):
         return BlackBody(wavelength,self.temperature)
         
         
-class GaussianSpectrum(AnalyticSpectra.AnalyticSpectra):
+class GaussianSpectrum(AnalyticSpectra.AnalyticSpectrum):
     """docstring for GaussianSpectrum"""
-    def __init__(self, mean, stdev, label=None):
+    def __init__(self, mean, stdev, height, label=None):
         if label == None:
             label = "Gaussian Spectrum with mean: %4.2e and standard deviation: %4.2e" % (mean,stdev)
-        super(GaussianSpectrum, self).__init__()
+        super(GaussianSpectrum, self).__init__(label)
         self.mean = mean
         self.stdev = stdev
+        self.height = height
         
     def __call__(self,wavelength):
         """Calls a wavelength function"""
-        return Gaussian(wavelength,self.mean,self.stdev)
+        return Gaussian(wavelength,self.mean,self.stdev,self.height)
         
         
