@@ -44,7 +44,9 @@ def BlackBody(wl,T):
     c = spconst.c
     k = spconst.k
     exponent = (h * c)/(wl * k * T)
-    flux = (2.0 * h * c**2.0)/(wl**5.0) * (1.0)/(np.exp(exponent)-1.0)
+    exponential=np.exp(exponent)
+    flux = np.nan_to_num((2.0 * h * c**2.0)/(wl**5.0) * (1.0)/(exponential-1.0))
+    
     return flux
 
 
