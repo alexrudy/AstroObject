@@ -8,20 +8,67 @@
 # 
 
 execfile("__init__.py")
-import logging,os,sys
+import logging,os,sys,unittest
 import Utilities
 from AstroImage import plt,np
-import AstroImage, AstroSpectra, AnalyticSpectra
+import AstroImage, AstroSpectra, AnalyticSpectra, AstroObject
 import matplotlib as mpl
 from pyraf import iraf
 
 LOG = logging.getLogger("AstroObject Tests")
 
 
+
+
+LOG.info("Starting Test Suite: %s" % __file__)
+
+class ObjectTests(unittest.TestCase):
+    """A class for testing the AstroObject objects"""
+    def setUp(self):
+        """Sets up the Object Tests"""
+        LOG.info("--Object Tests--")
+        # Generate Object
+        self.Object = AstroObject.FITSObject()
+        # Generate Empty Frame
+        self.Frame = AstroObject.FITSFrame("Test Empty Frame")
+        
+        self.Object.save(self.Frame)
+    
+    def test_save(self):
+        """Tests save"""
+        self.assertRaises(TypeError,self.Object.save,[1,3])
+        self.assertRaises(KeyError,self.Object.save,self.Frame)
+    
+    def test_show(self):
+        """Tests the plotting functions"""
+        self.assertEqual(type(plt.plot([1])),type(self.Object.show()))
+    
+    def tearDown(self):
+        """Tears down UnitTests"""
+        LOG.info("--Completed Object Tests--")
+        plt.show()
+    
+        
+def ObjectTest():
+    """docstring for ObjectTests"""
+    Passed = True
+    
+    Object.save(Frame)
+    Object.show()
+    LOG.info("Returned List Correctly: ")
+
 if __name__ != '__main__':
     LOG.critical(__name__+" is not a module, do not run it as one!")
     sys.exit(1)
-
+else:
+    LOG.info("Removing Console Handler...")
+    logging.getLogger('').removeHandler(console)
+    suite = unittest.TestLoader().loadTestsFromTestCase(ObjectTests)
+    unittest.TextTestRunner(verbosity=2).run(suite)
+    logging.getLogger('').addHandler(console)
+    LOG.info("Re-applying Console Handler...")
+    
+    
 def ImageTests():
     """Performs basic Image Tests"""
     ImageResult = True
@@ -123,12 +170,6 @@ def IRAFTests():
     TestImage.reloadFITS()
     plt.figure(6)
     TestImage.show()
-
-ImageTests()
-SpectraTests()
-AnalyticSpectraTests()
-IRAFTests()
-plt.show()
 
 
 

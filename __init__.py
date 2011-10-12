@@ -24,9 +24,10 @@ console.setFormatter(consoleFormatter)
 initLOG.addHandler(console)
 
 if os.access(logfolder,os.F_OK):
-    logfile = logging.FileHandler(filename=logfolder+filename)
+    logfile = logging.FileHandler(filename=logfolder+filename,mode="w")
     logfile.setLevel(logging.DEBUG)
     fileformatter = logging.Formatter(longFormat,datefmt=dateFormat)
     logfile.setFormatter(fileformatter)
     initLOG.addHandler(logfile)
 
+initLOG.info("Launching %s from the %s module" % (sys.argv[0],__name__))
