@@ -11,7 +11,7 @@ import logging,time,sys,os
 logfolder = "Logs/"
 filename = "AstroObject-"+time.strftime("%Y-%m-%d")+".log"
 longFormat = "%(asctime)s : %(levelname)-8s : %(name)-20s : %(message)s"
-shortFormat = '%(levelname)-8s: %(name)-20s: %(message)s'
+shortFormat = '%(levelname)-8s: %(message)s'
 dateFormat = "%Y-%m-%d-%H:%M:%S"
 
 initLOG = logging.getLogger('')
@@ -25,6 +25,7 @@ initLOG.addHandler(console)
 
 if os.access(logfolder,os.F_OK):
     logfile = logging.FileHandler(filename=logfolder+filename,mode="w")
+    logfilestream = open(logfolder+filename,'aw')
     logfile.setLevel(logging.DEBUG)
     fileformatter = logging.Formatter(longFormat,datefmt=dateFormat)
     logfile.setFormatter(fileformatter)
