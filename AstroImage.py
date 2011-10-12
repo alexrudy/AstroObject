@@ -35,8 +35,53 @@ class ImageFrame(AstroObject.FITSFrame):
     def __call__(self):
         """Call this frame, returning the data array"""
         return self.data
+        
+    def __hdu__(self,primary=False):
+        """Retruns an HDU for this frame"""
+        if primary:
+            LOG.info("Generating a primary HDU for %s" % self)
+            return pyfits.PrimaryHDU(self())
+        else:
+            LOG.info("Generating an image HDU for %s" % self)
+            return pyfits.ImageHDU(self())
+            
+    def __show__(self):
+        """Returns the plot object for this image"""
+        LOG.debug("Plotting %s using matplotlib.pyplot.imshow" % self)
+        return plt.imshow(self())
+    
+    @classmethod
+    def __save__(cls,data,label):
+        """A generic class method for saving to this object with data directly"""
+        if not isinstance(data,np.ndarray):
+            msg = "ImageFrame cannot handle objects of type %s, must be type %s" % (type(data),np.ndarray)
+            LOG.critical(msg)
+            raise AbstractError(msg)
+        if len(data.shape) != 2:
+            LOG.warning("The data appears to be %d dimensional. This object expects 2 dimensional data." % len(data.shape))
+        Object = ImageFrame(data,label)
+        LOG.debug("Saved %s with size %d" % (Object,data.size))
+        return Object
 
 class ImageObject(AstroObject.FITSObject):
+    """docstring for ImageObject"""
+    def __init__(self, array=None):
+        super(ImageObject, self).__init__()
+        self.dataClass = ImageFrame
+        if array != None:
+            self.save(array)        # Save the initializing data
+            
+    def loadFromFile(self,filename=None,statename=None):
+        """Load a regular image file into the object"""
+        if not filename:
+            filename = self.filename
+        if statename == None:
+            statename = os.path.basename(filename)
+            LOG.debug("Set statename for image from filename: %s" % statename)
+        self.save(mpimage.imread(filename),statename)
+        LOG.info("Loaded Image from file: "+filename)
+
+class OLDImageObject(AstroObject.FITSObject):
     """docstring for ImageObject"""
     def __init__(self, array=None):
         super(ImageObject, self).__init__()
@@ -48,15 +93,7 @@ class ImageObject(AstroObject.FITSObject):
     #####################
     # Loading Functions #
     #####################
-    def loadFromFile(self,filename=None,statename=None):
-        """Load a regular image file into the object"""
-        if not filename:
-            filename = self.filename
-        if statename == None:
-            statename = os.path.basename(filename)
-            LOG.debug("Set statename for image from filename: %s" % statename)
-        self.save(mpimage.imread(filename),statename)
-        LOG.info("Loaded Image from file: "+filename)
+
     
     def loadFromFITS(self,filename=None,statename=None):
         """Load a FITS File into the image object"""
