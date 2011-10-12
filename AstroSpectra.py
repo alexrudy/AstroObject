@@ -32,8 +32,7 @@ class FITSSpectra(AstroImage.FITSImage):
         
     def showSpectrum(self):
         """Shows a 2-D plot of a spectrum"""
-        data = self.data()
-        x,y = data #Slice Data
+        x,y = self.data() #Slice Data
         axis = get_padding((x,y))
         plt.plot(x,y,'k-')
         plt.axis(axis)
@@ -48,15 +47,9 @@ class SpectraFrame(AstroImage.FITSFrame):
         
         
     def validate(self):
-        """Validates this spectra"""
-        pass
+        """Validates this spectra as a valid spectrum, not an image object"""
+        return True
         
     
 
-
-class FunctionalSpectra(SpectraFrame):
-    """A functional spectrum object for spectrum generation"""
-    def __init__(self,label):
-        super(FunctionalSpectra, self).__init__(None,label)
-        
             
