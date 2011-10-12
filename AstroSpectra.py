@@ -38,3 +38,25 @@ class FITSSpectra(AstroImage.FITSImage):
         plt.plot(x,y,'k-')
         plt.axis(axis)
         plt.gca().ticklabel_format(style="sci",scilimits=(3,3))
+        
+
+
+class SpectraFrame(AstroImage.FITSFrame):
+    """docstring for SpectraFrame"""
+    def __init__(self, array, label, header=None, metadata=None):
+        super(SpectraFrame, self).__init__(array, label, header, metadata)
+        
+        
+    def validate(self):
+        """Validates this spectra"""
+        pass
+        
+    
+
+
+class FunctionalSpectra(SpectraFrame):
+    """A functional spectrum object for spectrum generation"""
+    def __init__(self,label):
+        super(FunctionalSpectra, self).__init__(None,label)
+        
+            
