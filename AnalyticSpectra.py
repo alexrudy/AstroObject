@@ -57,7 +57,7 @@ class AnalyticSpectra(AstroSpectra.SpectraFrame):
         """Returns the Flux data for this spectrum"""
         if wavelengths == None:
             wavelengths = self.wavelengths
-        return np.hstack(np.ones(wavelengths.shape),wavelengths)
+        return np.ones(wavelengths.shape)
     
 class CompositeSpectra(AnalyticSpectra):
     """Binary composition of two functional spectra"""
