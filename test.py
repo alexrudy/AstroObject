@@ -11,7 +11,7 @@ execfile("__init__.py")
 import logging,os,sys
 import Utilities
 from AstroImage import plt,np
-import AstroImage, AstroSpectra
+import AstroImage, AstroSpectra, AnalyticSpectra
 import matplotlib as mpl
 from pyraf import iraf
 
@@ -26,7 +26,7 @@ if __name__ != '__main__':
 LOG.info("== Image Tests Starting ==")
 LOG.info("Allocating Image Object")
 FileName = "Tests/Hong-Kong.jpg"
-TestImage = AstroImage.FITSImage()
+TestImage = AstroImage.ImageObject()
 
 LOG.info("Loading Image from File "+FileName+"...")
 TestImage.loadFromFile(FileName)
@@ -71,7 +71,7 @@ LOG.info("Result = %s" % ("Passed" if ImageResult else "Failed"))
 
 LOG.info("== Spectra Tests Starting ==")
 
-TestSpectra = AstroSpectra.FITSSpectra()
+TestSpectra = AstroSpectra.SpectraObject()
 
 LOG.info("Generating a Blackbody Spectrum at 5000K...")
 x = np.linspace(0.1e-6,2e-6,1000)[1:]
@@ -82,6 +82,21 @@ plt.figure(4)
 TestSpectra.showSpectrum()
 plt.xlabel("Wavelength")
 plt.ylabel("Flux (Joules)")
+
+LOG.info("== Analytic Spectra Testing ==")
+
+LOG.info("Generating Spectrum Components")
+BlackBody = AnalyticSpectra.BlackBodySpectrum(5000)
+Gaussian = AnalyticSpectra.GaussianSpectrum(0.5e-6,0.5e-8,4e12)
+Composed = Gaussian + BlackBody
+
+LOG.info("Saving Generated Spectrum (and rendering...)")
+TestSpectra.save(np.array([x,Composed(x)]),"Composed Spectrum")
+
+LOG.info("Plotting Generated Spectrum")
+plt.figure(5)
+TestSpectra.showSpectrum()
+
 
 plt.show()
 
