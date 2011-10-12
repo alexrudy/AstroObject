@@ -32,3 +32,5 @@ In the future, I will add the ability to import output fits files back in to the
 0.1.1
 - Fixed a log message formatting error in AstroImage which caused a printing error
 - Removed the "Logs/" folder requirement from the module
+0.1.2
+- Logs only written to file when a "Logs/" folder is present.

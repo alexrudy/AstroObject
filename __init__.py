@@ -5,15 +5,28 @@
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
 # 
-import logging,time,sys
+import logging,time,sys,os
 
-logging.basicConfig(filename="AstroObject-"+time.strftime("%Y-%m-%d")+".log",format="%(asctime)s : %(levelname)-8s : %(name)-20s : %(message)s",datefmt="%Y-%m-%d-%H:%M:%S",level=logging.DEBUG,filemode='w')
+
+logfolder = "Logs/"
+filename = "AstroObject-"+time.strftime("%Y-%m-%d")+".log"
+longFormat = "%(asctime)s : %(levelname)-8s : %(name)-20s : %(message)s"
+shortFormat = '%(levelname)-8s: %(name)-20s: %(message)s'
+dateFormat = "%Y-%m-%d-%H:%M:%S"
+
+initLOG = logging.getLogger('')
+initLOG.setLevel(logging.DEBUG)
 
 console = logging.StreamHandler()
 console.setLevel(logging.INFO)
-# set a format which is simpler for console use
-formatter = logging.Formatter('%(name)-20s: %(levelname)-8s %(message)s')
-# tell the handler to use this format
-console.setFormatter(formatter)
-# add the handler to the root logger
-logging.getLogger('').addHandler(console)
+consoleFormatter = logging.Formatter(shortFormat,datefmt=dateFormat)
+console.setFormatter(consoleFormatter)
+initLOG.addHandler(console)
+
+if os.access(logfolder,os.F_OK):
+    logfile = logging.FileHandler(filename=logfolder+filename)
+    logfile.setLevel(logging.DEBUG)
+    fileformatter = logging.Formatter(longFormat,datefmt=dateFormat)
+    logfile.setFormatter(fileformatter)
+    initLOG.addHandler(logfile)
+

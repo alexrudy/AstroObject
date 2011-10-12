@@ -16,26 +16,34 @@ import matplotlib as mpl
 from pyraf import iraf
 
 LOG = logging.getLogger("AstroObject Tests")
-result = True
+
+ImageResult = True
 
 if __name__ != '__main__':
     LOG.critical(__name__+" is not a module, do not run it as one!")
     sys.exit(1)
 
+LOG.info("== Image Tests Starting ==")
+LOG.info("Allocating Image Object")
 FileName = "Tests/Hong-Kong.jpg"
 TestImage = AstroImage.FITSImage()
-LOG.info("== Image Tests Starting ==")
-LOG.info("Image Loading Procedure for File "+FileName+"...")
+
+LOG.info("Loading Image from File "+FileName+"...")
 TestImage.loadFromFile(FileName)
-LOG.info("Image Display:"+FileName+"...")
+
+LOG.info("Plotting Image "+TestImage.statename+"...")
 plt.figure(1)
 TestImage.show()
+plt.title("Image: "+TestImage.statename)
+
 LOG.info("Image Manipulation: GrayScale...")
 TestImage.save(TestImage.data()[:,:,1],"GrayScale")
-result = result and len(TestImage.object().shape) == 2
-LOG.info("Image Display: GrayScale...")
+ImageResult = ImageResult and len(TestImage.object().shape) == 2
+
+LOG.info("Plotting Image: "+TestImage.statename+"...")
 plt.figure(2)
 TestImage.show()
+plt.title("Image"+TestImage.statename)
 
 if os.access("HongKong.fit",os.F_OK):
     LOG.debug("Removing old HongKong.fit file")
@@ -45,13 +53,13 @@ LOG.info("FITS File Writing...")
 TestImage.FITS("HongKong.fit")
 LOG.info("FITS File Reading...")
 TestImage.loadFromFITS("HongKong.fit")
+
 LOG.info("Image Display: Loaded from FITS")
 plt.figure(3)
 TestImage.show()
+plt.title("Image"+TestImage.statename)
 
-plt.draw()
-
-result = result and np.abs(TestImage.data()-TestImage.data("GrayScale")).max() < 1e-20
+ImageResult = ImageResult and np.abs(TestImage.data()-TestImage.data("GrayScale")).max() < 1e-20
 
 if os.access("HongKong.fit",os.F_OK):
     LOG.debug("Removing HongKong.fit file")
@@ -59,7 +67,7 @@ if os.access("HongKong.fit",os.F_OK):
 
 LOG.info("== Image Tests Complete ==")
 
-LOG.info("Result = %s" % ("Passed" if result else "Failed"))
+LOG.info("Result = %s" % ("Passed" if ImageResult else "Failed"))
 
 LOG.info("== Spectra Tests Starting ==")
 
@@ -85,6 +93,4 @@ plt.figure(4)
 TestImage.show()
 
 
-LOG.info("== Image Tests Complete ==")
-
-LOG.info("Result = %s" % ("Passed" if result else "Failed"))
+# LOG.info("Result = %s" % ("Passed" if result else "Failed"))
