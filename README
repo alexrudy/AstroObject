@@ -36,3 +36,5 @@ In the future, I will add the ability to import output fits files back in to the
 - Logs only written to file when a "Logs/" folder is present.
 0.1.3
 - Handling Overflows in Blackbody Function
+0.1.4
+- Logging cannot capture warnings in python 0.1.4, so don't import that!
