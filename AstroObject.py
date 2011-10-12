@@ -22,7 +22,12 @@ from Utilities import *
 LOG = logging.getLogger(__name__)
 
 class FITSFrame(object):
-    """A single frame of a FITS image"""
+    """A single frame of a FITS image
+    Frames are known as Header Data Units, or HDUs when written to a FITS file.
+    This frame is generic. It does not legitimately implement any functions. Rather, each function implemented is a placeholder, and will generate a CRITICAL Log entry if called. Several objects inherit from this one to create HDUs which have some semantic meaning.
+    This object requires a label, and can optionally take headers and metadata
+    
+    """
     def __init__(self, label, header=None, metadata=None):
         super(FITSFrame, self).__init__()
         self.label = label # A label for this frame, for selection in parent object
@@ -38,7 +43,7 @@ class FITSFrame(object):
     def __call__(self):
         """Returns the objects data"""
         LOG.critical("Object %s was called, but not instantiated as a proper data type!" % self)
-        return None
+        raise AbstractError("Abstract Data Structure cannot return data!")
     
     def __str__(self):
         """String Representation of an Object"""
@@ -55,14 +60,13 @@ class FITSFrame(object):
     def __show__(self):
         """Returns a plot object for the current Frame"""
         LOG.critical("Plotting from a generic object %s is undefined" % self)
-        plot = plt.plot([1,1])
-        return plot
+        raise AbstractError("Abstract Data Structure cannot be used for plotting!")
     
     @classmethod
     def __save__(cls,data,label):
         """A generic class method for saving to this object with data directly"""
         LOG.critical("Abstract Data Structure cannot be the target of a save operation!")
-        raise TypeError("Abstract Data Structure cannot be used for saving!")
+        raise AbstractError("Abstract Data Structure cannot be used for saving!")
         
 class FITSObject(object):
     """Holds on to a regular numpy-formated feature list image."""
@@ -87,7 +91,7 @@ class FITSObject(object):
         if not isinstance(data,self.dataClass):
             try:
                 Object = self.dataClass.__save__(data,statename)
-            except TypeError:
+            except AbstractError:
                 raise TypeError("Object to be saved is not of type %s" % self.dataClass)
         else:
             Object = data

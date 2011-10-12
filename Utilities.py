@@ -58,6 +58,10 @@ def validate_filename(string,extension=".fits"):
     """Validates a string as an acceptable filename, stripping path components,etc."""
     if string[-len(extension):] == extension:
         string = string[:-len(extension)]
-    return string.replace("/","").replace(".","")+extension
+    return string+extension
     
+
+class AbstractError(Exception):
+    """An error which arose due to bad abstraction implemetnation"""
+    pass
 
