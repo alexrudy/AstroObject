@@ -13,6 +13,7 @@ import Utilities
 from AstroImage import plt,np
 import AstroImage, AstroSpectra, AnalyticSpectra, AstroObject
 import matplotlib as mpl
+import matplotlib.image as mpimage
 from pyraf import iraf
 
 LOG = logging.getLogger("AstroObject Tests")
@@ -30,92 +31,103 @@ class ObjectTests(unittest.TestCase):
         self.Object = AstroObject.FITSObject(filename="somefile")
         self.EmptyFileName = "somefile.fits"
         # Generate Empty Frame
-        self.Frame = AstroObject.FITSFrame("Test Empty Frame")
-        
-        self.Object.save(self.Frame)
-        
-        self.HongKong = AstroObject.FITSObject()
-        FileName = "Tests/Hong-Kong.jpg"
-        
+        self.EmptyFrame = AstroObject.FITSFrame("Test Empty Frame")
         
     
     def test_save(self):
-        """Tests save"""
+        """Testing Save for type consistency and key consistency"""
+        LOG.info("Testing Save for type consistency and key consistency")
+        self.Object.save(self.EmptyFrame)
         self.assertRaises(TypeError,self.Object.save,[1,3])
-        self.assertRaises(KeyError,self.Object.save,self.Frame)
+        self.assertRaises(KeyError,self.Object.save,self.EmptyFrame)
     
     def test_show(self):
-        """Tests the plotting functions"""
-        self.assertEqual(type(plt.plot([1])),type(self.Object.show()))
+        """Testing the plotting functions for type output consistency"""
+        LOG.info("Testing the plotting functions for type output consistency")
+        self.Object.save(self.EmptyFrame)
+        self.assertRaises(Utilities.AbstractError,self.Object.show)
+        plt.savefig("Tests/simple_plot_gen")
         
     def test_write(self):
         """Tests the FITS file writing functions for an empty FITS file"""
+        LOG.info("Tests the FITS file writing functions for an empty FITS file")
+        self.Object.save(self.EmptyFrame)
         self.Object.write()
         self.assertTrue(os.access,(self.EmptyFileName,os.F_OK))
-        if os.access(self.EmptyFileName,os.F_OK):
-            os.remove(self.EmptyFileName)
-            
-    def test_read(self):
-        """Tests the FITS file reading functions for a generic FITS file"""
-        pass
-    
-    def test_load(self):
-        """Tests the image file loading functions for a generic image"""
-        pass
+        
     
     def tearDown(self):
         """Tears down UnitTests"""
-        
+        self.Object = None
+        self.EmptyFrame = None
+        if os.access(self.EmptyFileName,os.F_OK):
+            os.remove(self.EmptyFileName)
     
+class ImageTests(unittest.TestCase):
+    """A class for testing the AstroImage objects"""
+    def setUp(self):
+        """Sets up the Object Tests"""
+        self.HongKongFileName = "Tests/Hong-Kong.fits"
+        self.HongKongImage = "Tests/Hong-Kong.jpg"
+        # Generate Object
+        self.EmptyObject = AstroImage.ImageObject()
+        self.GrayScaleImage = np.sum(mpimage.imread(self.HongKongImage),axis=2)
         
-def ObjectTest():
-    """docstring for ObjectTests"""
-    Passed = True
+    def test_loadfromfile(self):
+        """Testing the ImageObject.loadFromFile method"""
+        LOG.info("Testing the ImageObject.loadFromFile method")
+        self.EmptyObject.loadFromFile(self.HongKongImage)
+        
+    def test_manipulation(self):
+        """Testing the ImageObject.save and ImageObject.data methods for manipulation"""
+        LOG.info("Testing the ImageObject.save and ImageObject.data methods for manipulation")
+        self.EmptyObject.loadFromFile(self.HongKongImage)
+        self.EmptyObject.save(np.sum(self.EmptyObject.data(),axis=2),"GrayScale Hong Kong Image")
+        self.assertTrue(len(self.EmptyObject.object().shape) == 2)
+        self.EmptyObject.show()
+        plt.savefig("Tests/grayscale_image_gen")
     
-    Object.save(Frame)
-    Object.show()
-    LOG.info("Returned List Correctly: ")
+    def test_frame(self):
+        """Testing AstroImage.ImageFrame Object"""
+        LOG.info("Testing AstroImage.ImageFrame Object")
+        frame = AstroImage.ImageFrame(self.GrayScaleImage,"GrayScale Hong Kong Image")
+        self.EmptyObject.save(frame)
+        LOG.debug("Generated Frame %s" % frame)
+        
+    def test_write(self):
+        """Testing writing image to a FITS File"""
+        frame = AstroImage.ImageFrame(self.GrayScaleImage,"GrayScale Hong Kong Image")
+        self.EmptyObject.save(frame)
+        if os.access(self.HongKongFileName,os.F_OK):
+            os.remove(self.HongKongFileName)
+        self.EmptyObject.write(self.HongKongFileName)
+        
+    def tearDown(self):
+        """docstring for tearDown"""
+        self.EmptyObject = None
+        self.GrayScaleImage = None
+
 
 if __name__ != '__main__':
     LOG.critical(__name__+" is not a module, do not run it as one!")
     sys.exit(1)
 else:
-    LOG.info("Removing Console Handler...")
+    LOG.debug("Removing Console Handler...")
+    print "\n" + "-"*70
     logging.getLogger('').removeHandler(console)
-    suite = unittest.TestLoader().loadTestsFromTestCase(ObjectTests)
-    unittest.TextTestRunner(verbosity=2).run(suite)
+    objectSuite = unittest.TestLoader().loadTestsFromTestCase(ObjectTests)
+    imageSuite = unittest.TestLoader().loadTestsFromTestCase(ImageTests)
+    alltests = unittest.TestSuite([objectSuite, imageSuite])
+    result = unittest.TextTestRunner(verbosity=2).run(alltests)
     logging.getLogger('').addHandler(console)
-    LOG.info("Re-applying Console Handler...")
+    LOG.debug("Re-applying Console Handler...")
+    LOG.info("Tests were %s" % "passed" if result.wasSuccessful() else "FAILED")
+    
+    
     
     
 def ImageTests():
     """Performs basic Image Tests"""
-    ImageResult = True
-    LOG.info("== Image Tests Starting ==")
-    LOG.info("Allocating Image Object")
-    FileName = "Tests/Hong-Kong.jpg"
-    TestImage = AstroImage.ImageObject()
-
-    LOG.info("Loading Image from File "+FileName+"...")
-    TestImage.loadFromFile(FileName)
-
-    LOG.info("Plotting Image "+TestImage.statename+"...")
-    plt.figure(1)
-    TestImage.show()
-    plt.title("Image: "+TestImage.statename)
-
-    LOG.info("Image Manipulation: GrayScale...")
-    TestImage.save(TestImage.data()[:,:,1],"GrayScale")
-    ImageResult = ImageResult and len(TestImage.object().shape) == 2
-
-    LOG.info("Plotting Image: "+TestImage.statename+"...")
-    plt.figure(2)
-    TestImage.show()
-    plt.title("Image"+TestImage.statename)
-
-    if os.access("HongKong.fit",os.F_OK):
-        LOG.debug("Removing old HongKong.fit file")
-        os.remove("HongKong.fit")
 
     LOG.info("FITS File Writing...")
     TestImage.FITS("HongKong.fit")
