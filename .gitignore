@@ -9,3 +9,4 @@
 *.pyc
 Logs/*
 TODO.txt
+Tests/*gen.png
