@@ -28,13 +28,21 @@ class FITSFrame(object):
         self.label = label # A label for this frame, for selection in parent object
         self.header = header # A dictionary of header keys and values for use in 
         self.metadata = metadata # An optional metadata dictionary
-        self.time = time.strftime("%Y-%m-%dT%H:%M:%S")
-        
+        self.time = time.clock() # An object representing the time this object was created
         
         if self.metadata == None:
             self.metadata = {}
         if self.header == None:
             self.header = {}
+            
+    def __call__(self):
+        """Returns the objects data"""
+        LOG.critical("Object %s was called, but not instantiated as a proper data type!" % self)
+        return None
+        
+    def __str__(self):
+        """String Representation of an Object"""
+        return "<\'%s\' labeled \"%s\">" % (__class__.__name__,self.label)
         
 class FITSObject(object):
     """Holds on to a regular numpy-formated feature list image."""

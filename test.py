@@ -17,95 +17,120 @@ from pyraf import iraf
 
 LOG = logging.getLogger("AstroObject Tests")
 
-ImageResult = True
 
 if __name__ != '__main__':
     LOG.critical(__name__+" is not a module, do not run it as one!")
     sys.exit(1)
 
-LOG.info("== Image Tests Starting ==")
-LOG.info("Allocating Image Object")
-FileName = "Tests/Hong-Kong.jpg"
-TestImage = AstroImage.ImageObject()
+def ImageTests():
+    """Performs basic Image Tests"""
+    ImageResult = True
+    LOG.info("== Image Tests Starting ==")
+    LOG.info("Allocating Image Object")
+    FileName = "Tests/Hong-Kong.jpg"
+    TestImage = AstroImage.ImageObject()
 
-LOG.info("Loading Image from File "+FileName+"...")
-TestImage.loadFromFile(FileName)
+    LOG.info("Loading Image from File "+FileName+"...")
+    TestImage.loadFromFile(FileName)
 
-LOG.info("Plotting Image "+TestImage.statename+"...")
-plt.figure(1)
-TestImage.show()
-plt.title("Image: "+TestImage.statename)
+    LOG.info("Plotting Image "+TestImage.statename+"...")
+    plt.figure(1)
+    TestImage.show()
+    plt.title("Image: "+TestImage.statename)
 
-LOG.info("Image Manipulation: GrayScale...")
-TestImage.save(TestImage.data()[:,:,1],"GrayScale")
-ImageResult = ImageResult and len(TestImage.object().shape) == 2
+    LOG.info("Image Manipulation: GrayScale...")
+    TestImage.save(TestImage.data()[:,:,1],"GrayScale")
+    ImageResult = ImageResult and len(TestImage.object().shape) == 2
 
-LOG.info("Plotting Image: "+TestImage.statename+"...")
-plt.figure(2)
-TestImage.show()
-plt.title("Image"+TestImage.statename)
+    LOG.info("Plotting Image: "+TestImage.statename+"...")
+    plt.figure(2)
+    TestImage.show()
+    plt.title("Image"+TestImage.statename)
 
-if os.access("HongKong.fit",os.F_OK):
-    LOG.debug("Removing old HongKong.fit file")
-    os.remove("HongKong.fit")
+    if os.access("HongKong.fit",os.F_OK):
+        LOG.debug("Removing old HongKong.fit file")
+        os.remove("HongKong.fit")
 
-LOG.info("FITS File Writing...")
-TestImage.FITS("HongKong.fit")
-LOG.info("FITS File Reading...")
-TestImage.loadFromFITS("HongKong.fit")
+    LOG.info("FITS File Writing...")
+    TestImage.FITS("HongKong.fit")
+    LOG.info("FITS File Reading...")
+    TestImage.loadFromFITS("HongKong.fit")
 
-LOG.info("Image Display: Loaded from FITS")
-plt.figure(3)
-TestImage.show()
-plt.title("Image"+TestImage.statename)
+    LOG.info("Image Display: Loaded from FITS")
+    plt.figure(3)
+    TestImage.show()
+    plt.title("Image"+TestImage.statename)
 
-ImageResult = ImageResult and np.abs(TestImage.data()-TestImage.data("GrayScale")).max() < 1e-20
+    ImageResult = ImageResult and np.abs(TestImage.data()-TestImage.data("GrayScale")).max() < 1e-20
 
-if os.access("HongKong.fit",os.F_OK):
-    LOG.debug("Removing HongKong.fit file")
-    os.remove("HongKong.fit")
+    if os.access("HongKong.fit",os.F_OK):
+        LOG.debug("Removing HongKong.fit file")
+        os.remove("HongKong.fit")
 
-LOG.info("== Image Tests Complete ==")
+    LOG.info("== Image Tests Complete ==")
 
-LOG.info("Result = %s" % ("Passed" if ImageResult else "Failed"))
-
-LOG.info("== Spectra Tests Starting ==")
-
-TestSpectra = AstroSpectra.SpectraObject()
-
-LOG.info("Generating a Blackbody Spectrum at 5000K...")
-x = np.linspace(0.1e-6,2e-6,1000)[1:]
-TestSpectra.save(np.array([x,Utilities.BlackBody(x,5000)]),"BlackBody")
-LOG.info("Displaying a Spectrum")
-plt.figure(4)
-
-TestSpectra.showSpectrum()
-plt.xlabel("Wavelength")
-plt.ylabel("Flux (Joules)")
-
-LOG.info("== Analytic Spectra Testing ==")
-
-LOG.info("Generating Spectrum Components")
-BlackBody = AnalyticSpectra.BlackBodySpectrum(5000)
-Gaussian = AnalyticSpectra.GaussianSpectrum(0.5e-6,0.5e-8,4e12)
-Composed = Gaussian + BlackBody
-
-LOG.info("Saving Generated Spectrum (and rendering...)")
-TestSpectra.save(np.array([x,Composed(x)]),"Composed Spectrum")
-
-LOG.info("Plotting Generated Spectrum")
-plt.figure(5)
-TestSpectra.showSpectrum()
+    LOG.info("Result = %s" % ("Passed" if ImageResult else "Failed"))
+    return ImageResult
 
 
+def SpectraTests():
+    """Tests the facilities for raw spectra"""
+    LOG.info("== Spectra Tests Starting ==")
+
+    TestSpectra = AstroSpectra.SpectraObject()
+
+    LOG.info("Generating a Blackbody Spectrum at 5000K...")
+    x = np.linspace(0.1e-6,2e-6,1000)[1:]
+    TestSpectra.save(np.array([x,Utilities.BlackBody(x,5000)]),"BlackBody")
+    LOG.info("Displaying a Spectrum")
+    plt.figure(4)
+
+    TestSpectra.showSpectrum()
+    plt.xlabel("Wavelength")
+    plt.ylabel("Flux (Joules)")
+
+def AnalyticSpectraTests():
+    """docstring for AnalyticSpectraTests"""
+    LOG.info("== Analytic Spectra Testing ==")
+    TestSpectra = AstroSpectra.SpectraObject()
+    
+    LOG.info("Generating Spectrum Components")
+    BlackBody = AnalyticSpectra.BlackBodySpectrum(5000)
+    Gaussian = AnalyticSpectra.GaussianSpectrum(0.5e-6,0.5e-8,4e12)
+    Composed = Gaussian + BlackBody
+    x = np.linspace(0.1e-6,2e-6,1000)[1:]
+    LOG.info("Saving Generated Spectrum (and rendering...)")
+    TestSpectra.save(np.array([x,Composed(x)]),"Composed Spectrum")
+
+    LOG.info("Plotting Generated Spectrum")
+    plt.figure(5)
+    TestSpectra.showSpectrum()
+
+
+def IRAFTests():
+    """Testing IRAF Interaction"""
+    LOG.info("== IRAF Interaction Tests Starting ==")
+    FileName = "Tests/Hong-Kong.jpg"
+    TestImage = AstroImage.ImageObject()
+
+    LOG.info("Loading Image from File "+FileName+"...")
+    TestImage.loadFromFile(FileName)
+    
+    LOG.info("Image Manipulation: GrayScale...")
+    TestImage.save(TestImage.data()[:,:,1],"GrayScale")
+    
+    iraf.imarith(TestImage.inFITS(),"/",2,TestImage.outFITS(statename="Half"))
+    TestImage.reloadFITS()
+    plt.figure(6)
+    TestImage.show()
+
+ImageTests()
+SpectraTests()
+AnalyticSpectraTests()
+IRAFTests()
 plt.show()
 
-LOG.info("== IRAF Interaction Tests Starting ==")
 
-iraf.imarith(TestImage.inFITS(),"/",2,TestImage.outFITS(statename="Half"))
-TestImage.reloadFITS()
-plt.figure(4)
-TestImage.show()
 
 
 # LOG.info("Result = %s" % ("Passed" if result else "Failed"))
