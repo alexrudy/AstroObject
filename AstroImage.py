@@ -38,9 +38,10 @@ class FITSFrame(object):
         if self.header == None:
             self.header = {}
         
-        return
     
-
+    def __call__(self):
+        """Call this frame, returning the data array"""
+        return self.data
 
 class FITSImage(object):
     """Holds on to a regular numpy-formated feature list image."""
@@ -83,7 +84,7 @@ class FITSImage(object):
         if not statename:
             statename = self.statename
         if statename != None and statename in self.states:
-            return self.states[statename].data
+            return self.states[statename]()
         else:
             raise KeyError("Image not instantiated with any data...")
     
@@ -159,7 +160,7 @@ class FITSImage(object):
         
         filename = validate_filename(filename)
         LOG.debug("Generating FITS File from state %s with filename %s" % (statename,filename))
-        HDU = pyfits.PrimaryHDU(self.states[statename].data)
+        HDU = pyfits.PrimaryHDU(self.states[statename]()    )
         HDUList = pyfits.HDUList([HDU])
         HDUList.writeto(filename)
         LOG.info("Wrote FITS File %s" % filename)
