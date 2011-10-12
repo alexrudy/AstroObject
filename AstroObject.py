@@ -44,10 +44,13 @@ class FITSFrame(object):
         """String Representation of an Object"""
         return "<\'%s\' labeled \'%s\'>" % (self.__class__.__name__,self.label)
     
-    def __hdu__(self):
+    def __hdu__(self,primary=False):
         """Retruns a Header-Data Unit"""
         LOG.critical("Generating an Empty HDU from %s" % self)
-        return pyfits.PrimaryHDU()
+        if primary:
+            return pyfits.PrimaryHDU()
+        else:
+            return pyfits.ImageHDU()
     
     def __show__(self):
         """Returns a plot object for the current Frame"""
@@ -149,8 +152,24 @@ class FITSObject(object):
         else:
             raise KeyError("Object not instantiated with any data...")
     
-    def write(self,filename=None,states=None):
+    def write(self,filename=None,states=None,primaryState=None):
         """Writes a FITS file for this object"""
+        if not primaryState:
+            primaryState = self.statename
+        if not filename:
+            if self.filename == None:
+                filename = primaryState
+            else:
+                filename = self.filename
+        filename = validate_filename(filename)
         if not states:
             states = self.list()
-        HDUs = []
+        if primaryState in states:
+            states.remove(primaryState)
+        PrimaryHDU = self.states[primaryState].__hdu__(primary=True)
+        if states:
+            HDUs = [self.states[state].__hdu__(primary=False) for state in states]
+            HDUList = pyfits.HDUList([PrimaryHDU]+HDUs)
+        else:
+            HDUList = pyfits.HDUList(PrimaryHDU)
+        HDUList.writeto(filename)

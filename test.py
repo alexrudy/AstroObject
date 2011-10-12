@@ -26,13 +26,18 @@ class ObjectTests(unittest.TestCase):
     """A class for testing the AstroObject objects"""
     def setUp(self):
         """Sets up the Object Tests"""
-        LOG.info("--Object Tests--")
         # Generate Object
-        self.Object = AstroObject.FITSObject()
+        self.Object = AstroObject.FITSObject(filename="somefile")
+        self.EmptyFileName = "somefile.fits"
         # Generate Empty Frame
         self.Frame = AstroObject.FITSFrame("Test Empty Frame")
         
         self.Object.save(self.Frame)
+        
+        self.HongKong = AstroObject.FITSObject()
+        FileName = "Tests/Hong-Kong.jpg"
+        
+        
     
     def test_save(self):
         """Tests save"""
@@ -42,11 +47,25 @@ class ObjectTests(unittest.TestCase):
     def test_show(self):
         """Tests the plotting functions"""
         self.assertEqual(type(plt.plot([1])),type(self.Object.show()))
+        
+    def test_write(self):
+        """Tests the FITS file writing functions for an empty FITS file"""
+        self.Object.write()
+        self.assertTrue(os.access,(self.EmptyFileName,os.F_OK))
+        if os.access(self.EmptyFileName,os.F_OK):
+            os.remove(self.EmptyFileName)
+            
+    def test_read(self):
+        """Tests the FITS file reading functions for a generic FITS file"""
+        pass
+    
+    def test_load(self):
+        """Tests the image file loading functions for a generic image"""
+        pass
     
     def tearDown(self):
         """Tears down UnitTests"""
-        LOG.info("--Completed Object Tests--")
-        plt.show()
+        
     
         
 def ObjectTest():

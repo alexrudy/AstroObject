@@ -52,8 +52,10 @@ def Gaussian(x,mean,stdev,height):
     """Rertun a gaussian at postion x"""
     return height*np.exp(-(x-mean)**2.0/(2.0*stdev**2.0))
 
-def validate_filename(string,extension=".fit"):
+def validate_filename(string,extension=".fits"):
     """Validates a string as an acceptable filename, stripping path components,etc."""
-    return string.replace("/","").rstrip(extension).replace(".","") + extension
+    if string[-len(extension):] == extension:
+        string = string[:-len(extension)]
+    return string.replace("/","").replace(".","")+extension
     
 
