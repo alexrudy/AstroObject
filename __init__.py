@@ -14,6 +14,7 @@ longFormat = "%(asctime)s : %(levelname)-8s : %(name)-20s : %(message)s"
 shortFormat = '%(levelname)-8s: %(name)-20s: %(message)s'
 dateFormat = "%Y-%m-%d-%H:%M:%S"
 
+logging.captureWarnings(True)
 initLOG = logging.getLogger('')
 initLOG.setLevel(logging.DEBUG)
 

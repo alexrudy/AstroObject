@@ -34,3 +34,5 @@ In the future, I will add the ability to import output fits files back in to the
 - Removed the "Logs/" folder requirement from the module
 0.1.2
 - Logs only written to file when a "Logs/" folder is present.
+0.1.3
+- Handling Overflows in Blackbody Function
