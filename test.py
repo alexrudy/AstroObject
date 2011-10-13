@@ -126,7 +126,7 @@ class ImageTests(unittest.TestCase):
         self.EmptyObject.save(self.GrayScaleImage,"GrayScale Hong Kong Image")
         self.EmptyObject.write(self.TestReadWriteFileName)
         self.EmptyObject.read(self.TestReadWriteFileName,"Imported Hong Kong Image")
-        self.assertTrue(np.abs(self.EmptyObject.data()-self.EmptyObject.data("GrayScale Hong Kong Image")).max() < 1e-5)
+        self.assertAlmostEqual(np.abs(self.EmptyObject.data()-self.EmptyObject.data("GrayScale Hong Kong Image")).max(),0)
         
         
     def tearDown(self):
