@@ -177,3 +177,22 @@ class FITSObject(object):
         else:
             HDUList = pyfits.HDUList(PrimaryHDU)
         HDUList.writeto(filename)
+        
+    def read(self,filename=None,statename=None):
+        """This reader assumes that all HDUs are image HDUs"""
+        if not filename:
+            filename = self.filename
+        if statename == None:
+            statename = os.path.basename(filename)
+            LOG.debug("Set statename for image from filename: %s" % statename)
+        HDUList = pyfits.open(filename)
+        Read = False
+        for HDU in HDUList:
+            if isinstance(HDU,pyfits.PrimaryHDU) and HDU.data == None:
+                label = statename + " " + "Empty Primary"
+                self.save(FITSFrame(label))
+                Read = True
+            else:
+                LOG.warning("Skipping HDU %s, not an Empty Primary HDU" % HDU)
+        if not Read:
+            LOG.warning("No HDUs were saved from this FITS file")

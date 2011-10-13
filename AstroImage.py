@@ -80,6 +80,33 @@ class ImageObject(AstroObject.FITSObject):
             LOG.debug("Set statename for image from filename: %s" % statename)
         self.save(mpimage.imread(filename),statename)
         LOG.info("Loaded Image from file: "+filename)
+        
+    def read(self,filename=None,statename=None):
+        """This reader assumes that all HDUs are image HDUs"""
+        if not filename:
+            filename = self.filename
+        if statename == None:
+            statename = os.path.basename(filename)
+            LOG.debug("Set statename for image from filename: %s" % statename)
+        HDUList = pyfits.open(filename)
+        Read = 0
+        for HDU in HDUList:
+            if isinstance(HDU,pyfits.PrimaryHDU):
+                label = statename + " " + "Primary"
+                self.save(HDU.data,label)
+                Read += 1
+            elif isinstance(HDU,pyfits.ImageHDU):
+                if HDU.name:
+                    label = statename + " " + HDU.name
+                else:
+                    label = statename + "HDU %d" % READ
+                self.save(HDU.data,label)
+                Read += 1
+            else:
+                LOG.warning("Skipping HDU %s, not an ImageHDU" % HDU)
+        if not Read:
+            LOG.warning("No HDUs were saved from this FITS file")
+            
 
 class OLDImageObject(AstroObject.FITSObject):
     """docstring for ImageObject"""

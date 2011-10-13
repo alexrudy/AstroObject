@@ -27,11 +27,15 @@ class ObjectTests(unittest.TestCase):
     """A class for testing the AstroObject objects"""
     def setUp(self):
         """Sets up the Object Tests"""
+        self.EmptyFileName = "Tests/Empty.fits"
+        self.EmptyFileNameEx = "Tests/Empty-Ex.fits"
         # Generate Object
-        self.Object = AstroObject.FITSObject(filename="somefile")
-        self.EmptyFileName = "somefile.fits"
+        self.Object = AstroObject.FITSObject(filename=self.EmptyFileName)
         # Generate Empty Frame
         self.EmptyFrame = AstroObject.FITSFrame("Test Empty Frame")
+        
+        if os.access(self.EmptyFileName,os.F_OK):
+            os.remove(self.EmptyFileName)
         
     
     def test_save(self):
@@ -55,20 +59,26 @@ class ObjectTests(unittest.TestCase):
         self.Object.write()
         self.assertTrue(os.access,(self.EmptyFileName,os.F_OK))
         
+    def test_read(self):
+        """Testing the abiltiy to read FITS Files"""
+        LOG.info(self.test_read.__doc__)
+        self.Object.read(self.EmptyFileNameEx)
+        
+    
     
     def tearDown(self):
         """Tears down UnitTests"""
         self.Object = None
         self.EmptyFrame = None
-        if os.access(self.EmptyFileName,os.F_OK):
-            os.remove(self.EmptyFileName)
     
 class ImageTests(unittest.TestCase):
     """A class for testing the AstroImage objects"""
     def setUp(self):
         """Sets up the Object Tests"""
         self.HongKongFileName = "Tests/Hong-Kong.fits"
+        self.HongKongExFileName = "Tests/Hong-Kong-Ex.fits"
         self.HongKongImage = "Tests/Hong-Kong.jpg"
+        self.EmptyFileName = "Tests/Empty-Ex.fits"
         # Generate Object
         self.EmptyObject = AstroImage.ImageObject()
         self.GrayScaleImage = np.sum(mpimage.imread(self.HongKongImage),axis=2)
@@ -96,11 +106,20 @@ class ImageTests(unittest.TestCase):
         
     def test_write(self):
         """Testing writing image to a FITS File"""
+        LOG.info(self.test_write.__doc__)
         frame = AstroImage.ImageFrame(self.GrayScaleImage,"GrayScale Hong Kong Image")
         self.EmptyObject.save(frame)
         if os.access(self.HongKongFileName,os.F_OK):
             os.remove(self.HongKongFileName)
         self.EmptyObject.write(self.HongKongFileName)
+        
+    def test_read(self):
+        """Testing reading a FITS File"""
+        LOG.info(self.test_read.__doc__)
+        self.EmptyObject.read(self.HongKongExFileName)
+        self.assertRaises(TypeError,self.EmptyObject.read,self.EmptyFileName)
+        
+        
         
     def tearDown(self):
         """docstring for tearDown"""

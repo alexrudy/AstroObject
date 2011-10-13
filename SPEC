@@ -1,0 +1,33 @@
+
+ SPEC
+ ObjectModel
+ 
+ Created by Alexander Rudy on 2011-10-13.
+ Copyright 2011 Alexander Rudy. All rights reserved.
+
+This file defines an interface specification for the Astro Object model. There are two types of objects defined here: Frames, which capture a specific instance of data, and Objects, which capture sets of frames, or whole FITS files, and provide the appropriate interface.
+
+
+FRAME
+__init__(label,header=None,metadata=None) BaseClass
+	This function must save the provided label to the object.
+	The implementation of metadata and header data has not yet been finished.
+	
+__call__(self) Abstract
+	This function returns the data representation of the object. This will vary:
+	For Images: A 2-D numpy array in the image dimensions.
+	For Spectra: A 2-D numpy array, with the form [x,flux]
+	For Tables: Tables are not yet implemented
+
+__str__(self) BaseClass
+	This function should return a string representation of the object
+
+__hdu__(self,primary=False) Abstract
+	This function should generate an HDU for this frame. If the frame is empty, or can produce images, it can have the ability to generate a PrimaryHDU, as specified by the optional argument
+	
+__show__(self) Abstract
+	This function should call the minimal matplotlib calls to display with basic functionality
+	
+@classmethod
+__save__(cls,data,label,header=None,metadata=None) Abstract
+	This function should determine if the passed data can be instantiated in this type, and if so, should instantiate such an object. If the data cannot be instantiated, it should raise an AbstractError.
