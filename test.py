@@ -79,9 +79,10 @@ class ImageTests(unittest.TestCase):
         self.HongKongExFileName = "Tests/Hong-Kong-Ex.fits"
         self.HongKongImage = "Tests/Hong-Kong.jpg"
         self.EmptyFileName = "Tests/Empty-Ex.fits"
+        self.TestReadWriteFileName = "Tests/ReadWriteTest.fits"
         # Generate Object
         self.EmptyObject = AstroImage.ImageObject()
-        self.GrayScaleImage = np.sum(mpimage.imread(self.HongKongImage),axis=2)
+        self.GrayScaleImage = np.int32(np.sum(mpimage.imread(self.HongKongImage),axis=2))
         
     def test_loadfromfile(self):
         """Testing the ImageObject.loadFromFile method"""
@@ -119,12 +120,21 @@ class ImageTests(unittest.TestCase):
         self.EmptyObject.read(self.HongKongExFileName)
         self.assertRaises(ValueError,self.EmptyObject.read,self.EmptyFileName)
         
+    def test_readwrite(self):
+        """Testing the preservation of data through read and write"""
+        LOG.info(self.test_readwrite.__doc__)
+        self.EmptyObject.save(self.GrayScaleImage,"GrayScale Hong Kong Image")
+        self.EmptyObject.write(self.TestReadWriteFileName)
+        self.EmptyObject.read(self.TestReadWriteFileName,"Imported Hong Kong Image")
+        self.assertTrue(np.abs(self.EmptyObject.data()-self.EmptyObject.data("GrayScale Hong Kong Image")).max() < 1e-5)
         
         
     def tearDown(self):
         """docstring for tearDown"""
         self.EmptyObject = None
         self.GrayScaleImage = None
+        if os.access(self.TestReadWriteFileName,os.F_OK):
+            os.remove(self.TestReadWriteFileName)
 
 
 if __name__ != '__main__':
