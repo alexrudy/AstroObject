@@ -31,3 +31,9 @@ __show__(self) Abstract
 @classmethod
 __save__(cls,data,label,header=None,metadata=None) Abstract
 	This function should determine if the passed data can be instantiated in this type, and if so, should instantiate such an object. If the data cannot be instantiated, it should raise an AbstractError.
+	
+@classmethod
+__read__(cls,HDU,label) Abstract
+	This function is used to attempt to read this type of data. Only two actions may result:
+	On Success: Return an object of type cls with the HDU's data stored
+	On Failure: Raise an exception of type AbstractError describing the reason for failure.
