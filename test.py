@@ -117,7 +117,7 @@ class ImageTests(unittest.TestCase):
         """Testing reading a FITS File"""
         LOG.info(self.test_read.__doc__)
         self.EmptyObject.read(self.HongKongExFileName)
-        self.assertRaises(TypeError,self.EmptyObject.read,self.EmptyFileName)
+        self.assertRaises(ValueError,self.EmptyObject.read,self.EmptyFileName)
         
         
         

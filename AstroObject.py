@@ -68,12 +68,31 @@ class FITSFrame(object):
         LOG.critical("Abstract Data Structure cannot be the target of a save operation!")
         raise AbstractError("Abstract Data Structure cannot be used for saving!")
         
+    
+    @classmethod
+    def __read__(cls,HDU,label):
+        """An abstract method for reading empty data HDU Frames"""
+        LOG.debug("Attempting to read as %s" % cls)
+        if not isinstance(HDU,pyfits.PrimaryHDU):
+            msg = "Must save a PrimaryHDU to a generic FITSFrame, found %s" % type(HDU)
+            LOG.debug(msg)
+            raise AbstractError(msg)
+        if not HDU.data == None:
+            msg = "HDU Data must be None for generic FITSFrame, found data of %s" % type(HDU.data)
+            LOG.debug(msg)
+            raise AbstractError(msg)
+        Object = cls(label)
+        LOG.debug("Created %s" % Object)
+        return Object
+                    
 class FITSObject(object):
     """Holds on to a regular numpy-formated feature list image."""
-    def __init__(self,filename=None):
+    def __init__(self,filename=None,dataClasses=None):
         super(FITSObject, self).__init__()
         # Image data variables.
-        self.dataClass = FITSFrame
+        self.dataClasses = [FITSFrame]
+        if dataClasses:
+            self.dataClasses += dataClasses
         self.states = {}            # Storage for all of the images
         self.statename = None       # The active state name
         self.filename = filename    # The filename to use for file loading and writing
@@ -88,11 +107,15 @@ class FITSObject(object):
     def save(self,data,statename=None):
         """Saves the given image to this object"""
         # If we were passed raw data, and the dataClass can accept it, then go for it!
-        if not isinstance(data,self.dataClass):
-            try:
-                Object = self.dataClass.__save__(data,statename)
-            except AbstractError:
-                raise TypeError("Object to be saved is not of type %s" % self.dataClass)
+        if not isinstance(data,tuple(self.dataClasses)):
+            Object = None
+            for dataClass in self.dataClasses:
+                try:
+                    Object = dataClass.__save__(data,statename)
+                except AbstractError as AE:
+                    LOG.debug("Cannot save as %s: %s" % (dataClass,AE))
+            if not Object:
+                raise TypeError("Object to be saved is not of type %s" % dataClass)
         else:
             Object = data
             
@@ -186,13 +209,21 @@ class FITSObject(object):
             statename = os.path.basename(filename)
             LOG.debug("Set statename for image from filename: %s" % statename)
         HDUList = pyfits.open(filename)
-        Read = False
+        Read = 0
         for HDU in HDUList:
-            if isinstance(HDU,pyfits.PrimaryHDU) and HDU.data == None:
-                label = statename + " " + "Empty Primary"
-                self.save(FITSFrame(label))
-                Read = True
+            Object = None
+            for dataClass in self.dataClasses:
+                label = statename + " %d" % Read
+                try:
+                    Object = dataClass.__read__(HDU,label)
+                except AbstractError as AE:
+                    LOG.debug("Cannot read as %s: %s" % (dataClass,AE))
+            if not Object:
+                LOG.warning("Skipping HDU %s, cannot save as valid type " % HDU)
             else:
-                LOG.warning("Skipping HDU %s, not an Empty Primary HDU" % HDU)
+                Read += 1
+                self.save(Object)
         if not Read:
-            LOG.warning("No HDUs were saved from this FITS file")
+            msg = "No HDUs were saved from FITS file %s to %s" % (filename,self)
+            LOG.error(msg)
+            raise ValueError(msg)

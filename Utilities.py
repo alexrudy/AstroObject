@@ -65,3 +65,7 @@ class AbstractError(Exception):
     """An error which arose due to bad abstraction implemetnation"""
     pass
 
+class HDUFrameTypeError(Exception):
+    """docstring for HDUFrameTypeError"""
+    pass
+        

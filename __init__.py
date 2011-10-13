@@ -9,7 +9,7 @@ import logging,time,sys,os
 
 
 logfolder = "Logs/"
-filename = "AstroObject-"+time.strftime("%Y-%m-%d")+".log"
+filename = "AstroObject-"+time.strftime("%Y-%m-%d")
 longFormat = "%(asctime)s : %(levelname)-8s : %(name)-20s : %(message)s"
 shortFormat = '%(levelname)-8s: %(message)s'
 dateFormat = "%Y-%m-%d-%H:%M:%S"
@@ -24,11 +24,11 @@ console.setFormatter(consoleFormatter)
 initLOG.addHandler(console)
 
 if os.access(logfolder,os.F_OK):
-    logfile = logging.FileHandler(filename=logfolder+filename,mode="w")
-    logfilestream = open(logfolder+filename,'aw')
+    logfile = logging.FileHandler(filename=logfolder+filename+".log",mode="w")
     logfile.setLevel(logging.DEBUG)
     fileformatter = logging.Formatter(longFormat,datefmt=dateFormat)
     logfile.setFormatter(fileformatter)
     initLOG.addHandler(logfile)
+
 
 initLOG.info("Launching %s from the %s module" % (sys.argv[0],__name__))

@@ -53,21 +53,41 @@ class ImageFrame(AstroObject.FITSFrame):
     @classmethod
     def __save__(cls,data,label):
         """A generic class method for saving to this object with data directly"""
+        LOG.debug("Attempting to save as %s" % cls)
         if not isinstance(data,np.ndarray):
             msg = "ImageFrame cannot handle objects of type %s, must be type %s" % (type(data),np.ndarray)
-            LOG.critical(msg)
+            LOG.debug(msg)
             raise AbstractError(msg)
         if len(data.shape) != 2:
             LOG.warning("The data appears to be %d dimensional. This object expects 2 dimensional data." % len(data.shape))
         Object = cls(data,label)
         LOG.debug("Saved %s with size %d" % (Object,data.size))
         return Object
+    
+    @classmethod
+    def __read__(cls,HDU,label):
+        """An abstract method for reading empty data HDU Frames"""
+        LOG.debug("Attempting to read as %s" % cls)
+        if not isinstance(HDU,(pyfits.ImageHDU,pyfits.PrimaryHDU)):
+            msg = "Must save a PrimaryHDU or ImageHDU to a %s, found %s" % (cls.__name__,type(HDU))
+            LOG.debug(msg)
+            raise AbstractError(msg)
+        if not isinstance(HDU.data,np.ndarray):
+            msg = "HDU Data must be %s for %s, found data of %s" % (np.ndarray,cls.__name__,type(HDU.data))
+            LOG.debug(msg)
+            raise AbstractError(msg)
+        Object = cls(HDU.data,label)
+        LOG.debug("Created %s" % Object)
+        return Object
+
 
 class ImageObject(AstroObject.FITSObject):
     """docstring for ImageObject"""
     def __init__(self, array=None):
         super(ImageObject, self).__init__()
-        self.dataClass = ImageFrame
+        self.dataClasses += [ImageFrame]
+        self.dataClasses.remove(AstroObject.FITSFrame)
+        LOG.debug("Initialized %s, data classes %s" % (self,self.dataClasses))
         if array != None:
             self.save(array)        # Save the initializing data
             
@@ -80,33 +100,8 @@ class ImageObject(AstroObject.FITSObject):
             LOG.debug("Set statename for image from filename: %s" % statename)
         self.save(mpimage.imread(filename),statename)
         LOG.info("Loaded Image from file: "+filename)
-        
-    def read(self,filename=None,statename=None):
-        """This reader assumes that all HDUs are image HDUs"""
-        if not filename:
-            filename = self.filename
-        if statename == None:
-            statename = os.path.basename(filename)
-            LOG.debug("Set statename for image from filename: %s" % statename)
-        HDUList = pyfits.open(filename)
-        Read = 0
-        for HDU in HDUList:
-            if isinstance(HDU,pyfits.PrimaryHDU):
-                label = statename + " " + "Primary"
-                self.save(HDU.data,label)
-                Read += 1
-            elif isinstance(HDU,pyfits.ImageHDU):
-                if HDU.name:
-                    label = statename + " " + HDU.name
-                else:
-                    label = statename + "HDU %d" % READ
-                self.save(HDU.data,label)
-                Read += 1
-            else:
-                LOG.warning("Skipping HDU %s, not an ImageHDU" % HDU)
-        if not Read:
-            LOG.warning("No HDUs were saved from this FITS file")
-            
+    
+
 
 class OLDImageObject(AstroObject.FITSObject):
     """docstring for ImageObject"""
