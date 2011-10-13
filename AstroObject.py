@@ -214,7 +214,10 @@ class FITSObject(object):
         for HDU in HDUList:
             Object = None
             for dataClass in self.dataClasses:
-                label = statename + " Frame %d" % Read
+                if Read != 0:
+                    label = statename + " Frame %d" % Read
+                else:
+                    label = statename
                 try:
                     Object = dataClass.__read__(HDU,label)
                 except AbstractError as AE:
