@@ -105,23 +105,6 @@ class ImageObject(AstroObject.FITSObject):
 
 class OLDImageObject(AstroObject.FITSObject):
     """docstring for ImageObject"""
-        
-    #####################
-    # Loading Functions #
-    #####################
-
-    
-    def loadFromFITS(self,filename=None,statename=None):
-        """Load a FITS File into the image object"""
-        if not filename:
-            filename = self.filename
-        if statename == None:
-            statename = os.path.basename(filename)
-            LOG.debug("Set statename for image from filename: %s" % statename)
-        HDUList = pyfits.open(filename)
-        self.save(HDUList[0].data,statename)
-        HDUList.close()
-        LOG.info("Loaded Image from FITS file: "+filename)
     
     ##########################
     # File Writing Functions #
