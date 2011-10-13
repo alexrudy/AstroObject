@@ -210,10 +210,11 @@ class FITSObject(object):
             LOG.debug("Set statename for image from filename: %s" % statename)
         HDUList = pyfits.open(filename)
         Read = 0
+        Labels = []
         for HDU in HDUList:
             Object = None
             for dataClass in self.dataClasses:
-                label = statename + " %d" % Read
+                label = statename + " Frame %d" % Read
                 try:
                     Object = dataClass.__read__(HDU,label)
                 except AbstractError as AE:
@@ -222,8 +223,12 @@ class FITSObject(object):
                 LOG.warning("Skipping HDU %s, cannot save as valid type " % HDU)
             else:
                 Read += 1
+                Labels += [label]
                 self.save(Object)
         if not Read:
             msg = "No HDUs were saved from FITS file %s to %s" % (filename,self)
             LOG.error(msg)
             raise ValueError(msg)
+        
+        return Labels
+    
