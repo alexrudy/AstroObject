@@ -39,29 +39,29 @@ class ObjectTests(unittest.TestCase):
         
     
     def test_save(self):
-        """Testing Save for type consistency and key consistency"""
-        LOG.info("Testing Save for type consistency and key consistency")
+        """FITSObject.save will reject poorly typed objects and objects with identical labels"""
+        LOG.info("TEST: "+self.test_save.__doc__)
         self.Object.save(self.EmptyFrame)
         self.assertRaises(TypeError,self.Object.save,[1,3])
         self.assertRaises(KeyError,self.Object.save,self.EmptyFrame)
     
     def test_show(self):
-        """Testing the plotting functions for type output consistency"""
-        LOG.info("Testing the plotting functions for type output consistency")
+        """FITSFrame will raise an AbstractError on FITSObject.show"""
+        LOG.info("TEST: "+self.test_show.__doc__)
         self.Object.save(self.EmptyFrame)
         self.assertRaises(Utilities.AbstractError,self.Object.show)
         plt.savefig("Tests/simple_plot_gen")
         
     def test_write(self):
-        """Tests the FITS file writing functions for an empty FITS file"""
-        LOG.info("Tests the FITS file writing functions for an empty FITS file")
+        """Existance of written empty FITS File after calling FITSObject.write"""
+        LOG.info("TEST: "+self.test_write.__doc__)
         self.Object.save(self.EmptyFrame)
         self.Object.write()
         self.assertTrue(os.access,(self.EmptyFileName,os.F_OK))
         
     def test_read(self):
-        """Testing the abiltiy to read FITS Files"""
-        LOG.info(self.test_read.__doc__)
+        """Code Reads Empty FITS File error-free"""
+        LOG.info("TEST: "+self.test_read.__doc__)
         self.Object.read(self.EmptyFileNameEx)
         
     
@@ -85,13 +85,13 @@ class ImageTests(unittest.TestCase):
         self.GrayScaleImage = np.int32(np.sum(mpimage.imread(self.HongKongImage),axis=2))
         
     def test_loadfromfile(self):
-        """Testing the ImageObject.loadFromFile method"""
-        LOG.info("Testing the ImageObject.loadFromFile method")
+        """ImageObject.loadFromFile method runs"""
+        LOG.info("TEST: "+self.test_loadfromfile.__doc__)
         self.EmptyObject.loadFromFile(self.HongKongImage)
         
     def test_manipulation(self):
-        """Testing the ImageObject.save and ImageObject.data methods for manipulation"""
-        LOG.info("Testing the ImageObject.save and ImageObject.data methods for manipulation")
+        """ImageObject.save and ImageObject.data methods correctly handle two forms of data"""
+        LOG.info("TEST: "+self.test_manipulation.__doc__)
         self.EmptyObject.loadFromFile(self.HongKongImage)
         self.EmptyObject.save(np.sum(self.EmptyObject.data(),axis=2),"GrayScale Hong Kong Image")
         self.assertTrue(len(self.EmptyObject.object().shape) == 2)
@@ -99,30 +99,32 @@ class ImageTests(unittest.TestCase):
         plt.savefig("Tests/grayscale_image_gen")
     
     def test_frame(self):
-        """Testing AstroImage.ImageFrame Object"""
-        LOG.info("Testing AstroImage.ImageFrame Object")
+        """AstroImage.ImageFrame saves Image Data"""
+        LOG.info("TEST: "+self.test_frame.__doc__)
         frame = AstroImage.ImageFrame(self.GrayScaleImage,"GrayScale Hong Kong Image")
         self.EmptyObject.save(frame)
         LOG.debug("Generated Frame %s" % frame)
         
     def test_write(self):
-        """Testing writing image to a FITS File"""
-        LOG.info(self.test_write.__doc__)
+        """ImageFrame produces a FITS File"""
+        LOG.info("TEST: "+self.test_write.__doc__)
         frame = AstroImage.ImageFrame(self.GrayScaleImage,"GrayScale Hong Kong Image")
         self.EmptyObject.save(frame)
         if os.access(self.HongKongFileName,os.F_OK):
             os.remove(self.HongKongFileName)
         self.EmptyObject.write(self.HongKongFileName)
+        self.assertTrue(os.access,(self.HongKongFileName,os.F_OK))
+        
         
     def test_read(self):
-        """Testing reading a FITS File"""
-        LOG.info(self.test_read.__doc__)
+        """ImageObject reads Image Files, but not Empty Files"""
+        LOG.info("TEST: "+self.test_read.__doc__)
         self.EmptyObject.read(self.HongKongExFileName)
         self.assertRaises(ValueError,self.EmptyObject.read,self.EmptyFileName)
         
     def test_readwrite(self):
-        """Testing the preservation of data through read and write"""
-        LOG.info(self.test_readwrite.__doc__)
+        """Image Data is preserved through read and write"""
+        LOG.info("TEST: "+self.test_readwrite.__doc__)
         self.EmptyObject.save(self.GrayScaleImage,"GrayScale Hong Kong Image")
         self.EmptyObject.write(self.TestReadWriteFileName)
         self.EmptyObject.read(self.TestReadWriteFileName,"Imported Hong Kong Image")
