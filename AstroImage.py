@@ -59,7 +59,7 @@ class ImageFrame(AstroObject.FITSFrame):
             raise AbstractError(msg)
         if len(data.shape) != 2:
             LOG.warning("The data appears to be %d dimensional. This object expects 2 dimensional data." % len(data.shape))
-        Object = ImageFrame(data,label)
+        Object = cls(data,label)
         LOG.debug("Saved %s with size %d" % (Object,data.size))
         return Object
 
@@ -83,13 +83,7 @@ class ImageObject(AstroObject.FITSObject):
 
 class OLDImageObject(AstroObject.FITSObject):
     """docstring for ImageObject"""
-    def __init__(self, array=None):
-        super(ImageObject, self).__init__()
-        self.dataClass = ImageFrame
-        if array != None:
-            self.save(array)        # Save the initializing data
         
-    
     #####################
     # Loading Functions #
     #####################
