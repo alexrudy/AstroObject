@@ -42,8 +42,9 @@ class FITSFrame(object):
     
     def __call__(self):
         """Returns the objects data"""
-        LOG.critical("Object %s was called, but not instantiated as a proper data type!" % self)
-        raise AbstractError("Abstract Data Structure cannot return data!")
+        msg = "%s: Abstract Data Structure was called, but cannot return data!" % self
+        LOG.critical(msg)
+        raise AbstractError(msg)
     
     def __str__(self):
         """String Representation of an Object"""
@@ -51,7 +52,7 @@ class FITSFrame(object):
     
     def __hdu__(self,primary=False):
         """Retruns a Header-Data Unit"""
-        LOG.critical("Generating an Empty HDU from %s" % self)
+        LOG.warning("%s: Generating an Empty HDU" % self)
         if primary:
             return pyfits.PrimaryHDU()
         else:
@@ -59,30 +60,32 @@ class FITSFrame(object):
     
     def __show__(self):
         """Returns a plot object for the current Frame"""
-        LOG.critical("Plotting from a generic object %s is undefined" % self)
-        raise AbstractError("Abstract Data Structure cannot be used for plotting!")
+        msg = "%s: Abstract Data Structure cannot be used for plotting!" % self
+        LOG.critical(msg)
+        raise AbstractError(msg)
     
     @classmethod
     def __save__(cls,data,label):
         """A generic class method for saving to this object with data directly"""
-        LOG.critical("Abstract Data Structure cannot be the target of a save operation!")
-        raise AbstractError("Abstract Data Structure cannot be used for saving!")
+        msg = "%s: Abstract Data Structure cannot be the target of a save operation!" % cls
+        LOG.critical(msg)
+        raise AbstractError(msg)
         
     
     @classmethod
     def __read__(cls,HDU,label):
         """An abstract method for reading empty data HDU Frames"""
-        LOG.debug("Attempting to read as %s" % cls)
+        LOG.debug("%s: Attempting to read data" % cls)
         if not isinstance(HDU,pyfits.PrimaryHDU):
-            msg = "Must save a PrimaryHDU to a generic FITSFrame, found %s" % type(HDU)
+            msg = "Must save a %s to a %s, found %s" % (pyfits.PrimaryHDU.__name__,cls.__name__,HDU.__class__.__name__)
             LOG.debug(msg)
             raise AbstractError(msg)
         if not HDU.data == None:
-            msg = "HDU Data must be None for generic FITSFrame, found data of %s" % type(HDU.data)
+            msg = "HDU Data must be type %s for %s, found data of type %s" % (None,cls,type(HDU.data).__name__)
             LOG.debug(msg)
             raise AbstractError(msg)
         Object = cls(label)
-        LOG.debug("Created %s" % Object)
+        LOG.debug("%s: Created %s" % (cls,Object))
         return Object
                     
 class FITSObject(object):
@@ -115,7 +118,7 @@ class FITSObject(object):
                 except AbstractError as AE:
                     LOG.debug("Cannot save as %s: %s" % (dataClass,AE))
             if not Object:
-                raise TypeError("Object to be saved is not of type %s" % dataClass)
+                raise TypeError("Object to be saved cannot be cast as %s" % self.dataClasses)
         else:
             Object = data
             
@@ -139,7 +142,7 @@ class FITSObject(object):
         if statename != None and statename in self.states:
             return self.states[statename]()
         else:
-            raise KeyError("Object not instantiated with any data...")
+            raise KeyError("Object %s not instantiated with any data..." % self)
     
     def object(self,statename=None):
         """Returns the FITSFrame Specfied"""
@@ -148,14 +151,14 @@ class FITSObject(object):
         if statename != None and statename in self.states:
             return self.states[statename]
         else:
-            raise KeyError("Object not instantiated with any data...")
+            raise KeyError("Object %s not instantiated with any data..." % self)
     
     def select(self,statename):
         """Sets the default image to the given name"""
         if statename not in self.states:
-            raise IndexError("Object %s does not exist!" % statename)
+            raise IndexError("State %s does not exist!" % statename)
         self.statename = statename
-        LOG.debug("Selected state %s" % statename)
+        LOG.debug("Selected state \'%s\'" % statename)
         return
     
     def list(self):
@@ -165,8 +168,8 @@ class FITSObject(object):
     def remove(self,statename):
         """Removes the specified image from the object"""
         if image not in self.states:
-            raise IndexError("Object %s does not exist!" % statename)
-        LOG.debug("Removing Object with label %s" % (statename))
+            raise IndexError("%s: Object %s does not exist!" % (self,statename))
+        LOG.debug("%s: Removing Object with label %s" % (self,statename))
         self.states.pop(statename)
     
     def show(self,statename=None):
