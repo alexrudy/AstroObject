@@ -26,34 +26,33 @@ LOG = logging.getLogger(__name__)
 
 class SpectraFrame(AstroObject.FITSFrame):
     """A simple spectral frame"""
-    def __init__(self, array, label, ordinate, header=None, metadata=None):
+    def __init__(self, array, label, header=None, metadata=None):
         super(SpectraFrame, self).__init__(label, header, metadata)
         self.data = array # The image data
         self.size = array.size # The size of this image
         self.shape = array.shape # The shape of this image
-        self.ordinate = ordinate # Usually wavelength
     
     def validate(self):
         """Validates this spectrum object"""
+        dimensions = 2
+        rows = 2
         try:
             assert self.size == self.data.size
             assert self.shape == self.data.shape
         except AssertionError:
             raise AssertionError("Members of %s appear to be inconsistent!" % self)
         try:
-            assert len(self.shape) == 1
-            assert self.shape[0] == self.size
+            assert data.ndim == dimensions
         except AssertionError:
-            raise AssertionError("Data of %s does not appear to be 1-dimensional! Shape: %s" % (self,self.shape))
+            raise AssertionError("Data of %s does not appear to be %d-dimensional! Shape: %s" % (self,dimensions,self.shape))
         try:
-            assert len(self.ordinate.shape) == 1
-            assert self.ordinate.shape[0] == self.ordinate.size
+            assert self.shape[0] == rows
         except AssertionError:
-            raise AssertionError("Ordinate of %s does not appear to be 1-dimensional! Shape: %s" % (self,self.ordinate.shape))
+            raise AssertionError("Spectrum for %s appears to be multi-dimensional, expected %d Shape: %s" % (self,rows,self.ordinate.shape))
     
     def __call__(self):
         """Call this frame, returning the data array"""
-        return np.array([self.ordinate,self.data])
+        return self.data
         
     
     def __hdu__(self,primary=False):
@@ -81,14 +80,19 @@ class SpectraFrame(AstroObject.FITSFrame):
     def __save__(cls,data,label):
         """A generic class method for saving to this object with data directly"""
         LOG.debug("Attempting to save as %s" % cls)
+        dimensions = 2
         if not isinstance(data,np.ndarray):
-            msg = "ImageFrame cannot handle objects of type %s, must be type %s" % (type(data),np.ndarray)
-            LOG.debug(msg)
+            msg = "%s cannot handle objects of type %s, must be type %s" % (cls.__name__,type(data),np.ndarray)
             raise AbstractError(msg)
-        if len(data.shape) != 2:
-            LOG.warning("The data appears to be %d dimensional. This object expects 2 dimensional data." % len(data.shape))
+        if data.ndim != dimensions:
+            LOG.warning("The data appears to be %d dimensional. This object expects %d dimensional data." % (len(data.shape),dimensions))
         Object = cls(data,label)
-        LOG.debug("Saved %s with size %d" % (Object,data.size))
+        try:
+            Object.validate()
+        except AssertionError as AE:
+            msg = "%s data did not validate: %s" % (cls.__name__,AE.)
+            raise AbstractError(msg)
+        LOG.debug("Saved %s with size %d" % (Object,Object.size))
         return Object
     
     @classmethod
@@ -97,14 +101,17 @@ class SpectraFrame(AstroObject.FITSFrame):
         LOG.debug("Attempting to read as %s" % cls)
         if not isinstance(HDU,(pyfits.ImageHDU,pyfits.PrimaryHDU)):
             msg = "Must save a PrimaryHDU or ImageHDU to a %s, found %s" % (cls.__name__,type(HDU))
-            LOG.debug(msg)
             raise AbstractError(msg)
         if not isinstance(HDU.data,np.ndarray):
             msg = "HDU Data must be %s for %s, found data of %s" % (np.ndarray,cls.__name__,type(HDU.data))
-            LOG.debug(msg)
             raise AbstractError(msg)
         Object = cls(HDU.data,label)
-        LOG.debug("Created %s" % Object)
+        try:
+            Object.validate()
+        except AssertionError as AE:
+            msg = "%s data did not validate: %s" % (cls.__name__,AE.)
+            raise AbstractError(msg)
+        LOG.debug("Read %s with size %s" % (Object,Object.size))
         return Object
     
 
