@@ -8,7 +8,7 @@
 This file defines an interface specification for the Astro Object model. There are two types of objects defined here: Frames, which capture a specific instance of data, and Objects, which capture sets of frames, or whole FITS files, and provide the appropriate interface.
 
 
-FRAME
+# FRAME
 __init__(label,header=None,metadata=None) BaseClass
 	This function must save the provided label to the object.
 	The implementation of metadata and header data has not yet been finished.
@@ -37,3 +37,14 @@ __read__(cls,HDU,label) Abstract
 	This function is used to attempt to read this type of data. Only two actions may result:
 	On Success: Return an object of type cls with the HDU's data stored
 	On Failure: Raise an exception of type AbstractError describing the reason for failure.
+	
+# Spectra
+Spectra are a special case. They are not two-dimensional images, and their scale is not inherently determined, nor is it standardized. As such, spectra are generally not reported with pixels, but rather with an abscissa axis. Spectra in the AstroObject system are stored in the following three possible ways:
+
+	1. *As Table Objects*: This will save the flux and wavelength in a two column table
+	2. *As an Image Object* : This will save the spectrum as an image, with the first row having flux, and second row having the wavelength equivalent.
+	3. *As a condensed Image Object*: This will save many spectra in the same primary HDU, in successive rows. For this method, all spectra must be provided with the same wavelength scale.
+
+Primarily, I will implement method 2. This will be the default.
+
+
