@@ -56,7 +56,6 @@ class ImageFrame(AstroObject.FITSFrame):
         LOG.debug("Attempting to save as %s" % cls)
         if not isinstance(data,np.ndarray):
             msg = "ImageFrame cannot handle objects of type %s, must be type %s" % (type(data),np.ndarray)
-            LOG.debug(msg)
             raise AbstractError(msg)
         if len(data.shape) != 2:
             LOG.warning("The data appears to be %d dimensional. This object expects 2 dimensional data." % len(data.shape))
@@ -70,15 +69,14 @@ class ImageFrame(AstroObject.FITSFrame):
         LOG.debug("Attempting to read as %s" % cls)
         if not isinstance(HDU,(pyfits.ImageHDU,pyfits.PrimaryHDU)):
             msg = "Must save a PrimaryHDU or ImageHDU to a %s, found %s" % (cls.__name__,type(HDU))
-            LOG.debug(msg)
             raise AbstractError(msg)
         if not isinstance(HDU.data,np.ndarray):
             msg = "HDU Data must be %s for %s, found data of %s" % (np.ndarray,cls.__name__,type(HDU.data))
-            LOG.debug(msg)
             raise AbstractError(msg)
         Object = cls(HDU.data,label)
         LOG.debug("Created %s" % Object)
         return Object
+    
 
 
 class ImageObject(AstroObject.FITSObject):
@@ -87,7 +85,6 @@ class ImageObject(AstroObject.FITSObject):
         super(ImageObject, self).__init__()
         self.dataClasses += [ImageFrame]
         self.dataClasses.remove(AstroObject.FITSFrame)
-        LOG.debug("Initialized %s, data classes %s" % (self,self.dataClasses))
         if array != None:
             self.save(array)        # Save the initializing data
             

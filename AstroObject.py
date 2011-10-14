@@ -43,7 +43,6 @@ class FITSFrame(object):
     def __call__(self):
         """Returns the objects data"""
         msg = "%s: Abstract Data Structure was called, but cannot return data!" % self
-        LOG.critical(msg)
         raise AbstractError(msg)
     
     def __str__(self):
@@ -61,14 +60,12 @@ class FITSFrame(object):
     def __show__(self):
         """Returns a plot object for the current Frame"""
         msg = "%s: Abstract Data Structure cannot be used for plotting!" % self
-        LOG.critical(msg)
         raise AbstractError(msg)
     
     @classmethod
     def __save__(cls,data,label):
         """A generic class method for saving to this object with data directly"""
         msg = "%s: Abstract Data Structure cannot be the target of a save operation!" % cls
-        LOG.critical(msg)
         raise AbstractError(msg)
         
     
@@ -78,11 +75,9 @@ class FITSFrame(object):
         LOG.debug("%s: Attempting to read data" % cls)
         if not isinstance(HDU,pyfits.PrimaryHDU):
             msg = "Must save a %s to a %s, found %s" % (pyfits.PrimaryHDU.__name__,cls.__name__,HDU.__class__.__name__)
-            LOG.debug(msg)
             raise AbstractError(msg)
         if not HDU.data == None:
             msg = "HDU Data must be type %s for %s, found data of type %s" % (None,cls,type(HDU.data).__name__)
-            LOG.debug(msg)
             raise AbstractError(msg)
         Object = cls(label)
         LOG.debug("%s: Created %s" % (cls,Object))
