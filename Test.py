@@ -51,7 +51,6 @@ class ObjectTests(unittest.TestCase):
         LOG.info("TEST: "+self.test_show.__doc__)
         self.Object.save(self.EmptyFrame)
         self.assertRaises(Utilities.AbstractError,self.Object.show)
-        plt.savefig("Tests/simple_plot_gen")
         
     
     def test_write(self):
@@ -84,7 +83,7 @@ class ImageTests(unittest.TestCase):
         self.HongKongExFileName = "Tests/Hong-Kong-Ex.fits"
         self.HongKongImage = "Tests/Hong-Kong.jpg"
         self.EmptyFileName = "Tests/Empty-Ex.fits"
-        self.TestReadWriteFileName = "Tests/ReadWriteTest.fits"
+        self.TestReadWriteFileName = "Tests/Hong-Kong-Test.fits"
         # Generate Object
         self.EmptyObject = AstroImage.ImageObject()
         self.GrayScaleImage = np.int32(np.sum(mpimage.imread(self.HongKongImage),axis=2))
@@ -100,10 +99,14 @@ class ImageTests(unittest.TestCase):
         """ImageObject.save and ImageObject.data methods correctly handle two forms of data"""
         LOG.info("TEST: "+self.test_manipulation.__doc__)
         self.EmptyObject.loadFromFile(self.HongKongImage)
-        self.EmptyObject.save(np.sum(self.EmptyObject.data(),axis=2),"GrayScale Hong Kong Image")
-        self.assertTrue(len(self.EmptyObject.object().shape) == 2)
+        self.EmptyObject.save(np.flipud(np.sum(self.EmptyObject.data(),axis=2)),"GrayScale Hong Kong Image")
+        self.assertTrue(self.EmptyObject.data().ndim == 2)
         self.EmptyObject.show()
-        plt.savefig("Tests/grayscale_image_gen")
+        plt.title("Grayscale Image of Hong Kong")
+        plt.gca().set_xticks([])
+        plt.gca().set_yticks([])
+        plt.colorbar()
+        plt.savefig("Tests/Grayscale-Hong-Kong")
         
     
     def test_frame(self):
@@ -154,13 +157,15 @@ class SpectraTests(unittest.TestCase):
     """docstring for SpectraTests"""
     
     BlackBody = {}
-    BlackBody["WL"]   = np.linspace(1e-7,5e-6,1e5)
-    BlackBody["Flux"] = Utilities.BlackBody(BlackBody["WL"],5000)
+    T = 5000.
+    BlackBody["WL"]   = np.linspace(0.37e-6,2e-6,1e5)
+    BlackBody["Flux"] = Utilities.BlackBody(BlackBody["WL"],T)
     ImageData = np.array([[3.,2.,4.],[3.,4.,2],[4.,1.,9.]])
     
     def setUp(self):
         """Set up the Spectra Tests"""
-
+        self.BlackBodyFile = "BlackBody.fits"
+        self.BlackBodyImage = "BlackBody.png"
         self.SpectrumObject = AstroSpectra.SpectraObject()
         self.SpectrumData = np.array([self.BlackBody["WL"],self.BlackBody["Flux"]])
     
@@ -179,6 +184,28 @@ class SpectraTests(unittest.TestCase):
         Frame.validate()
         ImFrame = AstroSpectra.SpectraFrame(self.ImageData,"Image Data")
         self.assertRaises(AssertionError,ImFrame.validate)
+        
+    def test_show(self):
+        """Produces an Example Figure"""
+        LOG.info("Test: " + self.test_show.__doc__)
+        plt.figure()
+        self.SpectrumObject.save(self.SpectrumData,"BlackBody")
+        self.SpectrumObject.show()
+        plt.xlabel("Wavelength (m)")
+        plt.ylabel("Flux (J/s)")
+        plt.title("Blackbody Spectrum at %dK" % self.T)
+        plt.savefig("Tests/"+ self.BlackBodyImage)
+        
+    def test_read_write(self):
+        """Reads and Writes a Spectrum Image"""
+        LOG.info("Test: " + self.test_read_write.__doc__)
+        self.SpectrumObject.save(self.SpectrumData,"BlackBody")
+        if os.access("Tests/"+ self.BlackBodyFile,os.F_OK):
+            os.remove("Tests/"+ self.BlackBodyFile)
+        self.SpectrumObject.write("Tests/" + self.BlackBodyFile)
+        self.SpectrumObject.read( "Tests/" + self.BlackBodyFile)
+        self.assertAlmostEqual(np.abs(self.SpectrumObject.data()-self.SpectrumObject.data("BlackBody")).max(),0)
+        
 
 
 if __name__ != '__main__':
