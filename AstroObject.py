@@ -112,6 +112,8 @@ class FITSObject(object):
                     Object = dataClass.__save__(data,statename)
                 except AbstractError as AE:
                     LOG.debug("Cannot save as %s: %s" % (dataClass,AE))
+                else:
+                    break
             if not Object:
                 raise TypeError("Object to be saved cannot be cast as %s" % self.dataClasses)
         else:
@@ -220,6 +222,8 @@ class FITSObject(object):
                     Object = dataClass.__read__(HDU,label)
                 except AbstractError as AE:
                     LOG.debug("Cannot read as %s: %s" % (dataClass,AE))
+                else:
+                    break
             if not Object:
                 LOG.warning("Skipping HDU %s, cannot save as valid type " % HDU)
             else:
@@ -228,7 +232,6 @@ class FITSObject(object):
                 self.save(Object)
         if not Read:
             msg = "No HDUs were saved from FITS file %s to %s" % (filename,self)
-            LOG.error(msg)
             raise ValueError(msg)
         
         return Labels
