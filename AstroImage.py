@@ -48,7 +48,9 @@ class ImageFrame(AstroObject.FITSFrame):
     def __show__(self):
         """Returns the plot object for this image"""
         LOG.debug("Plotting %s using matplotlib.pyplot.imshow" % self)
-        return plt.imshow(self())
+        figure = plt.imshow(self())
+        figure.set_cmap('binary_r')
+        return figure
     
     @classmethod
     def __save__(cls,data,label):
