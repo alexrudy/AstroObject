@@ -150,6 +150,37 @@ class ImageTests(unittest.TestCase):
         
     
 
+class SpectraTests(unittest.TestCase):
+    """docstring for SpectraTests"""
+    
+    BlackBody = {}
+    BlackBody["WL"]   = np.linspace(1e-7,5e-6,1e5)
+    BlackBody["Flux"] = Utilities.BlackBody(BlackBody["WL"],5000)
+    ImageData = np.array([[3.,2.,4.],[3.,4.,2],[4.,1.,9.]])
+    
+    def setUp(self):
+        """Set up the Spectra Tests"""
+
+        self.SpectrumObject = AstroSpectra.SpectraObject()
+        self.SpectrumData = np.array([self.BlackBody["WL"],self.BlackBody["Flux"]])
+    
+    def test_save(self):
+        """Saves a simple BlackBody Spectrum"""
+        LOG.info("Test: " + self.test_save.__doc__)
+        self.SpectrumObject.save(self.SpectrumData,"BlackBody Data")
+        Frame = AstroSpectra.SpectraFrame(self.SpectrumData,"BlackBody Frame")
+        self.SpectrumObject.save(Frame)
+        self.assertRaises(KeyError,self.SpectrumObject.save,Frame)
+        
+    def test_validate(self):
+        """Verifies that a spectrum is 1-D etc."""
+        LOG.info("Test: " + self.test_validate.__doc__)
+        Frame = AstroSpectra.SpectraFrame(self.SpectrumData,"BlackBody Frame")
+        Frame.validate()
+        ImFrame = AstroSpectra.SpectraFrame(self.ImageData,"Image Data")
+        self.assertRaises(AssertionError,ImFrame.validate)
+
+
 if __name__ != '__main__':
     LOG.critical(__name__+" is not a module, do not run it as one!")
     sys.exit(1)
@@ -157,10 +188,15 @@ else:
     LOG.debug("Removing Console Handler...")
     print "\n" + "-"*70
     logging.getLogger('').removeHandler(console)
+    
     objectSuite = unittest.TestLoader().loadTestsFromTestCase(ObjectTests)
     imageSuite = unittest.TestLoader().loadTestsFromTestCase(ImageTests)
-    alltests = unittest.TestSuite([objectSuite, imageSuite])
+    spectraSuite = unittest.TestLoader().loadTestsFromTestCase(SpectraTests)
+    
+    alltests = unittest.TestSuite([objectSuite, imageSuite, spectraSuite])
+    
     result = unittest.TextTestRunner(verbosity=2).run(alltests)
+    
     logging.getLogger('').addHandler(console)
     LOG.debug("Re-applying Console Handler...")
     LOG.info("Tests were %s" % "passed" if result.wasSuccessful() else "FAILED")

@@ -42,13 +42,13 @@ class SpectraFrame(AstroObject.FITSFrame):
         except AssertionError:
             raise AssertionError("Members of %s appear to be inconsistent!" % self)
         try:
-            assert data.ndim == dimensions
+            assert self.data.ndim == dimensions
         except AssertionError:
             raise AssertionError("Data of %s does not appear to be %d-dimensional! Shape: %s" % (self,dimensions,self.shape))
         try:
             assert self.shape[0] == rows
         except AssertionError:
-            raise AssertionError("Spectrum for %s appears to be multi-dimensional, expected %d Shape: %s" % (self,rows,self.ordinate.shape))
+            raise AssertionError("Spectrum for %s appears to be multi-dimensional, expected %d Shape: %s" % (self,rows,self.shape))
     
     def __call__(self):
         """Call this frame, returning the data array"""
@@ -90,7 +90,7 @@ class SpectraFrame(AstroObject.FITSFrame):
         try:
             Object.validate()
         except AssertionError as AE:
-            msg = "%s data did not validate: %s" % (cls.__name__,AE.)
+            msg = "%s data did not validate: %s" % (cls.__name__,AE)
             raise AbstractError(msg)
         LOG.debug("Saved %s with size %d" % (Object,Object.size))
         return Object
@@ -109,7 +109,7 @@ class SpectraFrame(AstroObject.FITSFrame):
         try:
             Object.validate()
         except AssertionError as AE:
-            msg = "%s data did not validate: %s" % (cls.__name__,AE.)
+            msg = "%s data did not validate: %s" % (cls.__name__,AE)
             raise AbstractError(msg)
         LOG.debug("Read %s with size %s" % (Object,Object.size))
         return Object
@@ -118,25 +118,17 @@ class SpectraFrame(AstroObject.FITSFrame):
     
 
 
-class SpectraObject(AstroImage.ImageObject):
+class SpectraObject(AstroObject.FITSObject):
     """A subclass of FITS image with specific facilites for displaying spectra"""
     def __init__(self, array=None):
-        super(ImageObject, self).__init__()
-        self.dataClasses += [SpectrumFrame]
+        super(SpectraObject, self).__init__()
+        self.dataClasses += [SpectraFrame]
         self.dataClasses.remove(AstroObject.FITSFrame)
-        LOG.debug("Initialized %s, data classes %s" % (self,self.dataClasses))
         if array != None:
             self.save(array)        # Save the initializing data
         
         
         
-    def showSpectrum(self):
-        """Shows a 2-D plot of a spectrum"""
-        x,y = self.data() #Slice Data
-        axis = get_padding((x,y))
-        plt.plot(x,y,'k-')
-        plt.axis(axis)
-        plt.gca().ticklabel_format(style="sci",scilimits=(3,3))
         
 
 
