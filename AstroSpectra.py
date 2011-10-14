@@ -73,7 +73,6 @@ class SpectraFrame(AstroObject.FITSFrame):
         plt.plot(x,y,'k-')
         plt.axis(axis)
         plt.gca().ticklabel_format(style="sci",scilimits=(3,3))
-        
     
     
     @classmethod

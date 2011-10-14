@@ -45,6 +45,6 @@ Spectra are a special case. They are not two-dimensional images, and their scale
 	2. *As an Image Object* : This will save the spectrum as an image, with the first row having flux, and second row having the wavelength equivalent.
 	3. *As a condensed Image Object*: This will save many spectra in the same primary HDU, in successive rows. For this method, all spectra must be provided with the same wavelength scale.
 
-Primarily, I will implement method 2. This will be the default.
+Primarily, I will implement method 2. This will be the default. This is the method used by [sdss DR5](http://www.sdss.org/dr5/products/spectra/read_spSpec.html)
 
 
