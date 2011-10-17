@@ -83,7 +83,9 @@ class FITSFrame(object):
         Object = cls(label)
         LOG.debug("%s: Created %s" % (cls,Object))
         return Object
-                    
+    
+
+
 class FITSObject(object):
     """Holds on to a regular numpy-formated feature list image."""
     def __init__(self,filename=None,dataClasses=None):
@@ -165,7 +167,7 @@ class FITSObject(object):
     
     def remove(self,statename):
         """Removes the specified image from the object"""
-        if image not in self.states:
+        if statename not in self.states:
             raise IndexError("%s: Object %s does not exist!" % (self,statename))
         LOG.debug("%s: Removing Object with label %s" % (self,statename))
         self.states.pop(statename)
@@ -201,7 +203,7 @@ class FITSObject(object):
         else:
             HDUList = pyfits.HDUList(PrimaryHDU)
         HDUList.writeto(filename)
-        
+    
     def read(self,filename=None,statename=None):
         """This reader assumes that all HDUs are image HDUs"""
         if not filename:
