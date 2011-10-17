@@ -8,6 +8,6 @@
 
 *.pyc
 Logs/*
-TODO.txt
+TODO/*
 Tests/*.png
 Tests/*.fits
