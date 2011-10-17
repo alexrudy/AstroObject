@@ -5,7 +5,7 @@
  Created by Alexander Rudy on 2011-10-13.
  Copyright 2011 Alexander Rudy. All rights reserved.
  
-  Version 0.0.0
+  Version 0.2.0
 
 This file defines an interface specification for the Astro Object model. There are two types of objects defined here: Frames, which capture a specific instance of data, and Objects, which capture sets of frames, or whole FITS files, and provide the appropriate interface.
 

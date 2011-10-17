@@ -5,7 +5,7 @@
  Created by Alexander Rudy on 2011-10-07.
  Copyright 2011 Alexander Rudy. All rights reserved.
 
-  Version 0.0.0
+  Version 0.2.0
 
 ---
 
@@ -41,3 +41,5 @@ In the future, I will add the ability to import output fits files back in to the
 - Handling Overflows in Blackbody Function
 0.1.4
 - Logging cannot capture warnings in python 0.1.4, so don't import that!
+0.2.0
+- API Has CHANGED! Please see SPEC.md to understand the 0.2 API

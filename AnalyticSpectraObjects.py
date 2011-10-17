@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.0.0
+#  Version 0.2.0
 # 
 
 import AstroImage,AstroSpectra,AnalyticSpectra
