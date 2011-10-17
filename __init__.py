@@ -10,6 +10,8 @@
 import logging,time,sys,os
 
 
+__version__ = '0.0.0'
+
 logfolder = "Logs/"
 filename = "AstroObject-"+time.strftime("%Y-%m-%d")
 longFormat = "%(asctime)s : %(levelname)-8s : %(name)-20s : %(message)s"
