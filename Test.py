@@ -87,6 +87,7 @@ class ImageTests(unittest.TestCase):
         # Generate Object
         self.EmptyObject = AstroImage.ImageObject()
         self.GrayScaleImage = np.int32(np.sum(mpimage.imread(self.HongKongImage),axis=2))
+        plt.clf()
         
     
     def test_loadfromfile(self):
@@ -168,6 +169,8 @@ class SpectraTests(unittest.TestCase):
         self.BlackBodyImage = "BlackBody.png"
         self.SpectrumObject = AstroSpectra.SpectraObject()
         self.SpectrumData = np.array([self.BlackBody["WL"],self.BlackBody["Flux"]])
+        plt.clf()
+        
     
     def test_save(self):
         """Saves a simple BlackBody Spectrum"""
@@ -177,6 +180,7 @@ class SpectraTests(unittest.TestCase):
         self.SpectrumObject.save(Frame)
         self.assertRaises(KeyError,self.SpectrumObject.save,Frame)
         
+    
     def test_validate(self):
         """Verifies that a spectrum is 1-D etc."""
         LOG.info("Test: " + self.test_validate.__doc__)
@@ -185,6 +189,7 @@ class SpectraTests(unittest.TestCase):
         ImFrame = AstroSpectra.SpectraFrame(self.ImageData,"Image Data")
         self.assertRaises(AssertionError,ImFrame.validate)
         
+    
     def test_show(self):
         """Produces an Example Figure"""
         LOG.info("Test: " + self.test_show.__doc__)
@@ -196,6 +201,7 @@ class SpectraTests(unittest.TestCase):
         plt.title("Blackbody Spectrum at %dK" % self.T)
         plt.savefig("Tests/"+ self.BlackBodyImage)
         
+    
     def test_read_write(self):
         """Reads and Writes a Spectrum Image"""
         LOG.info("Test: " + self.test_read_write.__doc__)
@@ -205,8 +211,39 @@ class SpectraTests(unittest.TestCase):
         self.SpectrumObject.write("Tests/" + self.BlackBodyFile)
         self.SpectrumObject.read( "Tests/" + self.BlackBodyFile)
         self.assertAlmostEqual(np.abs(self.SpectrumObject.data()-self.SpectrumObject.data("BlackBody")).max(),0)
-        
+    
 
+
+class AnalayticSpectraTests(unittest.TestCase):
+    """Tests on the AnalyticSpectra model"""
+    
+    
+    wavelength = np.linspace(0.37e-6,2e-6,1e5)
+    
+    
+    def setUp(self):
+        """Initial variables for Analytic Spectra Tests"""
+        self.SpectrumObject = AstroSpectra.SpectraObject()
+        self.RenderedFilename = "AnalyticRender.png"
+        plt.clf()
+    
+    def test_render(self):
+        """Rendering a blackbody and a gaussain spectrum"""
+        LOG.info("Test: "+self.test_render.__doc__)
+        BlackbodyS = AnalyticSpectra.BlackBodySpectrum(5000)
+        GaussianS = AnalyticSpectra.GaussianSpectrum(0.5e-6,0.5e-7,1e12)
+        self.SpectrumObject.save(BlackbodyS(self.wavelength),BlackbodyS.label)
+        self.SpectrumObject.save(GaussianS(self.wavelength),GaussianS.label)
+        
+    def test_compose(self):
+        """Test composition spectra rendering and saving"""
+        LOG.info("Test: "+self.test_compose.__doc__)
+        BlackbodyS = AnalyticSpectra.BlackBodySpectrum(5000)
+        GaussianS = AnalyticSpectra.GaussianSpectrum(1.0e-6,0.5e-7,5e12)
+        CompositeS = BlackbodyS + GaussianS
+        self.SpectrumObject.save(CompositeS(self.wavelength),CompositeS.label)
+        self.SpectrumObject.show()
+        plt.savefig("Tests/"+self.RenderedFilename)
 
 if __name__ != '__main__':
     LOG.critical(__name__+" is not a module, do not run it as one!")
@@ -219,8 +256,9 @@ else:
     objectSuite = unittest.TestLoader().loadTestsFromTestCase(ObjectTests)
     imageSuite = unittest.TestLoader().loadTestsFromTestCase(ImageTests)
     spectraSuite = unittest.TestLoader().loadTestsFromTestCase(SpectraTests)
+    analyticSuite = unittest.TestLoader().loadTestsFromTestCase(AnalayticSpectraTests)
     
-    alltests = unittest.TestSuite([objectSuite, imageSuite, spectraSuite])
+    alltests = unittest.TestSuite([objectSuite, imageSuite, spectraSuite, analyticSuite])
     
     result = unittest.TextTestRunner(verbosity=2).run(alltests)
     

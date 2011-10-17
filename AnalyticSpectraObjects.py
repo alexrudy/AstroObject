@@ -31,7 +31,7 @@ class BlackBodySpectrum(AnalyticSpectra.AnalyticSpectrum):
         
     def __call__(self,wavelength):
         """Calls this blackbody spectrum over certain wavelengths"""
-        return BlackBody(wavelength,self.temperature)
+        return np.vstack((wavelength,BlackBody(wavelength,self.temperature)))
         
         
 class GaussianSpectrum(AnalyticSpectra.AnalyticSpectrum):
@@ -46,6 +46,6 @@ class GaussianSpectrum(AnalyticSpectra.AnalyticSpectrum):
         
     def __call__(self,wavelength):
         """Calls a wavelength function"""
-        return Gaussian(wavelength,self.mean,self.stdev,self.height)
+        return np.vstack((wavelength,Gaussian(wavelength,self.mean,self.stdev,self.height)))
         
         
