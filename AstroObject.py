@@ -42,7 +42,7 @@ class FITSFrame(object):
     
     def __call__(self):
         """Returns the objects data"""
-        msg = "%s: Abstract Data Structure was called, but cannot return data!" % self
+        msg = "Abstract Data Structure %s was called, but cannot return data!" % self
         raise AbstractError(msg)
     
     def __str__(self):
@@ -51,7 +51,7 @@ class FITSFrame(object):
     
     def __hdu__(self,primary=False):
         """Retruns a Header-Data Unit"""
-        LOG.warning("%s: Generating an Empty HDU" % self)
+        LOG.warning("%s: Generating an Empty HDU" % (self))
         if primary:
             return pyfits.PrimaryHDU()
         else:
@@ -59,13 +59,13 @@ class FITSFrame(object):
     
     def __show__(self):
         """Returns a plot object for the current Frame"""
-        msg = "%s: Abstract Data Structure cannot be used for plotting!" % self
+        msg = "Abstract Data Structure %s cannot be used for plotting!" % (self)
         raise AbstractError(msg)
     
     @classmethod
     def __save__(cls,data,label):
         """A generic class method for saving to this object with data directly"""
-        msg = "%s: Abstract Data Structure cannot be the target of a save operation!" % cls
+        msg = "Abstract Data Structure %s cannot be the target of a save operation!" % (cls)
         raise AbstractError(msg)
         
     
