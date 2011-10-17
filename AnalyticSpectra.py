@@ -6,7 +6,7 @@
 #  Copyright 2011 Alexander Rudy. All rights reserved.
 # 
 
-import AstroImage,AstroSpectra
+import AstroObject,AstroImage,AstroSpectra
 from Utilities import *
 
 import matplotlib.pyplot as plt
@@ -21,10 +21,10 @@ import numpy as np
 import pyfits
 import math, copy, sys, time, logging, os
 
-class AnalyticSpectrum(AstroSpectra.SpectraFrame):
+class AnalyticSpectrum(AstroObject.FITSFrame):
     """A functional spectrum object for spectrum generation. The default implementation is a flat spectrum."""
     def __init__(self,label,wavelengths=None,units=None):
-        super(AnalyticSpectrum, self).__init__(None,label)
+        super(AnalyticSpectrum, self).__init__(label)
         self.wavelengths = wavelengths
         self.units = units #Future will be used for enforcing unit behaviors
         
@@ -61,9 +61,28 @@ class AnalyticSpectrum(AstroSpectra.SpectraFrame):
     
     def __call__(self,wavelengths=None):
         """Returns the Flux data for this spectrum"""
-        if wavelengths == None:
-            wavelengths = self.wavelengths
-        return np.ones(wavelengths.shape)
+        msg = "%s: Cannot Call: Abstract Spectra not instantiated with any properies." % (self)
+        raise AbstractError(msg)
+    
+    def __hdu__(self):
+        """Returns a pyfits HDU representing this object"""
+        msg = "%s: Cannot make HDU: Abstract Spectra not instantiated with any properies." % (self)
+        raise AbstractError(msg)
+    
+    
+    @classmethod
+    def __save__(cls,data,label):
+        """A generic class method for saving to this object with data directly"""
+        msg = "%s: Abstract Analytic Structure cannot be the target of a save operation!" % (cls)
+        raise AbstractError(msg)
+    
+    
+    @classmethod
+    def __read__(cls,HDU,label):
+        """An abstract method for reading empty data HDU Frames"""
+        LOG.debug("%s: Attempting to read data" % cls)
+        msg = "%s: Cannot save HDU as Analytic Spectra" % (cls)
+        raise AbstractError(msg)
     
 
 
@@ -80,12 +99,24 @@ class CompositeSpectra(AnalyticSpectrum):
         """Calls the composite function components"""
         if wavelengths == None:
             wavelengths = self.wavelengths
+        if wavelengths == None:
+            raise ValueError("No wavelengths specified in %s" % (self))
+            
+        
+        Awavelengths,Avalue = self.A(wavelengths)
+        Bwavelengths,Bvalue = self.B(wavelengths)
+        
         if self.operation == 'add':
-            return self.A(wavelengths) + self.B(wavelengths)
+            Result = Avalue + Bvalue
         elif self.operation == 'mul':
-            return self.A(wavelengths) * self.B(wavelengths)
+            Result = Avalue * Bvalue
         elif self.operation == 'sub':
-            return self.A(wavelengths) - self.B(wavelengths)
+            Result = Avalue - Bvalue
+        
+        if Result != None:
+            return np.vstack((wavelengths,Result))
+        else:
+            raise ValueError("Composition did not produce a value result!")
             
 from AnalyticSpectraObjects import *
         
