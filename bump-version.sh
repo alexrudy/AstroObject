@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
+# 
+#  bump-version.sh
+#  ObjectModel
+#  
+#  Created by Alexander Rudy on 2011-10-17.
+#  Copyright 2011 Alexander Rudy. All rights reserved.
+# 
+
 
 EXE=$0
 USAGE="
