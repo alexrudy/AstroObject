@@ -41,3 +41,5 @@ for file in $files
 do
 	sed -i '' -Ee "s/ +Version [0-9\.]+/  Version $VERSION/" $file
 done
+
+sed -i '' -Ee "s/__version__ += +\'[0-9\.]+\'/__version__ = \'$VERSION\'/" '__init__.py'
