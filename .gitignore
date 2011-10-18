@@ -9,5 +9,4 @@
 *.pyc
 Logs/*
 TODO/*
-Tests/*.png
-Tests/*.fits
+Tests/*
