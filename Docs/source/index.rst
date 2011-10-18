@@ -3,15 +3,19 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to AstroObject's documentation!
+Welcome to AstroObject!
 =======================================
+
+AstroObject is a library for Object-Oriented Astronomy. Currently under development, it contains tools for object-oriented management of Spectrum Data, Image Data, and Analytic Spectrum Data. More features are planned for the future. To get a sense of the philosophy of this project, read :ref:`AstroObject-Introduction`.
 
 Contents:
 
 .. toctree::
    :maxdepth: 2
+   :numbered:
    
    intro
+   AstroObject
 
 
 
