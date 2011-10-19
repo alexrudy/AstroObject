@@ -8,7 +8,7 @@
 # 
 
 
-import AstroObject, AstroImage
+import AstroObjectBase, AstroImage
 from Utilities import *
 
 import matplotlib.pyplot as plt
@@ -25,7 +25,7 @@ import math, copy, sys, time, logging, os
 
 LOG = logging.getLogger(__name__)
 
-class SpectraFrame(AstroObject.FITSFrame):
+class SpectraFrame(AstroObjectBase.FITSFrame):
     """A simple spectral frame"""
     def __init__(self, array, label, header=None, metadata=None):
         super(SpectraFrame, self).__init__(label, header, metadata)
@@ -118,7 +118,7 @@ class SpectraFrame(AstroObject.FITSFrame):
     
 
 
-class SpectraObject(AstroObject.FITSObject):
+class SpectraObject(AstroObjectBase.FITSObject):
     """A subclass of FITS image with specific facilites for displaying spectra"""
     def __init__(self, array=None):
         super(SpectraObject, self).__init__()

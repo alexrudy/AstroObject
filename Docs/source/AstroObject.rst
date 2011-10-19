@@ -1,13 +1,13 @@
 .. _AstroObject-Module
-:mod:`AstroObject`
-==================
+:mod:`AstroObjectBase`
+======================
 
 .. autoclass:: 
-    AstroObject.FITSFrame
+    AstroObjectBase.FITSFrame
     :members:
     :special-members:
     
 .. autoclass::
-    AstroObject.FITSObject
+    AstroObjectBase.FITSObject
     :members:
     :special-members:

@@ -7,7 +7,7 @@
 #  Version 0.2.0
 # 
 
-import AstroObject,AstroImage,AstroSpectra
+import AstroObjectBase,AstroImage,AstroSpectra
 from Utilities import *
 
 import matplotlib.pyplot as plt
@@ -22,7 +22,7 @@ import numpy as np
 import pyfits
 import math, copy, sys, time, logging, os
 
-class AnalyticSpectrum(AstroObject.FITSFrame):
+class AnalyticSpectrum(AstroObjectBase.FITSFrame):
     """A functional spectrum object for spectrum generation. The default implementation is a flat spectrum."""
     def __init__(self,label,wavelengths=None,units=None):
         super(AnalyticSpectrum, self).__init__(label)

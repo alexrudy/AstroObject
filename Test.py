@@ -12,7 +12,7 @@ execfile("__init__.py")
 import logging,os,sys,unittest
 import Utilities
 from AstroImage import plt,np
-import AstroImage, AstroSpectra, AnalyticSpectra, AstroObject
+import AstroImage, AstroSpectra, AnalyticSpectra, AstroObjectBase
 import matplotlib as mpl
 import matplotlib.image as mpimage
 from pyraf import iraf

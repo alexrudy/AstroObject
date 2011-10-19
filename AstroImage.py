@@ -7,7 +7,7 @@
 #  Version 0.2.0
 # 
 
-import AstroObject
+import AstroObjectBase
 
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimage
@@ -24,7 +24,7 @@ from Utilities import *
 
 LOG = logging.getLogger(__name__)
 
-class ImageFrame(AstroObject.FITSFrame):
+class ImageFrame(AstroObjectBase.FITSFrame):
     """A single frame of a FITS image"""
     def __init__(self, array, label, header=None, metadata=None):
         super(ImageFrame, self).__init__(label, header, metadata)
@@ -82,7 +82,7 @@ class ImageFrame(AstroObject.FITSFrame):
     
 
 
-class ImageObject(AstroObject.FITSObject):
+class ImageObject(AstroObjectBase.FITSObject):
     """docstring for ImageObject"""
     def __init__(self, array=None):
         super(ImageObject, self).__init__()
@@ -103,7 +103,7 @@ class ImageObject(AstroObject.FITSObject):
     
 
 
-class OLDImageObject(AstroObject.FITSObject):
+class OLDImageObject(AstroObjectBase.FITSObject):
     """docstring for ImageObject"""
     
     ##########################
