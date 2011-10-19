@@ -1,4 +1,3 @@
-.. _AstroObject-Introduction
 Introduction to :mod:`AstroObject`
 ==================================
 
