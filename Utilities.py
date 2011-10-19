@@ -4,7 +4,8 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-# 
+#  Version 0.2.0
+
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -50,8 +51,22 @@ def BlackBody(wl,T):
     return flux
 
 
-def validate_filename(string,extension=".fit"):
+def Gaussian(x,mean,stdev,height):
+    """Rertun a gaussian at postion x"""
+    return height*np.exp(-(x-mean)**2.0/(2.0*stdev**2.0))
+
+def validate_filename(string,extension=".fits"):
     """Validates a string as an acceptable filename, stripping path components,etc."""
-    return string.replace("/","").rstrip(extension).replace(".","") + extension
+    if string[-len(extension):] == extension:
+        string = string[:-len(extension)]
+    return string+extension
     
 
+class AbstractError(Exception):
+    """An error which arose due to bad abstraction implemetnation"""
+    pass
+
+class HDUFrameTypeError(Exception):
+    """docstring for HDUFrameTypeError"""
+    pass
+        

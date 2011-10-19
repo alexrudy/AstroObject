@@ -4,7 +4,11 @@
 #  
 #  Created by Alexander Rudy on 2011-04-28.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
+#  Version 0.2.0
 # 
+
+import AstroObject
+
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimage
 from mpl_toolkits.mplot3d import Axes3D
@@ -20,105 +24,73 @@ from Utilities import *
 
 LOG = logging.getLogger(__name__)
 
-class FITSFrame(object):
+class ImageFrame(AstroObject.FITSFrame):
     """A single frame of a FITS image"""
     def __init__(self, array, label, header=None, metadata=None):
-        super(FITSFrame, self).__init__()
+        super(ImageFrame, self).__init__(label, header, metadata)
         self.data = array # The image data
-        self.label = label # A label for this frame, for selection in parent object
         self.size = array.size # The size of this image
         self.shape = array.shape # The shape of this image
-        self.header = header # A dictionary of header keys and values for use in 
-        self.metadata = metadata # An optional metadata dictionary
-        self.time = time.strftime("%Y-%m-%dT%H:%M:%S")
         
+    
+    def __call__(self):
+        """Call this frame, returning the data array"""
+        return self.data
         
-        if self.metadata == None:
-            self.metadata = {}
-        if self.header == None:
-            self.header = {}
-        
-        return
+    def __hdu__(self,primary=False):
+        """Retruns an HDU for this frame"""
+        if primary:
+            LOG.info("Generating a primary HDU for %s" % self)
+            return pyfits.PrimaryHDU(self())
+        else:
+            LOG.info("Generating an image HDU for %s" % self)
+            return pyfits.ImageHDU(self())
+            
+    def __show__(self):
+        """Returns the plot object for this image"""
+        LOG.debug("Plotting %s using matplotlib.pyplot.imshow" % self)
+        figure = plt.imshow(self())
+        figure.set_cmap('binary_r')
+        return figure
+    
+    @classmethod
+    def __save__(cls,data,label):
+        """A generic class method for saving to this object with data directly"""
+        LOG.debug("Attempting to save as %s" % cls)
+        if not isinstance(data,np.ndarray):
+            msg = "ImageFrame cannot handle objects of type %s, must be type %s" % (type(data),np.ndarray)
+            raise AbstractError(msg)
+        if len(data.shape) != 2:
+            LOG.warning("The data appears to be %d dimensional. This object expects 2 dimensional data." % len(data.shape))
+        Object = cls(data,label)
+        LOG.debug("Saved %s with size %d" % (Object,data.size))
+        return Object
+    
+    @classmethod
+    def __read__(cls,HDU,label):
+        """An abstract method for reading empty data HDU Frames"""
+        LOG.debug("Attempting to read as %s" % cls)
+        if not isinstance(HDU,(pyfits.ImageHDU,pyfits.PrimaryHDU)):
+            msg = "Must save a PrimaryHDU or ImageHDU to a %s, found %s" % (cls.__name__,type(HDU))
+            raise AbstractError(msg)
+        if not isinstance(HDU.data,np.ndarray):
+            msg = "HDU Data must be %s for %s, found data of %s" % (np.ndarray,cls.__name__,type(HDU.data))
+            raise AbstractError(msg)
+        Object = cls(HDU.data,label)
+        LOG.debug("Created %s" % Object)
+        return Object
     
 
 
-class FITSImage(object):
-    """Holds on to a regular numpy-formated feature list image."""
-    def __init__(self,dimensions=2,array=None,filename=None):
-        super(FITSImage, self).__init__()
-        # Image data variables.
-        self.DIMEN = dimensions     # Total number of dimensions, i.e. x and y, or wavelength
-        self.states = {}            # Storage for all of the images
-        self.statename = None       # The active state name
-        self.filename = filename    # The filename to use for file loading and writing
-        self.plt = plt
-        self.outputData = False
-        self.inputData = False
-        
-        
+class ImageObject(AstroObject.FITSObject):
+    """docstring for ImageObject"""
+    def __init__(self, array=None):
+        super(ImageObject, self).__init__()
+        self.dataClasses += [ImageFrame]
+        self.dataClasses.remove(AstroObject.FITSFrame)
         if array != None:
             self.save(array)        # Save the initializing data
-    
-    
-    ##############################
-    # Basic Image Mode Functions #
-    ##############################
-    def save(self,array,statename="Original"):
-        """Saves the given image to this object"""
-        # Error checking for provided arguments
-        if statename in self.states:
-            raise IndexError("Cannot Duplicate State Name: %s \nUse remove(\'%s\') to clear" % (statename,statename))
-        if type(array) != np.ndarray:
-            raise TypeError("Array to be saved is not a numpy array \nCheck that you are saving a numpy image array \nType: %s" % type(array))
-        
-        # Save the actual state
-        self.states[statename] = FITSFrame(array,statename)
-        # Activate the saved state as the current state
-        self.select(statename)
-        LOG.debug("Saved image of size %d with label %s" % (self.states[statename].size,statename))
-    
-    def data(self,statename=None):
-        """Returns the numpy image for this object"""
-        # Load the current stat if no state provided
-        if not statename:
-            statename = self.statename
-        if statename != None and statename in self.states:
-            return self.states[statename].data
-        else:
-            raise KeyError("Image not instantiated with any data...")
-    
-    def object(self,statename=None):
-        """Returns the FITSFrame Specfied"""
-        if not statename:
-            statename = self.statename
-        if statename != None and statename in self.states:
-            return self.states[statename]
-        else:
-            raise KeyError("Image not instantiated with any data...")
-    
-    def select(self,statename):
-        """Sets the default image to the given name"""
-        if statename not in self.states:
-            raise IndexError("Image %s does not exist!" % statename)
-        self.statename = statename
-        LOG.debug("Selected state %s" % statename)
-        return
-    
-    def list(self):
-        """Provides a list of the available images"""
-        return self.states.keys()
-    
-    def remove(self,statename):
-        """Removes the specified image from the object"""
-        if image not in self.states:
-            raise IndexError("Image %s does not exist!" % statename)
-        LOG.debug("Removing image with label %s" % (statename))
-        self.states.pop(statename)
-    
-    
-    #####################
-    # Loading Functions #
-    #####################
+            
     def loadFromFile(self,filename=None,statename=None):
         """Load a regular image file into the object"""
         if not filename:
@@ -129,17 +101,10 @@ class FITSImage(object):
         self.save(mpimage.imread(filename),statename)
         LOG.info("Loaded Image from file: "+filename)
     
-    def loadFromFITS(self,filename=None,statename=None):
-        """Load a FITS File into the image object"""
-        if not filename:
-            filename = self.filename
-        if statename == None:
-            statename = os.path.basename(filename)
-            LOG.debug("Set statename for image from filename: %s" % statename)
-        HDUList = pyfits.open(filename)
-        self.save(HDUList[0].data,statename)
-        HDUList.close()
-        LOG.info("Loaded Image from FITS file: "+filename)
+
+
+class OLDImageObject(AstroObject.FITSObject):
+    """docstring for ImageObject"""
     
     ##########################
     # File Writing Functions #
@@ -159,7 +124,7 @@ class FITSImage(object):
         
         filename = validate_filename(filename)
         LOG.debug("Generating FITS File from state %s with filename %s" % (statename,filename))
-        HDU = pyfits.PrimaryHDU(self.states[statename].data)
+        HDU = pyfits.PrimaryHDU(self.states[statename]()    )
         HDUList = pyfits.HDUList([HDU])
         HDUList.writeto(filename)
         LOG.info("Wrote FITS File %s" % filename)
