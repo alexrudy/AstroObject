@@ -39,6 +39,21 @@ def get_padding(*otherxy):
     return [min(x)-(max(x)-min(x))*0.05, max(x)+(max(x)-min(x))*0.05, min(y)-(max(y)-min(y))*0.05, max(y)+(max(y)-min(y))*0.05]
     
 
+
+def expandLim(axis,scale=0.05):
+    """Expands Axis Limits by *scale*"""
+    xmin,xmax,ymin,ymax = axis
+    xran = abs(xmax-xmin)
+    yran = abs(ymax-ymin)
+
+    xmax += xran*scale
+    xmin -= xran*scale
+    ymax += yran*scale
+    ymin -= yran*scale
+
+    axis = (xmin,xmax,ymin,ymax)
+    return axis
+
 def BlackBody(wl,T):
     """Return black-body flux as a function of wavelength"""
     h = spconst.h
