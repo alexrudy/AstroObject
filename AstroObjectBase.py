@@ -52,7 +52,8 @@ class FITSFrame(object):
         return "<\'%s\' labeled \'%s\'>" % (self.__class__.__name__,self.label)
     
     def __hdu__(self,primary=False):
-        """Retruns a Header-Data Unit"""
+        """Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.
+        Subclasses should provide a *primary* keyword argument, and if that keyword is set, the method should return a primaryHDU."""
         LOG.warning("%s: Generating an Empty HDU" % (self))
         if primary:
             return pyfits.PrimaryHDU()
@@ -60,13 +61,15 @@ class FITSFrame(object):
             return pyfits.ImageHDU()
     
     def __show__(self):
-        """Returns a plot object for the current Frame"""
+        """Should return a plot object for the current frame, after setting up this plot in matplotlib. 
+        
+        In general, this method should display data nicely, but should not do too much work, so as to be flexible for use with other plotting commands. It is best to do the minimal amount of work to simply show the data. The intent is for the user to call Object.show() when they want a quick view of the data in a given frame."""
         msg = "Abstract Data Structure %s cannot be used for plotting!" % (self)
         raise AbstractError(msg)
     
     @classmethod
     def __save__(cls,data,label):
-        """A generic class method for saving to this object with data directly"""
+        """A class save method is called when the parent object is trying to save raw data. In this case, the save method will take raw data and attempt to cast it as an object of its own type, returning such an object. If it can't do that (because the data doesn't appear to fit, or for pretty much any other reason) it should raise an :exc:`AbstractError` which will be handled by the calling object."""
         msg = "Abstract Data Structure %s cannot be the target of a save operation!" % (cls)
         raise AbstractError(msg)
         
