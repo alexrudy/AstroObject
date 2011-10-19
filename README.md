@@ -26,20 +26,20 @@ In the future, I will add the ability to import output fits files back in to the
 
 # Release Notes
 
-0.1.0
-- Basic operation of Spectra
-- Basic operation of Images
-- Untested IRAF Interaction Lines
-- Basic FITS File Writing
-- NO Metadata and Header Features
-0.1.1
-- Fixed a log message formatting error in AstroImage which caused a printing error
-- Removed the "Logs/" folder requirement from the module
-0.1.2
-- Logs only written to file when a "Logs/" folder is present.
-0.1.3
-- Handling Overflows in Blackbody Function
-0.1.4
-- Logging cannot capture warnings in python 0.1.4, so don't import that!
-0.2.0
-- API Has CHANGED! Please see SPEC.md to understand the 0.2 API
+* 0.1.0
+	- Basic operation of Spectra
+	- Basic operation of Images
+	- Untested IRAF Interaction Lines
+	- Basic FITS File Writing
+	- NO Metadata and Header Features
+* 0.1.1
+	- Fixed a log message formatting error in AstroImage which caused a printing error
+	- Removed the "Logs/" folder requirement from the module
+* 0.1.2
+	- Logs only written to file when a "Logs/" folder is present.
+* 0.1.3
+	- Handling Overflows in Blackbody Function
+* 0.1.4
+	- Logging cannot capture warnings in python 0.1.4, so don't import that!
+* 0.2.0
+	- API Has CHANGED! Please see SPEC.md to understand the 0.2 API

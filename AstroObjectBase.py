@@ -23,11 +23,10 @@ from Utilities import *
 LOG = logging.getLogger(__name__)
 
 class FITSFrame(object):
-    """A single frame of a FITS image
+    """A single frame of a FITS image.
     Frames are known as Header Data Units, or HDUs when written to a FITS file.
-    This frame is generic. It does not legitimately implement any functions. Rather, each function implemented is a placeholder, and will generate a CRITICAL Log entry if called. Several objects inherit from this one to create HDUs which have some semantic meaning.
-    This object requires a label, and can optionally take headers and metadata
-    
+    This frame is generic. It does not legitimately implement any functions. Rather, each function implemented is a placeholder, and will generate an :exc:`AbstractError` if called. Several objects inherit from this one to create HDUs which have some semantic meaning.
+    This object requires a *label*, and can optionally take *headers* and *metadata*.
     """
     def __init__(self, label, header=None, metadata=None):
         super(FITSFrame, self).__init__()
@@ -42,12 +41,14 @@ class FITSFrame(object):
             self.header = {}
     
     def __call__(self):
-        """Returns the objects data"""
+        """Should return the data within this frame, usually as a *numpy* array.
+        
+        For an example implementation, see :cls:`AstroImage.ImageFrame`."""
         msg = "Abstract Data Structure %s was called, but cannot return data!" % self
         raise AbstractError(msg)
     
     def __str__(self):
-        """String Representation of an Object"""
+        """Returns String Representation of this frame object. Will display the class name and the label. This method does not need to be overwritten by subclasses."""
         return "<\'%s\' labeled \'%s\'>" % (self.__class__.__name__,self.label)
     
     def __hdu__(self,primary=False):
