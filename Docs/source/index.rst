@@ -24,6 +24,8 @@ API:
     :numbered:
     
     AstroObject
+    AstroImage
+    AstroSpectra
 
 Development:
 
