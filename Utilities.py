@@ -19,6 +19,15 @@ import logging,time,sys
 
 LOG = logging.getLogger(__name__)
 
+def disable_Console():
+    """Disables console Logging"""
+    logging.getLogger('').removeHandler(console)
+
+def enable_Console():
+    """docstring for enable_Console"""
+    logging.getLogger('').addHandler(console)
+    
+
 def get_padding(*otherxy):
     """This function returns axis values to provide 5-percent padding around the given data."""
     

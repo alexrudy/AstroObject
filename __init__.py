@@ -12,8 +12,10 @@ import logging,time,sys,os
 
 __version__ = '0.2.0'
 
+__all__ = ['AnalyticSpectra','AstroImage','AstroObjectBase','AstroObjectSpectra','Test','Utilities']
+
 logfolder = "Logs/"
-filename = "AstroObject-"+time.strftime("%Y-%m-%d")
+filename = "AstroObject-"+time.strftime("%Y-%m")
 longFormat = "%(asctime)s : %(levelname)-8s : %(name)-20s : %(message)s"
 shortFormat = '%(levelname)-8s: %(message)s'
 dateFormat = "%Y-%m-%d-%H:%M:%S"
@@ -28,11 +30,12 @@ console.setFormatter(consoleFormatter)
 initLOG.addHandler(console)
 
 if os.access(logfolder,os.F_OK):
-    logfile = logging.FileHandler(filename=logfolder+filename+".log",mode="w")
+    logfile = logging.FileHandler(filename=logfolder+filename+".log",mode="a")
     logfile.setLevel(logging.DEBUG)
     fileformatter = logging.Formatter(longFormat,datefmt=dateFormat)
     logfile.setFormatter(fileformatter)
     initLOG.addHandler(logfile)
+    initLOG.removeHandler(console)
 
 
 initLOG.info("Launching %s from the %s module" % (sys.argv[0],__name__))
