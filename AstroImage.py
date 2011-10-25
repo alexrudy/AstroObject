@@ -87,7 +87,7 @@ class ImageObject(AstroObjectBase.FITSObject):
     def __init__(self, array=None):
         super(ImageObject, self).__init__()
         self.dataClasses += [ImageFrame]
-        self.dataClasses.remove(AstroObject.FITSFrame)
+        self.dataClasses.remove(AstroObjectBase.FITSFrame)
         if array != None:
             self.save(array)        # Save the initializing data
             

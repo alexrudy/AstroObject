@@ -123,7 +123,7 @@ class SpectraObject(AstroObjectBase.FITSObject):
     def __init__(self, array=None):
         super(SpectraObject, self).__init__()
         self.dataClasses += [SpectraFrame]
-        self.dataClasses.remove(AstroObject.FITSFrame)
+        self.dataClasses.remove(AstroObjectBase.FITSFrame)
         if array != None:
             self.save(array)        # Save the initializing data
         
