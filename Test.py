@@ -31,9 +31,9 @@ class ObjectTests(unittest.TestCase):
         self.EmptyFileName = "Tests/Empty.fits"
         self.EmptyFileNameEx = "Tests/Empty-Ex.fits"
         # Generate Object
-        self.Object = AstroObject.FITSObject(filename=self.EmptyFileName)
+        self.Object = AstroObjectBase.FITSObject(filename=self.EmptyFileName)
         # Generate Empty Frame
-        self.EmptyFrame = AstroObject.FITSFrame("Test Empty Frame")
+        self.EmptyFrame = AstroObjectBase.FITSFrame("Test Empty Frame")
         
         if os.access(self.EmptyFileName,os.F_OK):
             os.remove(self.EmptyFileName)
