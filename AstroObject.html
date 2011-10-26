@@ -58,6 +58,10 @@
 <h1>1. <a class="reference internal" href="#module-AstroObjectBase" title="AstroObjectBase"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObjectBase</span></tt></a><a class="headerlink" href="#astroobjectbase" title="Permalink to this headline">¶</a></h1>
 <p>The Base API was introduced in version 0.2.1 to facilitate the creation and use of basic template classes.</p>
 <span class="target" id="module-AstroObjectBase"></span><p>AstroObjectBase provides template objects for the Object-Oriented Modules <a class="reference internal" href="AstroImage.html#module-AstroImage" title="AstroImage"><tt class="xref py py-mod docutils literal"><span class="pre">AstroImage</span></tt></a> and <a class="reference internal" href="AstroSpectra.html#module-AstroSpectra" title="AstroSpectra"><tt class="xref py py-mod docutils literal"><span class="pre">AstroSpectra</span></tt></a>. Template classes implement all of the required methods. However, calling a method defined by a template class will usually raise an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> indicating that an Abstract method was called.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You should still use Template Classes even though they really only raise abstract errors. This helps you to ensure that you have implemented all of the required methods. As well, if new methods are added to the APIs in the future, using the Abstract class will likely cause your program to fail quietly on these new API calls, allowing you to mix old and new code with out too much concern for what has changed.</p>
+</div>
 <dl class="class">
 <dt id="AstroObjectBase.FITSFrame">
 <em class="property">class </em><tt class="descclassname">AstroObjectBase.</tt><tt class="descname">FITSFrame</tt><big>(</big><em>label</em>, <em>header=None</em>, <em>metadata=None</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSFrame" title="Permalink to this definition">¶</a></dt>
@@ -65,11 +69,15 @@
 Frames are known as Header Data Units, or HDUs when written to a FITS file.
 This frame is generic. It does not legitimately implement any functions. Rather, each function implemented is a placeholder, and will generate an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> if called. Several objects inherit from this one to create HDUs which have some semantic meaning.
 This object requires a <em>label</em>, and can optionally take <em>headers</em> and <em>metadata</em>.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This is an abstract object. Methods implemented here will <em>likely</em> raise an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> indicating that you shouldn&#8217;t be using these methods. This class is provided so that users can sub-class it for their own purposes. It also serves as the base class for other Frames in this package.</p>
+</div>
 <dl class="method">
 <dt id="AstroObjectBase.FITSFrame.__call__">
 <tt class="descname">__call__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSFrame.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSFrame.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Should return the data within this frame, usually as a <em>numpy</em> array.</p>
-<p>For an example implementation, see <a href="#id1"><span class="problematic" id="id2">:cls:`AstroImage.ImageFrame`</span></a>.</p>
+<p>For an example implementation, see <a class="reference internal" href="AstroImage.html#AstroImage.ImageFrame" title="AstroImage.ImageFrame"><tt class="xref py py-class docutils literal"><span class="pre">AstroImage.ImageFrame</span></tt></a>.</p>
 </dd></dl>
 
 <dl class="method">
@@ -115,65 +123,65 @@ Subclasses should provide a <em>primary</em> keyword argument, and if that keywo
 <dl class="class">
 <dt id="AstroObjectBase.FITSObject">
 <em class="property">class </em><tt class="descclassname">AstroObjectBase.</tt><tt class="descname">FITSObject</tt><big>(</big><em>filename=None</em>, <em>dataClasses=None</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject" title="Permalink to this definition">¶</a></dt>
-<dd><p>Holds on to a regular numpy-formated feature list image.</p>
-<dl class="attribute">
-<dt id="AstroObjectBase.FITSObject.__weakref__">
-<tt class="descname">__weakref__</tt><a class="headerlink" href="#AstroObjectBase.FITSObject.__weakref__" title="Permalink to this definition">¶</a></dt>
-<dd><p>list of weak references to the object (if defined)</p>
-</dd></dl>
-
+<dd><p>This object tracks a number of data frames. The <tt class="xref py py-attr docutils literal"><span class="pre">Filename</span></tt> is the default filename to use when reading and writing, and the <tt class="xref py py-attr docutils literal"><span class="pre">dataClass</span></tt> argument accepts a list of new data classes to be used with this object. New data classes should conform to the data class standard.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This is an abstract object. Methods implemented here <em>may</em> raise an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> indicating that you shouldn&#8217;t be using these methods. This class is provided so that users can sub-class it for their own purposes. It is often acceptalbe to use this as your Object class so long as you provide a new Frame class to hold your data in the <tt class="docutils literal"><span class="pre">dataClasses</span></tt> argument.</p>
+</div>
 <dl class="method">
 <dt id="AstroObjectBase.FITSObject.data">
 <tt class="descname">data</tt><big>(</big><em>statename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the numpy image for this object</p>
+<dd><p>Returns the raw data for the current state. This is done through the <a class="reference internal" href="#AstroObjectBase.FITSFrame.__call__" title="AstroObjectBase.FITSFrame.__call__"><tt class="xref py py-meth docutils literal"><span class="pre">FITSFrame.__call__()</span></tt></a> method, which should return basic data in as raw a form as possible. The purpose of this call is to allow the user get at the most recent piece of data as easily as possible.</p>
+<p>..Note:: I have not finished examining some issues with referencing vs. copying data that comes out of this call. Be aware that manipulating some objects produced here may actually manipulate the version saved in the Object.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="AstroObjectBase.FITSObject.list">
 <tt class="descname">list</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.list" title="Permalink to this definition">¶</a></dt>
-<dd><p>Provides a list of the available images</p>
+<dd><p>Provides a list of the available frames, by label.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="AstroObjectBase.FITSObject.object">
 <tt class="descname">object</tt><big>(</big><em>statename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.object"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.object" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the FITSFrame Specfied</p>
+<dd><p>Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.</p>
+<p>..Note:: Using frames can be advantageous as you don&#8217;t rely on the Object to guess what type of frame should be used. Most times, the object will guess correctly, but Frames are a more robust way of ensuring type consistency.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="AstroObjectBase.FITSObject.read">
 <tt class="descname">read</tt><big>(</big><em>filename=None</em>, <em>statename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.read" title="Permalink to this definition">¶</a></dt>
-<dd><p>This reader assumes that all HDUs are image HDUs</p>
+<dd><p>This reader takes a FITS file, and trys to render each HDU within that FITS file as a frame in this Object. As such, it might read multiple frames. This method will return a list of Frames that it read. It uses the <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> <a class="reference internal" href="#AstroObjectBase.FITSFrame.__read__" title="AstroObjectBase.FITSFrame.__read__"><tt class="xref py py-meth docutils literal"><span class="pre">FITSFrame.__read__()</span></tt></a> method to return a valid Frame object for each HDU.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="AstroObjectBase.FITSObject.remove">
 <tt class="descname">remove</tt><big>(</big><em>statename</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.remove" title="Permalink to this definition">¶</a></dt>
-<dd><p>Removes the specified image from the object</p>
+<dd><p>Removes the specified frame from the object.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="AstroObjectBase.FITSObject.save">
 <tt class="descname">save</tt><big>(</big><em>data</em>, <em>statename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.save" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the given image to this object</p>
+<dd><p>Saves the given data to this object. If the data is an instance of one of the acceptable <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> then this method will simply save the data. Otherwise, it will attempt to cast the data into one of the acceptable <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> using their <tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt> mehtod.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="AstroObjectBase.FITSObject.select">
 <tt class="descname">select</tt><big>(</big><em>statename</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.select" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the default image to the given name</p>
+<dd><p>Sets the default frame to the given statename. Normally, the default frame is the one that was last saved.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="AstroObjectBase.FITSObject.show">
 <tt class="descname">show</tt><big>(</big><em>statename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.show" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the (rendered) matplotlib plot for this object</p>
+<dd><p>Returns the (rendered) matplotlib plot for this object. This is a quick way to view your current data state without doing any serious plotting work. This aims for the sensible defaults philosophy, if you don&#8217;t like what you get, write a new method that uses the <a class="reference internal" href="#AstroObjectBase.FITSObject.data" title="AstroObjectBase.FITSObject.data"><tt class="xref py py-meth docutils literal"><span class="pre">data()</span></tt></a> call and plots that.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="AstroObjectBase.FITSObject.write">
 <tt class="descname">write</tt><big>(</big><em>filename=None</em>, <em>states=None</em>, <em>primaryState=None</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.write" title="Permalink to this definition">¶</a></dt>
-<dd><p>Writes a FITS file for this object</p>
+<dd><p>Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify <tt class="docutils literal"><span class="pre">states</span></tt> then only those states will be used. <tt class="docutils literal"><span class="pre">primaryState</span></tt> should be the state of the front HDU. When not specified, the latest state will be used. It uses the <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> <a class="reference internal" href="#AstroObjectBase.FITSFrame.__hdu__" title="AstroObjectBase.FITSFrame.__hdu__"><tt class="xref py py-meth docutils literal"><span class="pre">FITSFrame.__hdu__()</span></tt></a> method to return a valid HDU object for each Frame.</p>
 </dd></dl>
 
 </dd></dl>
@@ -191,7 +199,7 @@ Subclasses should provide a <em>primary</em> keyword argument, and if that keywo
                         title="previous chapter">1. Introduction to <tt class="docutils literal"><span class="pre">AstroObject</span></tt></a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="AstroImage.html"
-                        title="next chapter">2. <tt class="docutils literal docutils literal"><span class="pre">AstroImage</span></tt></a></p>
+                        title="next chapter">2. <tt class="docutils literal"><span class="pre">AstroImage</span></tt></a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/AstroObject.txt"
