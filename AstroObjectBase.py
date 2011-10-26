@@ -27,6 +27,10 @@ class FITSFrame(object):
     Frames are known as Header Data Units, or HDUs when written to a FITS file.
     This frame is generic. It does not legitimately implement any functions. Rather, each function implemented is a placeholder, and will generate an :exc:`AbstractError` if called. Several objects inherit from this one to create HDUs which have some semantic meaning.
     This object requires a *label*, and can optionally take *headers* and *metadata*.
+    
+    .. Warning::
+        This is an abstract object. Methods implemented here will *likely* raise an :exc:`AbstractError` indicating that you shouldn't be using these methods. This class is provided so that users can sub-class it for their own purposes. It also serves as the base class for other Frames in this package.
+    
     """
     def __init__(self, label, header=None, metadata=None):
         super(FITSFrame, self).__init__()
@@ -43,7 +47,7 @@ class FITSFrame(object):
     def __call__(self):
         """Should return the data within this frame, usually as a *numpy* array.
         
-        For an example implementation, see :cls:`AstroImage.ImageFrame`."""
+        For an example implementation, see :class:`AstroImage.ImageFrame`."""
         msg = "Abstract Data Structure %s was called, but cannot return data!" % self
         raise AbstractError(msg)
     
@@ -91,7 +95,12 @@ class FITSFrame(object):
 
 
 class FITSObject(object):
-    """Holds on to a regular numpy-formated feature list image."""
+    """This object tracks a number of data frames. The :attr:`Filename` is the default filename to use when reading and writing, and the :attr:`dataClass` argument accepts a list of new data classes to be used with this object. New data classes should conform to the data class standard.
+    
+    
+    .. Note::
+        This is an abstract object. Methods implemented here *may* raise an :exc:`AbstractError` indicating that you shouldn't be using these methods. This class is provided so that users can sub-class it for their own purposes. It is often acceptalbe to use this as your Object class so long as you provide a new Frame class to hold your data in the ``dataClasses`` argument.
+    """
     def __init__(self,filename=None,dataClasses=None):
         super(FITSObject, self).__init__()
         # Image data variables.
@@ -110,7 +119,7 @@ class FITSObject(object):
     # Basic Object Mode Functions #
     ###############################
     def save(self,data,statename=None):
-        """Saves the given image to this object"""
+        """Saves the given data to this object. If the data is an instance of one of the acceptable :attr:`dataClasses` then this method will simply save the data. Otherwise, it will attempt to cast the data into one of the acceptable :attr:`dataClasses` using their :meth:`__save__` mehtod."""
         # If we were passed raw data, and the dataClass can accept it, then go for it!
         if not isinstance(data,tuple(self.dataClasses)):
             Object = None
@@ -139,7 +148,9 @@ class FITSObject(object):
         LOG.debug("Saved frame %s" % Object)
     
     def data(self,statename=None):
-        """Returns the numpy image for this object"""
+        """Returns the raw data for the current state. This is done through the :meth:`FITSFrame.__call__` method, which should return basic data in as raw a form as possible. The purpose of this call is to allow the user get at the most recent piece of data as easily as possible.
+        
+        ..Note:: I have not finished examining some issues with referencing vs. copying data that comes out of this call. Be aware that manipulating some objects produced here may actually manipulate the version saved in the Object."""
         # Load the current stat if no state provided
         if not statename:
             statename = self.statename
@@ -149,7 +160,9 @@ class FITSObject(object):
             raise KeyError("Object %s not instantiated with any data..." % self)
     
     def object(self,statename=None):
-        """Returns the FITSFrame Specfied"""
+        """Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.
+        
+        ..Note:: Using frames can be advantageous as you don't rely on the Object to guess what type of frame should be used. Most times, the object will guess correctly, but Frames are a more robust way of ensuring type consistency."""
         if not statename:
             statename = self.statename
         if statename != None and statename in self.states:
@@ -158,7 +171,7 @@ class FITSObject(object):
             raise KeyError("Object %s not instantiated with any data..." % self)
     
     def select(self,statename):
-        """Sets the default image to the given name"""
+        """Sets the default frame to the given statename. Normally, the default frame is the one that was last saved."""
         if statename not in self.states:
             raise IndexError("State %s does not exist!" % statename)
         self.statename = statename
@@ -166,18 +179,18 @@ class FITSObject(object):
         return
     
     def list(self):
-        """Provides a list of the available images"""
+        """Provides a list of the available frames, by label."""
         return self.states.keys()
     
     def remove(self,statename):
-        """Removes the specified image from the object"""
+        """Removes the specified frame from the object."""
         if statename not in self.states:
             raise IndexError("%s: Object %s does not exist!" % (self,statename))
         LOG.debug("%s: Removing Object with label %s" % (self,statename))
         self.states.pop(statename)
     
     def show(self,statename=None):
-        """Returns the (rendered) matplotlib plot for this object"""
+        """Returns the (rendered) matplotlib plot for this object. This is a quick way to view your current data state without doing any serious plotting work. This aims for the sensible defaults philosophy, if you don't like what you get, write a new method that uses the :meth:`data` call and plots that."""
         # Load the current stat if no state provided
         if not statename:
             statename = self.statename
@@ -187,7 +200,7 @@ class FITSObject(object):
             raise KeyError("Object not instantiated with any data...")
     
     def write(self,filename=None,states=None,primaryState=None):
-        """Writes a FITS file for this object"""
+        """Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify ``states`` then only those states will be used. ``primaryState`` should be the state of the front HDU. When not specified, the latest state will be used. It uses the :attr:`dataClasses` :meth:`FITSFrame.__hdu__` method to return a valid HDU object for each Frame."""
         if not primaryState:
             primaryState = self.statename
         if not filename:
@@ -209,7 +222,7 @@ class FITSObject(object):
         HDUList.writeto(filename)
     
     def read(self,filename=None,statename=None):
-        """This reader assumes that all HDUs are image HDUs"""
+        """This reader takes a FITS file, and trys to render each HDU within that FITS file as a frame in this Object. As such, it might read multiple frames. This method will return a list of Frames that it read. It uses the :attr:`dataClasses` :meth:`FITSFrame.__read__` method to return a valid Frame object for each HDU."""
         if not filename:
             filename = self.filename
         if statename == None:
