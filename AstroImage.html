@@ -1,0 +1,155 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>2. AstroImage &mdash; AstroObject 0.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="AstroObject 0.2.0 documentation" href="index.html" />
+    <link rel="next" title="3. AstroSpectra" href="AstroSpectra.html" />
+    <link rel="prev" title="1. AstroObjectBase" href="AstroObject.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="AstroSpectra.html" title="3. AstroSpectra"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="AstroObject.html" title="1. AstroObjectBase"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">AstroObject 0.2.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="astroimage">
+<h1>2. <a class="reference internal" href="#module-AstroImage" title="AstroImage"><tt class="xref py py-mod docutils literal"><span class="pre">AstroImage</span></tt></a><a class="headerlink" href="#astroimage" title="Permalink to this headline">¶</a></h1>
+<p>Objects for manipulating and managing images.</p>
+<span class="target" id="module-AstroImage"></span><dl class="class">
+<dt id="AstroImage.ImageFrame">
+<em class="property">class </em><tt class="descclassname">AstroImage.</tt><tt class="descname">ImageFrame</tt><big>(</big><em>array</em>, <em>label</em>, <em>header=None</em>, <em>metadata=None</em><big>)</big><a class="reference internal" href="_modules/AstroImage.html#ImageFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroImage.ImageFrame" title="Permalink to this definition">¶</a></dt>
+<dd><p>A single frame of a FITS image</p>
+<dl class="method">
+<dt id="AstroImage.ImageFrame.__call__">
+<tt class="descname">__call__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroImage.html#ImageFrame.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroImage.ImageFrame.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call this frame, returning the data array</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroImage.ImageFrame.__hdu__">
+<tt class="descname">__hdu__</tt><big>(</big><em>primary=False</em><big>)</big><a class="reference internal" href="_modules/AstroImage.html#ImageFrame.__hdu__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroImage.ImageFrame.__hdu__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retruns an HDU for this frame</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="AstroImage.ImageFrame.__read__">
+<em class="property">classmethod </em><tt class="descname">__read__</tt><big>(</big><em>HDU</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroImage.html#ImageFrame.__read__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroImage.ImageFrame.__read__" title="Permalink to this definition">¶</a></dt>
+<dd><p>An abstract method for reading empty data HDU Frames</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="AstroImage.ImageFrame.__save__">
+<em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>data</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroImage.html#ImageFrame.__save__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroImage.ImageFrame.__save__" title="Permalink to this definition">¶</a></dt>
+<dd><p>A generic class method for saving to this object with data directly</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroImage.ImageFrame.__show__">
+<tt class="descname">__show__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroImage.html#ImageFrame.__show__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroImage.ImageFrame.__show__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the plot object for this image</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="AstroObject.html"
+                        title="previous chapter">1. <tt class="docutils literal"><span class="pre">AstroObjectBase</span></tt></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="AstroSpectra.html"
+                        title="next chapter">3. <tt class="docutils literal"><span class="pre">AstroSpectra</span></tt></a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/AstroImage.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="AstroSpectra.html" title="3. AstroSpectra"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="AstroObject.html" title="1. AstroObjectBase"
+             >previous</a> |</li>
+        <li><a href="index.html">AstroObject 0.2.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Alexander Rudy.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+    </div>
+  </body>
+</html>

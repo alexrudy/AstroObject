@@ -1,0 +1,240 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>1. AstroObjectBase &mdash; AstroObject 0.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="AstroObject 0.2.0 documentation" href="index.html" />
+    <link rel="next" title="2. AstroImage" href="AstroImage.html" />
+    <link rel="prev" title="1. Introduction to AstroObject" href="intro.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="AstroImage.html" title="2. AstroImage"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="intro.html" title="1. Introduction to AstroObject"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">AstroObject 0.2.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="astroobjectbase">
+<h1>1. <a class="reference internal" href="#module-AstroObjectBase" title="AstroObjectBase"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObjectBase</span></tt></a><a class="headerlink" href="#astroobjectbase" title="Permalink to this headline">¶</a></h1>
+<p>The Base API was introduced in version 0.2.1 to facilitate the creation and use of basic template classes.</p>
+<span class="target" id="module-AstroObjectBase"></span><p>AstroObjectBase provides template objects for the Object-Oriented Modules <a class="reference internal" href="AstroImage.html#module-AstroImage" title="AstroImage"><tt class="xref py py-mod docutils literal"><span class="pre">AstroImage</span></tt></a> and <a class="reference internal" href="AstroSpectra.html#module-AstroSpectra" title="AstroSpectra"><tt class="xref py py-mod docutils literal"><span class="pre">AstroSpectra</span></tt></a>. Template classes implement all of the required methods. However, calling a method defined by a template class will usually raise an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> indicating that an Abstract method was called.</p>
+<dl class="class">
+<dt id="AstroObjectBase.FITSFrame">
+<em class="property">class </em><tt class="descclassname">AstroObjectBase.</tt><tt class="descname">FITSFrame</tt><big>(</big><em>label</em>, <em>header=None</em>, <em>metadata=None</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSFrame" title="Permalink to this definition">¶</a></dt>
+<dd><p>A single frame of a FITS image.
+Frames are known as Header Data Units, or HDUs when written to a FITS file.
+This frame is generic. It does not legitimately implement any functions. Rather, each function implemented is a placeholder, and will generate an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> if called. Several objects inherit from this one to create HDUs which have some semantic meaning.
+This object requires a <em>label</em>, and can optionally take <em>headers</em> and <em>metadata</em>.</p>
+<dl class="method">
+<dt id="AstroObjectBase.FITSFrame.__call__">
+<tt class="descname">__call__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSFrame.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSFrame.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Should return the data within this frame, usually as a <em>numpy</em> array.</p>
+<p>For an example implementation, see <a href="#id1"><span class="problematic" id="id2">:cls:`AstroImage.ImageFrame`</span></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObjectBase.FITSFrame.__hdu__">
+<tt class="descname">__hdu__</tt><big>(</big><em>primary=False</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSFrame.__hdu__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSFrame.__hdu__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.
+Subclasses should provide a <em>primary</em> keyword argument, and if that keyword is set, the method should return a primaryHDU.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="AstroObjectBase.FITSFrame.__read__">
+<em class="property">classmethod </em><tt class="descname">__read__</tt><big>(</big><em>HDU</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSFrame.__read__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSFrame.__read__" title="Permalink to this definition">¶</a></dt>
+<dd><p>An abstract method for reading empty data HDU Frames</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="AstroObjectBase.FITSFrame.__save__">
+<em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>data</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSFrame.__save__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSFrame.__save__" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class save method is called when the parent object is trying to save raw data. In this case, the save method will take raw data and attempt to cast it as an object of its own type, returning such an object. If it can&#8217;t do that (because the data doesn&#8217;t appear to fit, or for pretty much any other reason) it should raise an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> which will be handled by the calling object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObjectBase.FITSFrame.__show__">
+<tt class="descname">__show__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSFrame.__show__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSFrame.__show__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Should return a plot object for the current frame, after setting up this plot in matplotlib.</p>
+<p>In general, this method should display data nicely, but should not do too much work, so as to be flexible for use with other plotting commands. It is best to do the minimal amount of work to simply show the data. The intent is for the user to call Object.show() when they want a quick view of the data in a given frame.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObjectBase.FITSFrame.__str__">
+<tt class="descname">__str__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSFrame.__str__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSFrame.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns String Representation of this frame object. Will display the class name and the label. This method does not need to be overwritten by subclasses.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObjectBase.FITSFrame.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#AstroObjectBase.FITSFrame.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="AstroObjectBase.FITSObject">
+<em class="property">class </em><tt class="descclassname">AstroObjectBase.</tt><tt class="descname">FITSObject</tt><big>(</big><em>filename=None</em>, <em>dataClasses=None</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Holds on to a regular numpy-formated feature list image.</p>
+<dl class="attribute">
+<dt id="AstroObjectBase.FITSObject.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#AstroObjectBase.FITSObject.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObjectBase.FITSObject.data">
+<tt class="descname">data</tt><big>(</big><em>statename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the numpy image for this object</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObjectBase.FITSObject.list">
+<tt class="descname">list</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides a list of the available images</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObjectBase.FITSObject.object">
+<tt class="descname">object</tt><big>(</big><em>statename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.object"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the FITSFrame Specfied</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObjectBase.FITSObject.read">
+<tt class="descname">read</tt><big>(</big><em>filename=None</em>, <em>statename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>This reader assumes that all HDUs are image HDUs</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObjectBase.FITSObject.remove">
+<tt class="descname">remove</tt><big>(</big><em>statename</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the specified image from the object</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObjectBase.FITSObject.save">
+<tt class="descname">save</tt><big>(</big><em>data</em>, <em>statename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the given image to this object</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObjectBase.FITSObject.select">
+<tt class="descname">select</tt><big>(</big><em>statename</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.select" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the default image to the given name</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObjectBase.FITSObject.show">
+<tt class="descname">show</tt><big>(</big><em>statename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the (rendered) matplotlib plot for this object</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObjectBase.FITSObject.write">
+<tt class="descname">write</tt><big>(</big><em>filename=None</em>, <em>states=None</em>, <em>primaryState=None</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a FITS file for this object</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="intro.html"
+                        title="previous chapter">1. Introduction to <tt class="docutils literal"><span class="pre">AstroObject</span></tt></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="AstroImage.html"
+                        title="next chapter">2. <tt class="docutils literal docutils literal"><span class="pre">AstroImage</span></tt></a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/AstroObject.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="AstroImage.html" title="2. AstroImage"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="intro.html" title="1. Introduction to AstroObject"
+             >previous</a> |</li>
+        <li><a href="index.html">AstroObject 0.2.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Alexander Rudy.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+    </div>
+  </body>
+</html>

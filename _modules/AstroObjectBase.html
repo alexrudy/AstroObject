@@ -1,0 +1,339 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>AstroObjectBase &mdash; AstroObject 0.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="AstroObject 0.2.0 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">AstroObject 0.2.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for AstroObjectBase</h1><div class="highlight"><pre>
+<span class="c"># </span>
+<span class="c">#  AstroObject.py</span>
+<span class="c">#  ObjectModel</span>
+<span class="c">#  </span>
+<span class="c">#  Created by Alexander Rudy on 2011-10-12.</span>
+<span class="c">#  Copyright 2011 Alexander Rudy. All rights reserved.</span>
+<span class="c">#  Version 0.2.0</span>
+<span class="c"># </span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.image</span> <span class="kn">as</span> <span class="nn">mpimage</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">cm</span>
+<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">LinearLocator</span><span class="p">,</span> <span class="n">FixedLocator</span><span class="p">,</span> <span class="n">FormatStrFormatter</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">ndimage</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="kn">import</span> <span class="n">cdist</span>
+<span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">norm</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pyfits</span>
+<span class="kn">import</span> <span class="nn">math</span><span class="o">,</span> <span class="nn">copy</span><span class="o">,</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">logging</span><span class="o">,</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">Utilities</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FITSFrame"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSFrame">[docs]</a><span class="k">class</span> <span class="nc">FITSFrame</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A single frame of a FITS image.</span>
+<span class="sd">    Frames are known as Header Data Units, or HDUs when written to a FITS file.</span>
+<span class="sd">    This frame is generic. It does not legitimately implement any functions. Rather, each function implemented is a placeholder, and will generate an :exc:`AbstractError` if called. Several objects inherit from this one to create HDUs which have some semantic meaning.</span>
+<span class="sd">    This object requires a *label*, and can optionally take *headers* and *metadata*.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FITSFrame</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">label</span> <span class="c"># A label for this frame, for selection in parent object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">header</span> <span class="c"># A dictionary of header keys and values for use in </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span> <span class="c"># An optional metadata dictionary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">clock</span><span class="p">()</span> <span class="c"># An object representing the time this object was created</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="p">{}</span>
+    
+<div class="viewcode-block" id="FITSFrame.__call__"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSFrame.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Should return the data within this frame, usually as a *numpy* array.</span>
+<span class="sd">        </span>
+<span class="sd">        For an example implementation, see :cls:`AstroImage.ImageFrame`.&quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Abstract Data Structure </span><span class="si">%s</span><span class="s"> was called, but cannot return data!&quot;</span> <span class="o">%</span> <span class="bp">self</span>
+        <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="FITSFrame.__str__"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSFrame.__str__">[docs]</a>    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns String Representation of this frame object. Will display the class name and the label. This method does not need to be overwritten by subclasses.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s">&quot;&lt;</span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s"> labeled </span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s">&gt;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="FITSFrame.__hdu__"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSFrame.__hdu__">[docs]</a>    <span class="k">def</span> <span class="nf">__hdu__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">primary</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.</span>
+<span class="sd">        Subclasses should provide a *primary* keyword argument, and if that keyword is set, the method should return a primaryHDU.&quot;&quot;&quot;</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Generating an Empty HDU&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">primary</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">ImageHDU</span><span class="p">()</span>
+    </div>
+<div class="viewcode-block" id="FITSFrame.__show__"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSFrame.__show__">[docs]</a>    <span class="k">def</span> <span class="nf">__show__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Should return a plot object for the current frame, after setting up this plot in matplotlib. </span>
+<span class="sd">        </span>
+<span class="sd">        In general, this method should display data nicely, but should not do too much work, so as to be flexible for use with other plotting commands. It is best to do the minimal amount of work to simply show the data. The intent is for the user to call Object.show() when they want a quick view of the data in a given frame.&quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Abstract Data Structure </span><span class="si">%s</span><span class="s"> cannot be used for plotting!&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    </div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="FITSFrame.__save__"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSFrame.__save__">[docs]</a>    <span class="k">def</span> <span class="nf">__save__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A class save method is called when the parent object is trying to save raw data. In this case, the save method will take raw data and attempt to cast it as an object of its own type, returning such an object. If it can&#39;t do that (because the data doesn&#39;t appear to fit, or for pretty much any other reason) it should raise an :exc:`AbstractError` which will be handled by the calling object.&quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Abstract Data Structure </span><span class="si">%s</span><span class="s"> cannot be the target of a save operation!&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        
+    </div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="FITSFrame.__read__"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSFrame.__read__">[docs]</a>    <span class="k">def</span> <span class="nf">__read__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="n">HDU</span><span class="p">,</span><span class="n">label</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;An abstract method for reading empty data HDU Frames&quot;&quot;&quot;</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Attempting to read data&quot;</span> <span class="o">%</span> <span class="n">cls</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">HDU</span><span class="p">,</span><span class="n">pyfits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Must save a </span><span class="si">%s</span><span class="s"> to a </span><span class="si">%s</span><span class="s">, found </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pyfits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="n">HDU</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">HDU</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;HDU Data must be type </span><span class="si">%s</span><span class="s"> for </span><span class="si">%s</span><span class="s">, found data of type </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">None</span><span class="p">,</span><span class="n">cls</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">HDU</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">Object</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Created </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="n">Object</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">Object</span>
+    
+
+</div></div>
+<div class="viewcode-block" id="FITSObject"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject">[docs]</a><span class="k">class</span> <span class="nc">FITSObject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Holds on to a regular numpy-formated feature list image.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">dataClasses</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FITSObject</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="c"># Image data variables.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataClasses</span> <span class="o">=</span> <span class="p">[</span><span class="n">FITSFrame</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">dataClasses</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataClasses</span> <span class="o">+=</span> <span class="n">dataClasses</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">states</span> <span class="o">=</span> <span class="p">{}</span>            <span class="c"># Storage for all of the images</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statename</span> <span class="o">=</span> <span class="bp">None</span>       <span class="c"># The active state name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>    <span class="c"># The filename to use for file loading and writing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plt</span> <span class="o">=</span> <span class="n">plt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputData</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inputData</span> <span class="o">=</span> <span class="bp">False</span>
+        
+    
+    <span class="c">###############################</span>
+    <span class="c"># Basic Object Mode Functions #</span>
+    <span class="c">###############################</span>
+<div class="viewcode-block" id="FITSObject.save"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Saves the given image to this object&quot;&quot;&quot;</span>
+        <span class="c"># If we were passed raw data, and the dataClass can accept it, then go for it!</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataClasses</span><span class="p">)):</span>
+            <span class="n">Object</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">for</span> <span class="n">dataClass</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataClasses</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">Object</span> <span class="o">=</span> <span class="n">dataClass</span><span class="o">.</span><span class="n">__save__</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">statename</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">AbstractError</span> <span class="k">as</span> <span class="n">AE</span><span class="p">:</span>
+                    <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Cannot save as </span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dataClass</span><span class="p">,</span><span class="n">AE</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">Object</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Object to be saved cannot be cast as </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataClasses</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Object</span> <span class="o">=</span> <span class="n">data</span>
+            
+        <span class="k">if</span> <span class="n">statename</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">statename</span> <span class="o">=</span> <span class="n">Object</span><span class="o">.</span><span class="n">label</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Object</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">statename</span>
+        <span class="k">if</span> <span class="n">statename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&quot;Cannot Duplicate State Name: </span><span class="si">%s</span><span class="s"> </span><span class="se">\n</span><span class="s">Use remove(</span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s">) to clear&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">statename</span><span class="p">,</span><span class="n">statename</span><span class="p">))</span>
+        <span class="c"># Save the actual state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">statename</span><span class="p">]</span> <span class="o">=</span> <span class="n">Object</span>
+        <span class="c"># Activate the saved state as the current state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">statename</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Saved frame </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">Object</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="FITSObject.data"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the numpy image for this object&quot;&quot;&quot;</span>
+        <span class="c"># Load the current stat if no state provided</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">statename</span><span class="p">:</span>
+            <span class="n">statename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statename</span>
+        <span class="k">if</span> <span class="n">statename</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">statename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">statename</span><span class="p">]()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&quot;Object </span><span class="si">%s</span><span class="s"> not instantiated with any data...&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="FITSObject.object"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.object">[docs]</a>    <span class="k">def</span> <span class="nf">object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the FITSFrame Specfied&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">statename</span><span class="p">:</span>
+            <span class="n">statename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statename</span>
+        <span class="k">if</span> <span class="n">statename</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">statename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">statename</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&quot;Object </span><span class="si">%s</span><span class="s"> not instantiated with any data...&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="FITSObject.select"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.select">[docs]</a>    <span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets the default image to the given name&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">statename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s">&quot;State </span><span class="si">%s</span><span class="s"> does not exist!&quot;</span> <span class="o">%</span> <span class="n">statename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statename</span> <span class="o">=</span> <span class="n">statename</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Selected state </span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">statename</span><span class="p">)</span>
+        <span class="k">return</span>
+    </div>
+<div class="viewcode-block" id="FITSObject.list"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.list">[docs]</a>    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Provides a list of the available images&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    </div>
+<div class="viewcode-block" id="FITSObject.remove"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Removes the specified image from the object&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">statename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Object </span><span class="si">%s</span><span class="s"> does not exist!&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">))</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Removing Object with label </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">statename</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="FITSObject.show"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the (rendered) matplotlib plot for this object&quot;&quot;&quot;</span>
+        <span class="c"># Load the current stat if no state provided</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">statename</span><span class="p">:</span>
+            <span class="n">statename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statename</span>
+        <span class="k">if</span> <span class="n">statename</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">statename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">statename</span><span class="p">]</span><span class="o">.</span><span class="n">__show__</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&quot;Object not instantiated with any data...&quot;</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="FITSObject.write"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">states</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">primaryState</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Writes a FITS file for this object&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">primaryState</span><span class="p">:</span>
+            <span class="n">primaryState</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statename</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">primaryState</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">validate_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">states</span><span class="p">:</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">primaryState</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+            <span class="n">states</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">primaryState</span><span class="p">)</span>
+        <span class="n">PrimaryHDU</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">primaryState</span><span class="p">]</span><span class="o">.</span><span class="n">__hdu__</span><span class="p">(</span><span class="n">primary</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">states</span><span class="p">:</span>
+            <span class="n">HDUs</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">__hdu__</span><span class="p">(</span><span class="n">primary</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">]</span>
+            <span class="n">HDUList</span> <span class="o">=</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">HDUList</span><span class="p">([</span><span class="n">PrimaryHDU</span><span class="p">]</span><span class="o">+</span><span class="n">HDUs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">HDUList</span> <span class="o">=</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">HDUList</span><span class="p">(</span><span class="n">PrimaryHDU</span><span class="p">)</span>
+        <span class="n">HDUList</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="FITSObject.read"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This reader assumes that all HDUs are image HDUs&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
+        <span class="k">if</span> <span class="n">statename</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">statename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Set statename for image from filename: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">statename</span><span class="p">)</span>
+        <span class="n">HDUList</span> <span class="o">=</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">Read</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">Labels</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">HDU</span> <span class="ow">in</span> <span class="n">HDUList</span><span class="p">:</span>
+            <span class="n">Object</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">for</span> <span class="n">dataClass</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataClasses</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">Read</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="n">statename</span> <span class="o">+</span> <span class="s">&quot; Frame </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">Read</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="n">statename</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">Object</span> <span class="o">=</span> <span class="n">dataClass</span><span class="o">.</span><span class="n">__read__</span><span class="p">(</span><span class="n">HDU</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">AbstractError</span> <span class="k">as</span> <span class="n">AE</span><span class="p">:</span>
+                    <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Cannot read as </span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dataClass</span><span class="p">,</span><span class="n">AE</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">break</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">Object</span><span class="p">:</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Skipping HDU </span><span class="si">%s</span><span class="s">, cannot save as valid type &quot;</span> <span class="o">%</span> <span class="n">HDU</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">Read</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">Labels</span> <span class="o">+=</span> <span class="p">[</span><span class="n">label</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">Object</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">Read</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;No HDUs were saved from FITS file </span><span class="si">%s</span><span class="s"> to </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">Labels</span>
+    </div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">AstroObject 0.2.0 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Alexander Rudy.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+    </div>
+  </body>
+</html>
