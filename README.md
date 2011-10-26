@@ -13,16 +13,14 @@
 
 This program consists of a few simple objects for the repersentation and manipulation of astronomical objects. It allows python programs to interact with FITS files and Raw Data without constantly re-saving such data to the system. It provides a consistent object model, and stores object history for all of your data so that you won't lose data unintentionally.
 
+Documentation is hosted by GitHub Pages [here](http://alexrudy.github.com/AstroObject/)
+
 There are two primary modules:
 
-- AstroImage for handling images.
-- AstroSpectra for handling 1D data like spectra.
+- `AstroImage` for handling images.
+- `AstroSpectra` for handling 1D data like spectra.
 
-AstroImage has some basic image manipulation features, and is designed to work quickly with IRAF. examples include dynamically writing a FITSFile and returning the filename to a pyRAF routine. For example:
-
-imarith(ImageA.FITS(),+,ImageB.FITS(),"Out.FITS")
-
-In the future, I will add the ability to import output fits files back in to the running object.
+As well, the library is useful for building object-based representations of new data formats. The library comes with template classes that make it easy to expand the object oriented paradigm to whatever you are doing, and to add in custom manipulation functions.
 
 # Release Notes
 
