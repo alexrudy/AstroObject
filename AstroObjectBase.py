@@ -190,7 +190,7 @@ class FITSObject(object):
         else:
             raise KeyError("Object not instantiated with any data...")
     
-    def write(self,filename=None,states=None,primaryState=None):
+    def write(self,filename=None,states=None,primaryState=None,clobber=False):
         """Writes a FITS file for this object"""
         if not primaryState:
             primaryState = self.statename
@@ -210,7 +210,7 @@ class FITSObject(object):
             HDUList = pyfits.HDUList([PrimaryHDU]+HDUs)
         else:
             HDUList = pyfits.HDUList(PrimaryHDU)
-        HDUList.writeto(filename)
+        HDUList.writeto(filename,clobber=clobber)
     
     def read(self,filename=None,statename=None):
         """This reader assumes that all HDUs are image HDUs"""
