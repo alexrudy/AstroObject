@@ -13,7 +13,7 @@
 
 This program consists of a few simple objects for the repersentation and manipulation of astronomical objects. It allows python programs to interact with FITS files and Raw Data without constantly re-saving such data to the system. It provides a consistent object model, and stores object history for all of your data so that you won't lose data unintentionally.
 
-Documentation is hosted by GitHub Pages [here](http://alexrudy.github.com/AstroObject/)
+Documentation is hosted by GitHub Pages <http://alexrudy.github.com/AstroObject/>
 
 There are two primary modules:
 
