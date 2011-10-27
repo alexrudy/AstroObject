@@ -60,35 +60,113 @@
 <span class="target" id="module-AstroImage"></span><dl class="class">
 <dt id="AstroImage.ImageFrame">
 <em class="property">class </em><tt class="descclassname">AstroImage.</tt><tt class="descname">ImageFrame</tt><big>(</big><em>array</em>, <em>label</em>, <em>header=None</em>, <em>metadata=None</em><big>)</big><a class="reference internal" href="_modules/AstroImage.html#ImageFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroImage.ImageFrame" title="Permalink to this definition">¶</a></dt>
-<dd><p>A single frame of a FITS image</p>
+<dd><p>A single frame of a FITS image.
+Frames are known as Header Data Units, or HDUs when written to a FITS file.
+This frame accepts (generally) 2-dimensional numpy arrays (<tt class="docutils literal"><span class="pre">ndarray</span></tt>), and will show those arrays as images. Currently, the system makes no attempt to ensure/check the data type of your data arrays. As such, data saved will often be saved as <tt class="docutils literal"><span class="pre">np.float</span></tt> rather than more compact data types such as <tt class="docutils literal"><span class="pre">np.int16</span></tt>. Pyfits handles the typing of your data automatically, so saving an array with the correct type will generate the proper FITS file.
+This object requires <em>array</em>, the data, a <em>label</em>, and can optionally take <em>headers</em> and <em>metadata</em>.</p>
 <dl class="method">
 <dt id="AstroImage.ImageFrame.__call__">
 <tt class="descname">__call__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroImage.html#ImageFrame.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroImage.ImageFrame.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call this frame, returning the data array</p>
+<dd><p>Returns the data for this frame, which should be a <tt class="docutils literal"><span class="pre">numpy.ndarray</span></tt>.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="AstroImage.ImageFrame.__hdu__">
 <tt class="descname">__hdu__</tt><big>(</big><em>primary=False</em><big>)</big><a class="reference internal" href="_modules/AstroImage.html#ImageFrame.__hdu__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroImage.ImageFrame.__hdu__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retruns an HDU for this frame</p>
+<dd><p>Retruns an HDU which represents this frame. HDUs are either <tt class="docutils literal"><span class="pre">pyfits.PrimaryHDU</span></tt> or <tt class="docutils literal"><span class="pre">pyfits.ImageHDU</span></tt> depending on the <em>primary</em> keyword.</p>
 </dd></dl>
 
 <dl class="classmethod">
 <dt id="AstroImage.ImageFrame.__read__">
 <em class="property">classmethod </em><tt class="descname">__read__</tt><big>(</big><em>HDU</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroImage.html#ImageFrame.__read__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroImage.ImageFrame.__read__" title="Permalink to this definition">¶</a></dt>
-<dd><p>An abstract method for reading empty data HDU Frames</p>
+<dd><p>Attempts to convert a given HDU into an object of type <a class="reference internal" href="#AstroImage.ImageFrame" title="AstroImage.ImageFrame"><tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt></a>. This method is similar to the <a class="reference internal" href="#AstroImage.ImageFrame.__save__" title="AstroImage.ImageFrame.__save__"><tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt></a> method, but instead of taking data as input, it takes a full HDU. The use of a full HDU allows this method to check for the correct type of HDU, and to gather header information from the HDU. When reading data from a FITS file, this is the prefered method to initialize a new frame.</p>
 </dd></dl>
 
 <dl class="classmethod">
 <dt id="AstroImage.ImageFrame.__save__">
 <em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>data</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroImage.html#ImageFrame.__save__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroImage.ImageFrame.__save__" title="Permalink to this definition">¶</a></dt>
-<dd><p>A generic class method for saving to this object with data directly</p>
+<dd><p>Attempts to create a <a class="reference internal" href="#AstroImage.ImageFrame" title="AstroImage.ImageFrame"><tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt></a> object from the provided data. This requres some type checking to ensure that the provided data meets the general sense of such an image. If the data does not appear to be correct, this method will raise an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> with a message describing why the data did not validate. Generally, this error will be intercepted by the caller, and simply provides an indication that this is not the right class for a particular piece of data.</p>
+<p>If the data is saved successfully, this method will return an object of type <a class="reference internal" href="#AstroImage.ImageFrame" title="AstroImage.ImageFrame"><tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt></a></p>
+<p>The validation requires that the data be a type <tt class="docutils literal"><span class="pre">numpy.ndarray</span></tt> and that the data have 2 and only 2 dimensions.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="AstroImage.ImageFrame.__show__">
 <tt class="descname">__show__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroImage.html#ImageFrame.__show__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroImage.ImageFrame.__show__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the plot object for this image</p>
+<dd><p>Plots the image in this frame using matplotlib&#8217;s <tt class="docutils literal"><span class="pre">imshow</span></tt> function. The color map is set to an inverted binary, as is often useful when looking at astronomical images. The figure object is returned, and can be manipulated further.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function serves as a quick view of the current state of the frame. It is not intended for robust plotting support, as that can be easily accomplished using <tt class="docutils literal"><span class="pre">matplotlib</span></tt>. Rather, it attempts to do the minimum possible to create an acceptable image for immediate inspection.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="AstroImage.ImageObject">
+<em class="property">class </em><tt class="descclassname">AstroImage.</tt><tt class="descname">ImageObject</tt><big>(</big><em>array=None</em><big>)</big><a class="reference internal" href="_modules/AstroImage.html#ImageObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroImage.ImageObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>This object tracks a number of data frames. This class is a simple subclass of <a class="reference internal" href="AstroObject.html#AstroObjectBase.FITSObject" title="AstroObjectBase.FITSObject"><tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.FITSObject</span></tt></a> and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the <a class="reference internal" href="#AstroImage.ImageFrame" title="AstroImage.ImageFrame"><tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt></a> class for data. As well, it accepts an array in the initializer that will be saved immediately.</p>
+<dl class="method">
+<dt id="AstroImage.ImageObject.data">
+<tt class="descname">data</tt><big>(</big><em>statename=None</em><big>)</big><a class="headerlink" href="#AstroImage.ImageObject.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the raw data for the current state. This is done through the <tt class="xref py py-meth docutils literal"><span class="pre">FITSFrame.__call__()</span></tt> method, which should return basic data in as raw a form as possible. The purpose of this call is to allow the user get at the most recent piece of data as easily as possible.</p>
+<p>..Note:: I have not finished examining some issues with referencing vs. copying data that comes out of this call. Be aware that manipulating some objects produced here may actually manipulate the version saved in the Object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroImage.ImageObject.list">
+<tt class="descname">list</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroImage.ImageObject.list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides a list of the available frames, by label.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroImage.ImageObject.loadFromFile">
+<tt class="descname">loadFromFile</tt><big>(</big><em>filename=None</em>, <em>statename=None</em><big>)</big><a class="reference internal" href="_modules/AstroImage.html#ImageObject.loadFromFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroImage.ImageObject.loadFromFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function can be used to load an image file (but not a FITS file) into this image frame. Image files should be formats accepatble to the Python Image Library, but that generally applies to most common image formats, such as .png and .jpg .
+This method takes a <em>filename</em> and a <em>statename</em> parameter. If either is not given, they will be generated using sensible defaults.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroImage.ImageObject.object">
+<tt class="descname">object</tt><big>(</big><em>statename=None</em><big>)</big><a class="headerlink" href="#AstroImage.ImageObject.object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.</p>
+<p>..Note:: Using frames can be advantageous as you don&#8217;t rely on the Object to guess what type of frame should be used. Most times, the object will guess correctly, but Frames are a more robust way of ensuring type consistency.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroImage.ImageObject.read">
+<tt class="descname">read</tt><big>(</big><em>filename=None</em>, <em>statename=None</em><big>)</big><a class="headerlink" href="#AstroImage.ImageObject.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>This reader takes a FITS file, and trys to render each HDU within that FITS file as a frame in this Object. As such, it might read multiple frames. This method will return a list of Frames that it read. It uses the <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> <tt class="xref py py-meth docutils literal"><span class="pre">FITSFrame.__read__()</span></tt> method to return a valid Frame object for each HDU.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroImage.ImageObject.remove">
+<tt class="descname">remove</tt><big>(</big><em>statename</em><big>)</big><a class="headerlink" href="#AstroImage.ImageObject.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the specified frame from the object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroImage.ImageObject.save">
+<tt class="descname">save</tt><big>(</big><em>data</em>, <em>statename=None</em><big>)</big><a class="headerlink" href="#AstroImage.ImageObject.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the given data to this object. If the data is an instance of one of the acceptable <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> then this method will simply save the data. Otherwise, it will attempt to cast the data into one of the acceptable <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> using their <tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt> mehtod.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroImage.ImageObject.select">
+<tt class="descname">select</tt><big>(</big><em>statename</em><big>)</big><a class="headerlink" href="#AstroImage.ImageObject.select" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the default frame to the given statename. Normally, the default frame is the one that was last saved.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroImage.ImageObject.show">
+<tt class="descname">show</tt><big>(</big><em>statename=None</em><big>)</big><a class="headerlink" href="#AstroImage.ImageObject.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the (rendered) matplotlib plot for this object. This is a quick way to view your current data state without doing any serious plotting work. This aims for the sensible defaults philosophy, if you don&#8217;t like what you get, write a new method that uses the <a class="reference internal" href="#AstroImage.ImageObject.data" title="AstroImage.ImageObject.data"><tt class="xref py py-meth docutils literal"><span class="pre">data()</span></tt></a> call and plots that.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroImage.ImageObject.write">
+<tt class="descname">write</tt><big>(</big><em>filename=None</em>, <em>states=None</em>, <em>primaryState=None</em><big>)</big><a class="headerlink" href="#AstroImage.ImageObject.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify <tt class="docutils literal"><span class="pre">states</span></tt> then only those states will be used. <tt class="docutils literal"><span class="pre">primaryState</span></tt> should be the state of the front HDU. When not specified, the latest state will be used. It uses the <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> <tt class="xref py py-meth docutils literal"><span class="pre">FITSFrame.__hdu__()</span></tt> method to return a valid HDU object for each Frame.</p>
 </dd></dl>
 
 </dd></dl>

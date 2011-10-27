@@ -78,6 +78,10 @@
 <span class="sd">    Frames are known as Header Data Units, or HDUs when written to a FITS file.</span>
 <span class="sd">    This frame is generic. It does not legitimately implement any functions. Rather, each function implemented is a placeholder, and will generate an :exc:`AbstractError` if called. Several objects inherit from this one to create HDUs which have some semantic meaning.</span>
 <span class="sd">    This object requires a *label*, and can optionally take *headers* and *metadata*.</span>
+<span class="sd">    </span>
+<span class="sd">    .. Warning::</span>
+<span class="sd">        This is an abstract object. Methods implemented here will *likely* raise an :exc:`AbstractError` indicating that you shouldn&#39;t be using these methods. This class is provided so that users can sub-class it for their own purposes. It also serves as the base class for other Frames in this package.</span>
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">FITSFrame</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
@@ -94,7 +98,7 @@
 <div class="viewcode-block" id="FITSFrame.__call__"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSFrame.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Should return the data within this frame, usually as a *numpy* array.</span>
 <span class="sd">        </span>
-<span class="sd">        For an example implementation, see :cls:`AstroImage.ImageFrame`.&quot;&quot;&quot;</span>
+<span class="sd">        For an example implementation, see :class:`AstroImage.ImageFrame`.&quot;&quot;&quot;</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Abstract Data Structure </span><span class="si">%s</span><span class="s"> was called, but cannot return data!&quot;</span> <span class="o">%</span> <span class="bp">self</span>
         <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     </div>
@@ -142,7 +146,12 @@
 
 </div></div>
 <div class="viewcode-block" id="FITSObject"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject">[docs]</a><span class="k">class</span> <span class="nc">FITSObject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Holds on to a regular numpy-formated feature list image.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;This object tracks a number of data frames. The :attr:`Filename` is the default filename to use when reading and writing, and the :attr:`dataClass` argument accepts a list of new data classes to be used with this object. New data classes should conform to the data class standard.</span>
+<span class="sd">    </span>
+<span class="sd">    </span>
+<span class="sd">    .. Note::</span>
+<span class="sd">        This is an abstract object. Methods implemented here *may* raise an :exc:`AbstractError` indicating that you shouldn&#39;t be using these methods. This class is provided so that users can sub-class it for their own purposes. It is often acceptalbe to use this as your Object class so long as you provide a new Frame class to hold your data in the ``dataClasses`` argument.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">dataClasses</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">FITSObject</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         <span class="c"># Image data variables.</span>
@@ -161,7 +170,7 @@
     <span class="c"># Basic Object Mode Functions #</span>
     <span class="c">###############################</span>
 <div class="viewcode-block" id="FITSObject.save"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Saves the given image to this object&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Saves the given data to this object. If the data is an instance of one of the acceptable :attr:`dataClasses` then this method will simply save the data. Otherwise, it will attempt to cast the data into one of the acceptable :attr:`dataClasses` using their :meth:`__save__` mehtod.&quot;&quot;&quot;</span>
         <span class="c"># If we were passed raw data, and the dataClass can accept it, then go for it!</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataClasses</span><span class="p">)):</span>
             <span class="n">Object</span> <span class="o">=</span> <span class="bp">None</span>
@@ -190,7 +199,9 @@
         <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Saved frame </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">Object</span><span class="p">)</span>
     </div>
 <div class="viewcode-block" id="FITSObject.data"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the numpy image for this object&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns the raw data for the current state. This is done through the :meth:`FITSFrame.__call__` method, which should return basic data in as raw a form as possible. The purpose of this call is to allow the user get at the most recent piece of data as easily as possible.</span>
+<span class="sd">        </span>
+<span class="sd">        ..Note:: I have not finished examining some issues with referencing vs. copying data that comes out of this call. Be aware that manipulating some objects produced here may actually manipulate the version saved in the Object.&quot;&quot;&quot;</span>
         <span class="c"># Load the current stat if no state provided</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">statename</span><span class="p">:</span>
             <span class="n">statename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statename</span>
@@ -200,7 +211,9 @@
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&quot;Object </span><span class="si">%s</span><span class="s"> not instantiated with any data...&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="p">)</span>
     </div>
 <div class="viewcode-block" id="FITSObject.object"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.object">[docs]</a>    <span class="k">def</span> <span class="nf">object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the FITSFrame Specfied&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.</span>
+<span class="sd">        </span>
+<span class="sd">        ..Note:: Using frames can be advantageous as you don&#39;t rely on the Object to guess what type of frame should be used. Most times, the object will guess correctly, but Frames are a more robust way of ensuring type consistency.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">statename</span><span class="p">:</span>
             <span class="n">statename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statename</span>
         <span class="k">if</span> <span class="n">statename</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">statename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
@@ -209,7 +222,7 @@
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&quot;Object </span><span class="si">%s</span><span class="s"> not instantiated with any data...&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="p">)</span>
     </div>
 <div class="viewcode-block" id="FITSObject.select"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.select">[docs]</a>    <span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Sets the default image to the given name&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Sets the default frame to the given statename. Normally, the default frame is the one that was last saved.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">statename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s">&quot;State </span><span class="si">%s</span><span class="s"> does not exist!&quot;</span> <span class="o">%</span> <span class="n">statename</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">statename</span> <span class="o">=</span> <span class="n">statename</span>
@@ -217,18 +230,18 @@
         <span class="k">return</span>
     </div>
 <div class="viewcode-block" id="FITSObject.list"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.list">[docs]</a>    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Provides a list of the available images&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Provides a list of the available frames, by label.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
     </div>
 <div class="viewcode-block" id="FITSObject.remove"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Removes the specified image from the object&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Removes the specified frame from the object.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">statename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Object </span><span class="si">%s</span><span class="s"> does not exist!&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">))</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Removing Object with label </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">statename</span><span class="p">)</span>
     </div>
 <div class="viewcode-block" id="FITSObject.show"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the (rendered) matplotlib plot for this object&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns the (rendered) matplotlib plot for this object. This is a quick way to view your current data state without doing any serious plotting work. This aims for the sensible defaults philosophy, if you don&#39;t like what you get, write a new method that uses the :meth:`data` call and plots that.&quot;&quot;&quot;</span>
         <span class="c"># Load the current stat if no state provided</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">statename</span><span class="p">:</span>
             <span class="n">statename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statename</span>
@@ -238,7 +251,7 @@
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&quot;Object not instantiated with any data...&quot;</span><span class="p">)</span>
     </div>
 <div class="viewcode-block" id="FITSObject.write"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">states</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">primaryState</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Writes a FITS file for this object&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify ``states`` then only those states will be used. ``primaryState`` should be the state of the front HDU. When not specified, the latest state will be used. It uses the :attr:`dataClasses` :meth:`FITSFrame.__hdu__` method to return a valid HDU object for each Frame.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">primaryState</span><span class="p">:</span>
             <span class="n">primaryState</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statename</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
@@ -260,7 +273,7 @@
         <span class="n">HDUList</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     </div>
 <div class="viewcode-block" id="FITSObject.read"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;This reader assumes that all HDUs are image HDUs&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;This reader takes a FITS file, and trys to render each HDU within that FITS file as a frame in this Object. As such, it might read multiple frames. This method will return a list of Frames that it read. It uses the :attr:`dataClasses` :meth:`FITSFrame.__read__` method to return a valid Frame object for each HDU.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
         <span class="k">if</span> <span class="n">statename</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>

@@ -61,6 +61,14 @@
 <h2>1.2. Linear Fitting<a class="headerlink" href="#linear-fitting" title="Permalink to this headline">¶</a></h2>
 <p>There will be a submodule built for fitting data, both a generic API and a linear fit object. These objects will include access to standard scientific fitting parameters, such as Chi-Squared and Normalized Residuals.</p>
 </div>
+<div class="section" id="binning">
+<h2>1.3. Binning<a class="headerlink" href="#binning" title="Permalink to this headline">¶</a></h2>
+<p>I&#8217;ve been searching for a good, robust way to do image binning, but haven&#8217;t found one. This is very useful for simulations as it allows us to over-sample simulated data.</p>
+</div>
+<div class="section" id="analytic-convolutions">
+<h2>1.4. Analytic Convolutions<a class="headerlink" href="#analytic-convolutions" title="Permalink to this headline">¶</a></h2>
+<p>I&#8217;d like to develop a <em>fast</em> analytic way to do spectral convolutions. Managing individual spectra is okay, but handling a spectra that has a non-zero PSF, and hence is 2-D, is difficult. Generalizing this approach in the library is something I hope to do if I can figure this out.</p>
+</div>
 </div>
 
 
@@ -74,6 +82,8 @@
 <li><a class="reference internal" href="#">1. Development Plans</a><ul>
 <li><a class="reference internal" href="#pyraf-interaction">1.1. PyRAF Interaction</a></li>
 <li><a class="reference internal" href="#linear-fitting">1.2. Linear Fitting</a></li>
+<li><a class="reference internal" href="#binning">1.3. Binning</a></li>
+<li><a class="reference internal" href="#analytic-convolutions">1.4. Analytic Convolutions</a></li>
 </ul>
 </li>
 </ul>
