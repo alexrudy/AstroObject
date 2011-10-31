@@ -1,5 +1,5 @@
 :mod:`AstroSpectra`
-===================
+*******************
 
 Objects for manipulating and managing spectra.
 
@@ -10,5 +10,8 @@ Objects for manipulating and managing spectra.
     :members:
     :special-members:
 
-
+.. autoclass::
+    AstroSpectra.SpectraObject
+    :members:
+    :inherited-members:
 

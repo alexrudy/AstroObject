@@ -26,7 +26,7 @@ import math, copy, sys, time, logging, os
 LOG = logging.getLogger(__name__)
 
 class SpectraFrame(AstroObjectBase.FITSFrame):
-    """A simple spectral frame"""
+    """A single frame of a spectrum. This will save the spectrum as an image, with the first row having flux, and second row having the wavelength equivalent. Further rows can accomodate further spectral frames when stored to a FITS image. However, the frame only accepts a single spectrum."""
     def __init__(self, array, label, header=None, metadata=None):
         super(SpectraFrame, self).__init__(label, header, metadata)
         self.data = array # The image data
@@ -34,7 +34,7 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
         self.shape = array.shape # The shape of this image
     
     def validate(self):
-        """Validates this spectrum object"""
+        """Validates this spectrum frame to conform to the required data shape. This function is used to determine if a passed numpy data array appears to be a spectrum. It is essentially a helper function."""
         dimensions = 2
         rows = 2
         try:
@@ -52,12 +52,12 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
             raise AssertionError("Spectrum for %s appears to be multi-dimensional, expected %d Shape: %s" % (self,rows,self.shape))
     
     def __call__(self):
-        """Call this frame, returning the data array"""
+        """Returns the data for this frame, which should be a ``numpy.ndarray``. The first row will be the spectral data, the second row the equivalent wavelength for this spectrum."""
         return self.data
         
     
     def __hdu__(self,primary=False):
-        """Retruns an HDU for this frame"""
+        """Retruns an HDU which represents this frame. HDUs are either ``pyfits.PrimaryHDU`` or ``pyfits.ImageHDU`` depending on the *primary* keyword."""
         if primary:
             LOG.info("Generating a primary HDU for %s" % self)
             return pyfits.PrimaryHDU(self())
@@ -67,7 +67,10 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
         
     
     def __show__(self):
-        """Returns the plot object for this image"""
+        """Plots the image in this frame using matplotlib's ``imshow`` function. The color map is set to an inverted binary, as is often useful when looking at astronomical images. The figure object is returned, and can be manipulated further.
+        
+        .. Note::
+            This function serves as a quick view of the current state of the frame. It is not intended for robust plotting support, as that can be easily accomplished using ``matplotlib``. Rather, it attempts to do the minimum possible to create an acceptable image for immediate inspection."""
         LOG.debug("Plotting %s using matplotlib.pyplot.plot" % self)
         x,y = self.data #Slice Data
         axis = get_padding((x,y))
@@ -79,7 +82,11 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
     
     @classmethod
     def __save__(cls,data,label):
-        """A generic class method for saving to this object with data directly"""
+        """Attempts to create a :class:`ImageFrame` object from the provided data. This requres some type checking to ensure that the provided data meets the general sense of such an image. If the data does not appear to be correct, this method will raise an :exc:`AbstractError` with a message describing why the data did not validate. Generally, this error will be intercepted by the caller, and simply provides an indication that this is not the right class for a particular piece of data.
+        
+        If the data is saved successfully, this method will return an object of type :class:`ImageFrame`
+        
+        The validation requires that the data be a type ``numpy.ndarray`` and that the data have 2 and only 2 dimensions. As well, the data should pass the :meth:`validate` method."""
         LOG.debug("Attempting to save as %s" % cls)
         dimensions = 2
         if not isinstance(data,np.ndarray):
@@ -98,7 +105,7 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
     
     @classmethod
     def __read__(cls,HDU,label):
-        """An abstract method for reading empty data HDU Frames"""
+        """Attempts to convert a given HDU into an object of type :class:`ImageFrame`. This method is similar to the :meth:`__save__` method, but instead of taking data as input, it takes a full HDU. The use of a full HDU allows this method to check for the correct type of HDU, and to gather header information from the HDU. When reading data from a FITS file, this is the prefered method to initialize a new frame."""
         LOG.debug("Attempting to read as %s" % cls)
         if not isinstance(HDU,(pyfits.ImageHDU,pyfits.PrimaryHDU)):
             msg = "Must save a PrimaryHDU or ImageHDU to a %s, found %s" % (cls.__name__,type(HDU))
@@ -120,7 +127,7 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
 
 
 class SpectraObject(AstroObjectBase.FITSObject):
-    """A subclass of FITS image with specific facilites for displaying spectra"""
+    """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.FITSObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`SpectraFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately."""
     def __init__(self, array=None):
         super(SpectraObject, self).__init__()
         self.dataClasses += [SpectraFrame]

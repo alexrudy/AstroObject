@@ -8,30 +8,23 @@ Welcome to AstroObject!
 
 AstroObject is a library for Object-Oriented Astronomy. Currently under development, it contains tools for object-oriented management of Spectrum Data, Image Data, and Analytic Spectrum Data. More features are planned for the future. To get a sense of the philosophy of this project, read the introduction.
 
-Contents:
+.. Warning::
+    This module is under development. The version number |release| is very low, indicating that much of this module may be unreliable. The behavior in specific instances is not guaranteed nor should it be trusted. For more information about the development of this module, see :doc:`development`.
+
+About AstroObject:
+
+*These pages are meant to be read for an understanding of what this module is good for. In the future, the tutorial will be here, as well as simple installation instructions, etc*.
 
 .. toctree::
     :maxdepth: 2
     :numbered:
     
     intro
-
-
-API:
-
-.. toctree::
-    :maxdepth: 2
-    :numbered:
-    
+    development
+    api
     AstroObject
     AstroImage
     AstroSpectra
-
-Development:
-
-.. toctree::
-    :maxdepth: 2
-    :numbered:
     
     future
 

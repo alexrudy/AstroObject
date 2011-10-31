@@ -51,3 +51,5 @@ do
 done
 
 sed -i '' -Ee "s/__version__ += +\'[0-9\.]+\'/__version__ = \'$VERSION\'/" '__init__.py'
+sed -i '' -Ee "s/version += +\'[0-9\.]+\'/version = \'$VERSION\'/" 'Docs/source/conf.py'
+sed -i '' -Ee "s/release += +\'[0-9\.]+\'/release = \'$VERSION\'/" 'Docs/source/conf.py'

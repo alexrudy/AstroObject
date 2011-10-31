@@ -1,5 +1,5 @@
 :mod:`AstroImage`
-=================
+*****************
 
 Objects for manipulating and managing images.
 
@@ -11,4 +11,7 @@ Objects for manipulating and managing images.
     :special-members:
 
 
-
+.. autoclass::
+    AstroImage.ImageObject
+    :members:
+    :inherited-members:
