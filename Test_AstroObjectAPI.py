@@ -149,7 +149,7 @@ class API_Base_Object(object):
         AObject = self.OBJECT()
         AObject.save(self.FRAME)
         assert AObject.statename == self.FRAMELABEL
-        assert isinstance(AObject.object(),self.FRAMETYPE)
+        assert isinstance(AObject.frame(),self.FRAMETYPE)
 
     def test_save_object_with_label(self):
         """Saving an object with an explicit label changes that object's label"""
@@ -157,7 +157,7 @@ class API_Base_Object(object):
         AObject = self.OBJECT()
         AObject.save(self.FRAME,NewLabel)
         assert AObject.statename == NewLabel
-        assert AObject.object().label == NewLabel
+        assert AObject.frame().label == NewLabel
 
 
     def test_double_saving_an_object_should_reference(self):
@@ -168,13 +168,13 @@ class API_Base_Object(object):
         AObject.save(self.FRAME)
         AObject.save(self.FRAME,NewLabel)
         assert AObject.statename == NewLabel
-        assert AObject.object().label == NewLabel
+        assert AObject.frame().label == NewLabel
         AObject.select(self.FRAMELABEL)
         assert AObject.statename == self.FRAMELABEL
-        assert AObject.object().label == self.FRAMELABEL
+        assert AObject.frame().label == self.FRAMELABEL
         AObject.select(NewLabel)
         assert AObject.statename == NewLabel
-        assert AObject.object().label == NewLabel
+        assert AObject.frame().label == NewLabel
         
     
     def test_write_and_read_with_image_HDU(self):
@@ -189,7 +189,7 @@ class API_Base_Object(object):
         label = AObject.read(Filename)
         assert label == [Filename]
         assert Filename == AObject.statename
-        assert isinstance(AObject.object(),self.FRAMETYPE)
+        assert isinstance(AObject.frame(),self.FRAMETYPE)
         os.remove(Filename)
         
     
@@ -210,10 +210,10 @@ class API_Base_Object(object):
         AObject.save(self.FRAME)
         AObject.save(Frame,Label)
         assert AObject.statename == Label
-        assert AObject.object().label == Label
+        assert AObject.frame().label == Label
         AObject.select(self.FRAMELABEL)
         assert AObject.statename == self.FRAMELABEL
-        assert AObject.object().label == self.FRAMELABEL
+        assert AObject.frame().label == self.FRAMELABEL
     
     
     @nt.raises(IndexError)
@@ -242,7 +242,7 @@ class API_Base_Object(object):
     def test_object_raises_key_error(self):
         """Object should raise key error when no data is present"""
         AObject = self.OBJECT()
-        AObject.object()
+        AObject.frame()
     
     
     @nt.raises(KeyError)
