@@ -1,5 +1,5 @@
 :mod:`AstroObjectBase`
-======================
+**********************
 
 The Base API was introduced in version 0.2.1 to facilitate the creation and use of basic template classes.
 

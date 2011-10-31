@@ -1,5 +1,5 @@
 :mod:`AstroImage`
-=================
+*****************
 
 Objects for manipulating and managing images.
 
