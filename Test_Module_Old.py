@@ -24,7 +24,7 @@ LOG = logging.getLogger("AstroObject Tests")
 
 LOG.info("Starting Test Suite: %s" % __file__)
 
-class ObjectTests(unittest.TestCase):
+class TestsObject(unittest.TestCase):
     """A class for testing the AstroObject objects"""
     def setUp(self):
         """Sets up the Object Tests"""
@@ -248,7 +248,6 @@ class AnalayticSpectraTests(unittest.TestCase):
 
 if __name__ != '__main__':
     LOG.critical(__name__+" is not a module, do not run it as one!")
-    sys.exit(1)
 else:
     LOG.debug("Removing Console Handler...")
     print "\n" + "-"*70

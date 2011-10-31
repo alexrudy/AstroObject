@@ -65,7 +65,7 @@ class AnalyticSpectrum(AstroObjectBase.FITSFrame):
         msg = "%s: Cannot Call: Abstract Spectra not instantiated with any properies." % (self)
         raise AbstractError(msg)
     
-    def __hdu__(self):
+    def __hdu__(self,primary=False):
         """Returns a pyfits HDU representing this object"""
         msg = "%s: Cannot make HDU: Abstract Spectra not instantiated with any properies." % (self)
         raise AbstractError(msg)
