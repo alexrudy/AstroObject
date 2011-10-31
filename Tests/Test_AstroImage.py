@@ -30,7 +30,7 @@ class test_ImageFrame(API_Base_Frame):
     
     def setUp(self):
         """Sets up the test with some basic image data"""
-        self.testJPG = "Tests/Hong-Kong.jpg"
+        self.testJPG = "Hong-Kong.jpg"
         if not os.access(self.testJPG,os.R_OK):
             self.image = np.zeros((1000,1000))
             self.image[450:550,450:550] = np.ones((100,100))
