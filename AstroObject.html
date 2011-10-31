@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>1. AstroObjectBase &mdash; AstroObject 0.2.0 documentation</title>
+    <title>4. AstroObjectBase &mdash; AstroObject 0.2.0 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -26,8 +26,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="AstroObject 0.2.0 documentation" href="index.html" />
-    <link rel="next" title="2. AstroImage" href="AstroImage.html" />
-    <link rel="prev" title="2. Development of AstroObject" href="development.html" /> 
+    <link rel="next" title="5. AstroImage" href="AstroImage.html" />
+    <link rel="prev" title="3. AstroObject API" href="api.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,10 +40,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="AstroImage.html" title="2. AstroImage"
+          <a href="AstroImage.html" title="5. AstroImage"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="development.html" title="2. Development of AstroObject"
+          <a href="api.html" title="3. AstroObject API"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">AstroObject 0.2.0 documentation</a> &raquo;</li> 
       </ul>
@@ -55,7 +55,7 @@
           <div class="body">
             
   <div class="section" id="astroobjectbase">
-<h1>1. <a class="reference internal" href="#module-AstroObjectBase" title="AstroObjectBase"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObjectBase</span></tt></a><a class="headerlink" href="#astroobjectbase" title="Permalink to this headline">¶</a></h1>
+<h1>4. <a class="reference internal" href="#module-AstroObjectBase" title="AstroObjectBase"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObjectBase</span></tt></a><a class="headerlink" href="#astroobjectbase" title="Permalink to this headline">¶</a></h1>
 <p>The Base API was introduced in version 0.2.1 to facilitate the creation and use of basic template classes.</p>
 <span class="target" id="module-AstroObjectBase"></span><p>AstroObjectBase provides template objects for the Object-Oriented Modules <a class="reference internal" href="AstroImage.html#module-AstroImage" title="AstroImage"><tt class="xref py py-mod docutils literal"><span class="pre">AstroImage</span></tt></a> and <a class="reference internal" href="AstroSpectra.html#module-AstroSpectra" title="AstroSpectra"><tt class="xref py py-mod docutils literal"><span class="pre">AstroSpectra</span></tt></a>. Template classes implement all of the required methods. However, calling a method defined by a template class will usually raise an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> indicating that an Abstract method was called.</p>
 <div class="admonition note">
@@ -136,16 +136,16 @@ Subclasses should provide a <em>primary</em> keyword argument, and if that keywo
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObjectBase.FITSObject.list">
-<tt class="descname">list</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.list" title="Permalink to this definition">¶</a></dt>
-<dd><p>Provides a list of the available frames, by label.</p>
+<dt id="AstroObjectBase.FITSObject.frame">
+<tt class="descname">frame</tt><big>(</big><em>statename=None</em><big>)</big><a class="headerlink" href="#AstroObjectBase.FITSObject.frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.</p>
+<p>..Note:: Using frames can be advantageous as you don&#8217;t rely on the Object to guess what type of frame should be used. Most times, the object will guess correctly, but Frames are a more robust way of ensuring type consistency.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObjectBase.FITSObject.object">
-<tt class="descname">object</tt><big>(</big><em>statename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.object"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.object" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.</p>
-<p>..Note:: Using frames can be advantageous as you don&#8217;t rely on the Object to guess what type of frame should be used. Most times, the object will guess correctly, but Frames are a more robust way of ensuring type consistency.</p>
+<dt id="AstroObjectBase.FITSObject.list">
+<tt class="descname">list</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides a list of the available frames, by label.</p>
 </dd></dl>
 
 <dl class="method">
@@ -180,7 +180,7 @@ Subclasses should provide a <em>primary</em> keyword argument, and if that keywo
 
 <dl class="method">
 <dt id="AstroObjectBase.FITSObject.write">
-<tt class="descname">write</tt><big>(</big><em>filename=None</em>, <em>states=None</em>, <em>primaryState=None</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.write" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">write</tt><big>(</big><em>filename=None</em>, <em>states=None</em>, <em>primaryState=None</em>, <em>clobber=False</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify <tt class="docutils literal"><span class="pre">states</span></tt> then only those states will be used. <tt class="docutils literal"><span class="pre">primaryState</span></tt> should be the state of the front HDU. When not specified, the latest state will be used. It uses the <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> <a class="reference internal" href="#AstroObjectBase.FITSFrame.__hdu__" title="AstroObjectBase.FITSFrame.__hdu__"><tt class="xref py py-meth docutils literal"><span class="pre">FITSFrame.__hdu__()</span></tt></a> method to return a valid HDU object for each Frame.</p>
 </dd></dl>
 
@@ -195,11 +195,11 @@ Subclasses should provide a <em>primary</em> keyword argument, and if that keywo
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="development.html"
-                        title="previous chapter">2. Development of <tt class="docutils literal"><span class="pre">AstroObject</span></tt></a></p>
+  <p class="topless"><a href="api.html"
+                        title="previous chapter">3. AstroObject API</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="AstroImage.html"
-                        title="next chapter">2. <tt class="docutils literal docutils literal"><span class="pre">AstroImage</span></tt></a></p>
+                        title="next chapter">5. <tt class="docutils literal docutils literal"><span class="pre">AstroImage</span></tt></a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/AstroObject.txt"
@@ -232,10 +232,10 @@ Subclasses should provide a <em>primary</em> keyword argument, and if that keywo
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="AstroImage.html" title="2. AstroImage"
+          <a href="AstroImage.html" title="5. AstroImage"
              >next</a> |</li>
         <li class="right" >
-          <a href="development.html" title="2. Development of AstroObject"
+          <a href="api.html" title="3. AstroObject API"
              >previous</a> |</li>
         <li><a href="index.html">AstroObject 0.2.0 documentation</a> &raquo;</li> 
       </ul>

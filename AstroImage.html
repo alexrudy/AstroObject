@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>2. AstroImage &mdash; AstroObject 0.2.0 documentation</title>
+    <title>5. AstroImage &mdash; AstroObject 0.2.0 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -26,8 +26,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="AstroObject 0.2.0 documentation" href="index.html" />
-    <link rel="next" title="3. AstroSpectra" href="AstroSpectra.html" />
-    <link rel="prev" title="1. AstroObjectBase" href="AstroObject.html" /> 
+    <link rel="next" title="6. AstroSpectra" href="AstroSpectra.html" />
+    <link rel="prev" title="4. AstroObjectBase" href="AstroObject.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,10 +40,10 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="AstroSpectra.html" title="3. AstroSpectra"
+          <a href="AstroSpectra.html" title="6. AstroSpectra"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="AstroObject.html" title="1. AstroObjectBase"
+          <a href="AstroObject.html" title="4. AstroObjectBase"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">AstroObject 0.2.0 documentation</a> &raquo;</li> 
       </ul>
@@ -55,7 +55,7 @@
           <div class="body">
             
   <div class="section" id="astroimage">
-<h1>2. <a class="reference internal" href="#module-AstroImage" title="AstroImage"><tt class="xref py py-mod docutils literal"><span class="pre">AstroImage</span></tt></a><a class="headerlink" href="#astroimage" title="Permalink to this headline">¶</a></h1>
+<h1>5. <a class="reference internal" href="#module-AstroImage" title="AstroImage"><tt class="xref py py-mod docutils literal"><span class="pre">AstroImage</span></tt></a><a class="headerlink" href="#astroimage" title="Permalink to this headline">¶</a></h1>
 <p>Objects for manipulating and managing images.</p>
 <span class="target" id="module-AstroImage"></span><dl class="class">
 <dt id="AstroImage.ImageFrame">
@@ -114,6 +114,13 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
 </dd></dl>
 
 <dl class="method">
+<dt id="AstroImage.ImageObject.frame">
+<tt class="descname">frame</tt><big>(</big><em>statename=None</em><big>)</big><a class="headerlink" href="#AstroImage.ImageObject.frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.</p>
+<p>..Note:: Using frames can be advantageous as you don&#8217;t rely on the Object to guess what type of frame should be used. Most times, the object will guess correctly, but Frames are a more robust way of ensuring type consistency.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="AstroImage.ImageObject.list">
 <tt class="descname">list</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroImage.ImageObject.list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provides a list of the available frames, by label.</p>
@@ -124,13 +131,6 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
 <tt class="descname">loadFromFile</tt><big>(</big><em>filename=None</em>, <em>statename=None</em><big>)</big><a class="reference internal" href="_modules/AstroImage.html#ImageObject.loadFromFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroImage.ImageObject.loadFromFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function can be used to load an image file (but not a FITS file) into this image frame. Image files should be formats accepatble to the Python Image Library, but that generally applies to most common image formats, such as .png and .jpg .
 This method takes a <em>filename</em> and a <em>statename</em> parameter. If either is not given, they will be generated using sensible defaults.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="AstroImage.ImageObject.object">
-<tt class="descname">object</tt><big>(</big><em>statename=None</em><big>)</big><a class="headerlink" href="#AstroImage.ImageObject.object" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.</p>
-<p>..Note:: Using frames can be advantageous as you don&#8217;t rely on the Object to guess what type of frame should be used. Most times, the object will guess correctly, but Frames are a more robust way of ensuring type consistency.</p>
 </dd></dl>
 
 <dl class="method">
@@ -165,7 +165,7 @@ This method takes a <em>filename</em> and a <em>statename</em> parameter. If eit
 
 <dl class="method">
 <dt id="AstroImage.ImageObject.write">
-<tt class="descname">write</tt><big>(</big><em>filename=None</em>, <em>states=None</em>, <em>primaryState=None</em><big>)</big><a class="headerlink" href="#AstroImage.ImageObject.write" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">write</tt><big>(</big><em>filename=None</em>, <em>states=None</em>, <em>primaryState=None</em>, <em>clobber=False</em><big>)</big><a class="headerlink" href="#AstroImage.ImageObject.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify <tt class="docutils literal"><span class="pre">states</span></tt> then only those states will be used. <tt class="docutils literal"><span class="pre">primaryState</span></tt> should be the state of the front HDU. When not specified, the latest state will be used. It uses the <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> <tt class="xref py py-meth docutils literal"><span class="pre">FITSFrame.__hdu__()</span></tt> method to return a valid HDU object for each Frame.</p>
 </dd></dl>
 
@@ -181,10 +181,10 @@ This method takes a <em>filename</em> and a <em>statename</em> parameter. If eit
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
   <p class="topless"><a href="AstroObject.html"
-                        title="previous chapter">1. <tt class="docutils literal"><span class="pre">AstroObjectBase</span></tt></a></p>
+                        title="previous chapter">4. <tt class="docutils literal"><span class="pre">AstroObjectBase</span></tt></a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="AstroSpectra.html"
-                        title="next chapter">3. <tt class="docutils literal"><span class="pre">AstroSpectra</span></tt></a></p>
+                        title="next chapter">6. <tt class="docutils literal"><span class="pre">AstroSpectra</span></tt></a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/AstroImage.txt"
@@ -217,10 +217,10 @@ This method takes a <em>filename</em> and a <em>statename</em> parameter. If eit
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="AstroSpectra.html" title="3. AstroSpectra"
+          <a href="AstroSpectra.html" title="6. AstroSpectra"
              >next</a> |</li>
         <li class="right" >
-          <a href="AstroObject.html" title="1. AstroObjectBase"
+          <a href="AstroObject.html" title="4. AstroObjectBase"
              >previous</a> |</li>
         <li><a href="index.html">AstroObject 0.2.0 documentation</a> &raquo;</li> 
       </ul>
