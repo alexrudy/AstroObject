@@ -126,7 +126,7 @@ class API_Abstract_Object(object):
         BObject = self.OBJECT()
         BObject.save(self.FRAMEINST)
         assert BObject.statename == self.FRAMELABEL
-        assert isinstance(BObject.object(),self.FRAME)
+        assert isinstance(BObject.frame(),self.FRAME)
     
     def test_save_object_with_label(self):
         """Saving an object with an explicit label should change that object's label"""
@@ -134,7 +134,7 @@ class API_Abstract_Object(object):
         BObject = self.OBJECT()
         BObject.save(self.FRAMEINST,NewLabel)
         assert BObject.statename == NewLabel
-        assert BObject.object().label == NewLabel
+        assert BObject.frame().label == NewLabel
         
     
     def test_double_saving_an_object_should_reference(self):
@@ -145,13 +145,13 @@ class API_Abstract_Object(object):
         BObject.save(self.FRAMEINST)
         BObject.save(self.FRAMEINST,NewLabel)
         assert BObject.statename == NewLabel
-        assert BObject.object().label == NewLabel
+        assert BObject.frame().label == NewLabel
         BObject.select(self.FRAMELABEL)
         assert BObject.statename == self.FRAMELABEL
-        assert BObject.object().label == self.FRAMELABEL
+        assert BObject.frame().label == self.FRAMELABEL
         BObject.select(NewLabel)
         assert BObject.statename == NewLabel
-        assert BObject.object().label == NewLabel
+        assert BObject.frame().label == NewLabel
         
     
     def test_write_and_read_with_empty_HDU(self):
@@ -165,7 +165,7 @@ class API_Abstract_Object(object):
         label = BObject.read(self.FILENAME)
         assert label == [self.FILENAME]
         assert self.FILENAME == BObject.statename
-        assert isinstance(BObject.object(),self.FRAME)
+        assert isinstance(BObject.frame(),self.FRAME)
         os.remove(self.FILENAME)
         
     
@@ -186,10 +186,10 @@ class API_Abstract_Object(object):
         BObject.save(self.FRAMEINST)
         BObject.save(FRAME,Label)
         assert BObject.statename == Label
-        assert BObject.object().label == Label
+        assert BObject.frame().label == Label
         BObject.select(self.FRAMELABEL)
         assert BObject.statename == self.FRAMELABEL
-        assert BObject.object().label == self.FRAMELABEL
+        assert BObject.frame().label == self.FRAMELABEL
         
     
     @nt.raises(IndexError)
@@ -218,7 +218,7 @@ class API_Abstract_Object(object):
     def test_object_raises_key_error(self):
         """Object should raise key error when no data is present"""
         BObject = self.OBJECT()
-        BObject.object()
+        BObject.frame()
         
     
     @nt.raises(KeyError)
@@ -278,6 +278,12 @@ class API_Abstract_Object(object):
         BObject = self.OBJECT()
         BObject.save(self.FRAMEINST)
         BObject.show(self.FRAMELABEL + "JUNK...")
+        
+    def test_object_call_exists(self):
+        """Depreciated .object() call exists and works."""
+        BObject = self.OBJECT()
+        BObject.save(self.FRAMEINST)
+        assert BObject.object() == BObject.frame()
 
 
 
