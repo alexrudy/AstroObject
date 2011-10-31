@@ -103,15 +103,16 @@ class API_Abstract_Frame(object):
 class API_Abstract_Object(object):
     """Tests an Abstract Object"""
     
-    def setUp(self):
-        """Fixture for setting up a basic image frame"""
-        Image = np.ones((100,100))
-        Image[45:55,45:55] = np.zeros((10,10))
-        self.FRAME = self.FRAME("Empty")
-        self.FRAMELABEL = "Empty"
-        self.HDU = pf.PrimaryHDU()
-        self.imHDU = pf.ImageHDU()
-        
+    
+    def check_constants(self):
+           """API-Based Test Contains Appropriate Constants"""
+           passed = True
+           attributes = ['FRAME','DATA','INVALID','OBJECT']
+           for attribute in attributes:
+               passed &= hasattr(self,attribute)
+               
+               
+           assert passed
     
     @nt.raises(TypeError)
     def test_save_with_data(self):
@@ -123,7 +124,7 @@ class API_Abstract_Object(object):
     def test_save_with_object(self):
         """Saving to FITSObject should succeed with FITSFRAME"""
         BObject = self.OBJECT()
-        BObject.save(self.FRAME)
+        BObject.save(self.FRAMEINST)
         assert BObject.statename == self.FRAMELABEL
         assert isinstance(BObject.object(),self.FRAME)
     
@@ -131,7 +132,7 @@ class API_Abstract_Object(object):
         """Saving an object with an explicit label should change that object's label"""
         NewLabel = "Other"
         BObject = self.OBJECT()
-        BObject.save(self.FRAME,NewLabel)
+        BObject.save(self.FRAMEINST,NewLabel)
         assert BObject.statename == NewLabel
         assert BObject.object().label == NewLabel
         
@@ -141,8 +142,8 @@ class API_Abstract_Object(object):
         raise SkipTest("This is a bug, should be fixed in a later version.")
         NewLabel = "Other"
         BObject = self.OBJECT()
-        BObject.save(self.FRAME)
-        BObject.save(self.FRAME,NewLabel)
+        BObject.save(self.FRAMEINST)
+        BObject.save(self.FRAMEINST,NewLabel)
         assert BObject.statename == NewLabel
         assert BObject.object().label == NewLabel
         BObject.select(self.FRAMELABEL)
@@ -159,7 +160,7 @@ class API_Abstract_Object(object):
         if os.access(Filename,os.F_OK):
             os.remove(Filename)
         BObject = self.OBJECT()
-        BObject.save(self.FRAME)
+        BObject.save(self.FRAMEINST)
         BObject.write(Filename)
         assert os.access(Filename,os.F_OK)
         label = BObject.read(Filename)
@@ -183,7 +184,7 @@ class API_Abstract_Object(object):
         Label = "Other"
         FRAME = self.FRAME(Label)
         BObject = self.OBJECT()
-        BObject.save(self.FRAME)
+        BObject.save(self.FRAMEINST)
         BObject.save(FRAME,Label)
         assert BObject.statename == Label
         assert BObject.object().label == Label
@@ -203,7 +204,7 @@ class API_Abstract_Object(object):
     def test_data_raises_abstract_error(self):
         """Data should raise underlying abstract error with frame saved"""
         BObject = self.OBJECT()
-        BObject.save(self.FRAME)
+        BObject.save(self.FRAMEINST)
         BObject.data()
         
     
@@ -225,14 +226,14 @@ class API_Abstract_Object(object):
     def test_cannot_duplicate_state_name(self):
         """Save should not allow duplication of state name"""
         BObject = self.OBJECT()
-        BObject.save(self.FRAME)
-        BObject.save(self.FRAME)
+        BObject.save(self.FRAMEINST)
+        BObject.save(self.FRAMEINST)
     
     def test_list_statenames(self):
         """List should show all statenames"""
         BObject = self.OBJECT()
-        BObject.save(self.FRAME,"A")
-        BObject.save(self.FRAME,"B")
+        BObject.save(self.FRAMEINST,"A")
+        BObject.save(self.FRAMEINST,"B")
         assert ["A","B"] == BObject.list()
         
     
@@ -244,8 +245,8 @@ class API_Abstract_Object(object):
     def test_remove_should_delete_state(self):
         """Remove Deletes States"""
         BObject = self.OBJECT()
-        BObject.save(self.FRAME,"A")
-        BObject.save(self.FRAME,"B")
+        BObject.save(self.FRAMEINST,"A")
+        BObject.save(self.FRAMEINST,"B")
         assert ["A","B"] == BObject.list()
         BObject.remove("A")
         assert ["B"] == BObject.list()
@@ -255,7 +256,7 @@ class API_Abstract_Object(object):
     def test_cannot_remove_nonexistant_state(self):
         """Cannot Remove Non-Existant State"""
         BObject = self.OBJECT()
-        BObject.save(self.FRAME,"A")
+        BObject.save(self.FRAMEINST,"A")
         BObject.remove("B")
         
     
@@ -269,14 +270,14 @@ class API_Abstract_Object(object):
     def test_show_should_raise_abstract_error_with_frame(self):
         """Show should call underlying show method, raising an abstract error"""
         BObject = self.OBJECT()
-        BObject.save(self.FRAME)
+        BObject.save(self.FRAMEINST)
         BObject.show()
 
     @nt.raises(KeyError)
     def test_show_should_raise_key_error_with_wrong_statename(self):
         """Show should raise KeyError for a non-existent state name"""
         BObject = self.OBJECT()
-        BObject.save(self.FRAME)
+        BObject.save(self.FRAMEINST)
         BObject.show(self.FRAMELABEL + "JUNK...")
 
 
@@ -315,7 +316,19 @@ class test_FITSFrame(API_Abstract_Frame):
         assert HDU.data == None
 
 
-
+class test_FITSObject(API_Abstract_Object):
+    """AstroObjectBase.FITSObject"""
+    def setUp(self):
+        self.FRAME = AOB.FITSFrame
+        self.OBJECT = AOB.FITSObject
+        self.FRAMESTR = "<'FITSFrame' labeled 'Empty'>"
+        self.DATA = None
+        self.INVALID = np.array([1,2,3]).astype(np.int16)
+        self.FRAMELABEL = "Empty"
+        self.FRAMEINST = self.FRAME("Empty")
+        self.HDU = pf.PrimaryHDU()
+        self.imHDU = pf.ImageHDU()
+        self.check_constants()
 
 
 
