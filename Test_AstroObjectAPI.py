@@ -299,7 +299,7 @@ class API_Base_Object(object):
         AObject = self.OBJECT()
         AObject.save(self.FRAME)
         figure = AObject.show()
-        assert isinstance(figure,self.SHOWTYPE)
+        assert isinstance(figure,self.SHOWTYPE), "Returned type %s" % type(figure)
     
     @nt.raises(KeyError)
     def test_show_should_raise_key_error_with_wrong_statename(self):
