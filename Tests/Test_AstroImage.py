@@ -98,6 +98,8 @@ class test_ImageObject(API_Base_Object):
         
     def test_read_from_image_file(self):
         """Read directly from an image file"""
+        if not os.access(self.testJPG,os.R_OK):
+            raise SkipTest
         IObject = self.OBJECT()
         IObject.loadFromFile(self.testJPG,"TestJPG")
         assert IObject.statename == "TestJPG"
