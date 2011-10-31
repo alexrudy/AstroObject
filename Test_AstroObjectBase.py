@@ -18,16 +18,16 @@ import matplotlib.pyplot as plt
 import os
 
 class test_FITSFrame(object):
-    """Test grouping for those tests which apply to the basic FITS Frame"""
+    """AstroObjectBase.FITSFrame"""
         
     @nt.raises(AbstractError)
     def test_save(self):
-        """Attempting to save to an abstract base class should raise an error"""
+        """Save to an abstract base class raises an AbstractError"""
         AOB.FITSFrame.__save__(None,"None")
 
 
     def test_read_empty_HDU(self):
-        """Attempting to read an empty HDU to an abstract base class should succeed"""
+        """Reads an empty HDU"""
         HDU = pf.PrimaryHDU()
         FFrame = AOB.FITSFrame.__read__(HDU,"Empty")
         assert isinstance(FFrame,AOB.FITSFrame)
@@ -35,21 +35,21 @@ class test_FITSFrame(object):
         
     @nt.raises(AbstractError)
     def test_read_image_HDU(self):
-        """Read an ImageHDU should fail"""
+        """Read an ImageHDU fails"""
         HDU = pf.ImageHDU()
         AOB.FITSFrame.__read__(HDU,"Empty")
     
 
     @nt.raises(AbstractError)
     def test_read_non_empty_HDU(self):
-        """Attempting to read an not empty HDU to an abstract base class should fail"""
+        """Read a not empty HDU to an abstract base class fails"""
         HDU = pf.PrimaryHDU(np.array([1,2,3]).astype(np.int16))
         FFrame = AOB.FITSFrame.__read__(HDU,"Not Empty")
     
 
     @nt.raises(AbstractError)
     def test_call_should_fail(self):
-        """Calling a base frame should raise an abstract error"""
+        """Calling a base frame should raise an AbstractError"""
         FFrame = AOB.FITSFrame("Empty")
         assert FFrame.label == "Empty"
         FFrame()
@@ -70,20 +70,20 @@ class test_FITSFrame(object):
 
     @nt.raises(AbstractError)
     def test_show_should_fail(self):
-        """Attempting to show a base frame should fail"""
+        """Showing a base frame should fail"""
         FFrame = AOB.FITSFrame("Empty")
         assert FFrame.label == "Empty"
         FFrame.__show__()
 
     def test_string_representation(self):
-        """Confirm the desired string representation"""
+        """String representation"""
         FFrame = AOB.FITSFrame("Empty")
         assert FFrame.label == "Empty"
         assert str(FFrame) == "<'FITSFrame' labeled 'Empty'>"
 
 
 class test_FITSObject(object):
-    """Test grouping for testing the fits object"""
+    """"AstroObjectBase.FITSObject"""
     
     def setUp(self):
         """Fixture for setting up a basic image frame"""
@@ -94,11 +94,10 @@ class test_FITSObject(object):
         self.HDU = pf.PrimaryHDU()
         self.imHDU = pf.ImageHDU()
         
-        
     
     @nt.raises(TypeError)
     def test_save_with_data(self):
-        """Saving to FITSObject should fail with data"""
+        """Saving to FITSObject fails with None data"""
         FObject = AOB.FITSObject()
         FObject.save(None)
         
@@ -154,7 +153,7 @@ class test_FITSObject(object):
     
     @nt.raises(IOError)
     def test_read_from_nonexistant_file(self):
-        """Read should fail on non-existant file"""
+        """Read should fail on non-existent file"""
         Filename = "TestFile.fits"
         if os.access(Filename,os.F_OK):
             os.remove(Filename)

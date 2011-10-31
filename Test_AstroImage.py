@@ -26,7 +26,7 @@ import AstroObjectBase as AOB
 from Utilities import AbstractError
 
 class test_ImageFrame(API_Base_Frame):
-    """ImageFrame"""
+    """AstroImage.ImageFrame"""
     
     def setUp(self):
         """Sets up the test with some basic image data"""
@@ -49,6 +49,9 @@ class test_ImageFrame(API_Base_Frame):
             
         self.SAME = SAME
         
+        self.check_constants()
+        
+        
     
             
     def test_read_grayscale_HDU(self):
@@ -62,7 +65,7 @@ class test_ImageFrame(API_Base_Frame):
         
         
 class test_ImageObject(API_Base_Object):
-    """Tests an ImageObject using the API_BASE tests"""
+    """AstroImage.ImageObject"""
         
     def setUp(self):
         """Fixture for setting up a basic image frame"""
@@ -87,8 +90,10 @@ class test_ImageObject(API_Base_Object):
         def SAME(first,second):
             """Return whether these two are the same"""
             return not (np.abs(first-second) > 1e-6).any()
-            
+        
         self.SAME = SAME
+        
+        self.check_constants()
         
         
     def test_read_from_image_file(self):

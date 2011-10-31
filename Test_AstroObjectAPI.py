@@ -21,9 +21,12 @@ __all__ = ["API_Base_Frame","API_Base_Object"]
 
 class API_Base_Frame(object):
     """This class implements all of the tests required to ensure that the API is obeyed."""
+    def setUp(self):
+        self.check_constants()
     
-    def test_check_constants(self):
-        """Check for the following constants"""
+    
+    def check_constants(self):
+        """API-Based Test Contains Appropriate Constants"""
         passed = True
         attributes = ['FRAME','VALID','INVALID','SAME','SHOWTYPE','HDUTYPE','FRAMESTR']
         for attribute in attributes:
@@ -33,35 +36,35 @@ class API_Base_Frame(object):
     
     @nt.raises(AttributeError)
     def test_init_empty(self):
-        """Cannot initialize an ImageFrame without data"""
+        """Initialize Frame fails without data"""
         self.FRAME(None,"Label")
         
     @nt.raises(Exception)
     def test_init_invalid(self):
-        """Cannot initialize a Frame with invalid data"""
+        """Initialize Frame fails with invalid data"""
         self.FRAME(self.INVALID,"Invalid")
         
     def test_init_data(self):
-        """Frame initializes with data"""
+        """Initializes with valid data"""
         AFrame = self.FRAME(self.VALID,"Valid")
         assert AFrame.label == "Valid"
         assert self.SAME(AFrame.data,self.VALID)
     
     @nt.raises(AbstractError)
     def test_save_to_image(self):
-        """Save an invalid object should raise an error"""
+        """Save an invalid object raises an AbstractError"""
         self.FRAME.__save__(None,"None")
         
     
     def test_save_data(self):
-        """Save valid data should work"""
+        """Save valid data"""
         AFrame = self.FRAME.__save__(self.VALID,"Valid")
         assert AFrame.label == "Valid"
         assert self.SAME(AFrame.data,self.VALID)
         
     
     def test_read_HDU(self):
-        """Read an HDU to Frame should succeed"""
+        """Read an HDU to Frame"""
         HDU = pf.PrimaryHDU(self.VALID)
         AFrame = self.FRAME.__read__(HDU,"Valid")
         assert isinstance(AFrame,self.FRAME)
@@ -71,13 +74,13 @@ class API_Base_Frame(object):
     
     @nt.raises(AbstractError)
     def test_read_empty_HDU(self):
-        """Read an empty HDU to a Frame class should fail"""
+        """Read an empty HDU to a Frame class fails"""
         HDU = pf.PrimaryHDU()
         AFrame = self.FRAME.__read__(HDU,"Empty")
         
     
     def test_call_should_return_data(self):
-        """Calling a base frame should raise an abstract error"""
+        """Calling a frame returns data"""
         AFrame = self.FRAME(self.VALID,"Valid")
         assert AFrame.label == "Valid"
         data = AFrame()
@@ -85,7 +88,7 @@ class API_Base_Frame(object):
 
 
     def test_hdu_generates_hdu(self):
-        """HDU method should generate an  HDU for primary and non-primary"""
+        """HDU method generates an  HDU for primary and non-primary"""
         AFrame = self.FRAME(self.VALID,"Valid")
         assert AFrame.label == "Valid"
         HDU = AFrame.__hdu__()
@@ -111,34 +114,45 @@ class API_Base_Frame(object):
         
 class API_Base_Object(object):
     """Test grouping for testing the fits object"""
-
+    
+    def check_constants(self):
+        """API-Based Test Contains Appropriate Constants"""
+        passed = True
+        attributes = ['FRAME','VALID','INVALID','SAME','SHOWTYPE','HDUTYPE','OBJECTSTR','OBJECT','FRAMELABEL',
+        'FRAMETYPE','imHDU']
+        for attribute in attributes:
+            passed &= hasattr(self,attribute)
+            
+        assert passed
+        
+    
     @nt.raises(TypeError)
     def test_save_with_none_data(self):
-        """Saving to ImageObject should fail with none data"""
+        """Saving to ImageObject fails with none data"""
         AObject = self.OBJECT()
         AObject.save(None)
 
     def test_save_with_data(self):
-        """Saving to ImageObject should work with image data"""
+        """Saving to ImageObject works with image data"""
         AObject = self.OBJECT()
         AObject.save(self.VALID)
         
     @nt.raises(TypeError)
     def test_save_with_invalid_data(self):
-        """Saving to Object with invalid data should fail"""
+        """Saving to Object fails with invalid data"""
         AObject = self.OBJECT()
         AObject.save(self.INVALID)
 
 
     def test_save_with_object(self):
-        """Saving to ImageObject should succeed with FITSFrame"""
+        """Saving to ImageObject should succeed with FRAME"""
         AObject = self.OBJECT()
         AObject.save(self.FRAME)
         assert AObject.statename == self.FRAMELABEL
         assert isinstance(AObject.object(),self.FRAMETYPE)
 
     def test_save_object_with_label(self):
-        """Saving an object with an explicit label should change that object's label"""
+        """Saving an object with an explicit label changes that object's label"""
         NewLabel = "Other"
         AObject = self.OBJECT()
         AObject.save(self.FRAME,NewLabel)
@@ -147,7 +161,7 @@ class API_Base_Object(object):
 
 
     def test_double_saving_an_object_should_reference(self):
-        """Saving the same frame twice should cause referencing"""
+        """Saving the same frame twice should not cause referencing"""
         raise SkipTest("This is a bug, should be fixed in a later version.")
         NewLabel = "Other"
         AObject = self.OBJECT()
@@ -164,7 +178,7 @@ class API_Base_Object(object):
         
     
     def test_write_and_read_with_image_HDU(self):
-        """Writing and reading empty HDU"""
+        """Writing and reading empty HDU preserves data"""
         Filename = "TestFile.fits"
         if os.access(Filename,os.F_OK):
             os.remove(Filename)
@@ -180,8 +194,8 @@ class API_Base_Object(object):
         
     
     @nt.raises(IOError)
-    def test_read_from_nonexistant_file(self):
-        """Read should fail on non-existant file"""
+    def test_read_from_nonexistent_file(self):
+        """Read should fail on non-existent file"""
         Filename = "TestFile.fits"
         if os.access(Filename,os.F_OK):
             os.remove(Filename)
@@ -263,7 +277,7 @@ class API_Base_Object(object):
     
     @nt.raises(IndexError)
     def test_cannot_remove_nonexistant_state(self):
-        """Cannot Remove Non-Existant State"""
+        """Remove fails with non-existent state"""
         AObject = self.OBJECT()
         AObject.save(self.FRAME,"A")
         AObject.remove("B")
@@ -276,12 +290,12 @@ class API_Base_Object(object):
     
     @nt.raises(KeyError)
     def test_show_should_raise_key_error(self):
-        """Show should raise KeyError for an empty object"""
+        """Show raises KeyError for an empty object"""
         AObject = self.OBJECT()
         AObject.show()
     
     def test_show_should_complete_and_return_showtype(self):
-        """Show should call underlying show method"""
+        """Show calls underlying show method"""
         AObject = self.OBJECT()
         AObject.save(self.FRAME)
         figure = AObject.show()
@@ -289,7 +303,7 @@ class API_Base_Object(object):
     
     @nt.raises(KeyError)
     def test_show_should_raise_key_error_with_wrong_statename(self):
-        """Show should raise KeyError for a non-existent state name"""
+        """Show raises KeyError for a non-existent state name"""
         AObject = self.OBJECT()
         AObject.save(self.FRAME)
         AObject.show(self.FRAMELABEL + "JUNK...")
