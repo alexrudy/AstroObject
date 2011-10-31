@@ -6,8 +6,8 @@
 #  Copyright 2011 Alexander Rudy. All rights reserved.
 # 
 
-import AstroObjectBase as AOB
-from Utilities import AbstractError
+import AstroObject.AstroObjectBase as AOB
+from AstroObject.Utilities import AbstractError
 import nose.tools as nt
 from nose.plugins.skip import Skip,SkipTest
 import numpy as np

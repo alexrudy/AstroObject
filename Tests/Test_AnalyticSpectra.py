@@ -19,10 +19,10 @@ import os
 import nose.tools as nt
 from nose.plugins.skip import Skip,SkipTest
 
-from Test_AstroObjectBase import *
+from AstroObject.Test_AstroObjectBase import *
 
-import AnalyticSpectra as AS
-from Utilities import AbstractError
+import AstroObject.AnalyticSpectra as AS
+from AstroObject.Utilities import AbstractError
 
 class test_AnalyticSpectraFrame(API_Abstract_Frame):
     """AnalyticSpecra.AnalyticSpectrum"""

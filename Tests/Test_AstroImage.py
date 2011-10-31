@@ -19,11 +19,11 @@ import os
 import nose.tools as nt
 from nose.plugins.skip import Skip,SkipTest
 
-from Test_AstroObjectAPI import *
+from AstroObject.Tests.Test_AstroObjectAPI import *
 
-import AstroImage as AI
-import AstroObjectBase as AOB
-from Utilities import AbstractError
+import AstroObject.AstroImage as AI
+import AstroObject.AstroObjectBase as AOB
+from AstroObject.Utilities import AbstractError
 
 class test_ImageFrame(API_Base_Frame):
     """AstroImage.ImageFrame"""

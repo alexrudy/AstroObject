@@ -19,10 +19,10 @@ import os
 import nose.tools as nt
 from nose.plugins.skip import Skip,SkipTest
 
-from Test_AstroObjectAPI import *
+from AstroObject.Tests.Test_AstroObjectAPI import *
 
-import AstroSpectra as AS
-from Utilities import AbstractError
+import AstroObject.AstroSpectra as AS
+from AstroObject.Utilities import AbstractError
 
 class test_SpectraFrame(API_Base_Frame):
     """AstroImage.SpectraFrame"""
