@@ -12,7 +12,7 @@ import logging,time,sys,os
 
 __version__ = '0.2.0'
 
-__all__ = ['AnalyticSpectra','AstroImage','AstroObjectBase','AstroObjectSpectra','Test','Utilities']
+__all__ = ['AnalyticSpectra','AstroImage','AstroObjectBase','AstroSpectra','Utilities']
 
 logfolder = "Logs/"
 filename = "AstroObject-"+time.strftime("%Y-%m")
