@@ -83,7 +83,7 @@ class ImageFrame(AstroObjectBase.FITSFrame):
 
 
 class ImageObject(AstroObjectBase.FITSObject):
-    """docstring for ImageObject"""
+    """ImageObject"""
     def __init__(self, array=None):
         super(ImageObject, self).__init__()
         self.dataClasses += [ImageFrame]

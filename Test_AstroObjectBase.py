@@ -32,6 +32,12 @@ class test_FITSFrame(object):
         FFrame = AOB.FITSFrame.__read__(HDU,"Empty")
         assert isinstance(FFrame,AOB.FITSFrame)
         assert FFrame.label == "Empty"
+        
+    @nt.raises(AbstractError)
+    def test_read_image_HDU(self):
+        """Read an ImageHDU should fail"""
+        HDU = pf.ImageHDU()
+        AOB.FITSFrame.__read__(HDU,"Empty")
     
 
     @nt.raises(AbstractError)
@@ -86,6 +92,8 @@ class test_FITSObject(object):
         self.Frame = AOB.FITSFrame("Empty")
         self.FrameLabel = "Empty"
         self.HDU = pf.PrimaryHDU()
+        self.imHDU = pf.ImageHDU()
+        
         
     
     @nt.raises(TypeError)
@@ -143,6 +151,15 @@ class test_FITSObject(object):
         assert isinstance(FObject.object(),AOB.FITSFrame)
         os.remove(Filename)
         
+    
+    @nt.raises(IOError)
+    def test_read_from_nonexistant_file(self):
+        """Read should fail on non-existant file"""
+        Filename = "TestFile.fits"
+        if os.access(Filename,os.F_OK):
+            os.remove(Filename)
+        AObject = AOB.FITSObject()
+        AObject.read(Filename)
     
     def test_select_aquires_correct_state(self):
         """Select changes to correct state"""
