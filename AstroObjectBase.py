@@ -159,7 +159,7 @@ class FITSObject(object):
     
     def object(self,statename=None):
         LOG.info("Method \".object()\" on %s has been depreciated. Please use \".frame()\" instead.")
-        self.frame(statename)
+        return self.frame(statename)
         
     def select(self,statename):
         """Sets the default image to the given name"""

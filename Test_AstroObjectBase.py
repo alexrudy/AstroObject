@@ -156,28 +156,27 @@ class API_Abstract_Object(object):
     
     def test_write_and_read_with_empty_HDU(self):
         """Writing and reading empty HDU"""
-        Filename = "TestFile.fits"
-        if os.access(Filename,os.F_OK):
-            os.remove(Filename)
+        if os.access(self.FILENAME,os.F_OK):
+            os.remove(self.FILENAME)
         BObject = self.OBJECT()
         BObject.save(self.FRAMEINST)
-        BObject.write(Filename)
-        assert os.access(Filename,os.F_OK)
-        label = BObject.read(Filename)
-        assert label == [Filename]
-        assert Filename == BObject.statename
+        BObject.write(self.FILENAME)
+        assert os.access(self.FILENAME,os.F_OK)
+        label = BObject.read(self.FILENAME)
+        assert label == [self.FILENAME]
+        assert self.FILENAME == BObject.statename
         assert isinstance(BObject.object(),self.FRAME)
-        os.remove(Filename)
+        os.remove(self.FILENAME)
         
     
     @nt.raises(IOError)
     def test_read_from_nonexistant_file(self):
         """Read should fail on non-existent file"""
-        Filename = "TestFile.fits"
-        if os.access(Filename,os.F_OK):
-            os.remove(Filename)
+        self.FILENAME = "TestFile.fits"
+        if os.access(self.FILENAME,os.F_OK):
+            os.remove(self.FILENAME)
         AObject = self.OBJECT()
-        AObject.read(Filename)
+        AObject.read(self.FILENAME)
     
     def test_select_aquires_correct_state(self):
         """Select changes to correct state"""
@@ -319,6 +318,7 @@ class test_FITSFrame(API_Abstract_Frame):
 class test_FITSObject(API_Abstract_Object):
     """AstroObjectBase.FITSObject"""
     def setUp(self):
+        self.FILENAME = "TestFile.fits"
         self.FRAME = AOB.FITSFrame
         self.OBJECT = AOB.FITSObject
         self.FRAMESTR = "<'FITSFrame' labeled 'Empty'>"
@@ -329,6 +329,11 @@ class test_FITSObject(API_Abstract_Object):
         self.HDU = pf.PrimaryHDU()
         self.imHDU = pf.ImageHDU()
         self.check_constants()
+    
+    def tearDown(self):
+        """Clean Up!"""
+        if os.access(self.FILENAME,os.F_OK):
+            os.remove(self.FILENAME)
 
 
 
