@@ -38,7 +38,7 @@ class test_AnalyticSpectraFrame(API_Abstract_Frame):
         self.SHOWTYPE = mpl.artist.Artist
         def SAME(first,second):
             """Return whether these two are the same"""
-            return True
+            raise AbstractError("Data undefined...")
             
         self.SAME = SAME
         
@@ -71,3 +71,4 @@ class test_AnalyticSpectraFrame(API_Abstract_Frame):
         SFrame2 = self.FRAME("Empty")
         SFrame3 = SFrame1 * SFrame2
         assert isinstance(SFrame3,AS.CompositeSpectra)
+        
