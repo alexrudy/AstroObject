@@ -6,6 +6,7 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build-2.6
 PAPER         =
 BUILDDIR      = build
+OTHERREPO     = ../../ObjectModelDoc
 
 # Internal variables.
 PAPEROPT_a4     = -D latex_paper_size=a4
@@ -40,6 +41,12 @@ help:
 
 clean:
 	-rm -rf $(BUILDDIR)/*
+
+gh-pages: html
+	cp -r $(BUILDDIR)/html/ $(OTHERREPO)
+	@cd $(OTHERREPO) && git add -A
+	@cd $(OTHERREPO) && git commit
+	@cd $(OTHERREPO) && git push origin gh-pages
 
 html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
