@@ -107,7 +107,7 @@ class API_Base_Frame(object):
         assert isinstance(figure,self.SHOWTYPE), "Found type %s" % type(figure)
 
     def test_string_representation(self):
-        """String representation correct for ImageFrame"""
+        """String representation correct for Frame"""
         AFrame = self.FRAME(self.VALID,"Valid")
         assert AFrame.label == "Valid"
         assert str(AFrame) == self.FRAMESTR
@@ -128,12 +128,12 @@ class API_Base_Object(object):
     
     @nt.raises(TypeError)
     def test_save_with_none_data(self):
-        """Saving to ImageObject fails with none data"""
+        """Saving to Object fails with none data"""
         AObject = self.OBJECT()
         AObject.save(None)
 
     def test_save_with_data(self):
-        """Saving to ImageObject works with image data"""
+        """Saving to Object works with image data"""
         AObject = self.OBJECT()
         AObject.save(self.VALID)
         
@@ -145,7 +145,7 @@ class API_Base_Object(object):
 
 
     def test_save_with_object(self):
-        """Saving to ImageObject should succeed with FRAME"""
+        """Saving to Object should succeed with FRAME"""
         AObject = self.OBJECT()
         AObject.save(self.FRAME)
         assert AObject.statename == self.FRAMELABEL
