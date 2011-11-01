@@ -33,16 +33,21 @@ class ImageFrame(AstroObjectBase.FITSFrame):
     
     """
     def __init__(self, array, label, header=None, metadata=None):
-        super(ImageFrame, self).__init__(label, header, metadata)
         self.data = array # The image data
         self.size = array.size # The size of this image
         self.shape = array.shape # The shape of this image
+        super(ImageFrame, self).__init__(label, header, metadata)
         
     
     def __call__(self):
         """Returns the data for this frame, which should be a ``numpy.ndarray``."""
         return self.data
         
+    def __valid__(self):
+        """Runs a series of assertions which ensure that the data for this frame is valid"""
+        assert isinstance(self.data,np.ndarray), "Frame data is not correct type: %s" % type(self.data)
+        
+    
     def __hdu__(self,primary=False):
         """Retruns an HDU which represents this frame. HDUs are either ``pyfits.PrimaryHDU`` or ``pyfits.ImageHDU`` depending on the *primary* keyword."""
         if primary:
@@ -77,7 +82,11 @@ class ImageFrame(AstroObjectBase.FITSFrame):
             raise AbstractError(msg)
         if len(data.shape) != 2:
             LOG.warning("The data appears to be %d dimensional. This object expects 2 dimensional data." % len(data.shape))
-        Object = cls(data,label)
+        try:
+            Object = cls(data,label)
+        except AssertionError as AE:
+            msg = "%s data did not validate: %s" % (cls.__name__,AE)
+            raise AbstractError(msg)
         LOG.debug("Saved %s with size %d" % (Object,data.size))
         return Object
     
@@ -92,7 +101,11 @@ class ImageFrame(AstroObjectBase.FITSFrame):
         if not isinstance(HDU.data,np.ndarray):
             msg = "HDU Data must be %s for %s, found data of %s" % (np.ndarray,cls.__name__,type(HDU.data))
             raise AbstractError(msg)
-        Object = cls(HDU.data,label)
+        try:
+            Object = cls(HDU.data,label)
+        except AssertionError as AE:
+            msg = "%s data did not validate: %s" % (cls.__name__,AE)
+            raise AbstractError(msg)
         LOG.debug("Created %s" % Object)
         return Object
     

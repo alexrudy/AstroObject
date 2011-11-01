@@ -28,28 +28,22 @@ LOG = logging.getLogger(__name__)
 class SpectraFrame(AstroObjectBase.FITSFrame):
     """A single frame of a spectrum. This will save the spectrum as an image, with the first row having flux, and second row having the wavelength equivalent. Further rows can accomodate further spectral frames when stored to a FITS image. However, the frame only accepts a single spectrum."""
     def __init__(self, array, label, header=None, metadata=None):
-        super(SpectraFrame, self).__init__(label, header, metadata)
         self.data = array # The image data
         self.size = array.size # The size of this image
         self.shape = array.shape # The shape of this image
+        super(SpectraFrame, self).__init__(label, header, metadata)
+        
     
-    def validate(self):
+    def __valid__(self):
         """Validates this spectrum frame to conform to the required data shape. This function is used to determine if a passed numpy data array appears to be a spectrum. It is essentially a helper function."""
         dimensions = 2
         rows = 2
-        try:
-            assert self.size == self.data.size
-            assert self.shape == self.data.shape
-        except AssertionError:
-            raise AssertionError("Members of %s appear to be inconsistent!" % self)
-        try:
-            assert self.data.ndim == dimensions
-        except AssertionError:
-            raise AssertionError("Data of %s does not appear to be %d-dimensional! Shape: %s" % (self,dimensions,self.shape))
-        try:
-            assert self.shape[0] == rows
-        except AssertionError:
-            raise AssertionError("Spectrum for %s appears to be multi-dimensional, expected %d Shape: %s" % (self,rows,self.shape))
+        assert self.size == self.data.size, "Members of %s appear to be inconsistent!" % self
+        assert self.shape == self.data.shape, "Members of %s appear to be inconsistent!" % self
+        assert self.data.ndim == dimensions , "Data of %s does not appear to be %d-dimensional! Shape: %s" % (self,dimensions,self.shape)
+        assert self.shape[0] == rows, "Spectrum for %s appears to be multi-dimensional, expected %d Shape: %s" % (self,rows,self.shape)        
+        return True
+            
     
     def __call__(self):
         """Returns the data for this frame, which should be a ``numpy.ndarray``. The first row will be the spectral data, the second row the equivalent wavelength for this spectrum."""
@@ -94,9 +88,8 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
             raise AbstractError(msg)
         if data.ndim != dimensions:
             LOG.warning("The data appears to be %d dimensional. This object expects %d dimensional data." % (len(data.shape),dimensions))
-        Object = cls(data,label)
         try:
-            Object.validate()
+            Object = cls(data,label)
         except AssertionError as AE:
             msg = "%s data did not validate: %s" % (cls.__name__,AE)
             raise AbstractError(msg)
@@ -112,10 +105,9 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
             raise AbstractError(msg)
         if not isinstance(HDU.data,np.ndarray):
             msg = "HDU Data must be %s for %s, found data of %s" % (np.ndarray,cls.__name__,type(HDU.data))
-            raise AbstractError(msg)
-        Object = cls(HDU.data,label)
+            raise AbstractError(msg)    
         try:
-            Object.validate()
+            Object = cls(HDU.data,label)        
         except AssertionError as AE:
             msg = "%s data did not validate: %s" % (cls.__name__,AE)
             raise AbstractError(msg)
