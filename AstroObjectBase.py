@@ -43,6 +43,7 @@ class FITSFrame(object):
             self.metadata = {}
         if self.header == None:
             self.header = {}
+        self.__valid__()
     
     def __call__(self):
         """Should return the data within this frame, usually as a *numpy* array.
@@ -54,6 +55,10 @@ class FITSFrame(object):
     def __str__(self):
         """Returns String Representation of this frame object. Will display the class name and the label. This method does not need to be overwritten by subclasses."""
         return "<\'%s\' labeled \'%s\'>" % (self.__class__.__name__,self.label)
+    
+    def __valid__(self):
+        """Runs a series of assertions which ensure that the data for this frame is valid"""
+        assert not hasattr(self,'data')
     
     def __hdu__(self,primary=False):
         """Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.
@@ -186,12 +191,24 @@ class FITSObject(object):
         """Provides a list of the available frames, by label."""
         return self.states.keys()
     
-    def remove(self,statename):
+    def keep(self,*statenames):
+        """Removes all states except the specified frame from the object"""
+        oldStates = self.states
+        newStates = {}
+        for statename in statenames:
+            if statename not in self.states:
+                raise IndexError("%s: Object %s does not exist!" % (self,statename))
+            newStates[statename] = oldStates[statename]
+        LOG.debug("%s: Kept the following states %s" % (self,statenames))
+        self.states = newStates
+    
+    def remove(self,*statenames):
         """Removes the specified frame from the object."""
-        if statename not in self.states:
-            raise IndexError("%s: Object %s does not exist!" % (self,statename))
-        LOG.debug("%s: Removing Object with label %s" % (self,statename))
-        self.states.pop(statename)
+        for statename in statenames:
+            if statename not in self.states:
+                raise IndexError("%s: Object %s does not exist!" % (self,statename))
+            LOG.debug("%s: Removing Object with label %s" % (self,statename))
+            self.states.pop(statename)
     
     def show(self,statename=None):
         """Returns the (rendered) matplotlib plot for this object. This is a quick way to view your current data state without doing any serious plotting work. This aims for the sensible defaults philosophy, if you don't like what you get, write a new method that uses the :meth:`data` call and plots that."""

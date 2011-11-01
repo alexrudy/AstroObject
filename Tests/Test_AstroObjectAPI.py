@@ -257,7 +257,7 @@ class API_Base_Object(object):
         AObject = self.OBJECT()
         AObject.save(self.FRAME,"A")
         AObject.save(self.FRAME,"B")
-        assert ["A","B"] == AObject.list()
+        assert ["A","B"] == sorted(AObject.list())
     
     
     def test_list_should_show_no_statenames(self):
@@ -265,14 +265,56 @@ class API_Base_Object(object):
         AObject = self.OBJECT()
         assert [] == AObject.list()
     
+    def test_keep_should_keep_state(self):
+        """Keep only a given state"""
+        AObject = self.OBJECT()
+        AObject.save(self.FRAME,"A")
+        AObject.save(self.FRAME,"B")
+        assert ["A","B"] == sorted(AObject.list()) , "List: %s" % AObject.list()
+        AObject.keep("A")
+        assert ["A"] == sorted(AObject.list()) , "List: %s" % AObject.list()
+        assert "B" not in AObject.states, "States: %s" % AObject.states
+        
+    
+    def test_keep_should_keep_multiple_states(self):
+        """Keep a given set of states."""
+        AObject = self.OBJECT()
+        AObject.save(self.FRAME,"A")
+        AObject.save(self.FRAME,"B")
+        AObject.save(self.FRAME,"C")
+        assert ["A","B","C"] == sorted(AObject.list()) , "List: %s" % AObject.list()
+        AObject.keep("A","C")
+        assert ["A","C"] == sorted(AObject.list()) , "List: %s" % AObject.list()
+        assert "B" not in AObject.states, "States: %s" % AObject.states
+    
+    @nt.raises(IndexError)
+    def test_cannot_keep_non_existant_state(self):
+        """Keep fails with non-existent state"""
+        AObject = self.OBJECT()
+        AObject.save(self.FRAME,"A")
+        AObject.save(self.FRAME,"B")
+        assert ["A","B"] == sorted(AObject.list())
+        AObject.keep("C")
+    
     def test_remove_should_delete_state(self):
         """Remove Deletes States"""
         AObject = self.OBJECT()
         AObject.save(self.FRAME,"A")
         AObject.save(self.FRAME,"B")
-        assert ["A","B"] == AObject.list()
+        assert ["A","B"] == sorted(AObject.list())
         AObject.remove("A")
-        assert ["B"] == AObject.list()
+        assert ["B"] == sorted(AObject.list())
+        assert "A" not in AObject.states, "States: %s" % AObject.states
+    
+    def test_remove_should_delete_many_states(self):
+        """Remove Deletes States"""
+        AObject = self.OBJECT()
+        AObject.save(self.FRAME,"A")
+        AObject.save(self.FRAME,"B")
+        AObject.save(self.FRAME,"C")
+        assert ["A","B","C"] == sorted(AObject.list())
+        AObject.remove("A","C")
+        assert ["B"] == sorted(AObject.list())
         assert "A" not in AObject.states, "States: %s" % AObject.states
     
     @nt.raises(IndexError)
