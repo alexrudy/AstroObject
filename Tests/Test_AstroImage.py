@@ -75,9 +75,9 @@ class test_ImageObject(API_Base_Object):
             self.image[450:550,450:550] = np.ones((100,100))
         else:
             self.image = np.int32(np.sum(mpimage.imread(self.testJPG),axis=2))
-        self.FRAME = AI.ImageFrame(self.image,"Hong Kong")
+        self.FRAMEINST = AI.ImageFrame(self.image,"Hong Kong")
         self.FRAMELABEL = "Hong Kong"
-        self.FRAMETYPE = AI.ImageFrame
+        self.FRAME = AI.ImageFrame
         self.HDU = pf.PrimaryHDU(self.image)
         self.imHDU = pf.ImageHDU(self.image)
         self.VALID = self.image

@@ -118,8 +118,8 @@ class API_Base_Object(object):
     def check_constants(self):
         """API-Based Test Contains Appropriate Constants"""
         passed = True
-        attributes = ['FRAME','VALID','INVALID','SAME','SHOWTYPE','HDUTYPE','OBJECTSTR','OBJECT','FRAMELABEL',
-        'FRAMETYPE','imHDU']
+        attributes = ['FRAMEINST','VALID','INVALID','SAME','SHOWTYPE','HDUTYPE','OBJECTSTR','OBJECT','FRAMELABEL',
+        'FRAME','imHDU']
         for attribute in attributes:
             passed &= hasattr(self,attribute)
             
@@ -131,7 +131,7 @@ class API_Base_Object(object):
         """Saving to Object fails with none data"""
         AObject = self.OBJECT()
         AObject.save(None)
-
+    
     def test_save_with_data(self):
         """Saving to Object works with image data"""
         AObject = self.OBJECT()
@@ -142,31 +142,31 @@ class API_Base_Object(object):
         """Saving to Object fails with invalid data"""
         AObject = self.OBJECT()
         AObject.save(self.INVALID)
-
-
+        
+    
     def test_save_with_object(self):
         """Saving to Object should succeed with FRAME"""
         AObject = self.OBJECT()
-        AObject.save(self.FRAME)
+        AObject.save(self.FRAMEINST)
         assert AObject.statename == self.FRAMELABEL
-        assert isinstance(AObject.frame(),self.FRAMETYPE)
-
+        assert isinstance(AObject.frame(),self.FRAME)
+    
     def test_save_object_with_label(self):
         """Saving an object with an explicit label changes that object's label"""
         NewLabel = "Other"
         AObject = self.OBJECT()
-        AObject.save(self.FRAME,NewLabel)
+        AObject.save(self.FRAMEINST,NewLabel)
         assert AObject.statename == NewLabel
         assert AObject.frame().label == NewLabel
-
-
+        
+    
     def test_double_saving_an_object_should_reference(self):
         """Saving the same frame twice should not cause referencing"""
         raise SkipTest("This is a bug, should be fixed in a later version.")
         NewLabel = "Other"
         AObject = self.OBJECT()
-        AObject.save(self.FRAME)
-        AObject.save(self.FRAME,NewLabel)
+        AObject.save(self.FRAMEINST)
+        AObject.save(self.FRAMEINST,NewLabel)
         assert AObject.statename == NewLabel
         assert AObject.frame().label == NewLabel
         AObject.select(self.FRAMELABEL)
@@ -183,13 +183,13 @@ class API_Base_Object(object):
         if os.access(Filename,os.F_OK):
             os.remove(Filename)
         AObject = self.OBJECT()
-        AObject.save(self.FRAME)
+        AObject.save(self.FRAMEINST)
         AObject.write(Filename)
         assert os.access(Filename,os.F_OK)
         label = AObject.read(Filename)
         assert label == [Filename]
         assert Filename == AObject.statename
-        assert isinstance(AObject.frame(),self.FRAMETYPE)
+        assert isinstance(AObject.frame(),self.FRAME)
         os.remove(Filename)
         
     
@@ -205,9 +205,9 @@ class API_Base_Object(object):
     def test_select_aquires_correct_state(self):
         """Select changes to correct state"""
         Label = "Other"
-        Frame = self.FRAMETYPE(self.VALID,Label)
+        Frame = self.FRAME(self.VALID,Label)
         AObject = self.OBJECT()
-        AObject.save(self.FRAME)
+        AObject.save(self.FRAMEINST)
         AObject.save(Frame,Label)
         assert AObject.statename == Label
         assert AObject.frame().label == Label
@@ -226,7 +226,7 @@ class API_Base_Object(object):
     def test_data_raises_abstract_error(self):
         """Data should return data object"""
         AObject = self.OBJECT()
-        AObject.save(self.FRAME)
+        AObject.save(self.FRAMEINST)
         data = AObject.data()
         assert self.SAME(data,self.VALID)
     
@@ -249,14 +249,14 @@ class API_Base_Object(object):
     def test_cannot_duplicate_state_name(self):
         """Save should not allow duplication of state name"""
         AObject = self.OBJECT()
-        AObject.save(self.FRAME)
-        AObject.save(self.FRAME)
+        AObject.save(self.FRAMEINST)
+        AObject.save(self.FRAMEINST)
     
     def test_list_statenames(self):
         """List should show all statenames"""
         AObject = self.OBJECT()
-        AObject.save(self.FRAME,"A")
-        AObject.save(self.FRAME,"B")
+        AObject.save(self.FRAMEINST,"A")
+        AObject.save(self.FRAMEINST,"B")
         assert ["A","B"] == sorted(AObject.list())
     
     
@@ -268,8 +268,8 @@ class API_Base_Object(object):
     def test_keep_should_keep_state(self):
         """Keep only a given state"""
         AObject = self.OBJECT()
-        AObject.save(self.FRAME,"A")
-        AObject.save(self.FRAME,"B")
+        AObject.save(self.FRAMEINST,"A")
+        AObject.save(self.FRAMEINST,"B")
         assert ["A","B"] == sorted(AObject.list()) , "List: %s" % AObject.list()
         AObject.keep("A")
         assert ["A"] == sorted(AObject.list()) , "List: %s" % AObject.list()
@@ -279,9 +279,9 @@ class API_Base_Object(object):
     def test_keep_should_keep_multiple_states(self):
         """Keep a given set of states."""
         AObject = self.OBJECT()
-        AObject.save(self.FRAME,"A")
-        AObject.save(self.FRAME,"B")
-        AObject.save(self.FRAME,"C")
+        AObject.save(self.FRAMEINST,"A")
+        AObject.save(self.FRAMEINST,"B")
+        AObject.save(self.FRAMEINST,"C")
         assert ["A","B","C"] == sorted(AObject.list()) , "List: %s" % AObject.list()
         AObject.keep("A","C")
         assert ["A","C"] == sorted(AObject.list()) , "List: %s" % AObject.list()
@@ -291,16 +291,16 @@ class API_Base_Object(object):
     def test_cannot_keep_non_existant_state(self):
         """Keep fails with non-existent state"""
         AObject = self.OBJECT()
-        AObject.save(self.FRAME,"A")
-        AObject.save(self.FRAME,"B")
+        AObject.save(self.FRAMEINST,"A")
+        AObject.save(self.FRAMEINST,"B")
         assert ["A","B"] == sorted(AObject.list())
         AObject.keep("C")
     
     def test_remove_should_delete_state(self):
         """Remove Deletes States"""
         AObject = self.OBJECT()
-        AObject.save(self.FRAME,"A")
-        AObject.save(self.FRAME,"B")
+        AObject.save(self.FRAMEINST,"A")
+        AObject.save(self.FRAMEINST,"B")
         assert ["A","B"] == sorted(AObject.list())
         AObject.remove("A")
         assert ["B"] == sorted(AObject.list())
@@ -309,9 +309,9 @@ class API_Base_Object(object):
     def test_remove_should_delete_many_states(self):
         """Remove Deletes States"""
         AObject = self.OBJECT()
-        AObject.save(self.FRAME,"A")
-        AObject.save(self.FRAME,"B")
-        AObject.save(self.FRAME,"C")
+        AObject.save(self.FRAMEINST,"A")
+        AObject.save(self.FRAMEINST,"B")
+        AObject.save(self.FRAMEINST,"C")
         assert ["A","B","C"] == sorted(AObject.list())
         AObject.remove("A","C")
         assert ["B"] == sorted(AObject.list())
@@ -321,7 +321,7 @@ class API_Base_Object(object):
     def test_cannot_remove_nonexistant_state(self):
         """Remove fails with non-existent state"""
         AObject = self.OBJECT()
-        AObject.save(self.FRAME,"A")
+        AObject.save(self.FRAMEINST,"A")
         AObject.remove("B")
     
     @nt.raises(IndexError)
@@ -339,7 +339,7 @@ class API_Base_Object(object):
     def test_show_should_complete_and_return_showtype(self):
         """Show calls underlying show method"""
         AObject = self.OBJECT()
-        AObject.save(self.FRAME)
+        AObject.save(self.FRAMEINST)
         figure = AObject.show()
         assert isinstance(figure,self.SHOWTYPE), "Returned type %s" % type(figure)
     
@@ -347,7 +347,7 @@ class API_Base_Object(object):
     def test_show_should_raise_key_error_with_wrong_statename(self):
         """Show raises KeyError for a non-existent state name"""
         AObject = self.OBJECT()
-        AObject.save(self.FRAME)
+        AObject.save(self.FRAMEINST)
         AObject.show(self.FRAMELABEL + "JUNK...")
     
 

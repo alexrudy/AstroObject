@@ -53,9 +53,9 @@ class test_SpectraObject(API_Base_Object):
     def setUp(self):
         """Fixture for setting up a basic image frame"""
         self.VALID = np.ones((2,100))
-        self.FRAME = AS.SpectraFrame(self.VALID,"Flat")
+        self.FRAMEINST = AS.SpectraFrame(self.VALID,"Flat")
         self.FRAMELABEL = "Flat"
-        self.FRAMETYPE = AS.SpectraFrame
+        self.FRAME = AS.SpectraFrame
         self.HDU = pf.PrimaryHDU(self.VALID)
         self.imHDU = pf.ImageHDU(self.VALID)
         self.INVALID = 20
