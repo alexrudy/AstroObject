@@ -66,7 +66,7 @@ class test_AnalyticSpectraFrame(API_Abstract_Frame):
         
         
     def test_mul_objects(self):
-        """Objects respont to + operator"""
+        """Objects respont to * operator"""
         SFrame1 = self.FRAME("Empty")
         SFrame2 = self.FRAME("Empty")
         SFrame3 = SFrame1 * SFrame2

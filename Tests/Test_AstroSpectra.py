@@ -25,7 +25,7 @@ import AstroObject.AstroSpectra as AS
 from AstroObject.Utilities import AbstractError
 
 class test_SpectraFrame(API_Base_Frame):
-    """AstroImage.SpectraFrame"""
+    """AstroSpectra.SpectraFrame"""
     
     def setUp(self):
         """Sets up the test with some basic image data"""
@@ -48,7 +48,7 @@ class test_SpectraFrame(API_Base_Frame):
         
         
 class test_SpectraObject(API_Base_Object):
-    """AstroImage.SpectraObject"""
+    """AstroSpectra.SpectraObject"""
         
     def setUp(self):
         """Fixture for setting up a basic image frame"""
