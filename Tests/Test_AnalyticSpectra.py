@@ -30,17 +30,25 @@ class test_AnalyticSpectraFrame(API_Abstract_Frame):
     def setUp(self):
         """Sets up the test with some basic image data."""
                 
-        self.DATA = None
+        self.VALID = None
         self.FRAME = AS.AnalyticSpectrum
         self.INVALID = np.array([1,2,3])
         self.FRAMESTR = "<'AnalyticSpectrum' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.artist.Artist
+        
+        def SAMEDATA(first,second):
+            """Return whether these two are the same data"""
+            raise AbstractError("Data undefined...")
+            
+        
         def SAME(first,second):
             """Return whether these two are the same"""
             raise AbstractError("Data undefined...")
-            
+        
         self.SAME = SAME
+        self.SAMEDATA = SAMEDATA
+        
         
         self.check_constants()
         

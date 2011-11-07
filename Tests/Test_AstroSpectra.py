@@ -36,11 +36,17 @@ class test_SpectraFrame(API_Base_Frame):
         self.FRAMESTR = "<'SpectraFrame' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.artist.Artist
-        def SAME(first,second):
-            """Return whether these two are the same"""
+        def SAMEDATA(first,second):
+            """Return whether these two are the same data"""
             return not (np.abs(first-second) > 1e-6).any()
             
+        
+        def SAME(first,second):
+            """Return whether these two are the same"""
+            return SAMEDATA(first(),second())
+        
         self.SAME = SAME
+        self.SAMEDATA = SAMEDATA
         
         self.check_constants()
         
@@ -63,12 +69,19 @@ class test_SpectraObject(API_Base_Object):
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.artist.Artist
         self.OBJECT = AS.SpectraObject
+        self.FILENAME = "TestFile.fits"
+        
+        def SAMEDATA(first,second):
+            """Return whether these two are the same data"""
+            return not (np.abs(first-second) > 1e-6).any()
+            
         
         def SAME(first,second):
             """Return whether these two are the same"""
-            return not (np.abs(first-second) > 1e-6).any()
+            return SAMEDATA(first(),second())
         
         self.SAME = SAME
+        self.SAMEDATA = SAMEDATA
         
         self.check_constants()
         

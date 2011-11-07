@@ -43,11 +43,19 @@ class test_ImageFrame(API_Base_Frame):
         self.FRAMESTR = "<'ImageFrame' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.image.AxesImage
-        def SAME(first,second):
-            """Return whether these two are the same"""
+        self.FRAMEINST = AI.ImageFrame(self.image,"Hong Kong")
+            
+        def SAMEDATA(first,second):
+            """Return whether these two are the same data"""
             return not (np.abs(first-second) > 1e-6).any()
             
+        
+        def SAME(first,second):
+            """Return whether these two are the same"""
+            return SAMEDATA(first(),second())
+        
         self.SAME = SAME
+        self.SAMEDATA = SAMEDATA
         
         self.check_constants()
         
@@ -60,7 +68,7 @@ class test_ImageFrame(API_Base_Frame):
         IFrame = AI.ImageFrame.__read__(HDU,"Hong Kong")
         assert isinstance(IFrame,AI.ImageFrame)
         assert IFrame.label == "Hong Kong"
-        assert self.SAME(IFrame.data,self.image)
+        assert self.SAME(IFrame,self.FRAMEINST)
         
         
         
@@ -86,12 +94,19 @@ class test_ImageObject(API_Base_Object):
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.image.AxesImage
         self.OBJECT = AI.ImageObject
+        self.FILENAME = "TestFile.fits"
+        
+        def SAMEDATA(first,second):
+            """Return whether these two are the same data"""
+            return not (np.abs(first-second) > 1e-6).any()
+            
         
         def SAME(first,second):
             """Return whether these two are the same"""
-            return not (np.abs(first-second) > 1e-6).any()
+            return SAMEDATA(first(),second())
         
         self.SAME = SAME
+        self.SAMEDATA = SAMEDATA
         
         self.check_constants()
         
