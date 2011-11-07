@@ -36,22 +36,22 @@ class API_Base_Frame(object):
     
     @nt.raises(AttributeError)
     def test_init_empty(self):
-        """Initialize Frame fails without data"""
+        """__init__ fails without data"""
         self.FRAME(None,"Label")
         
     @nt.raises(Exception)
     def test_init_invalid(self):
-        """Initialize Frame fails with invalid data"""
+        """__init__ fails with invalid data"""
         self.FRAME(self.INVALID,"Invalid")
         
     def test_init_data(self):
-        """Initializes with valid data"""
+        """__init__ succeeds with valid data"""
         AFrame = self.FRAME(self.VALID,"Valid")
         assert AFrame.label == "Valid"
         assert self.SAME(AFrame.data,self.VALID)
     
     @nt.raises(AbstractError)
-    def test_save_to_image(self):
+    def test_save(self):
         """Save an invalid object raises an AbstractError"""
         self.FRAME.__save__(None,"None")
         
@@ -63,9 +63,17 @@ class API_Base_Frame(object):
         assert self.SAME(AFrame.data,self.VALID)
         
     
-    def test_read_HDU(self):
+    def test_read_PrimaryHDU(self):
         """Read an HDU to Frame"""
         HDU = pf.PrimaryHDU(self.VALID)
+        AFrame = self.FRAME.__read__(HDU,"Valid")
+        assert isinstance(AFrame,self.FRAME)
+        assert AFrame.label == "Valid"
+        assert self.SAME(AFrame.data,self.VALID)
+    
+    def test_read_ImageHDU(self):
+        """Read an HDU to Frame"""
+        HDU = pf.ImageHDU(self.VALID)
         AFrame = self.FRAME.__read__(HDU,"Valid")
         assert isinstance(AFrame,self.FRAME)
         assert AFrame.label == "Valid"
@@ -79,7 +87,7 @@ class API_Base_Frame(object):
         AFrame = self.FRAME.__read__(HDU,"Empty")
         
     
-    def test_call_should_return_data(self):
+    def test_call(self):
         """Calling a frame returns data"""
         AFrame = self.FRAME(self.VALID,"Valid")
         assert AFrame.label == "Valid"
@@ -87,19 +95,24 @@ class API_Base_Frame(object):
         assert self.SAME(data,self.VALID)
 
 
-    def test_hdu_generates_hdu(self):
+    def test_HDU(self):
         """HDU method generates an  HDU for primary and non-primary"""
         AFrame = self.FRAME(self.VALID,"Valid")
         assert AFrame.label == "Valid"
         HDU = AFrame.__hdu__()
         assert isinstance(HDU,self.HDUTYPE)
         assert self.SAME(HDU.data,self.VALID)
+    
+    def test_PrimaryHDU(self):
+        """docstring for test_PrimaryHDU"""
+        AFrame = self.FRAME(self.VALID,"Valid")
+        assert AFrame.label == "Valid"
         HDU = AFrame.__hdu__(primary=True)
         assert isinstance(HDU,pf.PrimaryHDU)
         assert self.SAME(HDU.data,self.VALID)
 
 
-    def test_show_should_return_figure(self):
+    def test_show(self):
         """Show an ImageFrame should return figure"""
         AFrame = self.FRAME(self.VALID,"Valid")
         assert AFrame.label == "Valid"
@@ -316,6 +329,16 @@ class API_Base_Object(object):
         AObject.remove("A","C")
         assert ["B"] == sorted(AObject.list())
         assert "A" not in AObject.states, "States: %s" % AObject.states
+    
+    def test_remove_should_leave_object_in_valid_state(self):
+        """Remove leaves the object with a valid state selected"""
+        BObject = self.OBJECT()
+        BObject.save(self.FRAMEINST,"A")
+        BObject.save(self.FRAMEINST,"B")
+        assert ["A","B"] == BObject.list()
+        BObject.select("A")
+        BObject.remove("A")
+        BObject.frame()
     
     @nt.raises(IndexError)
     def test_cannot_remove_nonexistant_state(self):

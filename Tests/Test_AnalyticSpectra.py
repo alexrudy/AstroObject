@@ -33,7 +33,7 @@ class test_AnalyticSpectraFrame(API_Abstract_Frame):
         self.DATA = None
         self.FRAME = AS.AnalyticSpectrum
         self.INVALID = np.array([1,2,3])
-        self.FRAMESTR = "<'AnalyticSpectrum' labeled 'Empty'>"
+        self.FRAMESTR = "<'AnalyticSpectrum' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.artist.Artist
         def SAME(first,second):
@@ -49,6 +49,25 @@ class test_AnalyticSpectraFrame(API_Abstract_Frame):
         wl = np.arange(100)
         SFrame = self.FRAME("Empty",wl)
         assert not np.abs(wl - SFrame.wavelengths > 1e-6).any()
+        
+    def test_init_empty(self):
+        """__init__ abstract frame works without data"""
+        AFrame = self.FRAME("Valid")
+        assert AFrame.label == "Valid"
+        
+    @nt.raises(AbstractError)
+    def test_HDU(self):
+        """HDU method raises an AbstractError"""
+        BFrame = self.FRAME("Empty")
+        assert BFrame.label == "Empty"
+        HDU = BFrame.__hdu__()
+    
+    @nt.raises(AbstractError)
+    def test_PrimaryHDU(self):
+        """HDU primary raises an AbstractError"""
+        BFrame = self.FRAME("Empty")
+        assert BFrame.label == "Empty"
+        HDU = BFrame.__hdu__(primary=True)
         
     def test_add_objects(self):
         """Objects respont to + operator"""
