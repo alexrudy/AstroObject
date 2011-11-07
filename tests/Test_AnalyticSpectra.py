@@ -14,12 +14,12 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimage
 
-import os
+import os,copy
 
 import nose.tools as nt
 from nose.plugins.skip import Skip,SkipTest
 
-from AstroObject.Tests.Test_AstroObjectBase import *
+from AstroObject.tests.Test_AstroObjectBase import *
 
 import AstroObject.AnalyticSpectra as AS
 from AstroObject.Utilities import AbstractError
@@ -36,6 +36,9 @@ class test_AnalyticSpectraFrame(API_Abstract_Frame):
         self.FRAMESTR = "<'AnalyticSpectrum' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.artist.Artist
+        self.WAVELENGTHS = np.arange(100)
+        
+        self.attributes = copy.deepcopy(self.attributes) + ['WAVELENGTHS']
         
         def SAMEDATA(first,second):
             """Return whether these two are the same data"""
@@ -53,39 +56,25 @@ class test_AnalyticSpectraFrame(API_Abstract_Frame):
         self.check_constants()
         
     def test_init_with_wavelengths(self):
-        """Initialize with Wavelengths"""
-        wl = np.arange(100)
-        SFrame = self.FRAME("Empty",wl)
-        assert not np.abs(wl - SFrame.wavelengths > 1e-6).any()
+        """__init__() works with wavelengths"""
+        SFrame = self.FRAME("Empty",self.WAVELENGTHS)
+        assert not np.abs(self.WAVELENGTHS - SFrame.wavelengths > 1e-6).any()
         
     def test_init_empty(self):
         """__init__ abstract frame works without data"""
         AFrame = self.FRAME("Valid")
         assert AFrame.label == "Valid"
         
-    @nt.raises(AbstractError)
-    def test_HDU(self):
-        """HDU method raises an AbstractError"""
-        BFrame = self.FRAME("Empty")
-        assert BFrame.label == "Empty"
-        HDU = BFrame.__hdu__()
-    
-    @nt.raises(AbstractError)
-    def test_PrimaryHDU(self):
-        """HDU primary raises an AbstractError"""
-        BFrame = self.FRAME("Empty")
-        assert BFrame.label == "Empty"
-        HDU = BFrame.__hdu__(primary=True)
         
     def test_add_objects(self):
-        """Objects respont to + operator"""
+        """__add__() Objects respont to + operator"""
         SFrame1 = self.FRAME("Empty")
         SFrame2 = self.FRAME("Empty")
         SFrame3 = SFrame1 + SFrame2
         assert isinstance(SFrame3,AS.CompositeSpectra)
     
     def test_sub_objects(self):
-        """Objects respont to - operator"""
+        """__sub__() Objects respont to - operator"""
         SFrame1 = self.FRAME("Empty")
         SFrame2 = self.FRAME("Empty")
         SFrame3 = SFrame1 - SFrame2
@@ -93,7 +82,7 @@ class test_AnalyticSpectraFrame(API_Abstract_Frame):
         
         
     def test_mul_objects(self):
-        """Objects respont to * operator"""
+        """__mul__() Objects respont to * operator"""
         SFrame1 = self.FRAME("Empty")
         SFrame2 = self.FRAME("Empty")
         SFrame3 = SFrame1 * SFrame2

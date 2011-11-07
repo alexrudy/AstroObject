@@ -19,7 +19,7 @@ import os
 import nose.tools as nt
 from nose.plugins.skip import Skip,SkipTest
 
-from AstroObject.Tests.Test_AstroObjectAPI import *
+from AstroObject.tests.Test_AstroObjectAPI import *
 
 import AstroObject.AstroImage as AI
 import AstroObject.AstroObjectBase as AOB
@@ -63,7 +63,7 @@ class test_ImageFrame(API_Base_Frame):
     
             
     def test_read_grayscale_HDU(self):
-        """Read an image HDU to ImageFrame should succeed"""
+        """__read__ an image HDU succeeds"""
         HDU = pf.PrimaryHDU(self.image)
         IFrame = AI.ImageFrame.__read__(HDU,"Hong Kong")
         assert isinstance(IFrame,AI.ImageFrame)
@@ -112,7 +112,7 @@ class test_ImageObject(API_Base_Object):
         
         
     def test_read_from_image_file(self):
-        """Read directly from an image file"""
+        """loadFromFile() directly from an image file"""
         if not os.access(self.testJPG,os.R_OK):
             raise SkipTest
         IObject = self.OBJECT()
@@ -122,7 +122,7 @@ class test_ImageObject(API_Base_Object):
     
     @nt.raises(IOError)
     def test_read_from_nonexistant_file(self):
-        """Cannot read from a non-existant image file"""
+        """loadFromFile() fails for a non-existant image file"""
         IObject = self.OBJECT()
         IObject.loadFromFile("Bogus")
         

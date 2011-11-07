@@ -69,19 +69,19 @@ class API_Base_Frame(API_Base):
     
     @nt.raises(AbstractError)
     def test_save_none(self):
-        """save() with none object raises an AbstractError"""
+        """__save__() with none object raises an AbstractError"""
         self.FRAME.__save__(None,"None")
         
     
     def test_save_data(self):
-        """save() valid data"""
+        """__save__() valid data"""
         AFrame = self.FRAME.__save__(self.VALID,"Valid")
         assert AFrame.label == "Valid"
         assert self.SAMEDATA(AFrame.data,self.VALID)
         
     
     def test_read_PrimaryHDU(self):
-        """read() primary HDU succeeds"""
+        """__read__() primary HDU succeeds"""
         HDU = pf.PrimaryHDU(self.VALID)
         AFrame = self.FRAME.__read__(HDU,"Valid")
         assert isinstance(AFrame,self.FRAME)
@@ -89,7 +89,7 @@ class API_Base_Frame(API_Base):
         assert self.SAMEDATA(AFrame.data,self.VALID)
     
     def test_read_SecondaryHDU(self):
-        """read() secondary HDU succeeds"""
+        """__read__() secondary HDU succeeds"""
         HDU = self.HDUTYPE(self.VALID)
         AFrame = self.FRAME.__read__(HDU,"Valid")
         assert isinstance(AFrame,self.FRAME)
@@ -99,7 +99,7 @@ class API_Base_Frame(API_Base):
     
     @nt.raises(AbstractError)
     def test_read_empty_HDU(self):
-        """read() an empty primary HDU fails"""
+        """__read__() an empty primary HDU fails"""
         HDU = pf.PrimaryHDU()
         AFrame = self.FRAME.__read__(HDU,"Empty")
         
@@ -130,14 +130,14 @@ class API_Base_Frame(API_Base):
 
 
     def test_show(self):
-        """show() returns a valid type"""
+        """__show__() returns a valid type"""
         AFrame = self.FRAME(self.VALID,"Valid")
         assert AFrame.label == "Valid"
         figure = AFrame.__show__()
         assert isinstance(figure,self.SHOWTYPE), "Found type %s" % type(figure)
 
     def test_string_representation(self):
-        """str() String representation correct for Frame"""
+        """__str__() String representation correct for Frame"""
         AFrame = self.FRAME(self.VALID,"Valid")
         assert AFrame.label == "Valid"
         assert str(AFrame) == self.FRAMESTR
@@ -402,7 +402,7 @@ class API_Base_Object(API_Base):
     
     @nt.raises(KeyError)
     def test_show_non_existant_state(self):
-        """Show raises KeyError for a non-existent state name"""
+        """show() raises KeyError for a non-existent state name"""
         AObject = self.OBJECT()
         AObject.save(self.FRAMEINST)
         AObject.show(self.FRAMELABEL + "JUNK...")

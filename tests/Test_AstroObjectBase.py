@@ -6,7 +6,7 @@
 #  Copyright 2011 Alexander Rudy. All rights reserved.
 # 
 
-from AstroObject.Tests.Test_AstroObjectAPI import *
+from AstroObject.tests.Test_AstroObjectAPI import *
 import AstroObject.AstroObjectBase as AOB
 from AstroObject.Utilities import AbstractError
 import nose.tools as nt
@@ -43,20 +43,20 @@ class API_Abstract_Frame(API_Base_Frame):
     
     @nt.raises(AbstractError)
     def test_save_data(self):
-        """save() to an abstract base class raises an AbstractError"""
+        """__save__() to an abstract base class raises an AbstractError"""
         raise SkipTest("This is a bug, related to argument ordering on the frame.__init__() call.")
         # The following arguments are treated as label and header respectivley. The lack of abstract type cheking and/or a data argument means that this call doesn't fail when it should.
         self.FRAME.__save__(self.VALID,"None")
     
     @nt.raises(AbstractError)
     def test_read_SecondaryHDU(self):
-        """read() secondary HDU type should get an abstract error"""
+        """__read__() secondary HDU type should get an abstract error"""
         HDU = self.HDUTYPE(self.INVALID)
         self.FRAME.__read__(HDU,"Empty")
         
     @nt.raises(AbstractError)
     def test_read_PrimaryHDU(self):
-        """read() primary HDU type should get an abstract error"""
+        """__read__() primary HDU type should get an abstract error"""
         HDU = pf.PrimaryHDU(self.INVALID)
         BFrame = self.FRAME.__read__(HDU,"Not Empty")
     
@@ -83,13 +83,13 @@ class API_Abstract_Frame(API_Base_Frame):
     
     @nt.raises(AbstractError)
     def test_show(self):
-        """show() a base frame should fail"""
+        """__show__() a base frame should fail"""
         BFrame = self.FRAME("Empty")
         assert BFrame.label == "Empty"
         BFrame.__show__()
     
     def test_string_representation(self):
-        """srt() String representation correct for Frame"""
+        """__str__() String representation correct for Frame"""
         AFrame = self.FRAME("Valid")
         assert AFrame.label == "Valid"
         assert str(AFrame) == self.FRAMESTR
@@ -109,17 +109,9 @@ class API_Abstract_Object(API_Base_Object):
         BObject.data()
         
     
-    @nt.raises(IndexError)
-    def test_cannot_remove_nonexistant_state(self):
-        """Cannot Remove Non-Existant State"""
-        BObject = self.OBJECT()
-        BObject.save(self.FRAMEINST,"A")
-        BObject.remove("B")
-        
-    
     @nt.raises(AbstractError)
     def test_show(self):
-        """Show should call underlying show method, raising an abstract error"""
+        """show() calls underlying show method, raising an abstract error"""
         BObject = self.OBJECT()
         BObject.save(self.FRAMEINST)
         BObject.show()
@@ -152,7 +144,7 @@ class test_FITSFrame(API_Abstract_Frame):
         self.doSetUp()
     
     def test_HDU(self):
-        """HDU method raises an AbstractError"""
+        """__hdu__() raises an AbstractError"""
         BFrame = self.FRAME("Empty")
         assert BFrame.label == "Empty"
         HDU = BFrame.__hdu__()
@@ -160,7 +152,7 @@ class test_FITSFrame(API_Abstract_Frame):
         assert HDU.data == None
 
     def test_PrimaryHDU(self):
-        """HDU primary raises an AbstractError"""
+        """__hdu__() primary raises an AbstractError"""
         BFrame = self.FRAME("Empty")
         assert BFrame.label == "Empty"
         HDU = BFrame.__hdu__(primary=True)
@@ -168,7 +160,7 @@ class test_FITSFrame(API_Abstract_Frame):
         assert HDU.data == None
         
     def test_read_empty_HDU(self):
-        """Reads an empty HDU"""
+        """__read__() works on an empty primary HDU"""
         HDU = pf.PrimaryHDU()
         BFrame = self.FRAME.__read__(HDU,"Empty")
         assert isinstance(BFrame,self.FRAME)

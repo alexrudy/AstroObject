@@ -19,7 +19,7 @@ import os
 import nose.tools as nt
 from nose.plugins.skip import Skip,SkipTest
 
-from AstroObject.Tests.Test_AstroObjectAPI import *
+from AstroObject.tests.Test_AstroObjectAPI import *
 
 import AstroObject.AstroSpectra as AS
 from AstroObject.Utilities import AbstractError
