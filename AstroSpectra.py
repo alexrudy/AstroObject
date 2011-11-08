@@ -31,7 +31,7 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
         self.data = array # The image data
         self.size = array.size # The size of this image
         self.shape = array.shape # The shape of this image
-        super(SpectraFrame, self).__init__(label, header, metadata)
+        super(SpectraFrame, self).__init__(None, label, header, metadata)
         
     
     def __valid__(self):

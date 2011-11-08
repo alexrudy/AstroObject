@@ -56,7 +56,7 @@ class API_Base_Frame(API_Base):
         """__init__() fails without data"""
         self.FRAME(None,"Label")
         
-    @nt.raises(Exception)
+    @nt.raises(AttributeError)
     def test_init_invalid(self):
         """__init__() fails with invalid data"""
         self.FRAME(self.INVALID,"Invalid")

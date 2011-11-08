@@ -24,8 +24,8 @@ import math, copy, sys, time, logging, os
 
 class AnalyticSpectrum(AstroObjectBase.FITSFrame):
     """A functional spectrum object for spectrum generation. The default implementation is a flat spectrum."""
-    def __init__(self,label,wavelengths=None,units=None):
-        super(AnalyticSpectrum, self).__init__(label)
+    def __init__(self,data,label,wavelengths=None,units=None):
+        super(AnalyticSpectrum, self).__init__(data, label)
         self.wavelengths = wavelengths
         self.units = units #Future will be used for enforcing unit behaviors
         
@@ -91,7 +91,7 @@ class CompositeSpectra(AnalyticSpectrum):
     """Binary composition of two functional spectra"""
     def __init__(self, partA, partB, operation):
         label = partA.label + " " + operation + " " + partB.label
-        super(CompositeSpectra, self).__init__(label)
+        super(CompositeSpectra, self).__init__(None,label)
         self.A = partA
         self.B = partB
         self.operation = operation
