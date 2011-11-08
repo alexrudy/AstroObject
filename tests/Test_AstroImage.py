@@ -7,6 +7,20 @@
 #  Copyright 2011 Alexander Rudy. All rights reserved.
 # 
 
+# Test API Imports
+from AstroObject.tests.Test_AstroObjectAPI import *
+
+# Parent Object Imports
+import AstroObject.AstroImage as AI
+
+# Utility Imports
+from AstroObject.Utilities import AbstractError
+
+# Testing Imports
+import nose.tools as nt
+from nose.plugins.skip import Skip,SkipTest
+
+# Scipy Imports
 import numpy as np
 import pyfits as pf
 import scipy as sp
@@ -14,16 +28,9 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimage
 
-import os
 
-import nose.tools as nt
-from nose.plugins.skip import Skip,SkipTest
-
-from AstroObject.tests.Test_AstroObjectAPI import *
-
-import AstroObject.AstroImage as AI
-import AstroObject.AstroObjectBase as AOB
-from AstroObject.Utilities import AbstractError
+# Python Imports
+import math, copy, sys, time, logging, os
 
 class test_ImageFrame(API_Base_Frame):
     """AstroImage.ImageFrame"""
