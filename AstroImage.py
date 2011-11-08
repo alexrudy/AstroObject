@@ -4,10 +4,10 @@
 #  
 #  Created by Alexander Rudy on 2011-04-28.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.0
+#  Version 0.2.1
 # 
 
-import AstroObject
+import AstroObjectBase
 
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimage
@@ -24,21 +24,32 @@ from Utilities import *
 
 LOG = logging.getLogger(__name__)
 
-class ImageFrame(AstroObject.FITSFrame):
-    """A single frame of a FITS image"""
+class ImageFrame(AstroObjectBase.FITSFrame):
+    """
+    A single frame of a FITS image.
+    Frames are known as Header Data Units, or HDUs when written to a FITS file.
+    This frame accepts (generally) 2-dimensional numpy arrays (``ndarray``), and will show those arrays as images. Currently, the system makes no attempt to ensure/check the data type of your data arrays. As such, data saved will often be saved as ``np.float`` rather than more compact data types such as ``np.int16``. Pyfits handles the typing of your data automatically, so saving an array with the correct type will generate the proper FITS file.
+    This object requires *array*, the data, a *label*, and can optionally take *headers* and *metadata*.
+    
+    """
     def __init__(self, array, label, header=None, metadata=None):
-        super(ImageFrame, self).__init__(label, header, metadata)
         self.data = array # The image data
         self.size = array.size # The size of this image
         self.shape = array.shape # The shape of this image
+        super(ImageFrame, self).__init__(label, header, metadata)
         
     
     def __call__(self):
-        """Call this frame, returning the data array"""
+        """Returns the data for this frame, which should be a ``numpy.ndarray``."""
         return self.data
         
+    def __valid__(self):
+        """Runs a series of assertions which ensure that the data for this frame is valid"""
+        assert isinstance(self.data,np.ndarray), "Frame data is not correct type: %s" % type(self.data)
+        
+    
     def __hdu__(self,primary=False):
-        """Retruns an HDU for this frame"""
+        """Retruns an HDU which represents this frame. HDUs are either ``pyfits.PrimaryHDU`` or ``pyfits.ImageHDU`` depending on the *primary* keyword."""
         if primary:
             LOG.info("Generating a primary HDU for %s" % self)
             return pyfits.PrimaryHDU(self())
@@ -47,7 +58,11 @@ class ImageFrame(AstroObject.FITSFrame):
             return pyfits.ImageHDU(self())
             
     def __show__(self):
-        """Returns the plot object for this image"""
+        """Plots the image in this frame using matplotlib's ``imshow`` function. The color map is set to an inverted binary, as is often useful when looking at astronomical images. The figure object is returned, and can be manipulated further.
+        
+        .. Note::
+            This function serves as a quick view of the current state of the frame. It is not intended for robust plotting support, as that can be easily accomplished using ``matplotlib``. Rather, it attempts to do the minimum possible to create an acceptable image for immediate inspection.
+        """
         LOG.debug("Plotting %s using matplotlib.pyplot.imshow" % self)
         figure = plt.imshow(self())
         figure.set_cmap('binary_r')
@@ -55,20 +70,30 @@ class ImageFrame(AstroObject.FITSFrame):
     
     @classmethod
     def __save__(cls,data,label):
-        """A generic class method for saving to this object with data directly"""
+        """Attempts to create a :class:`ImageFrame` object from the provided data. This requres some type checking to ensure that the provided data meets the general sense of such an image. If the data does not appear to be correct, this method will raise an :exc:`AbstractError` with a message describing why the data did not validate. Generally, this error will be intercepted by the caller, and simply provides an indication that this is not the right class for a particular piece of data.
+        
+        If the data is saved successfully, this method will return an object of type :class:`ImageFrame`
+        
+        The validation requires that the data be a type ``numpy.ndarray`` and that the data have 2 and only 2 dimensions.
+        """
         LOG.debug("Attempting to save as %s" % cls)
         if not isinstance(data,np.ndarray):
             msg = "ImageFrame cannot handle objects of type %s, must be type %s" % (type(data),np.ndarray)
             raise AbstractError(msg)
         if len(data.shape) != 2:
             LOG.warning("The data appears to be %d dimensional. This object expects 2 dimensional data." % len(data.shape))
-        Object = cls(data,label)
+        try:
+            Object = cls(data,label)
+        except AssertionError as AE:
+            msg = "%s data did not validate: %s" % (cls.__name__,AE)
+            raise AbstractError(msg)
         LOG.debug("Saved %s with size %d" % (Object,data.size))
         return Object
     
     @classmethod
     def __read__(cls,HDU,label):
-        """An abstract method for reading empty data HDU Frames"""
+        """Attempts to convert a given HDU into an object of type :class:`ImageFrame`. This method is similar to the :meth:`__save__` method, but instead of taking data as input, it takes a full HDU. The use of a full HDU allows this method to check for the correct type of HDU, and to gather header information from the HDU. When reading data from a FITS file, this is the prefered method to initialize a new frame.
+        """
         LOG.debug("Attempting to read as %s" % cls)
         if not isinstance(HDU,(pyfits.ImageHDU,pyfits.PrimaryHDU)):
             msg = "Must save a PrimaryHDU or ImageHDU to a %s, found %s" % (cls.__name__,type(HDU))
@@ -76,23 +101,29 @@ class ImageFrame(AstroObject.FITSFrame):
         if not isinstance(HDU.data,np.ndarray):
             msg = "HDU Data must be %s for %s, found data of %s" % (np.ndarray,cls.__name__,type(HDU.data))
             raise AbstractError(msg)
-        Object = cls(HDU.data,label)
+        try:
+            Object = cls(HDU.data,label)
+        except AssertionError as AE:
+            msg = "%s data did not validate: %s" % (cls.__name__,AE)
+            raise AbstractError(msg)
         LOG.debug("Created %s" % Object)
         return Object
     
 
 
-class ImageObject(AstroObject.FITSObject):
-    """docstring for ImageObject"""
+class ImageObject(AstroObjectBase.FITSObject):
+    """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.FITSObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`ImageFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.
+    """
     def __init__(self, array=None):
         super(ImageObject, self).__init__()
         self.dataClasses += [ImageFrame]
-        self.dataClasses.remove(AstroObject.FITSFrame)
+        self.dataClasses.remove(AstroObjectBase.FITSFrame)
         if array != None:
             self.save(array)        # Save the initializing data
             
     def loadFromFile(self,filename=None,statename=None):
-        """Load a regular image file into the object"""
+        """This function can be used to load an image file (but not a FITS file) into this image frame. Image files should be formats accepatble to the Python Image Library, but that generally applies to most common image formats, such as .png and .jpg .
+        This method takes a *filename* and a *statename* parameter. If either is not given, they will be generated using sensible defaults."""
         if not filename:
             filename = self.filename
         if statename == None:
@@ -103,7 +134,7 @@ class ImageObject(AstroObject.FITSObject):
     
 
 
-class OLDImageObject(AstroObject.FITSObject):
+class OLDImageObject(AstroObjectBase.FITSObject):
     """docstring for ImageObject"""
     
     ##########################

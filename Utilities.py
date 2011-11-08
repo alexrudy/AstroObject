@@ -4,8 +4,8 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.0
-
+#  Version 0.2.1
+#
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -18,6 +18,15 @@ import logging,time,sys
 
 
 LOG = logging.getLogger(__name__)
+
+def disable_Console():
+    """Disables console Logging"""
+    logging.getLogger('').removeHandler(console)
+
+def enable_Console():
+    """docstring for enable_Console"""
+    logging.getLogger('').addHandler(console)
+    
 
 def get_padding(*otherxy):
     """This function returns axis values to provide 5-percent padding around the given data."""
@@ -38,6 +47,21 @@ def get_padding(*otherxy):
     
     return [min(x)-(max(x)-min(x))*0.05, max(x)+(max(x)-min(x))*0.05, min(y)-(max(y)-min(y))*0.05, max(y)+(max(y)-min(y))*0.05]
     
+
+
+def expandLim(axis,scale=0.05):
+    """Expands Axis Limits by *scale*"""
+    xmin,xmax,ymin,ymax = axis
+    xran = abs(xmax-xmin)
+    yran = abs(ymax-ymin)
+
+    xmax += xran*scale
+    xmin -= xran*scale
+    ymax += yran*scale
+    ymin -= yran*scale
+
+    axis = (xmin,xmax,ymin,ymax)
+    return axis
 
 def BlackBody(wl,T):
     """Return black-body flux as a function of wavelength"""

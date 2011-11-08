@@ -9,4 +9,7 @@
 *.pyc
 Logs/*
 TODO/*
+Docs/build/*
 Tests/*
+.noseids
+.coverage

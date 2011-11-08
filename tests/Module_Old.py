@@ -10,9 +10,9 @@
 
 execfile("__init__.py")
 import logging,os,sys,unittest
-import Utilities
-from AstroImage import plt,np
-import AstroImage, AstroSpectra, AnalyticSpectra, AstroObject
+import AstroObject.Utilities
+from AstroObject.AstroImage import plt,np
+import AstroImage, AstroSpectra, AnalyticSpectra, AstroObjectBase
 import matplotlib as mpl
 import matplotlib.image as mpimage
 from pyraf import iraf
@@ -24,16 +24,16 @@ LOG = logging.getLogger("AstroObject Tests")
 
 LOG.info("Starting Test Suite: %s" % __file__)
 
-class ObjectTests(unittest.TestCase):
+class TestsObject(unittest.TestCase):
     """A class for testing the AstroObject objects"""
     def setUp(self):
         """Sets up the Object Tests"""
         self.EmptyFileName = "Tests/Empty.fits"
         self.EmptyFileNameEx = "Tests/Empty-Ex.fits"
         # Generate Object
-        self.Object = AstroObject.FITSObject(filename=self.EmptyFileName)
+        self.Object = AstroObjectBase.FITSObject(filename=self.EmptyFileName)
         # Generate Empty Frame
-        self.EmptyFrame = AstroObject.FITSFrame("Test Empty Frame")
+        self.EmptyFrame = AstroObjectBase.FITSFrame("Test Empty Frame")
         
         if os.access(self.EmptyFileName,os.F_OK):
             os.remove(self.EmptyFileName)
@@ -248,7 +248,6 @@ class AnalayticSpectraTests(unittest.TestCase):
 
 if __name__ != '__main__':
     LOG.critical(__name__+" is not a module, do not run it as one!")
-    sys.exit(1)
 else:
     LOG.debug("Removing Console Handler...")
     print "\n" + "-"*70

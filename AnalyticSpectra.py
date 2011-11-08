@@ -4,10 +4,10 @@
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.0
+#  Version 0.2.1
 # 
 
-import AstroObject,AstroImage,AstroSpectra
+import AstroObjectBase,AstroImage,AstroSpectra
 from Utilities import *
 
 import matplotlib.pyplot as plt
@@ -22,7 +22,7 @@ import numpy as np
 import pyfits
 import math, copy, sys, time, logging, os
 
-class AnalyticSpectrum(AstroObject.FITSFrame):
+class AnalyticSpectrum(AstroObjectBase.FITSFrame):
     """A functional spectrum object for spectrum generation. The default implementation is a flat spectrum."""
     def __init__(self,label,wavelengths=None,units=None):
         super(AnalyticSpectrum, self).__init__(label)
@@ -65,7 +65,7 @@ class AnalyticSpectrum(AstroObject.FITSFrame):
         msg = "%s: Cannot Call: Abstract Spectra not instantiated with any properies." % (self)
         raise AbstractError(msg)
     
-    def __hdu__(self):
+    def __hdu__(self,primary=False):
         """Returns a pyfits HDU representing this object"""
         msg = "%s: Cannot make HDU: Abstract Spectra not instantiated with any properies." % (self)
         raise AbstractError(msg)
