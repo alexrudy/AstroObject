@@ -191,6 +191,17 @@ class FITSObject(object):
         """Provides a list of the available frames, by label."""
         return self.states.keys()
     
+    def _default_state(self):
+        """Returns the default state name. If the currently selected state exists, it's state name will return. If not, the system will search for the newest state."""
+        if self.statename in self.states:
+            return self.statename
+        List = self.list()
+        if [] == List:
+            return None
+        Ages = [ time.clock() - self.frame(name).time for name in List ]
+        youngest = List[np.argmin(Ages)]
+        return youngest
+    
     def keep(self,*statenames):
         """Removes all states except the specified frame from the object"""
         oldStates = self.states
@@ -201,6 +212,8 @@ class FITSObject(object):
             newStates[statename] = oldStates[statename]
         LOG.debug("%s: Kept the following states %s" % (self,statenames))
         self.states = newStates
+        self.statename = self._default_state()
+        return self.list()
     
     def remove(self,*statenames):
         """Removes the specified frame from the object."""
@@ -209,6 +222,8 @@ class FITSObject(object):
                 raise IndexError("%s: Object %s does not exist!" % (self,statename))
             LOG.debug("%s: Removing Object with label %s" % (self,statename))
             self.states.pop(statename)
+        self.statename = self._default_state()
+        return self.list()
     
     def show(self,statename=None):
         """Returns the (rendered) matplotlib plot for this object. This is a quick way to view your current data state without doing any serious plotting work. This aims for the sensible defaults philosophy, if you don't like what you get, write a new method that uses the :meth:`data` call and plots that."""

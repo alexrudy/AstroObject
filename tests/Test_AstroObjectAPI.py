@@ -339,7 +339,6 @@ class API_Base_Object(API_Base):
         assert ["A","B"] == sorted(AObject.list()) , "List: %s" % AObject.list()
         AObject.select("B")
         AObject.keep("A")
-        raise SkipTest("This is a bug... should be fixed with a default state algorithm")
         AObject.frame()
     
     def test_remove(self):
@@ -371,7 +370,6 @@ class API_Base_Object(API_Base):
         assert ["A","B"] == BObject.list()
         BObject.select("A")
         BObject.remove("A")
-        raise SkipTest("This is a bug... should be fixed with a default state algorithm")
         BObject.frame()
     
     @nt.raises(IndexError)
