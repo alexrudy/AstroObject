@@ -224,13 +224,13 @@ class API_Base_Object(API_Base):
         AObject.write(self.FILENAME)
         AObject.write(self.FILENAME,clobber=True)
     
-    # @nt.raises(IOError)
+    @nt.raises(IOError)
     def test_write_does_not_clobber_file(self):
         """write() doesn't clobber files by default"""
         AObject = self.OBJECT()
         AObject.save(self.FRAMEINST)
         AObject.write(self.FILENAME)
-        AObject.write(self.FILENAME,clobber=True)
+        AObject.write(self.FILENAME)
     
     def test_select(self):
         """select() changes to correct state"""
