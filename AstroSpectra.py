@@ -9,19 +9,30 @@
 
 
 import AstroObjectBase, AstroImage
-from Utilities import *
 
+# Standard Scipy Toolkits
+import numpy as np
+import pyfits as pf
+import scipy as sp
+import matplotlib as mpl
 import matplotlib.pyplot as plt
+
+# Matplolib Extras
 import matplotlib.image as mpimage
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
+
+# Scipy Extras
 from scipy import ndimage
 from scipy.spatial.distance import cdist
 from scipy.linalg import norm
-import numpy as np
-import pyfits
+
+# Standard Python Modules
 import math, copy, sys, time, logging, os
+
+# Submodules from this system
+from Utilities import *
 
 LOG = logging.getLogger(__name__)
 

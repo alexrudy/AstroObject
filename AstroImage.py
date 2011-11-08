@@ -7,19 +7,25 @@
 #  Version 0.2.2
 # 
 
+# Parent Modules
 import AstroObjectBase
 
+# Standard Scipy Toolkits
+import numpy as np
+import pyfits as pf
+import scipy as sp
+import matplotlib as mpl
 import matplotlib.pyplot as plt
+
+# Matplotlib Extras
 import matplotlib.image as mpimage
-from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
-from scipy import ndimage
-from scipy.spatial.distance import cdist
-from scipy.linalg import norm
-import numpy as np
-import pyfits
+
+# Standard Python Libraries
 import math, copy, sys, time, logging, os
+
+# Module Utilites
 from Utilities import *
 
 LOG = logging.getLogger(__name__)

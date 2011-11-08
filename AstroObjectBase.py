@@ -7,17 +7,29 @@
 #  Version 0.2.2
 # 
 
+
+# Standard Scipy Toolkits
+import numpy as np
+import pyfits as pf
+import scipy as sp
+import matplotlib as mpl
 import matplotlib.pyplot as plt
+
+# Matplolib Extras
 import matplotlib.image as mpimage
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
+
+# Scipy Extras
 from scipy import ndimage
 from scipy.spatial.distance import cdist
 from scipy.linalg import norm
-import numpy as np
-import pyfits
+
+# Standard Python Modules
 import math, copy, sys, time, logging, os
+
+# Submodules from this system
 from Utilities import *
 
 LOG = logging.getLogger(__name__)
@@ -67,9 +79,9 @@ class FITSFrame(object):
         Subclasses should provide a *primary* keyword argument, and if that keyword is set, the method should return a primaryHDU."""
         LOG.warning("%s: Generating an Empty HDU" % (self))
         if primary:
-            return pyfits.PrimaryHDU()
+            return pf.PrimaryHDU()
         else:
-            return pyfits.ImageHDU()
+            return pf.ImageHDU()
     
     def __show__(self):
         """Should return a plot object for the current frame, after setting up this plot in matplotlib. 
@@ -89,8 +101,8 @@ class FITSFrame(object):
     def __read__(cls,HDU,label):
         """An abstract method for reading empty data HDU Frames"""
         LOG.debug("%s: Attempting to read data" % cls)
-        if not isinstance(HDU,pyfits.PrimaryHDU):
-            msg = "Must save a %s to a %s, found %s" % (pyfits.PrimaryHDU.__name__,cls.__name__,HDU.__class__.__name__)
+        if not isinstance(HDU,pf.PrimaryHDU):
+            msg = "Must save a %s to a %s, found %s" % (pf.PrimaryHDU.__name__,cls.__name__,HDU.__class__.__name__)
             raise AbstractError(msg)
         if not HDU.data == None:
             msg = "HDU Data must be type %s for %s, found data of type %s" % (None,cls,type(HDU.data).__name__)
@@ -254,9 +266,9 @@ class FITSObject(object):
         PrimaryHDU = self.states[primaryState].__hdu__(primary=True)
         if states:
             HDUs = [self.states[state].__hdu__(primary=False) for state in states]
-            HDUList = pyfits.HDUList([PrimaryHDU]+HDUs)
+            HDUList = pf.HDUList([PrimaryHDU]+HDUs)
         else:
-            HDUList = pyfits.HDUList(PrimaryHDU)
+            HDUList = pf.HDUList(PrimaryHDU)
         HDUList.writeto(filename,clobber=clobber)
     
     def read(self,filename=None,statename=None):
@@ -266,7 +278,7 @@ class FITSObject(object):
         if statename == None:
             statename = os.path.basename(filename)
             LOG.debug("Set statename for image from filename: %s" % statename)
-        HDUList = pyfits.open(filename)
+        HDUList = pf.open(filename)
         Read = 0
         Labels = []
         for HDU in HDUList:
