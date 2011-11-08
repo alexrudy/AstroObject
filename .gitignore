@@ -10,6 +10,8 @@
 Logs/*
 TODO/*
 Docs/build/*
-Tests/*
+Tests/*.png
+Tests/*.jpg
+Tests/*.fits
 .noseids
 .coverage
