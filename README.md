@@ -41,3 +41,13 @@ As well, the library is useful for building object-based representations of new 
 	- Logging cannot capture warnings in python 0.1.4, so don't import that!
 * 0.2.0
 	- API Has CHANGED! Please see SPEC.md to understand the 0.2 API
+* 0.2.1 
+    - object.keep() only keeps the specified states
+    - object.keep() and object.remove() both accept arbitrary numbers of arguments
+    - derived classes now have a __valid__() method
+    - object.object() has become object.frame() for more naming consistency. NOTE: object.object() will be depreciated.
+    - AstroObject has been renamed AstroObjectBase to reflect its use as a base class. NOTE: AstroObject.AstroObject will be depreciated.
+    - improvement to nosetests/spec
+	- improvements to documentation
+* 0.2.2
+	- Hotfix to include updated notes in the README and to update documentation
