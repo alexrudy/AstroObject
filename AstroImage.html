@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>5. AstroImage &mdash; AstroObject 0.2.0 documentation</title>
+    <title>5. AstroImage &mdash; AstroObject 0.2.2 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2.0',
+        VERSION:     '0.2.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.2.0 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.2.2 documentation" href="index.html" />
     <link rel="next" title="6. AstroSpectra" href="AstroSpectra.html" />
     <link rel="prev" title="4. AstroObjectBase" href="AstroObject.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="AstroObject.html" title="4. AstroObjectBase"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.2.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.2.2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -100,6 +100,12 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
 </div>
 </dd></dl>
 
+<dl class="method">
+<dt id="AstroImage.ImageFrame.__valid__">
+<tt class="descname">__valid__</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroImage.ImageFrame.__valid__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs a series of assertions which ensure that the data for this frame is valid</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -118,6 +124,12 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
 <tt class="descname">frame</tt><big>(</big><em>statename=None</em><big>)</big><a class="headerlink" href="#AstroImage.ImageObject.frame" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.</p>
 <p>..Note:: Using frames can be advantageous as you don&#8217;t rely on the Object to guess what type of frame should be used. Most times, the object will guess correctly, but Frames are a more robust way of ensuring type consistency.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroImage.ImageObject.keep">
+<tt class="descname">keep</tt><big>(</big><em>*statenames</em><big>)</big><a class="headerlink" href="#AstroImage.ImageObject.keep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes all states except the specified frame from the object</p>
 </dd></dl>
 
 <dl class="method">
@@ -141,7 +153,7 @@ This method takes a <em>filename</em> and a <em>statename</em> parameter. If eit
 
 <dl class="method">
 <dt id="AstroImage.ImageObject.remove">
-<tt class="descname">remove</tt><big>(</big><em>statename</em><big>)</big><a class="headerlink" href="#AstroImage.ImageObject.remove" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">remove</tt><big>(</big><em>*statenames</em><big>)</big><a class="headerlink" href="#AstroImage.ImageObject.remove" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes the specified frame from the object.</p>
 </dd></dl>
 
@@ -222,7 +234,7 @@ This method takes a <em>filename</em> and a <em>statename</em> parameter. If eit
         <li class="right" >
           <a href="AstroObject.html" title="4. AstroObjectBase"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.2.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.2.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

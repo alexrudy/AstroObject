@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>4. AstroObjectBase &mdash; AstroObject 0.2.0 documentation</title>
+    <title>4. AstroObjectBase &mdash; AstroObject 0.2.2 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2.0',
+        VERSION:     '0.2.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.2.0 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.2.2 documentation" href="index.html" />
     <link rel="next" title="5. AstroImage" href="AstroImage.html" />
     <link rel="prev" title="3. AstroObject API" href="api.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="api.html" title="3. AstroObject API"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.2.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.2.2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -112,6 +112,12 @@ Subclasses should provide a <em>primary</em> keyword argument, and if that keywo
 <dd><p>Returns String Representation of this frame object. Will display the class name and the label. This method does not need to be overwritten by subclasses.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="AstroObjectBase.FITSFrame.__valid__">
+<tt class="descname">__valid__</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObjectBase.FITSFrame.__valid__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs a series of assertions which ensure that the data for this frame is valid</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="AstroObjectBase.FITSFrame.__weakref__">
 <tt class="descname">__weakref__</tt><a class="headerlink" href="#AstroObjectBase.FITSFrame.__weakref__" title="Permalink to this definition">¶</a></dt>
@@ -143,6 +149,12 @@ Subclasses should provide a <em>primary</em> keyword argument, and if that keywo
 </dd></dl>
 
 <dl class="method">
+<dt id="AstroObjectBase.FITSObject.keep">
+<tt class="descname">keep</tt><big>(</big><em>*statenames</em><big>)</big><a class="headerlink" href="#AstroObjectBase.FITSObject.keep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes all states except the specified frame from the object</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="AstroObjectBase.FITSObject.list">
 <tt class="descname">list</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provides a list of the available frames, by label.</p>
@@ -156,7 +168,7 @@ Subclasses should provide a <em>primary</em> keyword argument, and if that keywo
 
 <dl class="method">
 <dt id="AstroObjectBase.FITSObject.remove">
-<tt class="descname">remove</tt><big>(</big><em>statename</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.remove" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">remove</tt><big>(</big><em>*statenames</em><big>)</big><a class="reference internal" href="_modules/AstroObjectBase.html#FITSObject.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObjectBase.FITSObject.remove" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes the specified frame from the object.</p>
 </dd></dl>
 
@@ -237,7 +249,7 @@ Subclasses should provide a <em>primary</em> keyword argument, and if that keywo
         <li class="right" >
           <a href="api.html" title="3. AstroObject API"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.2.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.2.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
