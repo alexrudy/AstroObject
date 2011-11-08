@@ -176,7 +176,7 @@ class FITSObject(object):
             raise KeyError("Object %s not instantiated with any data..." % self)
     
     def object(self,statename=None):
-        LOG.info("Method \".object()\" on %s has been depreciated. Please use \".frame()\" instead.")
+        LOG.info("Method \".object()\" on %s has been depreciated. Please use \".frame()\" instead." % self)
         return self.frame(statename)
         
     def select(self,statename):
