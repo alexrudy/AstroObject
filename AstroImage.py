@@ -36,7 +36,7 @@ class ImageFrame(AstroObjectBase.FITSFrame):
         self.data = array # The image data
         self.size = array.size # The size of this image
         self.shape = array.shape # The shape of this image
-        super(ImageFrame, self).__init__(label, header, metadata)
+        super(ImageFrame, self).__init__(None, label, header, metadata)
         
     
     def __call__(self):

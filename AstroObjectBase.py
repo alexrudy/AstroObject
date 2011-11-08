@@ -32,8 +32,10 @@ class FITSFrame(object):
         This is an abstract object. Methods implemented here will *likely* raise an :exc:`AbstractError` indicating that you shouldn't be using these methods. This class is provided so that users can sub-class it for their own purposes. It also serves as the base class for other Frames in this package.
     
     """
-    def __init__(self, label, header=None, metadata=None):
+    def __init__(self, data, label, header=None, metadata=None):
         super(FITSFrame, self).__init__()
+        if data != None:
+            raise AttributeError("Abstract Class cannot accept data!")
         self.label = label # A label for this frame, for selection in parent object
         self.header = header # A dictionary of header keys and values for use in 
         self.metadata = metadata # An optional metadata dictionary
@@ -93,7 +95,7 @@ class FITSFrame(object):
         if not HDU.data == None:
             msg = "HDU Data must be type %s for %s, found data of type %s" % (None,cls,type(HDU.data).__name__)
             raise AbstractError(msg)
-        Object = cls(label)
+        Object = cls(None,label)
         LOG.debug("%s: Created %s" % (cls,Object))
         return Object
     

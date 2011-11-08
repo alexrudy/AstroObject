@@ -57,34 +57,34 @@ class test_AnalyticSpectraFrame(API_Abstract_Frame):
         
     def test_init_with_wavelengths(self):
         """__init__() works with wavelengths"""
-        SFrame = self.FRAME("Empty",self.WAVELENGTHS)
+        SFrame = self.FRAME(None,"Empty",self.WAVELENGTHS)
         assert not np.abs(self.WAVELENGTHS - SFrame.wavelengths > 1e-6).any()
         
     def test_init_empty(self):
         """__init__ abstract frame works without data"""
-        AFrame = self.FRAME("Valid")
+        AFrame = self.FRAME(None,"Valid")
         assert AFrame.label == "Valid"
         
         
     def test_add_objects(self):
         """__add__() Objects respont to + operator"""
-        SFrame1 = self.FRAME("Empty")
-        SFrame2 = self.FRAME("Empty")
+        SFrame1 = self.FRAME(None,"Empty")
+        SFrame2 = self.FRAME(None,"Empty")
         SFrame3 = SFrame1 + SFrame2
         assert isinstance(SFrame3,AS.CompositeSpectra)
     
     def test_sub_objects(self):
         """__sub__() Objects respont to - operator"""
-        SFrame1 = self.FRAME("Empty")
-        SFrame2 = self.FRAME("Empty")
+        SFrame1 = self.FRAME(None,"Empty")
+        SFrame2 = self.FRAME(None,"Empty")
         SFrame3 = SFrame1 - SFrame2
         assert isinstance(SFrame3,AS.CompositeSpectra)
         
         
     def test_mul_objects(self):
         """__mul__() Objects respont to * operator"""
-        SFrame1 = self.FRAME("Empty")
-        SFrame2 = self.FRAME("Empty")
+        SFrame1 = self.FRAME(None,"Empty")
+        SFrame2 = self.FRAME(None,"Empty")
         SFrame3 = SFrame1 * SFrame2
         assert isinstance(SFrame3,AS.CompositeSpectra)
         
