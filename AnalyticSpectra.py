@@ -27,6 +27,7 @@ from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
 from scipy import ndimage
 from scipy.spatial.distance import cdist
 from scipy.linalg import norm
+import scipy.interpolate
 
 # Standard Python Modules
 import math, copy, sys, time, logging, os
@@ -110,6 +111,7 @@ class CompositeSpectra(AnalyticSpectrum):
         self.B = partB
         self.operation = operation
         
+    
     def __call__(self,wavelengths=None):
         """Calls the composite function components"""
         if wavelengths == None:
@@ -132,6 +134,26 @@ class CompositeSpectra(AnalyticSpectrum):
             return np.vstack((wavelengths,Result))
         else:
             raise ValueError("Composition did not produce a value result!")
-            
+        
+    
+
+
+class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
+    """An analytic representation of a Blackbody Spectrum at a Kelvin Tempertaure"""
+    def __init__(self, array, label, wavelengths=None):
+        self.data = array
+        self.size = array.size # The size of this image
+        self.shape = array.shape # The shape of this image
+        super(InterpolatedSpectrum, self).__init__(array,label)
+        x,y = self.data
+        self.func = sp.interpolate.interp1d(x,y)
+        self.wavelengths = wavelengths
+    
+    def __call__(self,wavelengths=None):
+        """Calls this blackbody spectrum over certain wavelengths"""
+        if wavelengths == None:
+            wavelengths = self.wavelengths
+        return np.vstack((wavelengths,self.func(wavelengths)))
+
 from AnalyticSpectraObjects import *
         
