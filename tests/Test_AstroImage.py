@@ -70,7 +70,7 @@ class test_ImageFrame(API_Base_Frame):
     
             
     def test_read_grayscale_HDU(self):
-        """__read__ an image HDU succeeds"""
+        """__read__() an image HDU succeeds"""
         HDU = pf.PrimaryHDU(self.image)
         IFrame = AI.ImageFrame.__read__(HDU,"Hong Kong")
         assert isinstance(IFrame,AI.ImageFrame)
