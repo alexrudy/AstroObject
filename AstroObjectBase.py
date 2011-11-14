@@ -58,7 +58,10 @@ class FITSFrame(object):
             self.metadata = {}
         if self.header == None:
             self.header = {}
-        self.__valid__()
+        try:
+            self.__valid__()
+        except AssertionError as e:
+            raise AttributeError(str(e))
     
     def __call__(self):
         """Should return the data within this frame, usually as a *numpy* array.
