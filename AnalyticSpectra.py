@@ -34,6 +34,8 @@ import math, copy, sys, time, logging, os
 # Submodules from this system
 from Utilities import *
 
+LOG = logging.getLogger(__name__)
+
 class AnalyticSpectrum(AstroObjectBase.FITSFrame):
     """A functional spectrum object for spectrum generation. The default implementation is a flat spectrum."""
     def __init__(self,data,label,wavelengths=None,units=None):
