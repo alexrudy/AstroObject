@@ -165,13 +165,13 @@ class API_Base_Object(API_Base):
     def test_save_with_data(self):
         """save() works with valid data"""
         AObject = self.OBJECT()
-        AObject.save(self.VALID)
+        AObject.save(self.VALID,"Valid")
         
     @nt.raises(TypeError)
     def test_save_with_invalid_data(self):
         """save() fails with invalid data"""
         AObject = self.OBJECT()
-        AObject.save(self.INVALID)
+        AObject.save(self.INVALID,"Invalid")
         
     
     def test_save_with_frame(self):
