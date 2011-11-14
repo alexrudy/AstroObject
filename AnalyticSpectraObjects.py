@@ -48,7 +48,7 @@ class BlackBodySpectrum(AnalyticSpectra.AnalyticSpectrum):
         
         
 class GaussianSpectrum(AnalyticSpectra.AnalyticSpectrum):
-    """docstring for GaussianSpectrum"""
+    """An analytic representation of a gaussian function in spectral form"""
     def __init__(self, mean, stdev, height, label=None):
         if label == None:
             label = "Gaussian Spectrum with mean: %4.2e and standard deviation: %4.2e" % (mean,stdev)
@@ -65,7 +65,7 @@ class GaussianSpectrum(AnalyticSpectra.AnalyticSpectrum):
     
 
 class FlatSpectrum(AnalyticSpectra.AnalyticSpectrum):
-    """docstring for FlatSpectrum"""
+    """An analytc form of a flat value at every wavelength"""
     def __init__(self, value, label=None):
         if label == None:
             label = "Flat spectrum with value %3f" % value
