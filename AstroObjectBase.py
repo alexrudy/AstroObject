@@ -46,6 +46,7 @@ class FITSFrame(object):
     """
     def __init__(self, data, label, header=None, metadata=None):
         super(FITSFrame, self).__init__()
+        assert isinstance(label,str), "Frame requires a label, got %s" % label
         if data != None:
             raise AttributeError("Abstract Class cannot accept data!")
         self.label = label # A label for this frame, for selection in parent object
