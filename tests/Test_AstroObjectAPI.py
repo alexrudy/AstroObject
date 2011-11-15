@@ -75,6 +75,11 @@ class API_Base_Frame(API_Base):
         assert AFrame.label == "Valid"
         assert self.SAMEDATA(AFrame.data,self.VALID)
     
+    @nt.raises(AttributeError)
+    def test_init_nolabel(self):
+        """__init__() fails with valid data but no label"""
+        AFrame = self.FRAME(self.VALID,None)
+    
     @nt.raises(AbstractError)
     def test_save_none(self):
         """__save__() with none object raises an AbstractError"""

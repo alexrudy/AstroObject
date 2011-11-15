@@ -46,9 +46,8 @@ class FITSFrame(object):
     """
     def __init__(self, data, label, header=None, metadata=None):
         super(FITSFrame, self).__init__()
-        assert isinstance(label,str), "Frame requires a label, got %s" % label
         if data != None:
-            raise AttributeError("Abstract Class cannot accept data!")
+            self.data = data
         self.label = label # A label for this frame, for selection in parent object
         self.header = header # A dictionary of header keys and values for use in 
         self.metadata = metadata # An optional metadata dictionary
@@ -62,6 +61,7 @@ class FITSFrame(object):
             self.__valid__()
         except AssertionError as e:
             raise AttributeError(str(e))
+        
     
     def __call__(self):
         """Should return the data within this frame, usually as a *numpy* array.
@@ -76,7 +76,8 @@ class FITSFrame(object):
     
     def __valid__(self):
         """Runs a series of assertions which ensure that the data for this frame is valid"""
-        assert not hasattr(self,'data')
+        assert not hasattr(self,'data'), "Abstract Class cannot accept data!"
+        assert isinstance(self.label,str), "Frame requires a label, got %s" % self.label
     
     def __hdu__(self,primary=False):
         """Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.
