@@ -139,7 +139,7 @@ class CompositeSpectra(AnalyticSpectrum):
 
 
 class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
-    """An analytic representation of a Blackbody Spectrum at a Kelvin Tempertaure"""
+    """An analytic representation of a generic, specified spectrum"""
     def __init__(self, array, label, wavelengths=None):
         self.data = array
         self.size = array.size # The size of this image
