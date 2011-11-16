@@ -39,7 +39,7 @@ class BlackBodySpectrum(AnalyticSpectra.AnalyticSpectrum):
     def __init__(self, temperature, label=None):
         if label == None:
             label = "Black Body Spectrum at %4.2eK" % temperature
-        super(BlackBodySpectrum, self).__init__(label)
+        super(BlackBodySpectrum, self).__init__(None,label)
         self.temperature = temperature
         
     def __call__(self,wavelength):
@@ -52,7 +52,7 @@ class GaussianSpectrum(AnalyticSpectra.AnalyticSpectrum):
     def __init__(self, mean, stdev, height, label=None):
         if label == None:
             label = "Gaussian Spectrum with mean: %4.2e and standard deviation: %4.2e" % (mean,stdev)
-        super(GaussianSpectrum, self).__init__(label)
+        super(GaussianSpectrum, self).__init__(None,label)
         self.mean = mean
         self.stdev = stdev
         self.height = height
@@ -69,7 +69,7 @@ class FlatSpectrum(AnalyticSpectra.AnalyticSpectrum):
     def __init__(self, value, label=None):
         if label == None:
             label = "Flat spectrum with value %3f" % value
-        super(FlatSpectrum, self).__init__(label)
+        super(FlatSpectrum, self).__init__(None,label)
         self.value = value
         
     def __call__(self,wavelength):
