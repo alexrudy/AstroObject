@@ -58,11 +58,15 @@ class ImageFrame(AstroObjectBase.FITSFrame):
         """Retruns an HDU which represents this frame. HDUs are either ``pyfits.PrimaryHDU`` or ``pyfits.ImageHDU`` depending on the *primary* keyword."""
         if primary:
             LOG.info("Generating a primary HDU for %s" % self)
-            return pyfits.PrimaryHDU(self())
+            HDU = pyfits.PrimaryHDU(self())
         else:
             LOG.info("Generating an image HDU for %s" % self)
-            return pyfits.ImageHDU(self())
-            
+            HDU = pyfits.ImageHDU(self())
+        
+        HDU.header.update('object',self.label)
+        
+        return HDU
+    
     def __show__(self):
         """Plots the image in this frame using matplotlib's ``imshow`` function. The color map is set to an inverted binary, as is often useful when looking at astronomical images. The figure object is returned, and can be manipulated further.
         
