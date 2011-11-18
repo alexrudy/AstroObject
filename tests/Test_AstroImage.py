@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-# 
+#
 #  Test_AstroImage.py
 #  ObjectModel
-#  
+#
 #  Created by Alexander Rudy on 2011-10-31.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-# 
+#
 
 # Test API Imports
 from AstroObject.tests.Test_AstroObjectAPI import *
@@ -43,7 +43,7 @@ class test_ImageFrame(API_Base_Frame):
             self.image[450:550,450:550] = np.ones((100,100))
         else:
             self.image = np.int32(np.sum(mpimage.imread(self.testJPG),axis=2))
-            
+        
         self.VALID = self.image
         self.FRAME = AI.ImageFrame
         self.INVALID = 20
@@ -51,11 +51,11 @@ class test_ImageFrame(API_Base_Frame):
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.image.AxesImage
         self.FRAMEINST = AI.ImageFrame(self.image,"Hong Kong")
-            
+        
         def SAMEDATA(first,second):
             """Return whether these two are the same data"""
             return not (np.abs(first-second) > 1e-6).any()
-            
+        
         
         def SAME(first,second):
             """Return whether these two are the same"""
@@ -66,9 +66,9 @@ class test_ImageFrame(API_Base_Frame):
         
         self.check_constants()
         
-        
     
             
+    
     def test_read_grayscale_HDU(self):
         """__read__() an image HDU succeeds"""
         HDU = pf.PrimaryHDU(self.image)
@@ -78,10 +78,10 @@ class test_ImageFrame(API_Base_Frame):
         assert self.SAME(IFrame,self.FRAMEINST)
         
         
-        
+
 class test_ImageObject(API_Base_Object):
     """AstroImage.ImageObject"""
-        
+    
     def setUp(self):
         """Fixture for setting up a basic image frame"""
         self.testJPG = "Tests/Hong-Kong.jpg"
@@ -106,7 +106,7 @@ class test_ImageObject(API_Base_Object):
         def SAMEDATA(first,second):
             """Return whether these two are the same data"""
             return not (np.abs(first-second) > 1e-6).any()
-            
+        
         
         def SAME(first,second):
             """Return whether these two are the same"""
@@ -117,7 +117,7 @@ class test_ImageObject(API_Base_Object):
         
         self.check_constants()
         
-        
+    
     def test_read_from_image_file(self):
         """loadFromFile() directly from an image file"""
         if not os.access(self.testJPG,os.R_OK):
@@ -125,12 +125,50 @@ class test_ImageObject(API_Base_Object):
         IObject = self.OBJECT()
         IObject.loadFromFile(self.testJPG,"TestJPG")
         assert IObject.statename == "TestJPG"
-        
+    
     
     @nt.raises(IOError)
     def test_read_from_nonexistant_file(self):
         """loadFromFile() fails for a non-existant image file"""
         IObject = self.OBJECT()
         IObject.loadFromFile("Bogus")
+    
+
+class test_AstroImage_Functional(API_Base_Functional):
+    """Functional Tests for AstroImage"""
+    def setUp(self):
+        """Fixture for setting up a basic image frame"""
+        self.testJPG = "Tests/Hong-Kong.jpg"
+        if not os.access(self.testJPG,os.R_OK):
+            self.image = np.zeros((1000,1000))
+            self.image[450:550,450:550] = np.ones((100,100))
+        else:
+            self.image = np.int32(np.sum(mpimage.imread(self.testJPG),axis=2))
+        self.FRAMEINST = AI.ImageFrame(self.image,"Hong Kong")
+        self.FRAMELABEL = "Hong Kong"
+        self.FRAME = AI.ImageFrame
+        self.HDU = pf.PrimaryHDU(self.image)
+        self.imHDU = pf.ImageHDU(self.image)
+        self.VALID = self.image
+        self.INVALID = 20
+        self.OBJECTSTR = None
+        self.HDUTYPE = pf.ImageHDU
+        self.SHOWTYPE = mpl.image.AxesImage
+        self.OBJECT = AI.ImageObject
+        self.FILENAME = "TestFile.fits"
         
+        def SAMEDATA(first,second):
+            """Return whether these two are the same data"""
+            return not (np.abs(first-second) > 1e-6).any()
+        
+        
+        def SAME(first,second):
+            """Return whether these two are the same"""
+            return SAMEDATA(first(),second())
+        
+        self.SAME = SAME
+        self.SAMEDATA = SAMEDATA
+        
+        self.check_constants()
+
         
