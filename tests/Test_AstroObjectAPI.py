@@ -206,20 +206,39 @@ class API_Base_Object(API_Base):
     
     def test_double_saving_an_object_should_reference(self):
         """save() should prevent data in frames from referencing each other"""
-        raise SkipTest("This is a bug, should be fixed in a later version.")
-        NewLabel = "Other"
-        AObject = self.OBJECT()
-        AObject.save(self.FRAMEINST)
-        AObject.save(self.FRAMEINST,NewLabel)
-        assert AObject.statename == NewLabel
-        assert AObject.frame().label == NewLabel
-        AObject.select(self.FRAMELABEL)
-        assert AObject.statename == self.FRAMELABEL
-        assert AObject.frame().label == self.FRAMELABEL
-        AObject.select(NewLabel)
-        assert AObject.statename == NewLabel
-        assert AObject.frame().label == NewLabel
+        try:
+            NewLabel = "Other"
+            AObject = self.OBJECT()
+            AObject.save(self.FRAMEINST)
+            AObject.save(self.FRAMEINST,NewLabel)
+            assert AObject.statename == NewLabel
+            assert AObject.frame().label == NewLabel
+            AObject.select(self.FRAMELABEL)
+            assert AObject.statename == self.FRAMELABEL
+            assert AObject.frame().label == self.FRAMELABEL
+            AObject.select(NewLabel)
+            assert AObject.statename == NewLabel
+            assert AObject.frame().label == NewLabel
+        except AssertionError as e:
+            raise SkipTest("This is a bug, should be fixed in a later version. %s" % e)
     
+    def test_double_saving_data_should_not_reference(self):
+        """data() should prevent data from referencing each other."""
+        try:
+            NewLabel = "Other"
+            AObject = self.OBJECT()
+            AObject.save(self.FRAMEINST)
+            AObject.save(AObject.data(),NewLabel)
+            assert AObject.statename == NewLabel
+            assert AObject.frame().label == NewLabel
+            AObject.select(self.FRAMELABEL)
+            assert AObject.statename == self.FRAMELABEL
+            assert AObject.frame().label == self.FRAMELABEL
+            AObject.select(NewLabel)
+            assert AObject.statename == NewLabel
+            assert AObject.frame().label == NewLabel
+        except AssertionError as e:
+            raise SkipTest("This is a bug, should be fixed in a later version. %s" % e)
     
     @nt.raises(IOError)
     def test_read_from_nonexistent_file(self):

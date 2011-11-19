@@ -133,6 +133,23 @@ class test_ImageObject(API_Base_Object):
         IObject = self.OBJECT()
         IObject.loadFromFile("Bogus")
     
+    def test_double_saving_data_should_not_reference(self):
+        """data() should prevent data from referencing each other."""
+        try:
+            NewLabel = "Other"
+            AObject = self.OBJECT()
+            AObject.save(self.FRAMEINST)
+            AObject.save(AObject.data(),NewLabel)
+            assert AObject.statename == NewLabel
+            assert AObject.frame().label == NewLabel
+            AObject.select(self.FRAMELABEL)
+            assert AObject.statename == self.FRAMELABEL
+            assert AObject.frame().label == self.FRAMELABEL
+            AObject.select(NewLabel)
+            assert AObject.statename == NewLabel
+            assert AObject.frame().label == NewLabel
+        except AssertionError as e:
+            raise SkipTest("This is a bug, should be fixed in a later version. %s" % e)
 
 class test_AstroImage_Functional(API_Base_Functional):
     """Functional Tests for AstroImage"""

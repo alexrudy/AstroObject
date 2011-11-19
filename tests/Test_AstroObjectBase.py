@@ -87,6 +87,9 @@ class API_Abstract_Frame(API_Base_Frame):
 class API_Abstract_Object(API_Base_Object):
     """Tests an Abstract Object"""
     
+    def test_double_saving_data_should_not_reference(self):
+        """data() should prevent data from referencing each other."""
+        raise SkipTest("data() does not make sense with abstract base class")
     
     @nt.raises(AbstractError)
     def test_data(self):
