@@ -35,6 +35,8 @@ import math, copy, sys, time, logging, os
 # Submodules from this system
 from Utilities import *
 
+__all__ = ["AnalyticSpectrum","CompositeSpectra","InterpolatedSpectrum"]
+
 LOG = logging.getLogger(__name__)
 
 class AnalyticSpectrum(AstroObjectBase.FITSFrame):
@@ -160,5 +162,7 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
             wavelengths = self.wavelengths
         return np.vstack((wavelengths,self.func(wavelengths)))
 
+import AnalyticSpectraObjects
 from AnalyticSpectraObjects import *
-        
+
+__all__ += AnalyticSpectraObjects.__all__

@@ -32,6 +32,8 @@ import math, copy, sys, time, logging, os
 # Submodules from this system
 from Utilities import *
 
+__all__ = ["FITSFrame","FITSObject"]
+
 LOG = logging.getLogger(__name__)
 
 class FITSFrame(object):

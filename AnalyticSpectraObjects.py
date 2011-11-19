@@ -34,6 +34,8 @@ import math, copy, sys, time, logging, os
 # Submodules from this system
 from Utilities import *
 
+__all__ = ["BlackBodySpectrum","GaussianSpectrum","FlatSpectrum"]
+
 class BlackBodySpectrum(AnalyticSpectra.AnalyticSpectrum):
     """An analytic representation of a Blackbody Spectrum at a Kelvin Tempertaure"""
     def __init__(self, temperature, label=None):

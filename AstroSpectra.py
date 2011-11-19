@@ -34,6 +34,8 @@ import math, copy, sys, time, logging, os
 # Submodules from this system
 from Utilities import *
 
+__all__ = ["SpectraFrame","SpectraObject"]
+
 LOG = logging.getLogger(__name__)
 
 class SpectraFrame(AstroObjectBase.FITSFrame):
