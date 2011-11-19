@@ -49,7 +49,7 @@ class FITSFrame(object):
         if data != None:
             self.data = data
         self.label = label # A label for this frame, for selection in parent object
-        self.header = header # A dictionary of header keys and values for use in 
+        self.header = header # A dictionary of header keys and values for use in HDU generation
         self.metadata = metadata # An optional metadata dictionary
         self.time = time.clock() # An object representing the time this object was created
         
@@ -180,7 +180,7 @@ class FITSObject(object):
         if not statename:
             statename = self.statename
         if statename != None and statename in self.states:
-            return self.states[statename]()
+            return np.copy(self.states[statename]())
         else:
             raise KeyError("Object %s not instantiated with any data..." % self)
     
@@ -221,6 +221,14 @@ class FITSObject(object):
         Ages = [ time.clock() - self.frame(name).time for name in List ]
         youngest = List[np.argmin(Ages)]
         return youngest
+    
+    def clear(self):
+        """Clears all states from this object. Returns an empty list representing the currently known states."""
+        LOG.debug("Clearing all states from the object")
+        self.states = {}
+        self.statename = None
+        return self.list()
+    
     
     def keep(self,*statenames):
         """Removes all states except the specified frame from the object"""
