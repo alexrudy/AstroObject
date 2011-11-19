@@ -119,9 +119,14 @@ class CompositeSpectra(AnalyticSpectrum):
         if wavelengths == None:
             raise ValueError("No wavelengths specified in %s" % (self))
             
-        
-        Awavelengths,Avalue = self.A(wavelengths)
-        Bwavelengths,Bvalue = self.B(wavelengths)
+        if isinstance(self.A,AnalyticSpectrum):
+            Awavelengths,Avalue = self.A(wavelengths)
+        else:
+            Avalue = self.A
+        if isinstance(self.B,AnalyticSpectrum):
+            Bwavelengths,Bvalue = self.B(wavelengths)
+        else:
+            Bvalue = self.B
         
         if self.operation == 'add':
             Result = Avalue + Bvalue
