@@ -28,6 +28,8 @@ import math, copy, sys, time, logging, os
 # Module Utilites
 from Utilities import *
 
+__all__ = ["ImageFrame","ImageObject"]
+
 LOG = logging.getLogger(__name__)
 
 class ImageFrame(AstroObjectBase.FITSFrame):
@@ -62,9 +64,10 @@ class ImageFrame(AstroObjectBase.FITSFrame):
         else:
             LOG.info("Generating an image HDU for %s" % self)
             HDU = pyfits.ImageHDU(self())
-        
+        HDU.header.update('label',self.label)
         HDU.header.update('object',self.label)
-        
+        for key,value in self.header.iteritems():
+            HDU.header.update(key,value)
         return HDU
     
     def __show__(self):
