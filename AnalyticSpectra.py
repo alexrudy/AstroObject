@@ -107,7 +107,10 @@ class AnalyticSpectrum(AstroObjectBase.FITSFrame):
 class CompositeSpectra(AnalyticSpectrum):
     """Binary composition of two functional spectra"""
     def __init__(self, partA, partB, operation):
-        label = partA.label + " " + operation + " " + partB.label
+        label = ""
+        label += partA.label if hasattr(partA,'label') else str(partA)
+        label += " " + operation + " "
+        label += partB.label if hasattr(partB,'label') else str(partB)
         super(CompositeSpectra, self).__init__(None,label)
         self.A = partA
         self.B = partB

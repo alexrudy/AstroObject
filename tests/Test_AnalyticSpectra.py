@@ -61,6 +61,12 @@ class API_AnalyticSpectra(API_Abstract_Frame):
         SFrame3 = SFrame1 * SFrame2
         assert isinstance(SFrame3,AS.CompositeSpectra)
         
+    def test_add_other(self):
+        """__add__() Handles adding of other simple classes"""
+        SFrame1 = self.FRAME(self.VALID,"Empty")
+        SFrame2 = 10.0
+        SFrame3 = SFrame1 + SFrame2
+        assert isinstance(SFrame3,AS.CompositeSpectra)
 
 class test_AnalyticSpectraFrame(API_AnalyticSpectra):
     """AnalyticSpecra.AnalyticSpectrum"""
