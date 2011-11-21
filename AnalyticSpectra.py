@@ -31,6 +31,7 @@ import scipy.interpolate
 
 # Standard Python Modules
 import math, copy, sys, time, logging, os
+import itertools
 
 # Submodules from this system
 from Utilities import *
@@ -160,10 +161,39 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         self.wavelengths = wavelengths
     
     def __call__(self,wavelengths=None):
-        """Calls this blackbody spectrum over certain wavelengths"""
+        """Calls this interpolated spectrum over certain wavelengths"""
         if wavelengths == None:
             wavelengths = self.wavelengths
         return np.vstack((wavelengths,self.func(wavelengths)))
+        
+class ResampledSpectrum(InterpolatedSpectrum):
+    """A spectrum that must be called with resampling information"""
+    def __init__(self, array, label, wavelengths=None, resolution=None):
+        super(ResampledSpectrum, self).__init__(array,label)
+        self.wavelengths = wavelengths
+        self.resolution = resolution
+        
+    def __call__(self,wavelengths=None):
+        """Calls this interpolated spectrum over certain wavelengths"""
+        if wavelengths == None:
+            wavelengths = self.wavelengths
+        return self.resample(wavelengths,self.resolution)
+        
+    def resample(self,wavelengths,resolution,z=0.0):
+        """Resample the given spectrum to a lower resolution"""
+        if resolution.size != wavelengths.size:
+            LOG.debug("%s: Wavelength Size: %d, Resolution Size %d" % (self,wavelength.size,resolution.size))
+            raise AttributeError("You must provide resolution appropriate for resampling.")
+        oldwl,oldfl = self.data
+        oldwl = oldwl * (1.0 + z)
+        ones = np.ones(oldwl.shape)
+        sigma = wavelengths / resolution / 2.35
+        curve = lambda wl,center,sig : (1.0/np.sqrt(np.pi * sig ** 2.0 )) * np.exp( - 0.5 * (wl - center) ** 2.0 / (sig ** 2.0) ).astype(np.float)
+        MWL,MCENT = np.meshgrid(oldwl,wavelengths)
+        MWL,MSIGM = np.meshgrid(oldwl,sigma)
+        curves = curve(MWL,MCENT,MSIGM)
+        flux = np.sum(curves * oldfl,axis=1) / np.sum(curves * ones, axis=1)
+        return np.vstack((wavelengths,flux))
 
 import AnalyticSpectraObjects
 from AnalyticSpectraObjects import *
