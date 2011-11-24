@@ -140,6 +140,7 @@ class FITSObject(object):
         self.plt = plt
         self.outputData = False
         self.inputData = False
+        self.do_select = True # Variable for use in threading
         
     
     ###############################
@@ -171,7 +172,7 @@ class FITSObject(object):
         # Save the actual state
         self.states[statename] = Object
         # Activate the saved state as the current state
-        self.select(statename)
+        self.select(statename,force=False)
         LOG.debug("Saved frame %s" % Object)
     
     def data(self,statename=None):
@@ -201,12 +202,14 @@ class FITSObject(object):
         LOG.info("Method \".object()\" on %s has been depreciated. Please use \".frame()\" instead." % self)
         return self.frame(statename)
         
-    def select(self,statename):
+    def select(self,statename,force=True):
         """Sets the default frame to the given statename. Normally, the default frame is the one that was last saved."""
-        if statename not in self.states:
-            raise IndexError("State %s does not exist!" % statename)
-        self.statename = statename
-        LOG.debug("Selected state \'%s\'" % statename)
+        if force:
+            if statename not in self.states:
+                raise IndexError("State %s does not exist!" % statename)
+        if force or self.do_select:
+            LOG.debug("Selected state \'%s\'" % statename)
+            self.statename = statename
         return
     
     def list(self):
@@ -215,12 +218,16 @@ class FITSObject(object):
     
     def _default_state(self):
         """Returns the default state name. If the currently selected state exists, it's state name will return. If not, the system will search for the newest state."""
+        # If the selected state still exists, return that.
         if self.statename in self.states:
             return self.statename
         List = self.list()
+        # If there are no states left, return None
         if [] == List:
             return None
-        Ages = [ time.clock() - self.frame(name).time for name in List ]
+        # Finally, return the newest state.
+        now = time.clock()
+        Ages = [ now - self.frame(name).time for name in List ]
         youngest = List[np.argmin(Ages)]
         return youngest
     
@@ -228,7 +235,7 @@ class FITSObject(object):
         """Clears all states from this object. Returns an empty list representing the currently known states."""
         LOG.debug("Clearing all states from the object")
         self.states = {}
-        self.statename = None
+        self.select(self.default_state,force=False)
         return self.list()
     
     
@@ -242,7 +249,7 @@ class FITSObject(object):
             newStates[statename] = oldStates[statename]
         LOG.debug("%s: Kept the following states %s" % (self,statenames))
         self.states = newStates
-        self.statename = self._default_state()
+        self.select(self._default_state(),force=False)
         return self.list()
     
     def remove(self,*statenames):
@@ -252,7 +259,7 @@ class FITSObject(object):
                 raise IndexError("%s: Object %s does not exist!" % (self,statename))
             LOG.debug("%s: Removing Object with label %s" % (self,statename))
             self.states.pop(statename)
-        self.statename = self._default_state()
+        self.select(self._default_state(),force=False)
         return self.list()
     
     def show(self,statename=None):
@@ -319,6 +326,7 @@ class FITSObject(object):
         if not Read:
             msg = "No HDUs were saved from FITS file %s to %s" % (filename,self)
             raise ValueError(msg)
-        
+        msg = "Read %d HDUs from file %s and saved to %s" % (Read,filename,self)
+        LOG.debug(msg)
         return Labels
     
