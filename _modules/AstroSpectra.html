@@ -55,60 +55,67 @@
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2011-10-07.</span>
 <span class="c">#  Copyright 2011 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.2.0</span>
+<span class="c">#  Version 0.2.2</span>
 <span class="c"># </span>
 
 
 <span class="kn">import</span> <span class="nn">AstroObjectBase</span><span class="o">,</span> <span class="nn">AstroImage</span>
-<span class="kn">from</span> <span class="nn">Utilities</span> <span class="kn">import</span> <span class="o">*</span>
 
+<span class="c"># Standard Scipy Toolkits</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pyfits</span> <span class="kn">as</span> <span class="nn">pf</span>
+<span class="kn">import</span> <span class="nn">scipy</span> <span class="kn">as</span> <span class="nn">sp</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="kn">as</span> <span class="nn">mpl</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+<span class="c"># Matplolib Extras</span>
 <span class="kn">import</span> <span class="nn">matplotlib.image</span> <span class="kn">as</span> <span class="nn">mpimage</span>
 <span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">cm</span>
 <span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">LinearLocator</span><span class="p">,</span> <span class="n">FixedLocator</span><span class="p">,</span> <span class="n">FormatStrFormatter</span>
+
+<span class="c"># Scipy Extras</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">ndimage</span>
 <span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="kn">import</span> <span class="n">cdist</span>
 <span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">norm</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pyfits</span>
+
+<span class="c"># Standard Python Modules</span>
 <span class="kn">import</span> <span class="nn">math</span><span class="o">,</span> <span class="nn">copy</span><span class="o">,</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">logging</span><span class="o">,</span> <span class="nn">os</span>
+
+<span class="c"># Submodules from this system</span>
+<span class="kn">from</span> <span class="nn">Utilities</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;SpectraFrame&quot;</span><span class="p">,</span><span class="s">&quot;SpectraObject&quot;</span><span class="p">]</span>
 
 <span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SpectraFrame"><a class="viewcode-back" href="../AstroSpectra.html#AstroSpectra.SpectraFrame">[docs]</a><span class="k">class</span> <span class="nc">SpectraFrame</span><span class="p">(</span><span class="n">AstroObjectBase</span><span class="o">.</span><span class="n">FITSFrame</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A simple spectral frame&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;A single frame of a spectrum. This will save the spectrum as an image, with the first row having flux, and second row having the wavelength equivalent. Further rows can accomodate further spectral frames when stored to a FITS image. However, the frame only accepts a single spectrum.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">SpectraFrame</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">array</span> <span class="c"># The image data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">size</span> <span class="c"># The size of this image</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span> <span class="c"># The shape of this image</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SpectraFrame</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+        
     
-<div class="viewcode-block" id="SpectraFrame.validate"><a class="viewcode-back" href="../AstroSpectra.html#AstroSpectra.SpectraFrame.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Validates this spectrum object&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="SpectraFrame.__valid__"><a class="viewcode-back" href="../AstroSpectra.html#AstroSpectra.SpectraFrame.__valid__">[docs]</a>    <span class="k">def</span> <span class="nf">__valid__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Validates this spectrum frame to conform to the required data shape. This function is used to determine if a passed numpy data array appears to be a spectrum. It is essentially a helper function.&quot;&quot;&quot;</span>
         <span class="n">dimensions</span> <span class="o">=</span> <span class="mi">2</span>
         <span class="n">rows</span> <span class="o">=</span> <span class="mi">2</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">size</span>
-            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
-        <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s">&quot;Members of </span><span class="si">%s</span><span class="s"> appear to be inconsistent!&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="p">)</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">dimensions</span>
-        <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s">&quot;Data of </span><span class="si">%s</span><span class="s"> does not appear to be </span><span class="si">%d</span><span class="s">-dimensional! Shape: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dimensions</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">rows</span>
-        <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s">&quot;Spectrum for </span><span class="si">%s</span><span class="s"> appears to be multi-dimensional, expected </span><span class="si">%d</span><span class="s"> Shape: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">rows</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="s">&quot;Members of </span><span class="si">%s</span><span class="s"> appear to be inconsistent!&quot;</span> <span class="o">%</span> <span class="bp">self</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s">&quot;Members of </span><span class="si">%s</span><span class="s"> appear to be inconsistent!&quot;</span> <span class="o">%</span> <span class="bp">self</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="n">dimensions</span> <span class="p">,</span> <span class="s">&quot;Data of </span><span class="si">%s</span><span class="s"> does not appear to be </span><span class="si">%d</span><span class="s">-dimensional! Shape: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dimensions</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">rows</span><span class="p">,</span> <span class="s">&quot;Spectrum for </span><span class="si">%s</span><span class="s"> appears to be multi-dimensional, expected </span><span class="si">%d</span><span class="s"> Shape: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">rows</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>        
+        <span class="k">return</span> <span class="bp">True</span>
+            
     </div>
 <div class="viewcode-block" id="SpectraFrame.__call__"><a class="viewcode-back" href="../AstroSpectra.html#AstroSpectra.SpectraFrame.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Call this frame, returning the data array&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns the data for this frame, which should be a ``numpy.ndarray``. The first row will be the spectral data, the second row the equivalent wavelength for this spectrum.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
         
     </div>
 <div class="viewcode-block" id="SpectraFrame.__hdu__"><a class="viewcode-back" href="../AstroSpectra.html#AstroSpectra.SpectraFrame.__hdu__">[docs]</a>    <span class="k">def</span> <span class="nf">__hdu__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">primary</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Retruns an HDU for this frame&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Retruns an HDU which represents this frame. HDUs are either ``pyfits.PrimaryHDU`` or ``pyfits.ImageHDU`` depending on the *primary* keyword.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">primary</span><span class="p">:</span>
             <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Generating a primary HDU for </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">pyfits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">(</span><span class="bp">self</span><span class="p">())</span>
@@ -118,18 +125,25 @@
         
     </div>
 <div class="viewcode-block" id="SpectraFrame.__show__"><a class="viewcode-back" href="../AstroSpectra.html#AstroSpectra.SpectraFrame.__show__">[docs]</a>    <span class="k">def</span> <span class="nf">__show__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the plot object for this image&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Plots the image in this frame using matplotlib&#39;s ``imshow`` function. The color map is set to an inverted binary, as is often useful when looking at astronomical images. The figure object is returned, and can be manipulated further.</span>
+<span class="sd">        </span>
+<span class="sd">        .. Note::</span>
+<span class="sd">            This function serves as a quick view of the current state of the frame. It is not intended for robust plotting support, as that can be easily accomplished using ``matplotlib``. Rather, it attempts to do the minimum possible to create an acceptable image for immediate inspection.&quot;&quot;&quot;</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Plotting </span><span class="si">%s</span><span class="s"> using matplotlib.pyplot.plot&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="p">)</span>
         <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="c">#Slice Data</span>
-        <span class="n">axis</span> <span class="o">=</span> <span class="n">get_padding</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="s">&#39;k-&#39;</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="n">axis</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="n">expandLim</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">()))</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s">&quot;sci&quot;</span><span class="p">,</span><span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
     
     </div>
     <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="SpectraFrame.__save__"><a class="viewcode-back" href="../AstroSpectra.html#AstroSpectra.SpectraFrame.__save__">[docs]</a>    <span class="k">def</span> <span class="nf">__save__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;A generic class method for saving to this object with data directly&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Attempts to create a :class:`ImageFrame` object from the provided data. This requres some type checking to ensure that the provided data meets the general sense of such an image. If the data does not appear to be correct, this method will raise an :exc:`AbstractError` with a message describing why the data did not validate. Generally, this error will be intercepted by the caller, and simply provides an indication that this is not the right class for a particular piece of data.</span>
+<span class="sd">        </span>
+<span class="sd">        If the data is saved successfully, this method will return an object of type :class:`ImageFrame`</span>
+<span class="sd">        </span>
+<span class="sd">        The validation requires that the data be a type ``numpy.ndarray`` and that the data have 2 and only 2 dimensions. As well, the data should pass the :meth:`validate` method.&quot;&quot;&quot;</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Attempting to save as </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">cls</span><span class="p">)</span>
         <span class="n">dimensions</span> <span class="o">=</span> <span class="mi">2</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
@@ -137,9 +151,8 @@
             <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="n">dimensions</span><span class="p">:</span>
             <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;The data appears to be </span><span class="si">%d</span><span class="s"> dimensional. This object expects </span><span class="si">%d</span><span class="s"> dimensional data.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span><span class="n">dimensions</span><span class="p">))</span>
-        <span class="n">Object</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">Object</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+            <span class="n">Object</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">AE</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> data did not validate: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="n">AE</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -148,17 +161,16 @@
     </div>
     <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="SpectraFrame.__read__"><a class="viewcode-back" href="../AstroSpectra.html#AstroSpectra.SpectraFrame.__read__">[docs]</a>    <span class="k">def</span> <span class="nf">__read__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="n">HDU</span><span class="p">,</span><span class="n">label</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;An abstract method for reading empty data HDU Frames&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Attempts to convert a given HDU into an object of type :class:`ImageFrame`. This method is similar to the :meth:`__save__` method, but instead of taking data as input, it takes a full HDU. The use of a full HDU allows this method to check for the correct type of HDU, and to gather header information from the HDU. When reading data from a FITS file, this is the prefered method to initialize a new frame.&quot;&quot;&quot;</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Attempting to read as </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">cls</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">HDU</span><span class="p">,(</span><span class="n">pyfits</span><span class="o">.</span><span class="n">ImageHDU</span><span class="p">,</span><span class="n">pyfits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">)):</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Must save a PrimaryHDU or ImageHDU to a </span><span class="si">%s</span><span class="s">, found </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">HDU</span><span class="p">))</span>
             <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">HDU</span><span class="o">.</span><span class="n">data</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;HDU Data must be </span><span class="si">%s</span><span class="s"> for </span><span class="si">%s</span><span class="s">, found data of </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">HDU</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
-            <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        <span class="n">Object</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">HDU</span><span class="o">.</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>    
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">Object</span><span class="o">.</span><span class="n">validate</span><span class="p">()</span>
+            <span class="n">Object</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">HDU</span><span class="o">.</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>        
         <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">AE</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> data did not validate: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="n">AE</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -170,7 +182,7 @@
 
 </div></div>
 <div class="viewcode-block" id="SpectraObject"><a class="viewcode-back" href="../AstroSpectra.html#AstroSpectra.SpectraObject">[docs]</a><span class="k">class</span> <span class="nc">SpectraObject</span><span class="p">(</span><span class="n">AstroObjectBase</span><span class="o">.</span><span class="n">FITSObject</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A subclass of FITS image with specific facilites for displaying spectra&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.FITSObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`SpectraFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SpectraObject</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dataClasses</span> <span class="o">+=</span> <span class="p">[</span><span class="n">SpectraFrame</span><span class="p">]</span>
@@ -223,7 +235,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Alexander Rudy.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

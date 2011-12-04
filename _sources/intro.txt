@@ -28,3 +28,21 @@ Expansion
 
 This module is designed to be expanded by users. The :mod:`AstroObjectBase` module provides basic abstract classes with source code which can be used to create sub-classes with specific functionality. By implementing their own ``frame``, users can create Objects (using the :class:`AstroObjectBase.FITSObject` class, and ``dataClasses``) to make their own data reduction systems.
 
+Example
+*******
+
+Here is a simple example use for this module::
+    
+    >>> obj = ImageObject()
+    >>> obj.loadFromFile("Picture.jpg")
+    >>> obj.show()
+    # Matplotlib Image Plot
+    >>> Image = obj.data()
+    >>> ScaledImage = np.sqrt(Image)
+    >>> obj.save(ScaledImage,"Scaled Image")
+    >>> obj.show()
+    # Matplotlib Image Plot
+    >>> obj.list()
+    ["Picture.jpg","Scaled Image"]
+    >>> obj.select("Picture.jpg")
+    

@@ -74,6 +74,24 @@
 <h2>1.3. Expansion<a class="headerlink" href="#expansion" title="Permalink to this headline">¶</a></h2>
 <p>This module is designed to be expanded by users. The <a class="reference internal" href="AstroObject.html#module-AstroObjectBase" title="AstroObjectBase"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObjectBase</span></tt></a> module provides basic abstract classes with source code which can be used to create sub-classes with specific functionality. By implementing their own <tt class="docutils literal"><span class="pre">frame</span></tt>, users can create Objects (using the <a class="reference internal" href="AstroObject.html#AstroObjectBase.FITSObject" title="AstroObjectBase.FITSObject"><tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.FITSObject</span></tt></a> class, and <tt class="docutils literal"><span class="pre">dataClasses</span></tt>) to make their own data reduction systems.</p>
 </div>
+<div class="section" id="example">
+<h2>1.4. Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>Here is a simple example use for this module:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">ImageObject</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">loadFromFile</span><span class="p">(</span><span class="s">&quot;Picture.jpg&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="go"># Matplotlib Image Plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Image</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ScaledImage</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Image</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">ScaledImage</span><span class="p">,</span><span class="s">&quot;Scaled Image&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="go"># Matplotlib Image Plot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+<span class="go">[&quot;Picture.jpg&quot;,&quot;Scaled Image&quot;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s">&quot;Picture.jpg&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 
@@ -88,6 +106,7 @@
 <li><a class="reference internal" href="#frames">1.1. Frames</a></li>
 <li><a class="reference internal" href="#object">1.2. Object</a></li>
 <li><a class="reference internal" href="#expansion">1.3. Expansion</a></li>
+<li><a class="reference internal" href="#example">1.4. Example</a></li>
 </ul>
 </li>
 </ul>
@@ -97,7 +116,7 @@
                         title="previous chapter">Welcome to AstroObject!</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="development.html"
-                        title="next chapter">2. Development of <tt class="docutils literal docutils literal docutils literal"><span class="pre">AstroObject</span></tt></a></p>
+                        title="next chapter">2. Development of <tt class="docutils literal"><span class="pre">AstroObject</span></tt></a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/intro.txt"
@@ -140,7 +159,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Alexander Rudy.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>
