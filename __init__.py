@@ -17,7 +17,7 @@ __all__ = ['AnalyticSpectra','AstroImage','AstroObjectBase','AstroSpectra','Util
 
 logfolder = "Logs/"
 filename = __name__+"-"+time.strftime("%Y-%m-%d")
-longFormat = "%(asctime)s : %(levelname)-8s : %(name)-20s : %(message)s"
+longFormat = "%(asctime)s : %(levelname)-8s : %(name)-40s : %(message)s"
 shortFormat = '%(levelname)-8s: %(message)s'
 dateFormat = "%Y-%m-%d-%H:%M:%S"
 

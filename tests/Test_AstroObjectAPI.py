@@ -38,11 +38,12 @@ class API_Base(object):
     def check_constants(self):
         """API-Based Test Contains Appropriate Constants"""
         passed = True
+        missing = []
         for attribute in self.attributes:
             passed &= hasattr(self,attribute)
-            if not passed:
-                raise AssertionError, "Missing Attribute: %s" % attribute
-        assert passed
+            if not hasattr(self,attribute):
+                missing += [attribute]
+        assert passed, "Test API is missing attributes: %s" % missing
     
     def tearDown(self):
         self.clear_files()

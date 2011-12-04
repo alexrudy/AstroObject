@@ -69,7 +69,12 @@ class FITSFrame(object):
     def __call__(self):
         """Should return the data within this frame, usually as a *numpy* array.
         
-        For an example implementation, see :class:`AstroImage.ImageFrame`."""
+        :class:`AstroImage.ImageFrame` implements this method as::
+            
+            def __call__(self):
+                return self.data
+            
+        """
         msg = "Abstract Data Structure %s was called, but cannot return data!" % self
         raise AbstractError(msg)
     
@@ -126,7 +131,7 @@ class FITSObject(object):
     
     
     .. Note::
-        This is an abstract object. Methods implemented here *may* raise an :exc:`AbstractError` indicating that you shouldn't be using these methods. This class is provided so that users can sub-class it for their own purposes. It is often acceptalbe to use this as your Object class so long as you provide a new Frame class to hold your data in the ``dataClasses`` argument.
+        This is object only contains Abstract data objects. In order to use this class properly, you should set the dataClasses keyword for use when storing data.
     """
     def __init__(self,filename=None,dataClasses=None):
         super(FITSObject, self).__init__()
@@ -138,14 +143,20 @@ class FITSObject(object):
         self.statename = None       # The active state name
         self.filename = filename    # The filename to use for file loading and writing
         self.plt = plt
-        self.outputData = False
-        self.inputData = False
+        self.clobber = False
+        self.name = False
         
+    def __str__(self):
+        """String representation of this object"""
+        if self.name:
+            return "<\'%s\' labeled \'%s\'>" % (self.__class__.__name__,self.name)
+        else:
+            return super(FITSObject, self).__str__()
     
     ###############################
     # Basic Object Mode Functions #
     ###############################
-    def save(self,data,statename=None):
+    def save(self,data,statename=None,clobber=False):
         """Saves the given data to this object. If the data is an instance of one of the acceptable :attr:`dataClasses` then this method will simply save the data. Otherwise, it will attempt to cast the data into one of the acceptable :attr:`dataClasses` using their :meth:`__save__` mehtod."""
         # If we were passed raw data, and the dataClass can accept it, then go for it!
         if not isinstance(data,tuple(self.dataClasses)):
@@ -166,7 +177,7 @@ class FITSObject(object):
             statename = Object.label
         else:
             Object.label = statename
-        if statename in self.states:
+        if statename in self.states and not (clobber or self.clobber):
             raise KeyError("Cannot Duplicate State Name: %s \nUse remove(\'%s\') to clear" % (statename,statename))
         # Save the actual state
         self.states[statename] = Object
@@ -177,7 +188,9 @@ class FITSObject(object):
     def data(self,statename=None):
         """Returns the raw data for the current state. This is done through the :meth:`FITSFrame.__call__` method, which should return basic data in as raw a form as possible. The purpose of this call is to allow the user get at the most recent piece of data as easily as possible.
         
-        ..Note:: I have not finished examining some issues with referencing vs. copying data that comes out of this call. Be aware that manipulating some objects produced here may actually manipulate the version saved in the Object."""
+        .. Warning::
+            I have not finished examining some issues with referencing vs. copying data that comes out of this call. Be aware that manipulating some objects produced here may actually manipulate the version saved in the Object. The current implementation which protects this call relies on the numpy copy command, ``np.copy(state())``, which might fail when used with data objects that do not return numpy arrays.
+        """
         # Load the current stat if no state provided
         if not statename:
             statename = self.statename
@@ -189,7 +202,19 @@ class FITSObject(object):
     def frame(self,statename=None):
         """Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.
         
-        ..Note:: Using frames can be advantageous as you don't rely on the Object to guess what type of frame should be used. Most times, the object will guess correctly, but Frames are a more robust way of ensuring type consistency."""
+        .. Warning::
+            Unlike with the :meth:`FITSObject.data` call, the object returned here should be treated as roughly immutable. That is, it is not advisable to re-use the data frame here, as Python has returned a reference to all examples of this data frame in your code::
+                
+                >>> obj = FITSObject()
+                >>> obj.save(FITSFrame(None,"Label"))
+                >>> Frame = obj.frame()
+                >>> Frame.label = "Other"
+                >>> obj.frame().label
+                "Other"
+                
+        
+        .. Note:: 
+            Using frames can be advantageous as you don't rely on the Object to guess what type of frame should be used. Most times, the object will guess correctly, but Frames are a more robust way of ensuring type consistency"""
         if not statename:
             statename = self.statename
         if statename != None and statename in self.states:
@@ -228,12 +253,12 @@ class FITSObject(object):
         """Clears all states from this object. Returns an empty list representing the currently known states."""
         LOG.debug("Clearing all states from the object")
         self.states = {}
-        self.statename = None
+        self.statename = self._default_state()
         return self.list()
     
     
     def keep(self,*statenames):
-        """Removes all states except the specified frame from the object"""
+        """Removes all states except the specified frame(s) in the object"""
         oldStates = self.states
         newStates = {}
         for statename in statenames:
@@ -246,7 +271,7 @@ class FITSObject(object):
         return self.list()
     
     def remove(self,*statenames):
-        """Removes the specified frame from the object."""
+        """Removes the specified frame(s) from the object."""
         for statename in statenames:
             if statename not in self.states:
                 raise IndexError("%s: Object %s does not exist!" % (self,statename))
@@ -288,7 +313,16 @@ class FITSObject(object):
         HDUList.writeto(filename,clobber=clobber)
     
     def read(self,filename=None,statename=None):
-        """This reader takes a FITS file, and trys to render each HDU within that FITS file as a frame in this Object. As such, it might read multiple frames. This method will return a list of Frames that it read. It uses the :attr:`dataClasses` :meth:`FITSFrame.__read__` method to return a valid Frame object for each HDU."""
+        """This reader takes a FITS file, and trys to render each HDU within that FITS file as a frame in this Object. As such, it might read multiple frames. This method will return a list of Frames that it read. It uses the :attr:`dataClasses` :meth:`FITSFrame.__read__` method to return a valid Frame object for each HDU.
+        
+        ::
+            
+            >>> obj = FITSObject()
+            >>> obj.read("SomeImage.fits")
+            >>> obj.list()
+            ["SomeImage","SomeImage Frame 1","SomeImage Frame 2"]
+            
+        """
         if not filename:
             filename = self.filename
         if statename == None:
