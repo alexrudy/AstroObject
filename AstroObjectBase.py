@@ -90,11 +90,16 @@ class FITSFrame(object):
     def __hdu__(self,primary=False):
         """Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.
         Subclasses should provide a *primary* keyword argument, and if that keyword is set, the method should return a primaryHDU."""
-        LOG.warning("%s: Generating an Empty HDU" % (self))
         if primary:
-            return pf.PrimaryHDU()
+            HDU = pf.PrimaryHDU()
         else:
-            return pf.ImageHDU()
+            HDU = pf.ImageHDU()
+        LOG.warning("%s: Generating an Empty %sHDU" % (self,"primary " if primary else ""))
+        HDU.header.update('label',self.label)
+        HDU.header.update('object',self.label)
+        for key,value in self.header.iteritems():
+            HDU.header.update(key,value)
+        return HDU
     
     def __show__(self):
         """Should return a plot object for the current frame, after setting up this plot in matplotlib. 
@@ -113,7 +118,6 @@ class FITSFrame(object):
     @classmethod
     def __read__(cls,HDU,label):
         """An abstract method for reading empty data HDU Frames"""
-        LOG.debug("%s: Attempting to read data" % cls)
         if not isinstance(HDU,pf.PrimaryHDU):
             msg = "Must save a %s to a %s, found %s" % (pf.PrimaryHDU.__name__,cls.__name__,HDU.__class__.__name__)
             raise AbstractError(msg)
@@ -179,11 +183,13 @@ class FITSObject(object):
             Object.label = statename
         if statename in self.states and not (clobber or self.clobber):
             raise KeyError("Cannot Duplicate State Name: %s \nUse remove(\'%s\') to clear" % (statename,statename))
+        elif statename in self.states:
+            LOG.debug("Overwiting the frame %s" % statename)
         # Save the actual state
         self.states[statename] = Object
         # Activate the saved state as the current state
         self.select(statename)
-        LOG.debug("Saved frame %s" % Object)
+        LOG.info("Saved frame %s" % Object)
     
     def data(self,statename=None):
         """Returns the raw data for the current state. This is done through the :meth:`FITSFrame.__call__` method, which should return basic data in as raw a form as possible. The purpose of this call is to allow the user get at the most recent piece of data as easily as possible.
@@ -231,7 +237,7 @@ class FITSObject(object):
         if statename not in self.states:
             raise IndexError("State %s does not exist!" % statename)
         self.statename = statename
-        LOG.debug("Selected state \'%s\'" % statename)
+        LOG.info("Selected state \'%s\'" % statename)
         return
     
     def list(self):
@@ -251,9 +257,9 @@ class FITSObject(object):
     
     def clear(self):
         """Clears all states from this object. Returns an empty list representing the currently known states."""
-        LOG.debug("Clearing all states from the object")
         self.states = {}
         self.statename = self._default_state()
+        LOG.info("%s: Cleared all states. Remaining: %s" % (self,self.list()))
         return self.list()
     
     
@@ -265,26 +271,28 @@ class FITSObject(object):
             if statename not in self.states:
                 raise IndexError("%s: Object %s does not exist!" % (self,statename))
             newStates[statename] = oldStates[statename]
-        LOG.debug("%s: Kept the following states %s" % (self,statenames))
+        LOG.info("%s: Kept states %s" % (self,list(statenames)))
         self.states = newStates
         self.statename = self._default_state()
         return self.list()
     
     def remove(self,*statenames):
         """Removes the specified frame(s) from the object."""
+        removed = []
         for statename in statenames:
             if statename not in self.states:
                 raise IndexError("%s: Object %s does not exist!" % (self,statename))
-            LOG.debug("%s: Removing Object with label %s" % (self,statename))
             self.states.pop(statename)
+            removed += [statename]
         self.statename = self._default_state()
+        LOG.info("%s: Removed states %s" % (self,removed))
         return self.list()
     
     def show(self,statename=None):
         """Returns the (rendered) matplotlib plot for this object. This is a quick way to view your current data state without doing any serious plotting work. This aims for the sensible defaults philosophy, if you don't like what you get, write a new method that uses the :meth:`data` call and plots that."""
         # Load the current stat if no state provided
         if not statename:
-            statename = self.statename
+            statename = self._default_state()
         if statename != None and statename in self.states:
             return self.states[statename].__show__()
         else:
@@ -293,15 +301,19 @@ class FITSObject(object):
     def write(self,filename=None,states=None,primaryState=None,clobber=False):
         """Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify ``states`` then only those states will be used. ``primaryState`` should be the state of the front HDU. When not specified, the latest state will be used. It uses the :attr:`dataClasses` :meth:`FITSFrame.__hdu__` method to return a valid HDU object for each Frame."""
         if not primaryState:
-            primaryState = self.statename
+            primaryState = self._default_state()
+            LOG.debug("Set primary statename to default state %s" % primaryState)
         if not filename:
             if self.filename == None:
                 filename = primaryState
+                LOG.debug("Set Filename from Primary State. Filename: %s" % filename)
             else:
                 filename = self.filename
+                LOG.debug("Set filename from Object. Filename: %s" % filename)
         filename = validate_filename(filename)
         if not states:
             states = self.list()
+            LOG.debug("Saving all states: %s" % states)
         if primaryState in states:
             states.remove(primaryState)
         PrimaryHDU = self.states[primaryState].__hdu__(primary=True)
@@ -311,6 +323,7 @@ class FITSObject(object):
         else:
             HDUList = pf.HDUList([PrimaryHDU])
         HDUList.writeto(filename,clobber=clobber)
+        LOG.info("Wrote state %s (primary) and states %s to FITS file %s" % (primaryState,states,filename))
     
     def read(self,filename=None,statename=None):
         """This reader takes a FITS file, and trys to render each HDU within that FITS file as a frame in this Object. As such, it might read multiple frames. This method will return a list of Frames that it read. It uses the :attr:`dataClasses` :meth:`FITSFrame.__read__` method to return a valid Frame object for each HDU.
@@ -354,5 +367,6 @@ class FITSObject(object):
             msg = "No HDUs were saved from FITS file %s to %s" % (filename,self)
             raise ValueError(msg)
         
+        LOG.info("Saved states %s" % Labels)
         return Labels
     
