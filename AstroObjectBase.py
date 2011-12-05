@@ -305,11 +305,11 @@ class FITSObject(object):
         if primaryState in states:
             states.remove(primaryState)
         PrimaryHDU = self.states[primaryState].__hdu__(primary=True)
-        if states:
+        if len(states) > 0:
             HDUs = [self.states[state].__hdu__(primary=False) for state in states]
             HDUList = pf.HDUList([PrimaryHDU]+HDUs)
         else:
-            HDUList = pf.HDUList(PrimaryHDU)
+            HDUList = pf.HDUList([PrimaryHDU])
         HDUList.writeto(filename,clobber=clobber)
     
     def read(self,filename=None,statename=None):
