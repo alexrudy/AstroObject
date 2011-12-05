@@ -181,12 +181,16 @@ class ResampledSpectrum(InterpolatedSpectrum):
             wavelengths = self.wavelengths
         if resolution == None:
             resolution = self.resolution
+        if wavelengths == None:
+            raise ValueError("Requires Wavelenths")
+        if resolution == None:
+            raise ValueError("Requires Resolution")
         return self.resample(wavelengths,resolution)
         
     def resample(self,wavelengths,resolution,z=0.0):
         """Resample the given spectrum to a lower resolution"""
         if resolution.size != wavelengths.size:
-            LOG.debug("%s: Wavelength Size: %d, Resolution Size %d" % (self,wavelength.size,resolution.size))
+            LOG.debug("%s: Wavelength Size: %d, Resolution Size %d" % (self,wavelengths.size,resolution.size))
             raise AttributeError("You must provide resolution appropriate for resampling.")
         oldwl,oldfl = self.data
         oldwl = oldwl * (1.0 + z)
