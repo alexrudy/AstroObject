@@ -4,24 +4,37 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.2
+#  Version 0.2.3
 # 
 
 
 import AstroObjectBase, AstroImage
-from Utilities import *
 
+# Standard Scipy Toolkits
+import numpy as np
+import pyfits as pf
+import scipy as sp
+import matplotlib as mpl
 import matplotlib.pyplot as plt
+
+# Matplolib Extras
 import matplotlib.image as mpimage
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
+
+# Scipy Extras
 from scipy import ndimage
 from scipy.spatial.distance import cdist
 from scipy.linalg import norm
-import numpy as np
-import pyfits
+
+# Standard Python Modules
 import math, copy, sys, time, logging, os
+
+# Submodules from this system
+from Utilities import *
+
+__all__ = ["SpectraFrame","SpectraObject"]
 
 LOG = logging.getLogger(__name__)
 
@@ -31,7 +44,7 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
         self.data = array # The image data
         self.size = array.size # The size of this image
         self.shape = array.shape # The shape of this image
-        super(SpectraFrame, self).__init__(label, header, metadata)
+        super(SpectraFrame, self).__init__(None, label, header, metadata)
         
     
     def __valid__(self):
@@ -67,9 +80,8 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
             This function serves as a quick view of the current state of the frame. It is not intended for robust plotting support, as that can be easily accomplished using ``matplotlib``. Rather, it attempts to do the minimum possible to create an acceptable image for immediate inspection."""
         LOG.debug("Plotting %s using matplotlib.pyplot.plot" % self)
         x,y = self.data #Slice Data
-        axis = get_padding((x,y))
         plt.plot(x,y,'k-')
-        plt.axis(axis)
+        plt.axis(expandLim(plt.axis()))
         plt.gca().ticklabel_format(style="sci",scilimits=(3,3))
         return plt.gca()
     

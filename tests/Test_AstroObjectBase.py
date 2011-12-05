@@ -23,28 +23,20 @@ __all__ = ['API_Abstract_Frame','API_Abstract_Object']
 class API_Abstract_Frame(API_Base_Frame):
     """Tests an Abstract Frame"""
     
-    def test_init_invalid(self):
-        """__init__() fails with invalid data"""
-        raise SkipTest("This is a bug, related to argument ordering on the frame.__init__() call.")
-        # The following arguments are treated as label and header respectivley. The lack of abstract type cheking and/or a data argument means that this call doesn't fail when it should.
-        self.FRAME(self.INVALID,"Invalid")
     
-    @nt.raises(AttributeError)
     def test_init_data(self):
-        """__init__() fails with invalid data"""
-        raise SkipTest("This is a bug, related to argument ordering on the frame.__init__() call.")
-        # The following arguments are treated as label and header respectivley. The lack of abstract type cheking and/or a data argument means that this call doesn't fail when it should.
-        self.FRAME(self.INVALID,"Invalid")
+        """__init__() succeds with None (Valid) data"""
+        self.FRAME(self.VALID,"Invalid")
     
     def test_init_empty(self):
         """__init__() abstract frame works without data"""
-        AFrame = self.FRAME("Valid")
+        AFrame = self.FRAME(None,"Valid")
         assert AFrame.label == "Valid"
     
     @nt.raises(AbstractError)
     def test_save_data(self):
         """__save__() to an abstract base class raises an AbstractError"""
-        raise SkipTest("This is a bug, related to argument ordering on the frame.__init__() call.")
+        # raise SkipTest("This is a bug, related to argument ordering on the frame.__init__() call.")
         # The following arguments are treated as label and header respectivley. The lack of abstract type cheking and/or a data argument means that this call doesn't fail when it should.
         self.FRAME.__save__(self.VALID,"None")
     
@@ -63,36 +55,31 @@ class API_Abstract_Frame(API_Base_Frame):
     @nt.raises(AbstractError)
     def test_call(self):
         """__call__() a base frame should raise an AbstractError"""
-        BFrame = self.FRAME("Empty")
+        BFrame = self.FRAME(self.VALID,"Empty")
         assert BFrame.label == "Empty"
         BFrame()
     
     @nt.raises(AbstractError)
     def test_HDU(self):
         """__hdu__() raises an AbstractError"""
-        BFrame = self.FRAME("Empty")
+        BFrame = self.FRAME(self.VALID,"Empty")
         assert BFrame.label == "Empty"
         HDU = BFrame.__hdu__()
     
     @nt.raises(AbstractError)
     def test_PrimaryHDU(self):
         """__hdu__() primary raises an AbstractError"""
-        BFrame = self.FRAME("Empty")
+        BFrame = self.FRAME(self.VALID,"Empty")
         assert BFrame.label == "Empty"
         HDU = BFrame.__hdu__(primary=True)
     
     @nt.raises(AbstractError)
     def test_show(self):
         """__show__() a base frame should fail"""
-        BFrame = self.FRAME("Empty")
+        BFrame = self.FRAME(self.VALID,"Empty")
         assert BFrame.label == "Empty"
         BFrame.__show__()
     
-    def test_string_representation(self):
-        """__str__() String representation correct for Frame"""
-        AFrame = self.FRAME("Valid")
-        assert AFrame.label == "Valid"
-        assert str(AFrame) == self.FRAMESTR
     
 
 
@@ -100,6 +87,9 @@ class API_Abstract_Frame(API_Base_Frame):
 class API_Abstract_Object(API_Base_Object):
     """Tests an Abstract Object"""
     
+    def test_double_saving_data_should_not_reference(self):
+        """data() should prevent data from referencing each other."""
+        raise SkipTest("data() does not make sense with abstract base class")
     
     @nt.raises(AbstractError)
     def test_data(self):
@@ -145,15 +135,15 @@ class test_FITSFrame(API_Abstract_Frame):
     
     def test_HDU(self):
         """__hdu__() raises an AbstractError"""
-        BFrame = self.FRAME("Empty")
+        BFrame = self.FRAME(self.VALID,"Empty")
         assert BFrame.label == "Empty"
         HDU = BFrame.__hdu__()
         assert isinstance(HDU,pf.ImageHDU)
         assert HDU.data == None
-
+    
     def test_PrimaryHDU(self):
         """__hdu__() primary raises an AbstractError"""
-        BFrame = self.FRAME("Empty")
+        BFrame = self.FRAME(self.VALID,"Empty")
         assert BFrame.label == "Empty"
         HDU = BFrame.__hdu__(primary=True)
         assert isinstance(HDU,pf.PrimaryHDU)
@@ -179,7 +169,7 @@ class test_FITSObject(API_Abstract_Object):
         self.VALID = None
         self.INVALID = np.array([1,2,3]).astype(np.int16)
         self.FRAMELABEL = "Empty"
-        self.FRAMEINST = self.FRAME("Empty")
+        self.FRAMEINST = self.FRAME(None,"Empty")
         self.HDUTYPE = pf.ImageHDU
         self.HDU = pf.PrimaryHDU()
         self.imHDU = pf.ImageHDU()

@@ -4,23 +4,31 @@
 #  
 #  Created by Alexander Rudy on 2011-04-28.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.2
+#  Version 0.2.3
 # 
 
+# Parent Modules
 import AstroObjectBase
 
+# Standard Scipy Toolkits
+import numpy as np
+import pyfits as pf
+import scipy as sp
+import matplotlib as mpl
 import matplotlib.pyplot as plt
+
+# Matplotlib Extras
 import matplotlib.image as mpimage
-from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
-from scipy import ndimage
-from scipy.spatial.distance import cdist
-from scipy.linalg import norm
-import numpy as np
-import pyfits
+
+# Standard Python Libraries
 import math, copy, sys, time, logging, os
+
+# Module Utilites
 from Utilities import *
+
+__all__ = ["ImageFrame","ImageObject"]
 
 LOG = logging.getLogger(__name__)
 
@@ -36,7 +44,7 @@ class ImageFrame(AstroObjectBase.FITSFrame):
         self.data = array # The image data
         self.size = array.size # The size of this image
         self.shape = array.shape # The shape of this image
-        super(ImageFrame, self).__init__(label, header, metadata)
+        super(ImageFrame, self).__init__(None, label, header, metadata)
         
     
     def __call__(self):
@@ -52,11 +60,16 @@ class ImageFrame(AstroObjectBase.FITSFrame):
         """Retruns an HDU which represents this frame. HDUs are either ``pyfits.PrimaryHDU`` or ``pyfits.ImageHDU`` depending on the *primary* keyword."""
         if primary:
             LOG.info("Generating a primary HDU for %s" % self)
-            return pyfits.PrimaryHDU(self())
+            HDU = pyfits.PrimaryHDU(self())
         else:
             LOG.info("Generating an image HDU for %s" % self)
-            return pyfits.ImageHDU(self())
-            
+            HDU = pyfits.ImageHDU(self())
+        HDU.header.update('label',self.label)
+        HDU.header.update('object',self.label)
+        for key,value in self.header.iteritems():
+            HDU.header.update(key,value)
+        return HDU
+    
     def __show__(self):
         """Plots the image in this frame using matplotlib's ``imshow`` function. The color map is set to an inverted binary, as is often useful when looking at astronomical images. The figure object is returned, and can be manipulated further.
         

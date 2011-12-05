@@ -1,40 +1,49 @@
-# 
+#
 #  Test_AstroObjectAPI.py
 #  ObjectModel
-#  
+#
 #  Created by Alexander Rudy on 2011-10-31.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-# 
+#
 
+# Parent Imports
 import AstroObject.AstroObjectBase as AOB
 from AstroObject.Utilities import AbstractError
+
+# Testing Imports
 import nose.tools as nt
 from nose.plugins.skip import Skip,SkipTest
+
+# Scipy Imports
 import numpy as np
 import pyfits as pf
 import scipy as sp
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import os
+import matplotlib.image as mpimage
 
-__all__ = ["API_Base_Frame","API_Base_Object"]
+# Python Imports
+import math, copy, sys, time, logging, os
+
+__all__ = ["API_Base_Frame","API_Base_Object","API_Base_Functional"]
 
 class API_Base(object):
     """Methods common to all tests!"""
     def setUp(self):
         self.check_constants()
         self.clear_files()
-        
+    
     doSetUp = setUp
     
     def check_constants(self):
         """API-Based Test Contains Appropriate Constants"""
         passed = True
+        missing = []
         for attribute in self.attributes:
             passed &= hasattr(self,attribute)
-            if not passed:
-                raise AssertionError, "Missing Attribute: %s" % attribute
-        assert passed
+            if not hasattr(self,attribute):
+                missing += [attribute]
+        assert passed, "Test API is missing attributes: %s" % missing
     
     def tearDown(self):
         self.clear_files()
@@ -55,30 +64,39 @@ class API_Base_Frame(API_Base):
     def test_init_empty(self):
         """__init__() fails without data"""
         self.FRAME(None,"Label")
-        
-    @nt.raises(Exception)
+    
+    
+    @nt.raises(AttributeError)
     def test_init_invalid(self):
         """__init__() fails with invalid data"""
         self.FRAME(self.INVALID,"Invalid")
-        
+    
+    
     def test_init_data(self):
         """__init__() succeeds with valid data"""
         AFrame = self.FRAME(self.VALID,"Valid")
         assert AFrame.label == "Valid"
         assert self.SAMEDATA(AFrame.data,self.VALID)
     
+    
+    @nt.raises(AttributeError)
+    def test_init_nolabel(self):
+        """__init__() fails with valid data but no label"""
+        AFrame = self.FRAME(self.VALID,None)
+    
+    
     @nt.raises(AbstractError)
     def test_save_none(self):
         """__save__() with none object raises an AbstractError"""
         self.FRAME.__save__(None,"None")
-        
+    
     
     def test_save_data(self):
         """__save__() valid data"""
         AFrame = self.FRAME.__save__(self.VALID,"Valid")
         assert AFrame.label == "Valid"
         assert self.SAMEDATA(AFrame.data,self.VALID)
-        
+    
     
     def test_read_PrimaryHDU(self):
         """__read__() primary HDU succeeds"""
@@ -88,6 +106,7 @@ class API_Base_Frame(API_Base):
         assert AFrame.label == "Valid"
         assert self.SAMEDATA(AFrame.data,self.VALID)
     
+    
     def test_read_SecondaryHDU(self):
         """__read__() secondary HDU succeeds"""
         HDU = self.HDUTYPE(self.VALID)
@@ -95,14 +114,14 @@ class API_Base_Frame(API_Base):
         assert isinstance(AFrame,self.FRAME)
         assert AFrame.label == "Valid"
         assert self.SAMEDATA(AFrame.data,self.VALID)
-        
+    
     
     @nt.raises(AbstractError)
     def test_read_empty_HDU(self):
         """__read__() an empty primary HDU fails"""
         HDU = pf.PrimaryHDU()
         AFrame = self.FRAME.__read__(HDU,"Empty")
-        
+    
     
     def test_call(self):
         """__call__() yields data"""
@@ -110,8 +129,8 @@ class API_Base_Frame(API_Base):
         assert AFrame.label == "Valid"
         data = AFrame()
         assert self.SAMEDATA(data,self.VALID)
-
-
+    
+    
     def test_HDU(self):
         """__hdu__() works for secondary HDUs"""
         AFrame = self.FRAME(self.VALID,"Valid")
@@ -120,6 +139,7 @@ class API_Base_Frame(API_Base):
         assert isinstance(HDU,self.HDUTYPE)
         assert self.SAMEDATA(HDU.data,self.VALID)
     
+    
     def test_PrimaryHDU(self):
         """__hdu__() works for primary HDUs"""
         AFrame = self.FRAME(self.VALID,"Valid")
@@ -127,21 +147,24 @@ class API_Base_Frame(API_Base):
         HDU = AFrame.__hdu__(primary=True)
         assert isinstance(HDU,pf.PrimaryHDU)
         assert self.SAMEDATA(HDU.data,self.VALID)
-
-
+    
+    
     def test_show(self):
         """__show__() returns a valid type"""
         AFrame = self.FRAME(self.VALID,"Valid")
         assert AFrame.label == "Valid"
         figure = AFrame.__show__()
         assert isinstance(figure,self.SHOWTYPE), "Found type %s" % type(figure)
-
+    
+    
     def test_string_representation(self):
         """__str__() String representation correct for Frame"""
         AFrame = self.FRAME(self.VALID,"Valid")
         assert AFrame.label == "Valid"
         assert str(AFrame) == self.FRAMESTR
-        
+    
+
+
 class API_Base_Object(API_Base):
     """Test grouping for testing the fits object"""
     attributes = ['FRAMEINST','VALID','INVALID','SAME','SHOWTYPE','HDUTYPE','OBJECTSTR','OBJECT','FRAMELABEL',
@@ -157,14 +180,14 @@ class API_Base_Object(API_Base):
     def test_save_with_data(self):
         """save() works with valid data"""
         AObject = self.OBJECT()
-        AObject.save(self.VALID)
-        
+        AObject.save(self.VALID,"Valid")
+    
     @nt.raises(TypeError)
     def test_save_with_invalid_data(self):
         """save() fails with invalid data"""
         AObject = self.OBJECT()
-        AObject.save(self.INVALID)
-        
+        AObject.save(self.INVALID,"Invalid")
+    
     
     def test_save_with_frame(self):
         """save() succeeds with a frame"""
@@ -180,43 +203,50 @@ class API_Base_Object(API_Base):
         AObject.save(self.FRAMEINST,NewLabel)
         assert AObject.statename == NewLabel
         assert AObject.frame().label == NewLabel
-        
+    
     
     def test_double_saving_an_object_should_reference(self):
         """save() should prevent data in frames from referencing each other"""
-        raise SkipTest("This is a bug, should be fixed in a later version.")
-        NewLabel = "Other"
-        AObject = self.OBJECT()
-        AObject.save(self.FRAMEINST)
-        AObject.save(self.FRAMEINST,NewLabel)
-        assert AObject.statename == NewLabel
-        assert AObject.frame().label == NewLabel
-        AObject.select(self.FRAMELABEL)
-        assert AObject.statename == self.FRAMELABEL
-        assert AObject.frame().label == self.FRAMELABEL
-        AObject.select(NewLabel)
-        assert AObject.statename == NewLabel
-        assert AObject.frame().label == NewLabel
-        
+        try:
+            NewLabel = "Other"
+            AObject = self.OBJECT()
+            AObject.save(self.FRAMEINST)
+            AObject.save(self.FRAMEINST,NewLabel)
+            assert AObject.statename == NewLabel
+            assert AObject.frame().label == NewLabel
+            AObject.select(self.FRAMELABEL)
+            assert AObject.statename == self.FRAMELABEL
+            assert AObject.frame().label == self.FRAMELABEL
+            AObject.select(NewLabel)
+            assert AObject.statename == NewLabel
+            assert AObject.frame().label == NewLabel
+        except AssertionError as e:
+            raise SkipTest("This is a bug, should be fixed in a later version. %s" % e)
     
-    def test_write_and_read(self):
-        """write() and read() should conserve across a single frame"""
-        AObject = self.OBJECT()
-        AObject.save(self.FRAMEINST)
-        AObject.write(self.FILENAME)
-        assert os.access(self.FILENAME,os.F_OK)
-        labels = AObject.read(self.FILENAME)
-        assert labels == [self.FILENAME]
-        assert self.FILENAME == AObject.statename
-        assert isinstance(AObject.frame(),self.FRAME)
-        assert self.SAME(self.FRAMEINST,AObject.frame())
+    def test_double_saving_data_should_not_reference(self):
+        """data() should prevent data from referencing each other."""
+        try:
+            NewLabel = "Other"
+            AObject = self.OBJECT()
+            AObject.save(self.FRAMEINST)
+            AObject.save(AObject.data(),NewLabel)
+            assert AObject.statename == NewLabel
+            assert AObject.frame().label == NewLabel
+            AObject.select(self.FRAMELABEL)
+            assert AObject.statename == self.FRAMELABEL
+            assert AObject.frame().label == self.FRAMELABEL
+            AObject.select(NewLabel)
+            assert AObject.statename == NewLabel
+            assert AObject.frame().label == NewLabel
+        except AssertionError as e:
+            raise SkipTest("This is a bug, should be fixed in a later version. %s" % e)
     
     @nt.raises(IOError)
     def test_read_from_nonexistent_file(self):
         """read() fails if the file doesn't exist"""
         AObject = self.OBJECT()
         AObject.read(self.FILENAME)
-        
+    
     def test_write_clobbers_file(self):
         """write() can clobber existing files"""
         AObject = self.OBJECT()
@@ -303,7 +333,7 @@ class API_Base_Object(API_Base):
         AObject.keep("A")
         assert ["A"] == sorted(AObject.list()) , "List: %s" % AObject.list()
         assert "B" not in AObject.states, "States: %s" % AObject.states
-        
+    
     
     def test_keep_multiple(self):
         """keep() only retains given states"""
@@ -410,7 +440,23 @@ class API_Base_Object(API_Base):
         BObject = self.OBJECT()
         BObject.save(self.FRAMEINST)
         assert BObject.object() == BObject.frame()
-        
     
 
 
+class API_Base_Functional(API_Base):
+    """Functional Tests Basic API Level"""
+    attributes = ['FRAMEINST','VALID','INVALID','SAME','SHOWTYPE','HDUTYPE','OBJECTSTR','OBJECT','FRAMELABEL',
+    'FRAME','imHDU','FILENAME','SAMEDATA']
+    
+    def test_write_and_read(self):
+        """User writes an image and reads from the same frame"""
+        AObject = self.OBJECT()
+        AObject.save(self.FRAMEINST)
+        AObject.write(self.FILENAME)
+        assert os.access(self.FILENAME,os.F_OK)
+        labels = AObject.read(self.FILENAME)
+        assert labels == [self.FILENAME]
+        assert self.FILENAME == AObject.statename
+        assert isinstance(AObject.frame(),self.FRAME)
+        assert self.SAME(self.FRAMEINST,AObject.frame())
+        

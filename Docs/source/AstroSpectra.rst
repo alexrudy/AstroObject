@@ -1,5 +1,5 @@
-:mod:`AstroSpectra`
-*******************
+Raw Spectrum Management :mod:`AstroSpectra`
+*******************************************
 
 Objects for manipulating and managing spectra.
 

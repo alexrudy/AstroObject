@@ -5,7 +5,7 @@
  Created by Alexander Rudy on 2011-10-07.
  Copyright 2011 Alexander Rudy. All rights reserved.
 
-  Version 0.2.2
+  Version 0.2.3
 
 ---
 
@@ -51,3 +51,27 @@ As well, the library is useful for building object-based representations of new 
 	- improvements to documentation
 * 0.2.2
 	- Hotfix to include updated notes in the README and to update documentation
+* 0.2.3
+	- Uniform `__init__` call signature (data,label,header=,metadata=)
+	This will change to (**kwargs) in the next release. The signature will primarily use (data=,label=), so that can be included now for future compatibility.
+	- Uniform `__call__` call signature for AnalyticSpectra items. This allows nested calls with a variety of keywords (see ResampledSpectrum)
+	- New InterpolatedSpectrum (using Spline by default) and ResampledSpectrum objects provide analytic interfaces to data-based spectra.
+	- AstroImage and AstroObject save header values to in `__hdu__` call.
+	- AstroObject now has a `clobber` mode which allows `.save()` to overwrite data
+	- AstroObject now has a `.clear()` method to delete all data.
+	- Fixed a bug which might crop up when saving only a single frame to a FITS file in AstroObject.
+	- AstroObject more consistently uses the `._default_state()` call to set statename.
+	- Made a temporary fix for data copying bugs
+	- Documentation of API
+	- Documentation of AnalyticSpectra
+	- Documentation includes examples
+	- Documentation intro improved
+	- Improvements to SpectraFrame `__show__()` plot limits
+	- Improvements to messaging from AstroObject
+	- Code style cleanup
+	- `__all__` settings for modules
+	- Testing for AnalyticSpectra
+	- Testing for AstroImage functional test cases
+	- Tests now include an API for functional testing
+
+
