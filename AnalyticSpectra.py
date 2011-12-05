@@ -106,7 +106,7 @@ class AnalyticSpectrum(AstroObjectBase.FITSFrame):
 
 
 class CompositeSpectra(AnalyticSpectrum):
-    """Binary composition of two functional spectra"""
+    """Binary composition of two functional spectra. This object should not be initialized by the user. Instead, this class is returned when you combine two spectra of different types, or combine a spectra with any other type. As such, do not initialze composite spectra idependently. See the :meth:`__call__` function for documentation of how to use this type of object."""
     def __init__(self, partA, partB, operation):
         label = ""
         label += partA.label if hasattr(partA,'label') else str(partA)
@@ -118,21 +118,19 @@ class CompositeSpectra(AnalyticSpectrum):
         self.operation = operation
         
     
-    def __call__(self,**kwargs):
-        """Calls the composite function components"""
-        if "wavelengths" in kwargs:
-            wavelengths = kwargs["wavelengths"]
-        else:
+    def __call__(self,wavelengths=None,**kwargs):
+        """Calls the composite function components. The keyword arguments are passed on to calls to spectra contained within this composite spectra. All spectra varieties should accept arbitrary keywords, so this argument is used to pass keywords to spectra which require specific alternatives."""
+        if wavelengths == None:
             wavelengths = self.wavelengths
         if wavelengths == None:
             raise ValueError("No wavelengths specified in %s" % (self))
             
         if isinstance(self.A,AnalyticSpectrum):
-            Awavelengths,Avalue = self.A(wavelengths,**kwargs)
+            Awavelengths,Avalue = self.A(wavelengths=wavelengths,**kwargs)
         else:
             Avalue = self.A
         if isinstance(self.B,AnalyticSpectrum):
-            Bwavelengths,Bvalue = self.B(wavelengths,**kwargs)
+            Bwavelengths,Bvalue = self.B(wavelengths=wavelengths,**kwargs)
         else:
             Bvalue = self.B
         
@@ -176,7 +174,7 @@ class ResampledSpectrum(InterpolatedSpectrum):
         self.resolution = resolution
         
     def __call__(self,wavelengths=None,resolution=None,**kwargs):
-        """Calls this interpolated spectrum over certain wavelengths"""
+        """Calls this resampled spectrum over certain wavelengths"""
         if wavelengths == None:
             wavelengths = self.wavelengths
         if resolution == None:

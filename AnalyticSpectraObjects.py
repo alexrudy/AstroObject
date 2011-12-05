@@ -61,7 +61,7 @@ class GaussianSpectrum(AnalyticSpectra.AnalyticSpectrum):
         
     
     def __call__(self,wavelengths=None,**kwargs):
-        """Calls a wavelength function"""
+        """Calls this gaussian spectrum over certain wavelengths"""
         return np.vstack((wavelengths,Gaussian(wavelengths,self.mean,self.stdev,self.height)))
         
     
@@ -75,5 +75,5 @@ class FlatSpectrum(AnalyticSpectra.AnalyticSpectrum):
         self.value = value
         
     def __call__(self,wavelengths,**kwargs):
-        """Calls a wavelength function"""
+        """Calls a flat spectrum over given wavelengths"""
         return np.vstack((wavelengths,np.ones(wavelengths.shape)*self.value))
