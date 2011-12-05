@@ -1,0 +1,295 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>AnalyticSpectra &mdash; AstroObject 0.2.2 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.2.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="AstroObject 0.2.2 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">AstroObject 0.2.2 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for AnalyticSpectra</h1><div class="highlight"><pre>
+<span class="c"># </span>
+<span class="c">#  AnalyticSpectra.py</span>
+<span class="c">#  ObjectModel</span>
+<span class="c">#  </span>
+<span class="c">#  Created by Alexander Rudy on 2011-10-12.</span>
+<span class="c">#  Copyright 2011 Alexander Rudy. All rights reserved.</span>
+<span class="c">#  Version 0.2.2</span>
+<span class="c"># </span>
+
+<span class="c"># Parent Modules</span>
+<span class="kn">import</span> <span class="nn">AstroObjectBase</span><span class="o">,</span><span class="nn">AstroImage</span><span class="o">,</span><span class="nn">AstroSpectra</span>
+
+<span class="c"># Standard Scipy Toolkits</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pyfits</span> <span class="kn">as</span> <span class="nn">pf</span>
+<span class="kn">import</span> <span class="nn">scipy</span> <span class="kn">as</span> <span class="nn">sp</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="kn">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+
+<span class="c"># Matplolib Extras</span>
+<span class="kn">import</span> <span class="nn">matplotlib.image</span> <span class="kn">as</span> <span class="nn">mpimage</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">cm</span>
+<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">LinearLocator</span><span class="p">,</span> <span class="n">FixedLocator</span><span class="p">,</span> <span class="n">FormatStrFormatter</span>
+
+<span class="c"># Scipy Extras</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">ndimage</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="kn">import</span> <span class="n">cdist</span>
+<span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">norm</span>
+<span class="kn">import</span> <span class="nn">scipy.interpolate</span>
+
+<span class="c"># Standard Python Modules</span>
+<span class="kn">import</span> <span class="nn">math</span><span class="o">,</span> <span class="nn">copy</span><span class="o">,</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">logging</span><span class="o">,</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+
+<span class="c"># Submodules from this system</span>
+<span class="kn">from</span> <span class="nn">Utilities</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;AnalyticSpectrum&quot;</span><span class="p">,</span><span class="s">&quot;CompositeSpectra&quot;</span><span class="p">,</span><span class="s">&quot;InterpolatedSpectrum&quot;</span><span class="p">]</span>
+
+<span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AnalyticSpectrum"><a class="viewcode-back" href="../AnalyticSpectra.html#AnalyticSpectra.AnalyticSpectrum">[docs]</a><span class="k">class</span> <span class="nc">AnalyticSpectrum</span><span class="p">(</span><span class="n">AstroObjectBase</span><span class="o">.</span><span class="n">FITSFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A functional spectrum object for spectrum generation. The default implementation is a flat spectrum.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">units</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AnalyticSpectrum</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span> <span class="o">=</span> <span class="n">wavelengths</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">units</span> <span class="c">#Future will be used for enforcing unit behaviors</span>
+        
+    
+<div class="viewcode-block" id="AnalyticSpectrum.__add__"><a class="viewcode-back" href="../AnalyticSpectra.html#AnalyticSpectra.AnalyticSpectrum.__add__">[docs]</a>    <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Implements spectrum addition&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">CompositeSpectra</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">,</span><span class="s">&#39;add&#39;</span><span class="p">)</span>
+        
+    </div>
+<div class="viewcode-block" id="AnalyticSpectrum.__mul__"><a class="viewcode-back" href="../AnalyticSpectra.html#AnalyticSpectra.AnalyticSpectrum.__mul__">[docs]</a>    <span class="k">def</span> <span class="nf">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Implements spectrum multiplication&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">CompositeSpectra</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">,</span><span class="s">&#39;mul&#39;</span><span class="p">)</span>
+        
+    </div>
+<div class="viewcode-block" id="AnalyticSpectrum.__sub__"><a class="viewcode-back" href="../AnalyticSpectra.html#AnalyticSpectra.AnalyticSpectrum.__sub__">[docs]</a>    <span class="k">def</span> <span class="nf">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Implements spectrum subtraction&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">CompositeSpectra</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">,</span><span class="s">&#39;sub&#39;</span><span class="p">)</span>
+        
+    </div>
+<div class="viewcode-block" id="AnalyticSpectrum.__rsub__"><a class="viewcode-back" href="../AnalyticSpectra.html#AnalyticSpectra.AnalyticSpectrum.__rsub__">[docs]</a>    <span class="k">def</span> <span class="nf">__rsub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reverse subtraction&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">CompositeSpectra</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="bp">self</span><span class="p">,</span><span class="s">&#39;sub&#39;</span><span class="p">)</span>
+        
+    </div>
+<div class="viewcode-block" id="AnalyticSpectrum.__rmul__"><a class="viewcode-back" href="../AnalyticSpectra.html#AnalyticSpectra.AnalyticSpectrum.__rmul__">[docs]</a>    <span class="k">def</span> <span class="nf">__rmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reverse Multiplication&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">CompositeSpectra</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">,</span><span class="s">&#39;mul&#39;</span><span class="p">)</span>
+        
+    </div>
+<div class="viewcode-block" id="AnalyticSpectrum.__radd__"><a class="viewcode-back" href="../AnalyticSpectra.html#AnalyticSpectra.AnalyticSpectrum.__radd__">[docs]</a>    <span class="k">def</span> <span class="nf">__radd__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reverse Addition&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">CompositeSpectra</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">,</span><span class="s">&#39;add&#39;</span><span class="p">)</span>
+        
+    </div>
+<div class="viewcode-block" id="AnalyticSpectrum.__call__"><a class="viewcode-back" href="../AnalyticSpectra.html#AnalyticSpectra.AnalyticSpectrum.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the Flux data for this spectrum&quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: Cannot Call: Abstract Spectra not instantiated with any properies.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="AnalyticSpectrum.__hdu__"><a class="viewcode-back" href="../AnalyticSpectra.html#AnalyticSpectra.AnalyticSpectrum.__hdu__">[docs]</a>    <span class="k">def</span> <span class="nf">__hdu__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">primary</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a pyfits HDU representing this object&quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: Cannot make HDU: Abstract Spectra not instantiated with any properies.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    
+    </div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="AnalyticSpectrum.__save__"><a class="viewcode-back" href="../AnalyticSpectra.html#AnalyticSpectra.AnalyticSpectrum.__save__">[docs]</a>    <span class="k">def</span> <span class="nf">__save__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A generic class method for saving to this object with data directly&quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: Abstract Analytic Structure cannot be the target of a save operation!&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    
+    </div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="AnalyticSpectrum.__read__"><a class="viewcode-back" href="../AnalyticSpectra.html#AnalyticSpectra.AnalyticSpectrum.__read__">[docs]</a>    <span class="k">def</span> <span class="nf">__read__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="n">HDU</span><span class="p">,</span><span class="n">label</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;An abstract method for reading empty data HDU Frames&quot;&quot;&quot;</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Attempting to read data&quot;</span> <span class="o">%</span> <span class="n">cls</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: Cannot save HDU as Analytic Spectra&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    
+
+</div></div>
+<div class="viewcode-block" id="CompositeSpectra"><a class="viewcode-back" href="../AnalyticSpectra.html#AnalyticSpectra.CompositeSpectra">[docs]</a><span class="k">class</span> <span class="nc">CompositeSpectra</span><span class="p">(</span><span class="n">AnalyticSpectrum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Binary composition of two functional spectra&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">partA</span><span class="p">,</span> <span class="n">partB</span><span class="p">,</span> <span class="n">operation</span><span class="p">):</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="n">label</span> <span class="o">+=</span> <span class="n">partA</span><span class="o">.</span><span class="n">label</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">partA</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">partA</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">+=</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="n">operation</span> <span class="o">+</span> <span class="s">&quot; &quot;</span>
+        <span class="n">label</span> <span class="o">+=</span> <span class="n">partB</span><span class="o">.</span><span class="n">label</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">partB</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">partB</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CompositeSpectra</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="n">partA</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">=</span> <span class="n">partB</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">operation</span> <span class="o">=</span> <span class="n">operation</span>
+        
+    
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calls the composite function components&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">wavelengths</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">wavelengths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span>
+        <span class="k">if</span> <span class="n">wavelengths</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;No wavelengths specified in </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+            
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">,</span><span class="n">AnalyticSpectrum</span><span class="p">):</span>
+            <span class="n">Awavelengths</span><span class="p">,</span><span class="n">Avalue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Avalue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">,</span><span class="n">AnalyticSpectrum</span><span class="p">):</span>
+            <span class="n">Bwavelengths</span><span class="p">,</span><span class="n">Bvalue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Bvalue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span> <span class="o">==</span> <span class="s">&#39;add&#39;</span><span class="p">:</span>
+            <span class="n">Result</span> <span class="o">=</span> <span class="n">Avalue</span> <span class="o">+</span> <span class="n">Bvalue</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span> <span class="o">==</span> <span class="s">&#39;mul&#39;</span><span class="p">:</span>
+            <span class="n">Result</span> <span class="o">=</span> <span class="n">Avalue</span> <span class="o">*</span> <span class="n">Bvalue</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span> <span class="o">==</span> <span class="s">&#39;sub&#39;</span><span class="p">:</span>
+            <span class="n">Result</span> <span class="o">=</span> <span class="n">Avalue</span> <span class="o">-</span> <span class="n">Bvalue</span>
+        
+        <span class="k">if</span> <span class="n">Result</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">Result</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Composition did not produce a value result!&quot;</span><span class="p">)</span>
+        
+    
+
+</div>
+<div class="viewcode-block" id="InterpolatedSpectrum"><a class="viewcode-back" href="../AnalyticSpectra.html#AnalyticSpectra.InterpolatedSpectrum">[docs]</a><span class="k">class</span> <span class="nc">InterpolatedSpectrum</span><span class="p">(</span><span class="n">AnalyticSpectrum</span><span class="p">,</span><span class="n">AstroSpectra</span><span class="o">.</span><span class="n">SpectraFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An analytic representation of a generic, specified spectrum&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">array</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">size</span> <span class="c"># The size of this image</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span> <span class="c"># The shape of this image</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">InterpolatedSpectrum</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">array</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span> <span class="o">=</span> <span class="n">wavelengths</span>
+    
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calls this interpolated spectrum over certain wavelengths&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">wavelengths</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">wavelengths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wavelengths</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">)))</span>
+        </div>
+<div class="viewcode-block" id="ResampledSpectrum"><a class="viewcode-back" href="../AnalyticSpectra.html#AnalyticSpectra.ResampledSpectrum">[docs]</a><span class="k">class</span> <span class="nc">ResampledSpectrum</span><span class="p">(</span><span class="n">InterpolatedSpectrum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A spectrum that must be called with resampling information&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ResampledSpectrum</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">array</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span> <span class="o">=</span> <span class="n">wavelengths</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span> <span class="o">=</span> <span class="n">resolution</span>
+        
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calls this interpolated spectrum over certain wavelengths&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">wavelengths</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">wavelengths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">resolution</span><span class="p">)</span>
+        
+<div class="viewcode-block" id="ResampledSpectrum.resample"><a class="viewcode-back" href="../AnalyticSpectra.html#AnalyticSpectra.ResampledSpectrum.resample">[docs]</a>    <span class="k">def</span> <span class="nf">resample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">resolution</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Resample the given spectrum to a lower resolution&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">resolution</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="n">wavelengths</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Wavelength Size: </span><span class="si">%d</span><span class="s">, Resolution Size </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelength</span><span class="o">.</span><span class="n">size</span><span class="p">,</span><span class="n">resolution</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;You must provide resolution appropriate for resampling.&quot;</span><span class="p">)</span>
+        <span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">oldwl</span> <span class="o">=</span> <span class="n">oldwl</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span>
+        <span class="n">ones</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">oldwl</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="n">wavelengths</span> <span class="o">/</span> <span class="n">resolution</span> <span class="o">/</span> <span class="mf">2.35</span>
+        <span class="n">curve</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">wl</span><span class="p">,</span><span class="n">center</span><span class="p">,</span><span class="n">sig</span> <span class="p">:</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">sig</span> <span class="o">**</span> <span class="mf">2.0</span> <span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">wl</span> <span class="o">-</span> <span class="n">center</span><span class="p">)</span> <span class="o">**</span> <span class="mf">2.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">sig</span> <span class="o">**</span> <span class="mf">2.0</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="n">MWL</span><span class="p">,</span><span class="n">MCENT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">oldwl</span><span class="p">,</span><span class="n">wavelengths</span><span class="p">)</span>
+        <span class="n">MWL</span><span class="p">,</span><span class="n">MSIGM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">oldwl</span><span class="p">,</span><span class="n">sigma</span><span class="p">)</span>
+        <span class="n">curves</span> <span class="o">=</span> <span class="n">curve</span><span class="p">(</span><span class="n">MWL</span><span class="p">,</span><span class="n">MCENT</span><span class="p">,</span><span class="n">MSIGM</span><span class="p">)</span>
+        <span class="n">flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">curves</span> <span class="o">*</span> <span class="n">oldfl</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">curves</span> <span class="o">*</span> <span class="n">ones</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">flux</span><span class="p">))</span>
+</div></div>
+<span class="kn">import</span> <span class="nn">AnalyticSpectraObjects</span>
+<span class="kn">from</span> <span class="nn">AnalyticSpectraObjects</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">__all__</span> <span class="o">+=</span> <span class="n">AnalyticSpectraObjects</span><span class="o">.</span><span class="n">__all__</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">AstroObject 0.2.2 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Alexander Rudy.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

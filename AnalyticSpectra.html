@@ -1,0 +1,255 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>7. Analytic Spectra and Interpolation AnalyticSpectra &mdash; AstroObject 0.2.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.2.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="AstroObject 0.2.2 documentation" href="index.html" />
+    <link rel="next" title="8. Development Plans" href="future.html" />
+    <link rel="prev" title="6. AstroSpectra" href="AstroSpectra.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="future.html" title="8. Development Plans"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="AstroSpectra.html" title="6. AstroSpectra"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">AstroObject 0.2.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="analytic-spectra-and-interpolation-analyticspectra">
+<h1>7. Analytic Spectra and Interpolation <a class="reference internal" href="#module-AnalyticSpectra" title="AnalyticSpectra"><tt class="xref py py-mod docutils literal"><span class="pre">AnalyticSpectra</span></tt></a><a class="headerlink" href="#analytic-spectra-and-interpolation-analyticspectra" title="Permalink to this headline">¶</a></h1>
+<p>Objects for manipulating and managing spectra which are inherently analytic (i.e. you want interpolation, or your spectrum to be defined by a single function).</p>
+<p>This module contains a few pre-defined analytic spectra which you can use as examples. See the <tt class="xref py py-mod docutils literal"><span class="pre">AnalyticSpectraObjects</span></tt> module.</p>
+<span class="target" id="module-AnalyticSpectra"></span><p>This module provides basic analytic spectrum capabilites. There is a simple principle at work in this module: Do all calculations as late as possible. As such, most spectra will be defined as basic analytic spectra. However, the use of the <a class="reference internal" href="#AnalyticSpectra.CompositeSpectra" title="AnalyticSpectra.CompositeSpectra"><tt class="xref py py-class docutils literal"><span class="pre">CompositeSpectra</span></tt></a> class allows spectra to be used in mathematics:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">A</span> <span class="o">=</span> <span class="n">AnalyticSpectrum</span><span class="p">()</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">AnaltyicSpectrum</span><span class="p">()</span>
+<span class="n">C</span> <span class="o">=</span> <span class="n">A</span> <span class="o">+</span> <span class="n">B</span> <span class="o">*</span> <span class="mi">20</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">I believe that STSCI Python has some spectrum capabilities, and I am researching combining this module to provide adaptors for the STSCI implementation.</p>
+</div>
+<dl class="class">
+<dt id="AnalyticSpectra.AnalyticSpectrum">
+<em class="property">class </em><tt class="descclassname">AnalyticSpectra.</tt><tt class="descname">AnalyticSpectrum</tt><big>(</big><em>data</em>, <em>label</em>, <em>wavelengths=None</em>, <em>units=None</em><big>)</big><a class="reference internal" href="_modules/AnalyticSpectra.html#AnalyticSpectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalyticSpectra.AnalyticSpectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>A functional spectrum object for spectrum generation. The default implementation is a flat spectrum.</p>
+<dl class="method">
+<dt id="AnalyticSpectra.AnalyticSpectrum.__add__">
+<tt class="descname">__add__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AnalyticSpectra.html#AnalyticSpectrum.__add__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalyticSpectra.AnalyticSpectrum.__add__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements spectrum addition</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AnalyticSpectra.AnalyticSpectrum.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>wavelengths=None</em><big>)</big><a class="reference internal" href="_modules/AnalyticSpectra.html#AnalyticSpectrum.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalyticSpectra.AnalyticSpectrum.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the Flux data for this spectrum</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AnalyticSpectra.AnalyticSpectrum.__hdu__">
+<tt class="descname">__hdu__</tt><big>(</big><em>primary=False</em><big>)</big><a class="reference internal" href="_modules/AnalyticSpectra.html#AnalyticSpectrum.__hdu__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalyticSpectra.AnalyticSpectrum.__hdu__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a pyfits HDU representing this object</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AnalyticSpectra.AnalyticSpectrum.__mul__">
+<tt class="descname">__mul__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AnalyticSpectra.html#AnalyticSpectrum.__mul__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalyticSpectra.AnalyticSpectrum.__mul__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements spectrum multiplication</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AnalyticSpectra.AnalyticSpectrum.__radd__">
+<tt class="descname">__radd__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AnalyticSpectra.html#AnalyticSpectrum.__radd__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalyticSpectra.AnalyticSpectrum.__radd__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reverse Addition</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="AnalyticSpectra.AnalyticSpectrum.__read__">
+<em class="property">classmethod </em><tt class="descname">__read__</tt><big>(</big><em>HDU</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AnalyticSpectra.html#AnalyticSpectrum.__read__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalyticSpectra.AnalyticSpectrum.__read__" title="Permalink to this definition">¶</a></dt>
+<dd><p>An abstract method for reading empty data HDU Frames</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AnalyticSpectra.AnalyticSpectrum.__rmul__">
+<tt class="descname">__rmul__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AnalyticSpectra.html#AnalyticSpectrum.__rmul__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalyticSpectra.AnalyticSpectrum.__rmul__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reverse Multiplication</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AnalyticSpectra.AnalyticSpectrum.__rsub__">
+<tt class="descname">__rsub__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AnalyticSpectra.html#AnalyticSpectrum.__rsub__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalyticSpectra.AnalyticSpectrum.__rsub__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reverse subtraction</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="AnalyticSpectra.AnalyticSpectrum.__save__">
+<em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>data</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AnalyticSpectra.html#AnalyticSpectrum.__save__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalyticSpectra.AnalyticSpectrum.__save__" title="Permalink to this definition">¶</a></dt>
+<dd><p>A generic class method for saving to this object with data directly</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AnalyticSpectra.AnalyticSpectrum.__sub__">
+<tt class="descname">__sub__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AnalyticSpectra.html#AnalyticSpectrum.__sub__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalyticSpectra.AnalyticSpectrum.__sub__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements spectrum subtraction</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="AnalyticSpectra.CompositeSpectra">
+<em class="property">class </em><tt class="descclassname">AnalyticSpectra.</tt><tt class="descname">CompositeSpectra</tt><big>(</big><em>partA</em>, <em>partB</em>, <em>operation</em><big>)</big><a class="reference internal" href="_modules/AnalyticSpectra.html#CompositeSpectra"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalyticSpectra.CompositeSpectra" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binary composition of two functional spectra</p>
+</dd></dl>
+
+<div class="section" id="expansion-objects">
+<h2>7.1. Expansion Objects<a class="headerlink" href="#expansion-objects" title="Permalink to this headline">¶</a></h2>
+<p>These objects provide simple expansions to the AnalyticSpectrum abstract class.</p>
+<dl class="class">
+<dt id="AnalyticSpectra.InterpolatedSpectrum">
+<em class="property">class </em><tt class="descclassname">AnalyticSpectra.</tt><tt class="descname">InterpolatedSpectrum</tt><big>(</big><em>array</em>, <em>label</em>, <em>wavelengths=None</em><big>)</big><a class="reference internal" href="_modules/AnalyticSpectra.html#InterpolatedSpectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalyticSpectra.InterpolatedSpectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>An analytic representation of a generic, specified spectrum</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="AnalyticSpectra.ResampledSpectrum">
+<em class="property">class </em><tt class="descclassname">AnalyticSpectra.</tt><tt class="descname">ResampledSpectrum</tt><big>(</big><em>array</em>, <em>label</em>, <em>wavelengths=None</em>, <em>resolution=None</em><big>)</big><a class="reference internal" href="_modules/AnalyticSpectra.html#ResampledSpectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalyticSpectra.ResampledSpectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>A spectrum that must be called with resampling information</p>
+<dl class="method">
+<dt id="AnalyticSpectra.ResampledSpectrum.resample">
+<tt class="descname">resample</tt><big>(</big><em>wavelengths</em>, <em>resolution</em>, <em>z=0.0</em><big>)</big><a class="reference internal" href="_modules/AnalyticSpectra.html#ResampledSpectrum.resample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalyticSpectra.ResampledSpectrum.resample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resample the given spectrum to a lower resolution</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="analytic-spectrum-objects">
+<h2>7.2. Analytic Spectrum Objects<a class="headerlink" href="#analytic-spectrum-objects" title="Permalink to this headline">¶</a></h2>
+<p>These objects actually have spectral functions included.</p>
+<dl class="class">
+<dt id="AnalyticSpectra.BlackBodySpectrum">
+<em class="property">class </em><tt class="descclassname">AnalyticSpectra.</tt><tt class="descname">BlackBodySpectrum</tt><big>(</big><em>temperature</em>, <em>label=None</em><big>)</big><a class="headerlink" href="#AnalyticSpectra.BlackBodySpectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>An analytic representation of a Blackbody Spectrum at a Kelvin Tempertaure</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="AnalyticSpectra.GaussianSpectrum">
+<em class="property">class </em><tt class="descclassname">AnalyticSpectra.</tt><tt class="descname">GaussianSpectrum</tt><big>(</big><em>mean</em>, <em>stdev</em>, <em>height</em>, <em>label=None</em><big>)</big><a class="headerlink" href="#AnalyticSpectra.GaussianSpectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>An analytic representation of a gaussian function in spectral form</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="AnalyticSpectra.FlatSpectrum">
+<em class="property">class </em><tt class="descclassname">AnalyticSpectra.</tt><tt class="descname">FlatSpectrum</tt><big>(</big><em>value</em>, <em>label=None</em><big>)</big><a class="headerlink" href="#AnalyticSpectra.FlatSpectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>An analytc form of a flat value at every wavelength</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">7. Analytic Spectra and Interpolation <tt class="docutils literal"><span class="pre">AnalyticSpectra</span></tt></a><ul>
+<li><a class="reference internal" href="#expansion-objects">7.1. Expansion Objects</a></li>
+<li><a class="reference internal" href="#analytic-spectrum-objects">7.2. Analytic Spectrum Objects</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="AstroSpectra.html"
+                        title="previous chapter">6. <tt class="docutils literal"><span class="pre">AstroSpectra</span></tt></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="future.html"
+                        title="next chapter">8. Development Plans</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/AnalyticSpectra.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="future.html" title="8. Development Plans"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="AstroSpectra.html" title="6. AstroSpectra"
+             >previous</a> |</li>
+        <li><a href="index.html">AstroObject 0.2.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Alexander Rudy.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
