@@ -44,9 +44,9 @@ class BlackBodySpectrum(AnalyticSpectra.AnalyticSpectrum):
         super(BlackBodySpectrum, self).__init__(None,label)
         self.temperature = temperature
         
-    def __call__(self,wavelength):
+    def __call__(self,wavelengths=None,**kwargs):
         """Calls this blackbody spectrum over certain wavelengths"""
-        return np.vstack((wavelength,BlackBody(wavelength,self.temperature)))
+        return np.vstack((wavelengths,BlackBody(wavelengths,self.temperature)))
         
         
 class GaussianSpectrum(AnalyticSpectra.AnalyticSpectrum):
@@ -60,9 +60,9 @@ class GaussianSpectrum(AnalyticSpectra.AnalyticSpectrum):
         self.height = height
         
     
-    def __call__(self,wavelength):
+    def __call__(self,wavelengths=None,**kwargs):
         """Calls a wavelength function"""
-        return np.vstack((wavelength,Gaussian(wavelength,self.mean,self.stdev,self.height)))
+        return np.vstack((wavelengths,Gaussian(wavelengths,self.mean,self.stdev,self.height)))
         
     
 
@@ -74,6 +74,6 @@ class FlatSpectrum(AnalyticSpectra.AnalyticSpectrum):
         super(FlatSpectrum, self).__init__(None,label)
         self.value = value
         
-    def __call__(self,wavelength):
+    def __call__(self,wavelengths,**kwargs):
         """Calls a wavelength function"""
-        return np.vstack((wavelength,np.ones(wavelength.shape)*self.value))
+        return np.vstack((wavelengths,np.ones(wavelengths.shape)*self.value))

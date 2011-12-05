@@ -144,3 +144,48 @@ class test_InterpolatedSpectra(API_AnalyticSpectra):
         AFrame = self.FRAME(self.VALID,"Valid")
         assert AFrame.label == "Valid"
         data = AFrame(self.WAVELENGTHS)
+    
+
+class test_ResampledSpectra(API_AnalyticSpectra):
+    """AnalyticSpectra.ResampledSpectra"""
+    def setUp(self):
+        """Sets up the test with some basic image data."""
+                
+        self.VALID = np.array([[-100.0,200.0,300.0],[1,3,5]])
+        self.FRAME = AS.ResampledSpectrum
+        self.INVALID = np.array([1,2,3])
+        self.FRAMESTR = "<'ResampledSpectrum' labeled 'Valid'>"
+        self.HDUTYPE = pf.ImageHDU
+        self.SHOWTYPE = mpl.artist.Artist
+        self.WAVELENGTHS = np.arange(100)
+        
+        self.attributes = copy.deepcopy(self.attributes) + ['WAVELENGTHS']
+        
+        def SAMEDATA(first,second):
+            """Return whether these two are the same data"""
+            return not (np.abs(first-second) > 1e-6).any()
+            
+        
+        def SAME(first,second):
+            """Return whether these two are the same"""
+            return SAMEDATA(first(),second())
+        
+        self.SAME = SAME
+        self.SAMEDATA = SAMEDATA
+        
+        
+        self.check_constants()
+    
+    def test_show(self):
+        """__show__() returns a valid type"""
+        AFrame = self.FRAME(self.VALID,"Valid")
+        assert AFrame.label == "Valid"
+        figure = AFrame.__show__()
+        assert isinstance(figure,self.SHOWTYPE), "Found type %s" % type(figure)
+        
+    def test_call(self):
+        """__call__() yields data"""
+        AFrame = self.FRAME(self.VALID,"Valid")
+        assert AFrame.label == "Valid"
+        data = AFrame(self.WAVELENGTHS[:-1],np.diff(self.WAVELENGTHS))
+        

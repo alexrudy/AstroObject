@@ -78,7 +78,7 @@ class AnalyticSpectrum(AstroObjectBase.FITSFrame):
         return CompositeSpectra(self,other,'add')
         
     
-    def __call__(self,wavelengths=None):
+    def __call__(self,wavelengths=None,**kwargs):
         """Returns the Flux data for this spectrum"""
         msg = "%s: Cannot Call: Abstract Spectra not instantiated with any properies." % (self)
         raise AbstractError(msg)
@@ -118,19 +118,21 @@ class CompositeSpectra(AnalyticSpectrum):
         self.operation = operation
         
     
-    def __call__(self,wavelengths=None):
+    def __call__(self,**kwargs):
         """Calls the composite function components"""
-        if wavelengths == None:
+        if "wavelengths" in kwargs:
+            wavelengths = kwargs["wavelengths"]
+        else:
             wavelengths = self.wavelengths
         if wavelengths == None:
             raise ValueError("No wavelengths specified in %s" % (self))
             
         if isinstance(self.A,AnalyticSpectrum):
-            Awavelengths,Avalue = self.A(wavelengths)
+            Awavelengths,Avalue = self.A(wavelengths,**kwargs)
         else:
             Avalue = self.A
         if isinstance(self.B,AnalyticSpectrum):
-            Bwavelengths,Bvalue = self.B(wavelengths)
+            Bwavelengths,Bvalue = self.B(wavelengths,**kwargs)
         else:
             Bvalue = self.B
         
@@ -160,7 +162,7 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         self.func = sp.interpolate.interp1d(x,y)
         self.wavelengths = wavelengths
     
-    def __call__(self,wavelengths=None):
+    def __call__(self,wavelengths=None,**kwargs):
         """Calls this interpolated spectrum over certain wavelengths"""
         if wavelengths == None:
             wavelengths = self.wavelengths
@@ -173,11 +175,13 @@ class ResampledSpectrum(InterpolatedSpectrum):
         self.wavelengths = wavelengths
         self.resolution = resolution
         
-    def __call__(self,wavelengths=None):
+    def __call__(self,wavelengths=None,resolution=None,**kwargs):
         """Calls this interpolated spectrum over certain wavelengths"""
         if wavelengths == None:
             wavelengths = self.wavelengths
-        return self.resample(wavelengths,self.resolution)
+        if resolution == None:
+            resolution = self.resolution
+        return self.resample(wavelengths,resolution)
         
     def resample(self,wavelengths,resolution,z=0.0):
         """Resample the given spectrum to a lower resolution"""
