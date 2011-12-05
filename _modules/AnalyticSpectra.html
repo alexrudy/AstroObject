@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AnalyticSpectra &mdash; AstroObject 0.2.2 documentation</title>
+    <title>AnalyticSpectra &mdash; AstroObject 0.2.3 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.2',
+        VERSION:     '0.2.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.2.2 documentation" href="../index.html" />
+    <link rel="top" title="AstroObject 0.2.3 documentation" href="../index.html" />
     <link rel="up" title="Module code" href="index.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../index.html">AstroObject 0.2.2 documentation</a> &raquo;</li>
+        <li><a href="../index.html">AstroObject 0.2.3 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -169,7 +169,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">operation</span> <span class="o">=</span> <span class="n">operation</span>
         
     
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="CompositeSpectra.__call__"><a class="viewcode-back" href="../AnalyticSpectra.html#AnalyticSpectra.CompositeSpectra.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calls the composite function components&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">wavelengths</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">wavelengths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span>
@@ -199,7 +199,7 @@
         
     
 
-</div>
+</div></div>
 <div class="viewcode-block" id="InterpolatedSpectrum"><a class="viewcode-back" href="../AnalyticSpectra.html#AnalyticSpectra.InterpolatedSpectrum">[docs]</a><span class="k">class</span> <span class="nc">InterpolatedSpectrum</span><span class="p">(</span><span class="n">AnalyticSpectrum</span><span class="p">,</span><span class="n">AstroSpectra</span><span class="o">.</span><span class="n">SpectraFrame</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An analytic representation of a generic, specified spectrum&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -211,12 +211,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span> <span class="o">=</span> <span class="n">wavelengths</span>
     
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="InterpolatedSpectrum.__call__"><a class="viewcode-back" href="../AnalyticSpectra.html#AnalyticSpectra.InterpolatedSpectrum.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calls this interpolated spectrum over certain wavelengths&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">wavelengths</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">wavelengths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wavelengths</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">)))</span>
-        </div>
+        </div></div>
 <div class="viewcode-block" id="ResampledSpectrum"><a class="viewcode-back" href="../AnalyticSpectra.html#AnalyticSpectra.ResampledSpectrum">[docs]</a><span class="k">class</span> <span class="nc">ResampledSpectrum</span><span class="p">(</span><span class="n">InterpolatedSpectrum</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A spectrum that must be called with resampling information&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -224,12 +224,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span> <span class="o">=</span> <span class="n">wavelengths</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span> <span class="o">=</span> <span class="n">resolution</span>
         
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ResampledSpectrum.__call__"><a class="viewcode-back" href="../AnalyticSpectra.html#AnalyticSpectra.ResampledSpectrum.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calls this interpolated spectrum over certain wavelengths&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">wavelengths</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">wavelengths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">resolution</span><span class="p">)</span>
-        
+        </div>
 <div class="viewcode-block" id="ResampledSpectrum.resample"><a class="viewcode-back" href="../AnalyticSpectra.html#AnalyticSpectra.ResampledSpectrum.resample">[docs]</a>    <span class="k">def</span> <span class="nf">resample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">resolution</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Resample the given spectrum to a lower resolution&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">resolution</span><span class="o">.</span><span class="n">size</span> <span class="o">!=</span> <span class="n">wavelengths</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
@@ -283,7 +283,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../index.html">AstroObject 0.2.2 documentation</a> &raquo;</li>
+        <li><a href="../index.html">AstroObject 0.2.3 documentation</a> &raquo;</li>
           <li><a href="index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
