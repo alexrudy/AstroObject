@@ -85,7 +85,7 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
             This function serves as a quick view of the current state of the frame. It is not intended for robust plotting support, as that can be easily accomplished using ``matplotlib``. Rather, it attempts to do the minimum possible to create an acceptable image for immediate inspection."""
         LOG.debug("Plotting %s using matplotlib.pyplot.plot" % self)
         x,y = self.data #Slice Data
-        plt.plot(x,y)
+        plt.plot(x,y,label=self.label)
         plt.axis(expandLim(plt.axis()))
         plt.gca().ticklabel_format(style="sci",scilimits=(3,3))
         return plt.gca()
