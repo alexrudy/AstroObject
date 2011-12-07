@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.3
+#  Version 0.2.4
 #
 
 import matplotlib as mpl
@@ -86,9 +86,9 @@ def validate_filename(string,extension=".fits"):
     return string+extension
     
 
-def rangemsg(array,name):
+def npArrayInfo(array,name):
     """Message describing this array"""
-    MSG = "Array named %(name)-10s has %(elements)8d els with shape %(shape)11s. Range %(range)10s. Zeros %(zeros)d (%(zper)3d%%). NaNs %(nans)d (%(nper)3d%%). Type %(type)3s"
+    MSG = "Array named %(name)-10s has %(elements)8d elements with shape %(shape)11s. Range %(range)10s. Data Type %(type)3s. "
     fmtr = {}
     fmtr["elements"] = array.size
     fmtr["shape"] = str(array.shape)
@@ -101,6 +101,10 @@ def rangemsg(array,name):
     fmtr["nper"] = float(fmtr["nans"]) / float(fmtr["elements"]) * 100
     fmtr["type"] = array.dtype
     fmtr["range"] = "[%(min)5.5g,%(max)5.5g]" % fmtr
+    if fmtr["zeros"] > 0:
+        MSG += " Zeros %(zeros)d (%(zper)3d%%)."
+    if fmtr["nans"] > 0:
+        MSG += " NaNs %(nans)d (%(nper)3d%%)."
     return MSG % fmtr
 
 class AbstractError(Exception):
