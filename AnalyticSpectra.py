@@ -189,16 +189,41 @@ class ResampledSpectrum(InterpolatedSpectrum):
         """Resample the given spectrum to a lower resolution"""
         if resolution.size != wavelengths.size:
             LOG.debug("%s: Wavelength Size: %d, Resolution Size %d" % (self,wavelengths.size,resolution.size))
-            raise AttributeError("You must provide resolution appropriate for resampling.")
+            raise AttributeError("You must provide resolution appropriate for resampling. Size mismatch!")
         oldwl,oldfl = self.data
         oldwl = oldwl * (1.0 + z)
+        
+        if np.min(oldwl) > np.min(wavelengths) or np.max(oldwl) < np.max(wavelengths):
+            msg = "Cannot extrapolate during reampling process. Please provide new wavelengths that are within the range of old ones."
+            LOG.critical(msg)
+            LOG.debug("%s: %s" % (self,rangemsg(wavelengths,"centers")))
+            LOG.debug("%s: %s" % (self,rangemsg(oldwl,"wls")))
+            raise ValueError(msg)
+        
         ones = np.ones(oldwl.shape)
         sigma = wavelengths / resolution / 2.35
         curve = lambda wl,center,sig : (1.0/np.sqrt(np.pi * sig ** 2.0 )) * np.exp( - 0.5 * (wl - center) ** 2.0 / (sig ** 2.0) ).astype(np.float)
         MWL,MCENT = np.meshgrid(oldwl,wavelengths)
         MWL,MSIGM = np.meshgrid(oldwl,sigma)
         curves = curve(MWL,MCENT,MSIGM)
-        flux = np.sum(curves * oldfl,axis=1) / np.sum(curves * ones, axis=1)
+        exps =  - 0.5 * (MWL - MCENT) ** 2.0 / (MSIGM ** 2.0)
+        base = np.sum(curves * ones, axis=1)
+        flux = np.sum(curves * oldfl,axis=1) / base
+        
+        if np.isnan(flux).any():
+            msg = "Detected NaN in result of Resampling!"
+            LOG.critical("%s: %s" % (self,msg))
+            LOG.debug("%s: %s" % (self,rangemsg(wavelengths,"centers")))
+            LOG.debug("%s: %s" % (self,rangemsg(oldwl,"wls")))
+            LOG.debug("%s: %s" % (self,rangemsg(sigma,"sigmas")))
+            LOG.debug("%s: %s" % (self,rangemsg(exps,"exps")))
+            LOG.debug("%s: %s" % (self,rangemsg(np.exp(exps),"exps-calc")))
+            LOG.debug("%s: %s" % (self,rangemsg(curves,"curves")))
+            LOG.debug("%s: %s" % (self,rangemsg(base,"base")))
+            LOG.debug("%s: %s" % (self,rangemsg(flux,"flux")))
+            LOG.debug("%s: %s" % (self,rangemsg(oldfl,"oldfl")))
+            raise ValueError(msg)
+        LOG.debug("%s: %s" % (self,rangemsg(flux,"flux")))
         return np.vstack((wavelengths,flux))
 
 import AnalyticSpectraObjects

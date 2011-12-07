@@ -187,9 +187,9 @@ class FITSObject(object):
             LOG.debug("Overwiting the frame %s" % statename)
         # Save the actual state
         self.states[statename] = Object
+        LOG.info("Saved frame %s" % Object)
         # Activate the saved state as the current state
         self.select(statename)
-        LOG.info("Saved frame %s" % Object)
     
     def data(self,statename=None):
         """Returns the raw data for the current state. This is done through the :meth:`FITSFrame.__call__` method, which should return basic data in as raw a form as possible. The purpose of this call is to allow the user get at the most recent piece of data as easily as possible.
