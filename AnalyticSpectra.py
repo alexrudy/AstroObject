@@ -192,8 +192,9 @@ class ResampledSpectrum(InterpolatedSpectrum):
             raise AttributeError("You must provide resolution appropriate for resampling. Size mismatch!")
         oldwl,oldfl = self.data
         oldwl = oldwl * (1.0 + z)
-        
-        if np.min(oldwl) > np.min(wavelengths) or np.max(oldwl) < np.max(wavelengths):
+        mintol = wavelengths[0] * resolution[0]
+        maxtol = wavelengths[-1] * resolution[-1]
+        if np.min(oldwl) - mintol > np.min(wavelengths) or np.max(oldwl) + maxtol < np.max(wavelengths):
             msg = "Cannot extrapolate during reampling process. Please provide new wavelengths that are within the range of old ones."
             LOG.critical(msg)
             LOG.debug("%s: %s" % (self,rangemsg(wavelengths,"centers")))
