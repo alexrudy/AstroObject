@@ -67,10 +67,15 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
         """Retruns an HDU which represents this frame. HDUs are either ``pyfits.PrimaryHDU`` or ``pyfits.ImageHDU`` depending on the *primary* keyword."""
         if primary:
             LOG.info("Generating a primary HDU for %s" % self)
-            return pyfits.PrimaryHDU(self())
+            HDU = pyfits.PrimaryHDU(self())
         else:
             LOG.info("Generating an image HDU for %s" % self)
-            return pyfits.ImageHDU(self())
+            HDU = pyfits.ImageHDU(self())
+        HDU.header.update('label',self.label)
+        HDU.header.update('object',self.label)
+        for key,value in self.header.iteritems():
+            HDU.header.update(key,value)
+        return HDU
         
     
     def __show__(self):
