@@ -197,8 +197,8 @@ class ResampledSpectrum(InterpolatedSpectrum):
         if np.min(oldwl) - mintol > np.min(wavelengths) or np.max(oldwl) + maxtol < np.max(wavelengths):
             msg = "Cannot extrapolate during reampling process. Please provide new wavelengths that are within the range of old ones."
             LOG.critical(msg)
-            LOG.debug("%s: %s" % (self,rangemsg(wavelengths,"centers")))
-            LOG.debug("%s: %s" % (self,rangemsg(oldwl,"wls")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(wavelengths,"centers")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(oldwl,"wls")))
             raise ValueError(msg)
         
         ones = np.ones(oldwl.shape)
@@ -214,17 +214,17 @@ class ResampledSpectrum(InterpolatedSpectrum):
         if np.isnan(flux).any():
             msg = "Detected NaN in result of Resampling!"
             LOG.critical("%s: %s" % (self,msg))
-            LOG.debug("%s: %s" % (self,rangemsg(wavelengths,"centers")))
-            LOG.debug("%s: %s" % (self,rangemsg(oldwl,"wls")))
-            LOG.debug("%s: %s" % (self,rangemsg(sigma,"sigmas")))
-            LOG.debug("%s: %s" % (self,rangemsg(exps,"exps")))
-            LOG.debug("%s: %s" % (self,rangemsg(np.exp(exps),"exps-calc")))
-            LOG.debug("%s: %s" % (self,rangemsg(curves,"curves")))
-            LOG.debug("%s: %s" % (self,rangemsg(base,"base")))
-            LOG.debug("%s: %s" % (self,rangemsg(flux,"flux")))
-            LOG.debug("%s: %s" % (self,rangemsg(oldfl,"oldfl")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(wavelengths,"centers")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(oldwl,"wls")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(sigma,"sigmas")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(exps,"exps")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(np.exp(exps),"exps-calc")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(curves,"curves")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(base,"base")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(flux,"flux")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(oldfl,"oldfl")))
             raise ValueError(msg)
-        LOG.debug("%s: %s" % (self,rangemsg(flux,"flux")))
+        LOG.debug("%s: %s" % (self,npArrayInfo(flux,"flux")))
         return np.vstack((wavelengths,flux))
 
 import AnalyticSpectraObjects
