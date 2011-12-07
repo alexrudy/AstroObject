@@ -73,5 +73,10 @@ As well, the library is useful for building object-based representations of new 
 	- Testing for AnalyticSpectra
 	- Testing for AstroImage functional test cases
 	- Tests now include an API for functional testing
+* 0.2.4
+	- Better debugging information and errors from the AnaltyicSpectra.ResampledSpectra class's `resample()`
+	- AstroSpectra's `__hdu__` includes header information stored in the HDU.
+	- New utility function `npArrayInfo()` which handles array log messages for information about the array.
+	- Testing updates to conform to new Resampling function (better example Spectra provided)
 
 
