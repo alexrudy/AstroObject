@@ -4,13 +4,13 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.3
+#  Version 0.2.4
 #  
  
 import logging,time,sys,os
 
 
-__version__ = '0.2.3'
+__version__ = '0.2.4'
 
 __all__ = ['AnalyticSpectra','AstroImage','AstroObjectBase','AstroSpectra','Utilities']
 

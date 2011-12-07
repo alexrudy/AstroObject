@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.3
+#  Version 0.2.4
 # 
 
 
@@ -67,10 +67,15 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
         """Retruns an HDU which represents this frame. HDUs are either ``pyfits.PrimaryHDU`` or ``pyfits.ImageHDU`` depending on the *primary* keyword."""
         if primary:
             LOG.info("Generating a primary HDU for %s" % self)
-            return pyfits.PrimaryHDU(self())
+            HDU = pyfits.PrimaryHDU(self())
         else:
             LOG.info("Generating an image HDU for %s" % self)
-            return pyfits.ImageHDU(self())
+            HDU = pyfits.ImageHDU(self())
+        HDU.header.update('label',self.label)
+        HDU.header.update('object',self.label)
+        for key,value in self.header.iteritems():
+            HDU.header.update(key,value)
+        return HDU
         
     
     def __show__(self):
@@ -80,7 +85,7 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
             This function serves as a quick view of the current state of the frame. It is not intended for robust plotting support, as that can be easily accomplished using ``matplotlib``. Rather, it attempts to do the minimum possible to create an acceptable image for immediate inspection."""
         LOG.debug("Plotting %s using matplotlib.pyplot.plot" % self)
         x,y = self.data #Slice Data
-        plt.plot(x,y,'k-')
+        plt.plot(x,y,label=self.label)
         plt.axis(expandLim(plt.axis()))
         plt.gca().ticklabel_format(style="sci",scilimits=(3,3))
         return plt.gca()

@@ -94,7 +94,7 @@ class test_AnalyticSpectraFrame(API_AnalyticSpectra):
         self.FRAMESTR = "<'AnalyticSpectrum' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.artist.Artist
-        self.WAVELENGTHS = np.arange(100)
+        self.WAVELENGTHS = np.arange(100) + 1.0
         
         self.attributes = copy.deepcopy(self.attributes) + ['WAVELENGTHS']
         
@@ -141,7 +141,7 @@ class test_InterpolatedSpectra(API_AnalyticSpectra):
         self.FRAMESTR = "<'InterpolatedSpectrum' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.artist.Artist
-        self.WAVELENGTHS = np.arange(100)
+        self.WAVELENGTHS = np.arange(100) + 1.0
         
         self.attributes = copy.deepcopy(self.attributes) + ['WAVELENGTHS']
         
@@ -175,13 +175,15 @@ class test_ResampledSpectra(API_AnalyticSpectra):
     def setUp(self):
         """Sets up the test with some basic image data."""
         
-        self.VALID = np.array([[-100.0,200.0,300.0],[1,3,5]])
         self.FRAME = AS.ResampledSpectrum
         self.INVALID = np.array([1,2,3])
         self.FRAMESTR = "<'ResampledSpectrum' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.artist.Artist
-        self.WAVELENGTHS = np.arange(100)
+        self.WAVELENGTHS = np.arange(100) + 1.0
+        self.VALID = np.vstack((np.arange(50) * 2.0 + 1.0
+        ,np.ones((50,))))
+        
         
         self.attributes = copy.deepcopy(self.attributes) + ['WAVELENGTHS']
         
