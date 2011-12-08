@@ -187,13 +187,16 @@ class ResampledSpectrum(InterpolatedSpectrum):
         
     def resample(self,wavelengths,resolution,z=0.0):
         """Resample the given spectrum to a lower resolution"""
+        
         if resolution.size != wavelengths.size:
             LOG.debug("%s: Wavelength Size: %d, Resolution Size %d" % (self,wavelengths.size,resolution.size))
             raise AttributeError("You must provide resolution appropriate for resampling. Size mismatch!")
+        
         oldwl,oldfl = self.data
         oldwl = oldwl * (1.0 + z)
-        mintol = wavelengths[0] * resolution[0]
-        maxtol = wavelengths[-1] * resolution[-1]
+        mintol = wavelengths[0] * resolution[0] / 4
+        maxtol = wavelengths[-1] * resolution[-1] / 4
+        
         if np.min(oldwl) - mintol > np.min(wavelengths) or np.max(oldwl) + maxtol < np.max(wavelengths):
             msg = "Cannot extrapolate during reampling process. Please provide new wavelengths that are within the range of old ones."
             LOG.critical(msg)
