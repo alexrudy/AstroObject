@@ -214,7 +214,7 @@ class ResampledSpectrum(InterpolatedSpectrum):
         base = np.sum(curves * ones, axis=1)
         
         zeros = base == np.zeros(base.shape)
-        base[zeros] = 1.0
+        base[zeros] = np.ones(np.sum(zeros))
         
         flux = np.sum(curves * oldfl,axis=1) / base
         
