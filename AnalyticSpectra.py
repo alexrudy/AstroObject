@@ -212,12 +212,12 @@ class ResampledSpectrum(InterpolatedSpectrum):
         curves = curve(MWL,MCENT,MSIGM)
         exps =  - 0.5 * (MWL - MCENT) ** 2.0 / (MSIGM ** 2.0)
         base = np.sum(curves * ones, axis=1)
-        
+        top = np.sum(curves * oldfl,axis=1)
         zeros = base == np.zeros(base.shape)
         base[zeros] = np.ones(np.sum(zeros))
-        curves[zeros] = np.zeros(np.sum(zeros))
+        top[zeros] = np.zeros(np.sum(zeros))
         
-        flux = np.sum(curves * oldfl,axis=1) / base
+        flux = top  / base
         
         if np.isnan(flux).any():
             msg = "Detected NaN in result of Resampling!"
