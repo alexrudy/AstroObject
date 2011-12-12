@@ -114,10 +114,10 @@ def npArrayInfo(array,name):
             if fmtr["nans"] > 0:
                 MSG += " NaNs %(nans)d (%(nper)3d%%)."
         except TypeError:
-            MSG += "Could not measure NaNs."    
+            MSG += " Could not measure NaNs."    
         fmtr["dtype"] = array.dtype
         if fmtr["dtype"] != np.float64:
-            MSG += "Data Type %(dtype)s."
+            MSG += " Data Type %(dtype)s."
     else:
         MSG = "%(name)s doesn't appear to be a Numpy Array! Type: %(type)s"
     return MSG % fmtr
