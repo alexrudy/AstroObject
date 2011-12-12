@@ -88,29 +88,32 @@ def validate_filename(string,extension=".fits"):
 
 def npArrayInfo(array,name):
     """Message describing this array"""
-    MSG = "%(name)s has %(elements)d elements with shape %(shape)s. Range %(range)s."
+    MSG = "%(name)s has %(elements)d elements with shape %(shape)s."
     fmtr = {}
     fmtr["elements"] = array.size
     fmtr["shape"] = str(array.shape)
     fmtr["name"] = name
-    fmtr["min"] = np.min(array)
-    fmtr["max"] = np.max(array)
+    try:
+        fmtr["min"] = np.min(array)
+        fmtr["max"] = np.max(array)
+        fmtr["range"] = "[%(min)5.5g,%(max)5.5g]" % fmtr
+        
+    except ValueError:
+        MSG += " Array does not appear to be numerical!"
+    else:
+        MSG += " Range %(range)s"
     fmtr["zeros"] = np.sum(array == np.zeros(array.shape))
     fmtr["zper"] = float(fmtr["zeros"]) / float(fmtr["elements"]) * 100
-    try:
-        fmtr["nans"] = np.sum(np.isnan(array))
-    except TypeError:
-        fmtr["nans"] = -1
-    
-    fmtr["nper"] = float(fmtr["nans"]) / float(fmtr["elements"]) * 100
-    fmtr["type"] = array.dtype
-    fmtr["range"] = "[%(min)5.5g,%(max)5.5g]" % fmtr
     if fmtr["zeros"] > 0:
         MSG += " Zeros %(zeros)d (%(zper)3d%%)."
-    if fmtr["nans"] > 0:
-        MSG += " NaNs %(nans)d (%(nper)3d%%)."
-    elif fmtr["nans"] < 1:
-        MSG += "Could not measure NaNs."
+    try:
+        fmtr["nans"] = np.sum(np.isnan(array))
+        fmtr["nper"] = float(fmtr["nans"]) / float(fmtr["elements"]) * 100
+        if fmtr["nans"] > 0:
+            MSG += " NaNs %(nans)d (%(nper)3d%%)."
+    except TypeError:
+        MSG += "Could not measure NaNs."    
+    fmtr["type"] = array.dtype
     if fmtr["type"] != np.float64:
         MSG += "Data Type %(type)s."
     return MSG % fmtr
