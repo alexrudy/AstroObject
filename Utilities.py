@@ -88,7 +88,7 @@ def validate_filename(string,extension=".fits"):
 
 def npArrayInfo(array,name):
     """Message describing this array"""
-    MSG = "Array named %(name)-10s has %(elements)8d elements with shape %(shape)11s. Range %(range)10s. Data Type %(type)3s. "
+    MSG = "%(name)s has %(elements)d elements with shape %(shape)s. Range %(range)s."
     fmtr = {}
     fmtr["elements"] = array.size
     fmtr["shape"] = str(array.shape)
@@ -105,6 +105,8 @@ def npArrayInfo(array,name):
         MSG += " Zeros %(zeros)d (%(zper)3d%%)."
     if fmtr["nans"] > 0:
         MSG += " NaNs %(nans)d (%(nper)3d%%)."
+    if fmtr["type"] != np.float64:
+        MSG += "Data Type %(type)s."
     return MSG % fmtr
 
 class AbstractError(Exception):
