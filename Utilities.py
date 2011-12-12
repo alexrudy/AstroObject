@@ -97,7 +97,11 @@ def npArrayInfo(array,name):
     fmtr["max"] = np.max(array)
     fmtr["zeros"] = np.sum(array == np.zeros(array.shape))
     fmtr["zper"] = float(fmtr["zeros"]) / float(fmtr["elements"]) * 100
-    fmtr["nans"] = np.sum(np.isnan(array))
+    try:
+        fmtr["nans"] = np.sum(np.isnan(array))
+    except TypeError:
+        fmtr["nans"] = -1
+    
     fmtr["nper"] = float(fmtr["nans"]) / float(fmtr["elements"]) * 100
     fmtr["type"] = array.dtype
     fmtr["range"] = "[%(min)5.5g,%(max)5.5g]" % fmtr
@@ -105,6 +109,8 @@ def npArrayInfo(array,name):
         MSG += " Zeros %(zeros)d (%(zper)3d%%)."
     if fmtr["nans"] > 0:
         MSG += " NaNs %(nans)d (%(nper)3d%%)."
+    elif fmtr["nans"] < 1:
+        MSG += "Could not measure NaNs."
     if fmtr["type"] != np.float64:
         MSG += "Data Type %(type)s."
     return MSG % fmtr
