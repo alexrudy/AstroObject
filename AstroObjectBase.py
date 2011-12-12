@@ -244,15 +244,16 @@ class FITSObject(object):
         """Provides a list of the available frames, by label."""
         return self.states.keys()
     
-    def _default_state(self):
+    def _default_state(self,states=None):
         """Returns the default state name. If the currently selected state exists, it's state name will return. If not, the system will search for the newest state."""
-        if self.statename in self.states:
+        if states == None:
+            states = self.list()
+        if self.statename in states:
             return self.statename
-        List = self.list()
-        if [] == List:
+        if [] == states:
             return None
-        Ages = [ time.clock() - self.frame(name).time for name in List ]
-        youngest = List[np.argmin(Ages)]
+        Ages = [ time.clock() - self.frame(name).time for name in states ]
+        youngest = states[np.argmin(Ages)]
         return youngest
     
     def clear(self):
@@ -300,9 +301,14 @@ class FITSObject(object):
     
     def write(self,filename=None,states=None,primaryState=None,clobber=False):
         """Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify ``states`` then only those states will be used. ``primaryState`` should be the state of the front HDU. When not specified, the latest state will be used. It uses the :attr:`dataClasses` :meth:`FITSFrame.__hdu__` method to return a valid HDU object for each Frame."""
+        if not states:
+            states = self.list()
+            LOG.debug("Saving all states: %s" % states)
         if not primaryState:
-            primaryState = self._default_state()
+            primaryState = self._default_state(states)
             LOG.debug("Set primary statename to default state %s" % primaryState)
+        if primaryState in states:
+            states.remove(primaryState)
         if not filename:
             if self.filename == None:
                 filename = primaryState
@@ -311,11 +317,6 @@ class FITSObject(object):
                 filename = self.filename
                 LOG.debug("Set filename from Object. Filename: %s" % filename)
         filename = validate_filename(filename)
-        if not states:
-            states = self.list()
-            LOG.debug("Saving all states: %s" % states)
-        if primaryState in states:
-            states.remove(primaryState)
         PrimaryHDU = self.states[primaryState].__hdu__(primary=True)
         if len(states) > 0:
             HDUs = [self.states[state].__hdu__(primary=False) for state in states]
