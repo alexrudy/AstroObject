@@ -115,7 +115,7 @@ class ImageFrame(AstroObjectBase.FITSFrame):
             msg = "HDU Data must be %s for %s, found data of %s" % (np.ndarray,cls.__name__,type(HDU.data))
             raise AbstractError(msg)
         try:
-            Object = cls(HDU.data,label)
+            Object = cls(HDU.data,label,header=HDU.header)
         except AssertionError as AE:
             msg = "%s data did not validate: %s" % (cls.__name__,AE)
             raise AbstractError(msg)
