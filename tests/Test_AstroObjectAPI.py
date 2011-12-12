@@ -453,10 +453,10 @@ class API_Base_Functional(API_Base):
         AObject = self.OBJECT()
         AObject.save(self.FRAMEINST)
         AObject.write(self.FILENAME)
+        BObject = self.OBJECT()
         assert os.access(self.FILENAME,os.F_OK)
-        labels = AObject.read(self.FILENAME)
-        assert labels == [self.FILENAME]
-        assert self.FILENAME == AObject.statename
-        assert isinstance(AObject.frame(),self.FRAME)
-        assert self.SAME(self.FRAMEINST,AObject.frame())
+        labels = BObject.read(self.FILENAME)
+        assert labels == AObject.list()
+        assert isinstance(BObject.frame(),self.FRAME)
+        assert self.SAME(self.FRAMEINST,BObject.frame())
         

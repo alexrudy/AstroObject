@@ -348,7 +348,9 @@ class FITSObject(object):
         for HDU in HDUList:
             Object = None
             for dataClass in self.dataClasses:
-                if Read != 0:
+                if "label" in HDU.header:
+                    label = HDU.header["label"]
+                elif Read != 0:
                     label = statename + " Frame %d" % Read
                 else:
                     label = statename
