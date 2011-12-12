@@ -88,34 +88,38 @@ def validate_filename(string,extension=".fits"):
 
 def npArrayInfo(array,name):
     """Message describing this array"""
-    MSG = "%(name)s has %(elements)d elements with shape %(shape)s."
     fmtr = {}
-    fmtr["elements"] = array.size
-    fmtr["shape"] = str(array.shape)
     fmtr["name"] = name
-    try:
-        fmtr["min"] = np.min(array)
-        fmtr["max"] = np.max(array)
-        fmtr["range"] = "[%(min)5.5g,%(max)5.5g]" % fmtr
-        
-    except ValueError:
-        MSG += " Array does not appear to be numerical!"
+    fmtr["type"] = str(type(array))
+    if isinstance(array,np.ndarray):
+        MSG = "%(name)s has %(elements)d elements with shape %(shape)s."
+        fmtr["elements"] = array.size
+        fmtr["shape"] = str(array.shape)
+        try:
+            fmtr["min"] = np.min(array)
+            fmtr["max"] = np.max(array)
+            fmtr["range"] = "[%(min)5.5g,%(max)5.5g]" % fmtr
+
+        except ValueError:
+            MSG += " Array does not appear to be numerical!"
+        else:
+            MSG += " Range %(range)s"
+        fmtr["zeros"] = np.sum(array == np.zeros(array.shape))
+        fmtr["zper"] = float(fmtr["zeros"]) / float(fmtr["elements"]) * 100
+        if fmtr["zeros"] > 0:
+            MSG += " Zeros %(zeros)d (%(zper)3d%%)."
+        try:
+            fmtr["nans"] = np.sum(np.isnan(array))
+            fmtr["nper"] = float(fmtr["nans"]) / float(fmtr["elements"]) * 100
+            if fmtr["nans"] > 0:
+                MSG += " NaNs %(nans)d (%(nper)3d%%)."
+        except TypeError:
+            MSG += "Could not measure NaNs."    
+        fmtr["dtype"] = array.dtype
+        if fmtr["dtype"] != np.float64:
+            MSG += "Data Type %(dtype)s."
     else:
-        MSG += " Range %(range)s"
-    fmtr["zeros"] = np.sum(array == np.zeros(array.shape))
-    fmtr["zper"] = float(fmtr["zeros"]) / float(fmtr["elements"]) * 100
-    if fmtr["zeros"] > 0:
-        MSG += " Zeros %(zeros)d (%(zper)3d%%)."
-    try:
-        fmtr["nans"] = np.sum(np.isnan(array))
-        fmtr["nper"] = float(fmtr["nans"]) / float(fmtr["elements"]) * 100
-        if fmtr["nans"] > 0:
-            MSG += " NaNs %(nans)d (%(nper)3d%%)."
-    except TypeError:
-        MSG += "Could not measure NaNs."    
-    fmtr["type"] = array.dtype
-    if fmtr["type"] != np.float64:
-        MSG += "Data Type %(type)s."
+        MSG = "%(name)s doesn't appear to be a Numpy Array! Type: %(type)s"
     return MSG % fmtr
 
 class AbstractError(Exception):
