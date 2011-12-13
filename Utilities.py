@@ -86,38 +86,65 @@ def validate_filename(string,extension=".fits"):
     return string+extension
     
 
-def npArrayInfo(array,name):
+def npArrayInfo(array,name=None):
     """Message describing this array"""
     fmtr = {}
-    fmtr["name"] = name
+    MSG = ""
+    if name != None:
+        fmtr["name"] = name
+        MSG += "%(name)s has "
+    else:
+        fmtr["name"] = str(array)
     fmtr["type"] = str(type(array))
+    
     if isinstance(array,np.ndarray):
-        MSG = "%(name)s has %(elements)d elements with shape %(shape)s."
+        
+        MSG += "%(elements)d elements with shape %(shape)s. "
+        
         fmtr["elements"] = array.size
         fmtr["shape"] = str(array.shape)
+        
         try:
             fmtr["min"] = np.min(array)
             fmtr["max"] = np.max(array)
             fmtr["range"] = "[%(min)5.5g,%(max)5.5g]" % fmtr
-
         except ValueError:
-            MSG += " Array does not appear to be numerical!"
+            MSG += "Array does not appear to be numerical! "
         else:
-            MSG += " Range %(range)s"
+            MSG += "Range %(range)s "
+        
         fmtr["zeros"] = np.sum(array == np.zeros(array.shape))
+        
         fmtr["zper"] = float(fmtr["zeros"]) / float(fmtr["elements"]) * 100
+        
         if fmtr["zeros"] > 0:
-            MSG += " Zeros %(zeros)d (%(zper)3d%%)."
+            MSG += "Zeros %(zeros)d (%(zper)3d%%). "
+        
         try:
             fmtr["nans"] = np.sum(np.isnan(array))
             fmtr["nper"] = float(fmtr["nans"]) / float(fmtr["elements"]) * 100
             if fmtr["nans"] > 0:
-                MSG += " NaNs %(nans)d (%(nper)3d%%)."
+                MSG += "NaNs %(nans)d (%(nper)3d%%). "
         except TypeError:
-            MSG += " Could not measure NaNs."    
+            MSG += "Could not measure NaNs. "
+        
         fmtr["dtype"] = array.dtype
+        
         if fmtr["dtype"] != np.float64:
             MSG += " Data Type %(dtype)s."
+    elif isinstance(array,list):
+        
+        fmtr["elements"] = len(array)
+        MSG += " %(elements)d elements "
+        
+        try:
+            fmtr["min"] = min(array)
+            fmtr["max"] = max(array)
+            fmtr["range"] = "[%(min)5.5g,%(max)5.5g]" % fmtr
+        except ValueError:
+            MSG += " List does not appear to contain numerical elements."
+        else:
+            MSG += "Range %(range)s "
     else:
         MSG = "%(name)s doesn't appear to be a Numpy Array! Type: %(type)s"
     return MSG % fmtr
