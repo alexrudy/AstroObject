@@ -129,4 +129,7 @@ class AbstractError(Exception):
 class HDUFrameTypeError(Exception):
     """docstring for HDUFrameTypeError"""
     pass
-        
+    
+class ConfigurationError(Exception):
+    """Denotes an error caused by a bad configuration"""
+    pass    
