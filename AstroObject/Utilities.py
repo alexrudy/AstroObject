@@ -41,11 +41,8 @@ def getVersion(rel=__name__,filename="../VERSION",getTuple=False):
 
 def get_padding(*otherxy):
     """This function returns axis values to provide 5-percent padding around the given data."""
-    
     xs = ()
     ys = ()
-    
-    
     if len(otherxy) == 1:
         x,y = otherxy[0]
     else:
@@ -58,8 +55,6 @@ def get_padding(*otherxy):
     
     return [min(x)-(max(x)-min(x))*0.05, max(x)+(max(x)-min(x))*0.05, min(y)-(max(y)-min(y))*0.05, max(y)+(max(y)-min(y))*0.05]
     
-
-
 def expandLim(axis,scale=0.05):
     """Expands Axis Limits by *scale*, given present axis limits"""
     xmin,xmax,ymin,ymax = axis
@@ -85,7 +80,6 @@ def BlackBody(wl,T):
     
     return flux
 
-
 def Gaussian(x,mean,stdev,height):
     """Rertun a gaussian at postion x, whith mean, stdev, and height"""
     return height*np.exp(-(x-mean)**2.0/(2.0*stdev**2.0))
@@ -100,7 +94,19 @@ def validate_filename(string,extension=".fits"):
     elif filename[-len(extension):] == extension:
         filename = filename[:-len(extension)]
     return os.path.join(dirname,filename+extension)
-    
+
+def update(d, u):
+    """A deep update command for dictionaries.
+    This is because the normal dictionary.update() command does not handle nested dictionaries."""
+    if len(u)==0:
+        return d
+    for k, v in u.iteritems():
+        if isinstance(v, collections.Mapping):
+            r = update(d.get(k, {}), v)
+            d[k] = r
+        else:
+            d[k] = u[k]
+    return d    
 
 def npArrayInfo(array,name):
     """Message describing this array in excruciating detail. Used in debugging arrays where we don't know what they contain. Returns a message string.
