@@ -31,27 +31,55 @@ import math, copy, sys, time, logging, os
 # Submodules from this system
 from Utilities import *
 
-__all__ = ["Simulator","Stage"]
+__all__ = ["Simulator"]
 
 class Stage(object):
-    """Run a single segment of a simulator"""
-    def __init__(self):
+    """docstring for Stage"""
+    def __init__(self,stage):
         super(Stage, self).__init__()
-        
-    def do(self,conf):
-        """Do the logic of this stage"""
-    pass
+        self.do = stage
 
 class Simulator(object):
     """A Simulator, used for running large segements of code with detailed logging and progress checking"""
     
     name = "Simulator"
     
+    config = {
+        "Logging" : {
+          "Console" : {
+              "Enable" : True,
+              "Message" : "...%(message)s",
+              "Level" : None,
+          },
+          "File" : {
+              "Enable" : True,
+              "Message" : "...%(message)s",
+              "Level" : None,
+              "FileName" : "Astro-Object-Simulator"
+          },
+        },
+    }
     
     def __init__(self):
         super(Simulator, self).__init__()
-        self.stages = []
+        self.stages = {}
+        self.orders = {}
     
-    def register(self,stage,position=None):
+    def register(self,stage,name=None,description=None,position=None):
         """Adds a stage object to this simulator"""
-    pass
+        if position != None:
+            position = len(self.stages)
+        if name == None:
+            raise ValueError("Stage must have a name")
+        
+        stageObject = Stage(stage)
+        stageObject.name = name
+        stageObject.description = description
+        self.stages[position] = stageObject
+        
+    def configure(self,filename="config.yaml"):
+        """A master configuration function"""
+        
+        
+        
+        
