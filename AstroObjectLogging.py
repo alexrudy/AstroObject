@@ -52,8 +52,6 @@ class LogManager(logging.getLoggerClass()):
         self.buffer = handlers.MemoryHandler(1e6)
         self.addHandler(self.buffer)
 
-        
-        
         self.libdebug("Logging Started")
         self.running = True
     
@@ -98,13 +96,20 @@ class LogManager(logging.getLoggerClass()):
                     self.config = update(self.config,loaded)
             except IOError as e:
                 self.warning("Couldn't load Configuration File %s" % self.configFileName)
-            self.configured |= True
+            else:
+                self.configured |= True
         
         if not self.configured:
             self.libwarn("No configuration provided or accessed. Using defaults.")
     
     def start(self):
         """Starts this logger outputing"""
+        if self.handling:
+            raise ConfigurationError("Logger appears to be already handling messages")
+        if not self.running:
+            raise ConfigurationError("Logger appears to not be running. This should never happen")
+        if not self.configured:
+            self.libwarn("Logger appears not to be configured")
         
         # Setup the Console Log Handler
         self.console = logging.StreamHandler()    
@@ -118,6 +123,7 @@ class LogManager(logging.getLoggerClass()):
 
         if self.config["logging"]["console"]["enable"]:
             self.addHandler(self.console)
+            self.handling |= True
         
         self.logfile = None
         self.logfolder = self.config["System"]["Dirs"]["Logs"]
@@ -141,9 +147,11 @@ class LogManager(logging.getLoggerClass()):
                 self.addHandler(self.logfile)
                 # Finally, we should flush the old buffers
                 self.buffer.setTarget(self.logfile)
-
-        self.buffer.close()
+                self.handling |= True
+        
         self.removeHandler(self.buffer)
-        self.debug("Configured Logging")
+        self.buffer.close()
+        if self.handling:
+            self.libdebug("Configured Logging")
 
 logging.setLoggerClass(LogManager)
