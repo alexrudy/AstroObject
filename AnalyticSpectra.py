@@ -99,7 +99,7 @@ class AnalyticSpectrum(AstroObjectBase.FITSFrame):
     @classmethod
     def __read__(cls,HDU,label):
         """An abstract method for reading empty data HDU Frames"""
-        LOG.debug("%s: Attempting to read data" % cls)
+        LOG.log(2,"%s: Attempting to read data" % cls)
         msg = "%s: Cannot save HDU as Analytic Spectra" % (cls)
         raise AbstractError(msg)
     
