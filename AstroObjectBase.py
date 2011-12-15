@@ -94,7 +94,7 @@ class FITSFrame(object):
             HDU = pf.PrimaryHDU()
         else:
             HDU = pf.ImageHDU()
-        LOG.warning("%s: Generating an Empty %sHDU" % (self,"primary " if primary else ""))
+        LOG.log(8,"%s: Generating an Empty %sHDU" % (self,"primary " if primary else ""))
         HDU.header.update('label',self.label)
         HDU.header.update('object',self.label)
         for key,value in self.header.iteritems():
@@ -125,7 +125,7 @@ class FITSFrame(object):
             msg = "HDU Data must be type %s for %s, found data of type %s" % (None,cls,type(HDU.data).__name__)
             raise AbstractError(msg)
         Object = cls(None,label)
-        LOG.debug("%s: Created %s" % (cls,Object))
+        LOG.log(2,"%s: Created %s" % (cls,Object))
         return Object
     
 
@@ -169,7 +169,7 @@ class FITSObject(object):
                 try:
                     Object = dataClass.__save__(data,statename)
                 except AbstractError as AE:
-                    LOG.debug("Cannot save as %s: %s" % (dataClass,AE))
+                    LOG.log(2,"Cannot save as %s: %s" % (dataClass,AE))
                 else:
                     break
             if not Object:
@@ -184,10 +184,10 @@ class FITSObject(object):
         if statename in self.states and not (clobber or self.clobber):
             raise KeyError("Cannot Duplicate State Name: %s \nUse remove(\'%s\') to clear" % (statename,statename))
         elif statename in self.states:
-            LOG.debug("Overwiting the frame %s" % statename)
+            LOG.log(2,"Overwiting the frame %s" % statename)
         # Save the actual state
         self.states[statename] = Object
-        LOG.info("Saved frame %s" % Object)
+        LOG.log(5,"Saved frame %s" % Object)
         # Activate the saved state as the current state
         self.select(statename)
     
@@ -229,7 +229,7 @@ class FITSObject(object):
             raise KeyError("Object %s not instantiated with any data..." % self)
     
     def object(self,statename=None):
-        LOG.info("Method \".object()\" on %s has been depreciated. Please use \".frame()\" instead." % self)
+        LOG.log(5,"Method \".object()\" on %s has been depreciated. Please use \".frame()\" instead." % self)
         return self.frame(statename)
         
     def select(self,statename):
@@ -237,7 +237,7 @@ class FITSObject(object):
         if statename not in self.states:
             raise IndexError("State %s does not exist!" % statename)
         self.statename = statename
-        LOG.info("Selected state \'%s\'" % statename)
+        LOG.log(5,"Selected state \'%s\'" % statename)
         return
     
     def list(self):
@@ -260,7 +260,7 @@ class FITSObject(object):
         """Clears all states from this object. Returns an empty list representing the currently known states."""
         self.states = {}
         self.statename = self._default_state()
-        LOG.info("%s: Cleared all states. Remaining: %s" % (self,self.list()))
+        LOG.log(5,"%s: Cleared all states. Remaining: %s" % (self,self.list()))
         return self.list()
     
     
@@ -272,7 +272,7 @@ class FITSObject(object):
             if statename not in self.states:
                 raise IndexError("%s: Object %s does not exist!" % (self,statename))
             newStates[statename] = oldStates[statename]
-        LOG.info("%s: Kept states %s" % (self,list(statenames)))
+        LOG.log(5,"%s: Kept states %s" % (self,list(statenames)))
         self.states = newStates
         self.statename = self._default_state()
         return self.list()
@@ -286,7 +286,7 @@ class FITSObject(object):
             self.states.pop(statename)
             removed += [statename]
         self.statename = self._default_state()
-        LOG.info("%s: Removed states %s" % (self,removed))
+        LOG.log(5,"%s: Removed states %s" % (self,removed))
         return self.list()
     
     def show(self,statename=None):
@@ -303,19 +303,19 @@ class FITSObject(object):
         """Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify ``states`` then only those states will be used. ``primaryState`` should be the state of the front HDU. When not specified, the latest state will be used. It uses the :attr:`dataClasses` :meth:`FITSFrame.__hdu__` method to return a valid HDU object for each Frame."""
         if not states:
             states = self.list()
-            LOG.debug("Saving all states: %s" % states)
+            LOG.log(2,"Saving all states: %s" % states)
         if not primaryState:
             primaryState = self._default_state(states)
-            LOG.debug("Set primary statename to default state %s" % primaryState)
+            LOG.log(2,"Set primary statename to default state %s" % primaryState)
         if primaryState in states:
             states.remove(primaryState)
         if not filename:
             if self.filename == None:
                 filename = primaryState
-                LOG.debug("Set Filename from Primary State. Filename: %s" % filename)
+                LOG.log(2,"Set Filename from Primary State. Filename: %s" % filename)
             else:
                 filename = self.filename
-                LOG.debug("Set filename from Object. Filename: %s" % filename)
+                LOG.log(2,"Set filename from Object. Filename: %s" % filename)
         filename = validate_filename(filename)
         PrimaryHDU = self.states[primaryState].__hdu__(primary=True)
         if len(states) > 0:
@@ -324,7 +324,7 @@ class FITSObject(object):
         else:
             HDUList = pf.HDUList([PrimaryHDU])
         HDUList.writeto(filename,clobber=clobber)
-        LOG.info("Wrote state %s (primary) and states %s to FITS file %s" % (primaryState,states,filename))
+        LOG.log(5,"Wrote state %s (primary) and states %s to FITS file %s" % (primaryState,states,filename))
     
     def read(self,filename=None,statename=None):
         """This reader takes a FITS file, and trys to render each HDU within that FITS file as a frame in this Object. As such, it might read multiple frames. This method will return a list of Frames that it read. It uses the :attr:`dataClasses` :meth:`FITSFrame.__read__` method to return a valid Frame object for each HDU.
@@ -341,7 +341,7 @@ class FITSObject(object):
             filename = self.filename
         if statename == None:
             statename = os.path.basename(filename)
-            LOG.debug("Set statename for image from filename: %s" % statename)
+            LOG.log(2,"Set statename for image from filename: %s" % statename)
         HDUList = pf.open(filename)
         Read = 0
         Labels = []
@@ -357,11 +357,11 @@ class FITSObject(object):
                 try:
                     Object = dataClass.__read__(HDU,label)
                 except AbstractError as AE:
-                    LOG.debug("Cannot read as %s: %s" % (dataClass,AE))
+                    LOG.log(2,"Cannot read as %s: %s" % (dataClass,AE))
                 else:
                     break
             if not Object:
-                LOG.warning("Skipping HDU %s, cannot save as valid type " % HDU)
+                LOG.log(8,"Skipping HDU %s, cannot save as valid type " % HDU)
             else:
                 Read += 1
                 Labels += [label]
@@ -370,6 +370,6 @@ class FITSObject(object):
             msg = "No HDUs were saved from FITS file %s to %s" % (filename,self)
             raise ValueError(msg)
         
-        LOG.info("Saved states %s" % Labels)
+        LOG.log(5,"Saved states %s" % Labels)
         return Labels
     
