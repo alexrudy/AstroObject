@@ -14,7 +14,7 @@ import scipy as sp
 import scipy.constants as spconst
 import pyfits
 import math
-import logging,time,sys
+import logging,time,sys,collections,os
 
 
 LOG = logging.getLogger(__name__)
@@ -27,6 +27,16 @@ def enable_Console():
     """docstring for enable_Console"""
     logging.getLogger('').addHandler(console)
     
+def getVersion(rel=__file__,filename="VERSION",getTuple=False):
+    """docstring for getVersion"""
+    with open(os.path.abspath(os.path.join(os.path.dirname(rel),filename)),'r') as stream:
+        string = stream.read()
+    if getTuple:
+        stuple = string.split(".")
+        stuple = [ int(val) for val in stuple ]
+        return tuple(stuple)
+    else:
+        return string
 
 def get_padding(*otherxy):
     """This function returns axis values to provide 5-percent padding around the given data."""
