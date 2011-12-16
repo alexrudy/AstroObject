@@ -90,6 +90,7 @@ class LogManager(logging.getLoggerClass()):
                     self.config = update(self.config,loaded)
             except IOError as e:
                 self.warning("Couldn't load Configuration File %s" % configFile)
+                self.configured |= False
             else:
                 self.configured |= True
         
