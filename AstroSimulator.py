@@ -245,6 +245,8 @@ class Simulator(object):
                 self.log.log(2,"Skipping stage %s" % stage)
             if use:
                 self.execute(stage)
+        
+        self.exit()
     
     def execute(self,stage):
         """Actually exectue a particular stage"""
@@ -265,4 +267,8 @@ class Simulator(object):
         finally:
             self.log.debug("Finished %s" % s.name)
         
+    def exit(self):
+        """Cleanup function for when we are all done"""
+        self.log.debug("Simulation took %2.1f seconds" % (time.clock()-self.times["init"]))
+    
         
