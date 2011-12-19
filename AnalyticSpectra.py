@@ -204,6 +204,12 @@ class ResampledSpectrum(InterpolatedSpectrum):
             LOG.debug("%s: %s" % (self,npArrayInfo(oldwl,"wls")))
             raise ValueError(msg)
         
+        oldres = oldwl[:-1] / np.diff(oldwl)
+        if np.min(oldres) > np.min(resolution):
+            LOG.warning("The new resolution seems to expect more detail than the old one. %g -> %g" % (np.min(oldres),np.min(resolution)))
+            LOG.debug("%s: %s" % (self,npArrayInfo(oldres,"given resolution")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(resolution,"requested resoluton")))
+        
         ones = np.ones(oldwl.shape)
         sigma = wavelengths / resolution / 2.35
         curve = lambda wl,center,sig : (1.0/np.sqrt(np.pi * sig ** 2.0 )) * np.exp( - 0.5 * (wl - center) ** 2.0 / (sig ** 2.0) ).astype(np.float)

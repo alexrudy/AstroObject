@@ -213,10 +213,12 @@ class test_ResampledSpectra(API_AnalyticSpectra):
         """__call__() yields data"""
         AFrame = self.FRAME(self.VALID,"Valid")
         assert AFrame.label == "Valid"
-        data = AFrame(wavelengths=self.WAVELENGTHS[:-1],resolution=np.diff(self.WAVELENGTHS))
+        data = AFrame(wavelengths=self.WAVELENGTHS[:-1],resolution=(self.WAVELENGTHS[:-1]/np.diff(self.WAVELENGTHS))/4)
         
     def test_call_with_arbitrary_arguments(self):
         """__call__() accepts arbitrary keyword arguments"""
         AFrame = self.FRAME(self.VALID,"Valid")
         assert AFrame.label == "Valid"
         data = AFrame(wavelengths=self.WAVELENGTHS[:-1],resolution=np.diff(self.WAVELENGTHS),other=1,arbitrary="str",arguments="blah")
+    
+
