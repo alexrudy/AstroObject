@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObjectBase &mdash; AstroObject 0.2.3 documentation</title>
+    <title>AstroObjectBase &mdash; AstroObject 0.2.4 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2.3',
+        VERSION:     '0.2.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.2.3 documentation" href="../index.html" />
+    <link rel="top" title="AstroObject 0.2.4 documentation" href="../index.html" />
     <link rel="up" title="Module code" href="index.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../index.html">AstroObject 0.2.3 documentation</a> &raquo;</li>
+        <li><a href="../index.html">AstroObject 0.2.4 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -55,7 +55,7 @@
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2011-10-12.</span>
 <span class="c">#  Copyright 2011 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.2.2</span>
+<span class="c">#  Version 0.2.4</span>
 <span class="c"># </span>
 
 
@@ -141,11 +141,16 @@
 <div class="viewcode-block" id="FITSFrame.__hdu__"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSFrame.__hdu__">[docs]</a>    <span class="k">def</span> <span class="nf">__hdu__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">primary</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.</span>
 <span class="sd">        Subclasses should provide a *primary* keyword argument, and if that keyword is set, the method should return a primaryHDU.&quot;&quot;&quot;</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Generating an Empty HDU&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">primary</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">pf</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">()</span>
+            <span class="n">HDU</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">pf</span><span class="o">.</span><span class="n">ImageHDU</span><span class="p">()</span>
+            <span class="n">HDU</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">ImageHDU</span><span class="p">()</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Generating an Empty </span><span class="si">%s</span><span class="s">HDU&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s">&quot;primary &quot;</span> <span class="k">if</span> <span class="n">primary</span> <span class="k">else</span> <span class="s">&quot;&quot;</span><span class="p">))</span>
+        <span class="n">HDU</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+        <span class="n">HDU</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s">&#39;object&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="n">HDU</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">HDU</span>
     </div>
 <div class="viewcode-block" id="FITSFrame.__show__"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSFrame.__show__">[docs]</a>    <span class="k">def</span> <span class="nf">__show__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Should return a plot object for the current frame, after setting up this plot in matplotlib. </span>
@@ -164,7 +169,6 @@
     <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="FITSFrame.__read__"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSFrame.__read__">[docs]</a>    <span class="k">def</span> <span class="nf">__read__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="n">HDU</span><span class="p">,</span><span class="n">label</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;An abstract method for reading empty data HDU Frames&quot;&quot;&quot;</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Attempting to read data&quot;</span> <span class="o">%</span> <span class="n">cls</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">HDU</span><span class="p">,</span><span class="n">pf</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">):</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Must save a </span><span class="si">%s</span><span class="s"> to a </span><span class="si">%s</span><span class="s">, found </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pf</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="n">HDU</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -230,11 +234,13 @@
             <span class="n">Object</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">statename</span>
         <span class="k">if</span> <span class="n">statename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">clobber</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">clobber</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&quot;Cannot Duplicate State Name: </span><span class="si">%s</span><span class="s"> </span><span class="se">\n</span><span class="s">Use remove(</span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s">) to clear&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">statename</span><span class="p">,</span><span class="n">statename</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">statename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Overwiting the frame </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">statename</span><span class="p">)</span>
         <span class="c"># Save the actual state</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">statename</span><span class="p">]</span> <span class="o">=</span> <span class="n">Object</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Saved frame </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">Object</span><span class="p">)</span>
         <span class="c"># Activate the saved state as the current state</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">statename</span><span class="p">)</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Saved frame </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">Object</span><span class="p">)</span>
     </div>
 <div class="viewcode-block" id="FITSObject.data"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the raw data for the current state. This is done through the :meth:`FITSFrame.__call__` method, which should return basic data in as raw a form as possible. The purpose of this call is to allow the user get at the most recent piece of data as easily as possible.</span>
@@ -282,29 +288,30 @@
         <span class="k">if</span> <span class="n">statename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s">&quot;State </span><span class="si">%s</span><span class="s"> does not exist!&quot;</span> <span class="o">%</span> <span class="n">statename</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">statename</span> <span class="o">=</span> <span class="n">statename</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Selected state </span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">statename</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Selected state </span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">statename</span><span class="p">)</span>
         <span class="k">return</span>
     </div>
 <div class="viewcode-block" id="FITSObject.list"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.list">[docs]</a>    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Provides a list of the available frames, by label.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
     </div>
-    <span class="k">def</span> <span class="nf">_default_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_default_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">states</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the default state name. If the currently selected state exists, it&#39;s state name will return. If not, the system will search for the newest state.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">statename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">states</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">statename</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">statename</span>
-        <span class="n">List</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
-        <span class="k">if</span> <span class="p">[]</span> <span class="o">==</span> <span class="n">List</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">[]</span> <span class="o">==</span> <span class="n">states</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">None</span>
-        <span class="n">Ages</span> <span class="o">=</span> <span class="p">[</span> <span class="n">time</span><span class="o">.</span><span class="n">clock</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">time</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">List</span> <span class="p">]</span>
-        <span class="n">youngest</span> <span class="o">=</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">Ages</span><span class="p">)]</span>
+        <span class="n">Ages</span> <span class="o">=</span> <span class="p">[</span> <span class="n">time</span><span class="o">.</span><span class="n">clock</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">time</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">states</span> <span class="p">]</span>
+        <span class="n">youngest</span> <span class="o">=</span> <span class="n">states</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">Ages</span><span class="p">)]</span>
         <span class="k">return</span> <span class="n">youngest</span>
     
 <div class="viewcode-block" id="FITSObject.clear"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Clears all states from this object. Returns an empty list representing the currently known states.&quot;&quot;&quot;</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Clearing all states from the object&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">states</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">statename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_state</span><span class="p">()</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Cleared all states. Remaining: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()))</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
     
     </div>
@@ -316,26 +323,28 @@
             <span class="k">if</span> <span class="n">statename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Object </span><span class="si">%s</span><span class="s"> does not exist!&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">))</span>
             <span class="n">newStates</span><span class="p">[</span><span class="n">statename</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldStates</span><span class="p">[</span><span class="n">statename</span><span class="p">]</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Kept the following states </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statenames</span><span class="p">))</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Kept states </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="nb">list</span><span class="p">(</span><span class="n">statenames</span><span class="p">)))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">states</span> <span class="o">=</span> <span class="n">newStates</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">statename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_state</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
     </div>
 <div class="viewcode-block" id="FITSObject.remove"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">statenames</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Removes the specified frame(s) from the object.&quot;&quot;&quot;</span>
+        <span class="n">removed</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">statename</span> <span class="ow">in</span> <span class="n">statenames</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">statename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Object </span><span class="si">%s</span><span class="s"> does not exist!&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">))</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Removing Object with label </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">statename</span><span class="p">)</span>
+            <span class="n">removed</span> <span class="o">+=</span> <span class="p">[</span><span class="n">statename</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">statename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_state</span><span class="p">()</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Removed states </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">removed</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
     </div>
 <div class="viewcode-block" id="FITSObject.show"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the (rendered) matplotlib plot for this object. This is a quick way to view your current data state without doing any serious plotting work. This aims for the sensible defaults philosophy, if you don&#39;t like what you get, write a new method that uses the :meth:`data` call and plots that.&quot;&quot;&quot;</span>
         <span class="c"># Load the current stat if no state provided</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">statename</span><span class="p">:</span>
-            <span class="n">statename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statename</span>
+            <span class="n">statename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_state</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">statename</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">statename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">statename</span><span class="p">]</span><span class="o">.</span><span class="n">__show__</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
@@ -343,25 +352,30 @@
     </div>
 <div class="viewcode-block" id="FITSObject.write"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">states</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">primaryState</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify ``states`` then only those states will be used. ``primaryState`` should be the state of the front HDU. When not specified, the latest state will be used. It uses the :attr:`dataClasses` :meth:`FITSFrame.__hdu__` method to return a valid HDU object for each Frame.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">states</span><span class="p">:</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Saving all states: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">states</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">primaryState</span><span class="p">:</span>
-            <span class="n">primaryState</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statename</span>
+            <span class="n">primaryState</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_state</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Set primary statename to default state </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">primaryState</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">primaryState</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+            <span class="n">states</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">primaryState</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">filename</span> <span class="o">=</span> <span class="n">primaryState</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Set Filename from Primary State. Filename: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Set filename from Object. Filename: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">validate_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">states</span><span class="p">:</span>
-            <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">primaryState</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
-            <span class="n">states</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">primaryState</span><span class="p">)</span>
         <span class="n">PrimaryHDU</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">primaryState</span><span class="p">]</span><span class="o">.</span><span class="n">__hdu__</span><span class="p">(</span><span class="n">primary</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">states</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">states</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">HDUs</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">__hdu__</span><span class="p">(</span><span class="n">primary</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">]</span>
             <span class="n">HDUList</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">HDUList</span><span class="p">([</span><span class="n">PrimaryHDU</span><span class="p">]</span><span class="o">+</span><span class="n">HDUs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">HDUList</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">HDUList</span><span class="p">(</span><span class="n">PrimaryHDU</span><span class="p">)</span>
+            <span class="n">HDUList</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">HDUList</span><span class="p">([</span><span class="n">PrimaryHDU</span><span class="p">])</span>
         <span class="n">HDUList</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="n">clobber</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Wrote state </span><span class="si">%s</span><span class="s"> (primary) and states </span><span class="si">%s</span><span class="s"> to FITS file </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">primaryState</span><span class="p">,</span><span class="n">states</span><span class="p">,</span><span class="n">filename</span><span class="p">))</span>
     </div>
 <div class="viewcode-block" id="FITSObject.read"><a class="viewcode-back" href="../AstroObject.html#AstroObjectBase.FITSObject.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;This reader takes a FITS file, and trys to render each HDU within that FITS file as a frame in this Object. As such, it might read multiple frames. This method will return a list of Frames that it read. It uses the :attr:`dataClasses` :meth:`FITSFrame.__read__` method to return a valid Frame object for each HDU.</span>
@@ -385,7 +399,9 @@
         <span class="k">for</span> <span class="n">HDU</span> <span class="ow">in</span> <span class="n">HDUList</span><span class="p">:</span>
             <span class="n">Object</span> <span class="o">=</span> <span class="bp">None</span>
             <span class="k">for</span> <span class="n">dataClass</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataClasses</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">Read</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s">&quot;label&quot;</span> <span class="ow">in</span> <span class="n">HDU</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="n">HDU</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;label&quot;</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">Read</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">label</span> <span class="o">=</span> <span class="n">statename</span> <span class="o">+</span> <span class="s">&quot; Frame </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">Read</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">label</span> <span class="o">=</span> <span class="n">statename</span>
@@ -405,6 +421,7 @@
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;No HDUs were saved from FITS file </span><span class="si">%s</span><span class="s"> to </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         
+        <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Saved states </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">Labels</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Labels</span>
     </div></div>
 </pre></div>
@@ -440,7 +457,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../index.html">AstroObject 0.2.3 documentation</a> &raquo;</li>
+        <li><a href="../index.html">AstroObject 0.2.4 documentation</a> &raquo;</li>
           <li><a href="index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

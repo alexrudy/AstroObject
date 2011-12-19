@@ -1,0 +1,153 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>9. AstroObject Utilities &mdash; AstroObject 0.2.4 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.2.4',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="AstroObject 0.2.4 documentation" href="index.html" />
+    <link rel="next" title="10. Development Plans" href="future.html" />
+    <link rel="prev" title="8. Analytic Spectra and Interpolation AnalyticSpectra" href="AnalyticSpectra.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="future.html" title="10. Development Plans"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="AnalyticSpectra.html" title="8. Analytic Spectra and Interpolation AnalyticSpectra"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">AstroObject 0.2.4 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="astroobject-utilities">
+<h1>9. AstroObject Utilities<a class="headerlink" href="#astroobject-utilities" title="Permalink to this headline">¶</a></h1>
+<p>These are mostly internal module utility functions, documented here in case you find them useful. They are not guaranteed to function in any way.</p>
+<dl class="function">
+<dt id="Utilities.getVersion">
+<tt class="descclassname">Utilities.</tt><tt class="descname">getVersion</tt><big>(</big><em>rel='/Users/alexanderrudy/Development/Astronomy/AstroObject/Utilities.py'</em>, <em>filename='VERSION'</em>, <em>getTuple=False</em><big>)</big><a class="reference internal" href="_modules/Utilities.html#getVersion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Utilities.getVersion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the version number as either a string or tuple. The version number is retrieved from the &#8220;VERSION&#8221; file, which should contain just the text for the version and nothing else. When the version is returned as a tuple, each component (level) of the version number is a seperate, integer element of the tuple.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="Utilities.npArrayInfo">
+<tt class="descclassname">Utilities.</tt><tt class="descname">npArrayInfo</tt><big>(</big><em>array</em>, <em>name</em><big>)</big><a class="reference internal" href="_modules/Utilities.html#npArrayInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Utilities.npArrayInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Message describing this array in excruciating detail. Used in debugging arrays where we don&#8217;t know what they contain. Returns a message string.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="go">&gt;&gt;&gt;arr = np.array([1,2,3,4,5,np.nan])</span>
+<span class="go">&gt;&gt;&gt;print npArrayInfo(arr,&quot;Some Array&quot;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="Utilities.expandLim">
+<tt class="descclassname">Utilities.</tt><tt class="descname">expandLim</tt><big>(</big><em>axis</em>, <em>scale=0.050000000000000003</em><big>)</big><a class="reference internal" href="_modules/Utilities.html#expandLim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Utilities.expandLim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expands Axis Limits by <em>scale</em>, given present axis limits</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="Utilities.BlackBody">
+<tt class="descclassname">Utilities.</tt><tt class="descname">BlackBody</tt><big>(</big><em>wl</em>, <em>T</em><big>)</big><a class="reference internal" href="_modules/Utilities.html#BlackBody"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Utilities.BlackBody" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return black-body flux as a function of wavelength. Usese constants from Scipy Constants, and expects SI units</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="Utilities.Gaussian">
+<tt class="descclassname">Utilities.</tt><tt class="descname">Gaussian</tt><big>(</big><em>x</em>, <em>mean</em>, <em>stdev</em>, <em>height</em><big>)</big><a class="reference internal" href="_modules/Utilities.html#Gaussian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Utilities.Gaussian" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rertun a gaussian at postion x, whith mean, stdev, and height</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="AnalyticSpectra.html"
+                        title="previous chapter">8. Analytic Spectra and Interpolation <tt class="docutils literal"><span class="pre">AnalyticSpectra</span></tt></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="future.html"
+                        title="next chapter">10. Development Plans</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/Utilities.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="future.html" title="10. Development Plans"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="AnalyticSpectra.html" title="8. Analytic Spectra and Interpolation AnalyticSpectra"
+             >previous</a> |</li>
+        <li><a href="index.html">AstroObject 0.2.4 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Alexander Rudy.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
