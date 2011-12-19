@@ -28,7 +28,7 @@ def enable_Console():
     logging.getLogger('').addHandler(console)
     
 def getVersion(rel=__file__,filename="VERSION",getTuple=False):
-    """docstring for getVersion"""
+    """Returns the version number as either a string or tuple. The version number is retrieved from the "VERSION" file, which should contain just the text for the version and nothing else. When the version is returned as a tuple, each component (level) of the version number is a seperate, integer element of the tuple."""
     with open(os.path.abspath(os.path.join(os.path.dirname(rel),filename)),'r') as stream:
         string = stream.read()
     if getTuple:
@@ -60,7 +60,7 @@ def get_padding(*otherxy):
 
 
 def expandLim(axis,scale=0.05):
-    """Expands Axis Limits by *scale*"""
+    """Expands Axis Limits by *scale*, given present axis limits"""
     xmin,xmax,ymin,ymax = axis
     xran = abs(xmax-xmin)
     yran = abs(ymax-ymin)
@@ -74,7 +74,7 @@ def expandLim(axis,scale=0.05):
     return axis
 
 def BlackBody(wl,T):
-    """Return black-body flux as a function of wavelength"""
+    """Return black-body flux as a function of wavelength. Usese constants from Scipy Constants, and expects SI units"""
     h = spconst.h
     c = spconst.c
     k = spconst.k
@@ -86,18 +86,27 @@ def BlackBody(wl,T):
 
 
 def Gaussian(x,mean,stdev,height):
-    """Rertun a gaussian at postion x"""
+    """Rertun a gaussian at postion x, whith mean, stdev, and height"""
     return height*np.exp(-(x-mean)**2.0/(2.0*stdev**2.0))
 
 def validate_filename(string,extension=".fits"):
-    """Validates a string as an acceptable filename, stripping path components,etc."""
+    """Validates a string as an acceptable filename, stripping path components,etc.
+    
+    ..warning:: This function isn't very good. I wouldn't use it in its current state."""
     if string[-len(extension):] == extension:
         string = string[:-len(extension)]
     return string+extension
     
 
 def npArrayInfo(array,name):
-    """Message describing this array"""
+    """Message describing this array in excruciating detail. Used in debugging arrays where we don't know what they contain. Returns a message string.
+    
+    ::
+        
+        >>>arr = np.array([1,2,3,4,5,np.nan])
+        >>>print npArrayInfo(arr,"Some Array")
+        
+    """
     fmtr = {}
     fmtr["name"] = name
     fmtr["type"] = str(type(array))
@@ -137,6 +146,6 @@ class AbstractError(Exception):
     pass
 
 class HDUFrameTypeError(Exception):
-    """docstring for HDUFrameTypeError"""
+    """An error caused because an HDUFrame is of the wrong type for interpretation."""
     pass
         
