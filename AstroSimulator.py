@@ -38,9 +38,16 @@ __version__ = getVersion(__file__)
 
 class Stage(object):
     """docstring for Stage"""
-    def __init__(self,stage):
+    def __init__(self,stage,name="a Stage",description="A description",order=0,exceptions=None):
         super(Stage, self).__init__()
         self.do = stage
+        if exceptions == None:
+            self.exceptions = tuple()
+        else:
+            self.exceptions = exceptions
+        self.name = name
+        self.description = description
+        self.order = order
 
 class Simulator(object):
     """A Simulator, used for running large segements of code with detailed logging and progress checking"""
@@ -80,6 +87,7 @@ class Simulator(object):
         self.stages = {}
         self.orders = {}
         self.macros = {}
+        self.mparse = {}
         self.name = name
         if name == "__class__.__name__":
             self.name = self.__class__.__name__
@@ -91,6 +99,7 @@ class Simulator(object):
         self.plotting = False
         self.debugging = False
         self.caching = True
+        self.starting = False
         self.commandLine = commandLine
         
         if commandLine:
@@ -122,29 +131,36 @@ class Simulator(object):
         self.subparsers = self.parser.add_subparsers(title="macros",dest="command")
         
         self.subparsers.add_parser("all",help="Run all stages")
+        self.subparsers.add_parser("none",help="Macro to run no stages",description="Explicitly use 'none' and +stage to only run a specific stage")
         
-    def register(self,stage,name=None,description=None,position=None):
+    def register(self,stage,name=None,description=None,position=None,exceptions=None):
         """Adds a stage object to this simulator"""
-        if self.running:
-            return ConfigurationError("Cannot add a new stage to the simulator, the simulation has already started!")
-        if position != None:
+        if self.running or self.starting:
+            raise ConfigurationError("Cannot add a new stage to the simulator, the simulation has already started!")
+        if position == None:
             position = len(self.stages)
         if name == None:
             raise ValueError("Stage must have a name")
+        if position in self.orders:
+            raise ValueError("Cannot dupilcate position ordering")
+        if description == None:
+            description = name
+        if exceptions == None:
+            exceptions = tuple()
         
-        
-        stageObject = Stage(stage)
-        stageObject.name = name
-        stageObject.description = description
-        stageObject.order = position
+        stageObject = Stage(stage,name=name,description=description,order=position,exceptions=exceptions)
         self.stages[name] = stageObject
+        self.orders[position] = name
         self.parser.add_argument("+"+name,action='append_const',dest='include',const=name,help=argparse.SUPPRESS)
         self.parser.add_argument("-"+name,action='append_const',dest='exclude',const=name,help=argparse.SUPPRESS)
         
     def addMacro(self,name,*stages,**kwargs):
         """Adds a new macro to the simulation"""
-        self.subparsers.add_parser(name,**kwargs)
-        self.macros[name] = list(*stages)
+        if self.running or self.starting:
+            raise ConfigureError("Cannot add macro after simulator has started!")
+            
+        self.mparse[name] = self.subparsers.add_parser(name,**kwargs)
+        self.macros[name] = list(stages)
         
     def configure(self,configFile=None,configuration=None):
         """Configure this logging object"""
@@ -182,24 +198,71 @@ class Simulator(object):
         """Apply arguments before configure"""
         if "config" in self.options and self.options["config"] != None:
             self.config["System"]["Configs"]["Main"] = self.options["config"]
+        if "exclude" not in self.options or not isinstance(self.options["exclude"],list):
+            self.options["exclude"] = []
+        if "include" not in self.options or not isinstance(self.options["include"],list):
+            self.options["include"] = []
+        
     
     def post_applyArguments(self):
         """Apply post-arguments"""
-        pass
+        self.macro = self.options["command"]
+        self.log.log(2,"Macro '%s' Stages %s" % (self.macro,self.macros[self.macro]))
     
     def startup(self):
         """Basic actions for simulator startup"""
+        self.starting = True
+        
+        self.macros["all"] = self.stages.keys()
+        self.macros["none"] = []
+        self.order = self.orders.keys()
+        self.order.sort()
+        
         if self.commandLine:
             self.parseArguments()
-            self.pre_applyArguments
+            self.pre_applyArguments()
         self.configure(configFile=self.config["System"]["Configs"]["Main"])
         if self.commandLine:
             self.post_applyArguments()
+        
+        self.starting = False
         
     def run(self):
         """Run the actual simulator"""
         self.startup()
         self.running = True
         
+        for position in self.order:
+            use = False
+            stage = self.orders[position]
+            if stage in self.macros[self.macro]:
+                use = True
+            if stage in self.options["exclude"]:
+                use = False
+            if stage in self.options["include"]:
+                use = True
+            if not use:
+                self.log.log(2,"Skipping stage %s" % stage)
+            if use:
+                self.execute(stage)
+    
+    def execute(self,stage):
+        """Actually exectue a particular stage"""
+        s = self.stages[stage]
+        self.log.debug("Starting %s" % s.name)
+        self.log.info("Running %s" % s.description)
+        try:
+            s.do()
+        except s.exceptions as e:
+            self.log.error("Error %(name)s in stage %(desc)s. Stage indicated that this error was not critical" % {'name': e.__class__.__name__, 'desc': s.description})
+            self.log.error("Error: %(msg)s" % {'msg':e})
+        except Exception as e:
+            self.log.critical("Error %(name)s in stage %(desc)s!" % {'name': e.__class__.__name__, 'desc': s.description})
+            self.log.critical("Error: %(msg)s" % {'msg':e})
+            raise
+        else:
+            self.log.debug("Successfully completed stage %s" % s.name)
+        finally:
+            self.log.debug("Finished %s" % s.name)
         
         
