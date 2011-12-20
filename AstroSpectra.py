@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.4
+#  Version 0.2.5
 # 
 
 
@@ -35,6 +35,8 @@ import math, copy, sys, time, logging, os
 from Utilities import *
 
 __all__ = ["SpectraFrame","SpectraObject"]
+
+__version__ = getVersion()
 
 LOG = logging.getLogger(__name__)
 

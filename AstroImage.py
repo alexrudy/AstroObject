@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-04-28.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.4
+#  Version 0.2.5
 # 
 
 # Parent Modules
@@ -29,6 +29,8 @@ import math, copy, sys, time, logging, os
 from Utilities import *
 
 __all__ = ["ImageFrame","ImageObject"]
+
+__version__ = getVersion()
 
 LOG = logging.getLogger(__name__)
 

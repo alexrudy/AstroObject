@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.4
+#  Version 0.2.5
 # 
 
 # Parent Modules
@@ -35,6 +35,8 @@ import math, copy, sys, time, logging, os
 from Utilities import *
 
 __all__ = ["BlackBodySpectrum","GaussianSpectrum","FlatSpectrum"]
+
+__version__ = getVersion()
 
 class BlackBodySpectrum(AnalyticSpectra.AnalyticSpectrum):
     """An analytic representation of a Blackbody Spectrum at a Kelvin Tempertaure"""
