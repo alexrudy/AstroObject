@@ -133,7 +133,7 @@ class HDUFrame(AstroObjectBase.FITSFrame,pf.ImageHDU):
 
 
 class HDUObject(AstroObjectBase.FITSObject):
-    """This object tracks a number of HDU frames. This class is a simple subclass of :class:`AstroObjectBase.FITSObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`ImageFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.
+    """This object tracks a number of HDU frames. This class is a simple subclass of :class:`AstroObjectBase.FITSObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. It uses only the :class:`HDUFrame` class for data.
     """
     def __init__(self, filename=None):
         super(ImageObject, self).__init__()

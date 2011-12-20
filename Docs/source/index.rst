@@ -26,6 +26,7 @@ About AstroObject:
     AstroImage
     AstroSpectra
     AnalyticSpectra
+    AstroFITS
     Utilities
     
     future
