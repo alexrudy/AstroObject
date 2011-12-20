@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # 
 #  Test_AstroImage.py
 #  ObjectModel
