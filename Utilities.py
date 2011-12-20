@@ -150,3 +150,4 @@ class HDUFrameTypeError(Exception):
     """An error caused because an HDUFrame is of the wrong type for interpretation."""
     pass
         
+__version__ = getVersion()
