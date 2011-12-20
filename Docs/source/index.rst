@@ -30,6 +30,8 @@ About AstroObject:
     Utilities
     
     future
+    rnotes
+
 
 
 Indices and tables

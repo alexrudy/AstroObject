@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.4
+#  Version 0.2.5
 #
 
 import matplotlib as mpl
@@ -16,6 +16,7 @@ import pyfits
 import math
 import logging,time,sys,collections,os
 
+__all__ = ["getVersion","expandLim","BlackBody","Gaussian","validate_filename","npArrayInfo","AbstractError","HDUFrameTypeError"]
 
 LOG = logging.getLogger(__name__)
 
@@ -152,3 +153,4 @@ class HDUFrameTypeError(Exception):
     """An error caused because an HDUFrame is of the wrong type for interpretation."""
     pass
         
+__version__ = getVersion()

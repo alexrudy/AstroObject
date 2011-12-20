@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.4
+#  Version 0.2.5
 # 
 
 
@@ -35,6 +35,8 @@ import math, copy, sys, time, logging, os
 from Utilities import *
 
 __all__ = ["SpectraFrame","SpectraObject"]
+
+__version__ = getVersion()
 
 LOG = logging.getLogger(__name__)
 
@@ -67,10 +69,10 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
         """Retruns an HDU which represents this frame. HDUs are either ``pyfits.PrimaryHDU`` or ``pyfits.ImageHDU`` depending on the *primary* keyword."""
         if primary:
             LOG.info("Generating a primary HDU for %s" % self)
-            HDU = pyfits.PrimaryHDU(self())
+            HDU = pf.PrimaryHDU(self())
         else:
             LOG.info("Generating an image HDU for %s" % self)
-            HDU = pyfits.ImageHDU(self())
+            HDU = pf.ImageHDU(self())
         HDU.header.update('label',self.label)
         HDU.header.update('object',self.label)
         for key,value in self.header.iteritems():
@@ -117,7 +119,7 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
     def __read__(cls,HDU,label):
         """Attempts to convert a given HDU into an object of type :class:`ImageFrame`. This method is similar to the :meth:`__save__` method, but instead of taking data as input, it takes a full HDU. The use of a full HDU allows this method to check for the correct type of HDU, and to gather header information from the HDU. When reading data from a FITS file, this is the prefered method to initialize a new frame."""
         LOG.debug("Attempting to read as %s" % cls)
-        if not isinstance(HDU,(pyfits.ImageHDU,pyfits.PrimaryHDU)):
+        if not isinstance(HDU,(pf.ImageHDU,pf.PrimaryHDU)):
             msg = "Must save a PrimaryHDU or ImageHDU to a %s, found %s" % (cls.__name__,type(HDU))
             raise AbstractError(msg)
         if not isinstance(HDU.data,np.ndarray):
