@@ -93,9 +93,12 @@ def validate_filename(string,extension=".fits"):
     """Validates a string as an acceptable filename, stripping path components,etc.
     
     ..warning:: This function isn't very good. I wouldn't use it in its current state."""
-    if string[-len(extension):] == extension:
-        string = string[:-len(extension)]
-    return string+extension
+    dirname,filename = os.path.split(string)
+    if len(filename) < len(extension):
+        filename = filename
+    elif filename[-len(extension):] == extension:
+        filename = filename[:-len(extension)]
+    return os.path.join(dirname,filename+extension)
     
 
 def npArrayInfo(array,name):
