@@ -118,7 +118,7 @@ class HDUFrame(AstroObjectBase.FITSFrame,pf.ImageHDU):
         """Attempts to convert a given HDU into an object of type :class:`ImageFrame`. This method is similar to the :meth:`__save__` method, but instead of taking data as input, it takes a full HDU. The use of a full HDU allows this method to check for the correct type of HDU, and to gather header information from the HDU. When reading data from a FITS file, this is the prefered method to initialize a new frame.
         """
         LOG.debug("Attempting to read as %s" % cls)
-        if not isinstance(HDU,(pyfits.ImageHDU,pyfits.PrimaryHDU)):
+        if not isinstance(HDU,(pf.ImageHDU,pf.PrimaryHDU)):
             msg = "Must save a PrimaryHDU or ImageHDU to a %s, found %s" % (cls.__name__,type(HDU))
             raise AbstractError(msg)
         if not (isinstance(HDU.data,np.ndarray) or HDU.data==None):
