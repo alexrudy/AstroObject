@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.4
+#  Version 0.2.5
 #
 
 import matplotlib as mpl
@@ -14,8 +14,9 @@ import scipy as sp
 import scipy.constants as spconst
 import pyfits
 import math
-import logging,time,sys
+import logging,time,sys,collections,os
 
+__all__ = ["getVersion","expandLim","BlackBody","Gaussian","validate_filename","npArrayInfo","AbstractError","HDUFrameTypeError"]
 
 LOG = logging.getLogger(__name__)
 
@@ -27,6 +28,16 @@ def enable_Console():
     """docstring for enable_Console"""
     logging.getLogger('').addHandler(console)
     
+def getVersion(rel=__file__,filename="VERSION",getTuple=False):
+    """Returns the version number as either a string or tuple. The version number is retrieved from the "VERSION" file, which should contain just the text for the version and nothing else. When the version is returned as a tuple, each component (level) of the version number is a seperate, integer element of the tuple."""
+    with open(os.path.abspath(os.path.join(os.path.dirname(rel),filename)),'r') as stream:
+        string = stream.read()
+    if getTuple:
+        stuple = string.split(".")
+        stuple = [ int(val) for val in stuple ]
+        return tuple(stuple)
+    else:
+        return string
 
 def get_padding(*otherxy):
     """This function returns axis values to provide 5-percent padding around the given data."""
@@ -50,7 +61,7 @@ def get_padding(*otherxy):
 
 
 def expandLim(axis,scale=0.05):
-    """Expands Axis Limits by *scale*"""
+    """Expands Axis Limits by *scale*, given present axis limits"""
     xmin,xmax,ymin,ymax = axis
     xran = abs(xmax-xmin)
     yran = abs(ymax-ymin)
@@ -64,7 +75,7 @@ def expandLim(axis,scale=0.05):
     return axis
 
 def BlackBody(wl,T):
-    """Return black-body flux as a function of wavelength"""
+    """Return black-body flux as a function of wavelength. Usese constants from Scipy Constants, and expects SI units"""
     h = spconst.h
     c = spconst.c
     k = spconst.k
@@ -76,35 +87,59 @@ def BlackBody(wl,T):
 
 
 def Gaussian(x,mean,stdev,height):
-    """Rertun a gaussian at postion x"""
+    """Rertun a gaussian at postion x, whith mean, stdev, and height"""
     return height*np.exp(-(x-mean)**2.0/(2.0*stdev**2.0))
 
 def validate_filename(string,extension=".fits"):
-    """Validates a string as an acceptable filename, stripping path components,etc."""
+    """Validates a string as an acceptable filename, stripping path components,etc.
+    
+    ..warning:: This function isn't very good. I wouldn't use it in its current state."""
     if string[-len(extension):] == extension:
         string = string[:-len(extension)]
     return string+extension
     
 
 def npArrayInfo(array,name):
-    """Message describing this array"""
-    MSG = "Array named %(name)-10s has %(elements)8d elements with shape %(shape)11s. Range %(range)10s. Data Type %(type)3s. "
+    """Message describing this array in excruciating detail. Used in debugging arrays where we don't know what they contain. Returns a message string.
+    
+    ::
+        
+        >>>arr = np.array([1,2,3,4,5,np.nan])
+        >>>print npArrayInfo(arr,"Some Array")
+        
+    """
     fmtr = {}
-    fmtr["elements"] = array.size
-    fmtr["shape"] = str(array.shape)
     fmtr["name"] = name
-    fmtr["min"] = np.min(array)
-    fmtr["max"] = np.max(array)
-    fmtr["zeros"] = np.sum(array == np.zeros(array.shape))
-    fmtr["zper"] = float(fmtr["zeros"]) / float(fmtr["elements"]) * 100
-    fmtr["nans"] = np.sum(np.isnan(array))
-    fmtr["nper"] = float(fmtr["nans"]) / float(fmtr["elements"]) * 100
-    fmtr["type"] = array.dtype
-    fmtr["range"] = "[%(min)5.5g,%(max)5.5g]" % fmtr
-    if fmtr["zeros"] > 0:
-        MSG += " Zeros %(zeros)d (%(zper)3d%%)."
-    if fmtr["nans"] > 0:
-        MSG += " NaNs %(nans)d (%(nper)3d%%)."
+    fmtr["type"] = str(type(array))
+    if isinstance(array,np.ndarray):
+        MSG = "%(name)s has %(elements)d elements with shape %(shape)s."
+        fmtr["elements"] = array.size
+        fmtr["shape"] = str(array.shape)
+        try:
+            fmtr["min"] = np.min(array)
+            fmtr["max"] = np.max(array)
+            fmtr["range"] = "[%(min)5.5g,%(max)5.5g]" % fmtr
+
+        except ValueError:
+            MSG += " Array does not appear to be numerical!"
+        else:
+            MSG += " Range %(range)s"
+        fmtr["zeros"] = np.sum(array == np.zeros(array.shape))
+        fmtr["zper"] = float(fmtr["zeros"]) / float(fmtr["elements"]) * 100
+        if fmtr["zeros"] > 0:
+            MSG += " Zeros %(zeros)d (%(zper)3d%%)."
+        try:
+            fmtr["nans"] = np.sum(np.isnan(array))
+            fmtr["nper"] = float(fmtr["nans"]) / float(fmtr["elements"]) * 100
+            if fmtr["nans"] > 0:
+                MSG += " NaNs %(nans)d (%(nper)3d%%)."
+        except TypeError:
+            MSG += " Could not measure NaNs."    
+        fmtr["dtype"] = array.dtype
+        if fmtr["dtype"] != np.float64:
+            MSG += " Data Type %(dtype)s."
+    else:
+        MSG = "%(name)s doesn't appear to be a Numpy Array! Type: %(type)s"
     return MSG % fmtr
 
 class AbstractError(Exception):
@@ -112,6 +147,7 @@ class AbstractError(Exception):
     pass
 
 class HDUFrameTypeError(Exception):
-    """docstring for HDUFrameTypeError"""
+    """An error caused because an HDUFrame is of the wrong type for interpretation."""
     pass
         
+__version__ = getVersion()

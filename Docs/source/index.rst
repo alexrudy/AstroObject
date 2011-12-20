@@ -26,8 +26,12 @@ About AstroObject:
     AstroImage
     AstroSpectra
     AnalyticSpectra
+    AstroFITS
+    Utilities
     
     future
+    rnotes
+
 
 
 Indices and tables

@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.4
+#  Version 0.2.5
 # 
 
 
@@ -36,15 +36,17 @@ from Utilities import *
 
 __all__ = ["SpectraFrame","SpectraObject"]
 
+__version__ = getVersion()
+
 LOG = logging.getLogger(__name__)
 
 class SpectraFrame(AstroObjectBase.FITSFrame):
     """A single frame of a spectrum. This will save the spectrum as an image, with the first row having flux, and second row having the wavelength equivalent. Further rows can accomodate further spectral frames when stored to a FITS image. However, the frame only accepts a single spectrum."""
-    def __init__(self, array, label, header=None, metadata=None):
-        self.data = array # The image data
-        self.size = array.size # The size of this image
-        self.shape = array.shape # The shape of this image
-        super(SpectraFrame, self).__init__(None, label, header, metadata)
+    def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
+        self.data = data # The image data
+        self.size = data.size # The size of this image
+        self.shape = data.shape # The shape of this image
+        super(SpectraFrame, self).__init__(label=label, header=header, metadata=metadata, **kwargs)
         
     
     def __valid__(self):
@@ -67,10 +69,10 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
         """Retruns an HDU which represents this frame. HDUs are either ``pyfits.PrimaryHDU`` or ``pyfits.ImageHDU`` depending on the *primary* keyword."""
         if primary:
             LOG.info("Generating a primary HDU for %s" % self)
-            HDU = pyfits.PrimaryHDU(self())
+            HDU = pf.PrimaryHDU(self())
         else:
             LOG.info("Generating an image HDU for %s" % self)
-            HDU = pyfits.ImageHDU(self())
+            HDU = pf.ImageHDU(self())
         HDU.header.update('label',self.label)
         HDU.header.update('object',self.label)
         for key,value in self.header.iteritems():
@@ -117,7 +119,7 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
     def __read__(cls,HDU,label):
         """Attempts to convert a given HDU into an object of type :class:`ImageFrame`. This method is similar to the :meth:`__save__` method, but instead of taking data as input, it takes a full HDU. The use of a full HDU allows this method to check for the correct type of HDU, and to gather header information from the HDU. When reading data from a FITS file, this is the prefered method to initialize a new frame."""
         LOG.debug("Attempting to read as %s" % cls)
-        if not isinstance(HDU,(pyfits.ImageHDU,pyfits.PrimaryHDU)):
+        if not isinstance(HDU,(pf.ImageHDU,pf.PrimaryHDU)):
             msg = "Must save a PrimaryHDU or ImageHDU to a %s, found %s" % (cls.__name__,type(HDU))
             raise AbstractError(msg)
         if not isinstance(HDU.data,np.ndarray):
@@ -137,12 +139,11 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
 
 class SpectraObject(AstroObjectBase.FITSObject):
     """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.FITSObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`SpectraFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately."""
-    def __init__(self, array=None):
-        super(SpectraObject, self).__init__()
+    def __init__(self, **kwargs):
+        super(SpectraObject, self).__init__(**kwargs)
         self.dataClasses += [SpectraFrame]
         self.dataClasses.remove(AstroObjectBase.FITSFrame)
-        if array != None:
-            self.save(array)        # Save the initializing data
+
         
         
         

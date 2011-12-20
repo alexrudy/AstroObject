@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.4
+#  Version 0.2.5
 # 
 
 # Parent Modules
@@ -42,8 +42,8 @@ LOG = logging.getLogger(__name__)
 
 class AnalyticSpectrum(AstroObjectBase.FITSFrame):
     """A functional spectrum object for spectrum generation. The default implementation is a flat spectrum."""
-    def __init__(self,data,label,wavelengths=None,units=None):
-        super(AnalyticSpectrum, self).__init__(data, label)
+    def __init__(self,data=None,label=None,wavelengths=None,units=None,**kwargs):
+        super(AnalyticSpectrum, self).__init__(data=data,label=label, **kwargs)
         self.wavelengths = wavelengths
         self.units = units #Future will be used for enforcing unit behaviors
         
@@ -151,11 +151,11 @@ class CompositeSpectra(AnalyticSpectrum):
 
 class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
     """An analytic representation of a generic, specified spectrum"""
-    def __init__(self, array, label, wavelengths=None):
-        self.data = array
-        self.size = array.size # The size of this image
-        self.shape = array.shape # The shape of this image
-        super(InterpolatedSpectrum, self).__init__(array,label)
+    def __init__(self, data=None, label=None, wavelengths=None, **kwargs):
+        self.data = data
+        self.size = data.size # The size of this image
+        self.shape = data.shape # The shape of this image
+        super(InterpolatedSpectrum, self).__init__(data=data,label=label,**kwargs)
         x,y = self.data
         self.func = sp.interpolate.interp1d(x,y)
         self.wavelengths = wavelengths
@@ -168,8 +168,8 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         
 class ResampledSpectrum(InterpolatedSpectrum):
     """A spectrum that must be called with resampling information"""
-    def __init__(self, array, label, wavelengths=None, resolution=None):
-        super(ResampledSpectrum, self).__init__(array,label)
+    def __init__(self, data=None, label=None, wavelengths=None, resolution=None, **kwargs):
+        super(ResampledSpectrum, self).__init__(data=data,label=label, **kwargs)
         self.wavelengths = wavelengths
         self.resolution = resolution
         
@@ -187,19 +187,28 @@ class ResampledSpectrum(InterpolatedSpectrum):
         
     def resample(self,wavelengths,resolution,z=0.0):
         """Resample the given spectrum to a lower resolution"""
+        
         if resolution.size != wavelengths.size:
             LOG.debug("%s: Wavelength Size: %d, Resolution Size %d" % (self,wavelengths.size,resolution.size))
             raise AttributeError("You must provide resolution appropriate for resampling. Size mismatch!")
+        
         oldwl,oldfl = self.data
         oldwl = oldwl * (1.0 + z)
-        mintol = wavelengths[0] * resolution[0]
-        maxtol = wavelengths[-1] * resolution[-1]
+        mintol = wavelengths[0] * resolution[0] / 4
+        maxtol = wavelengths[-1] * resolution[-1] / 4
+        
         if np.min(oldwl) - mintol > np.min(wavelengths) or np.max(oldwl) + maxtol < np.max(wavelengths):
             msg = "Cannot extrapolate during reampling process. Please provide new wavelengths that are within the range of old ones."
             LOG.critical(msg)
             LOG.debug("%s: %s" % (self,npArrayInfo(wavelengths,"centers")))
             LOG.debug("%s: %s" % (self,npArrayInfo(oldwl,"wls")))
             raise ValueError(msg)
+        
+        oldres = oldwl[:-1] / np.diff(oldwl)
+        if np.min(oldres) > np.min(resolution):
+            LOG.warning("The new resolution seems to expect more detail than the old one. %g -> %g" % (np.min(oldres),np.min(resolution)))
+            LOG.debug("%s: %s" % (self,npArrayInfo(oldres,"given resolution")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(resolution,"requested resoluton")))
         
         ones = np.ones(oldwl.shape)
         sigma = wavelengths / resolution / 2.35
@@ -209,7 +218,12 @@ class ResampledSpectrum(InterpolatedSpectrum):
         curves = curve(MWL,MCENT,MSIGM)
         exps =  - 0.5 * (MWL - MCENT) ** 2.0 / (MSIGM ** 2.0)
         base = np.sum(curves * ones, axis=1)
-        flux = np.sum(curves * oldfl,axis=1) / base
+        top = np.sum(curves * oldfl,axis=1)
+        zeros = base == np.zeros(base.shape)
+        base[zeros] = np.ones(np.sum(zeros))
+        top[zeros] = np.zeros(np.sum(zeros))
+        
+        flux = top  / base
         
         if np.isnan(flux).any():
             msg = "Detected NaN in result of Resampling!"
