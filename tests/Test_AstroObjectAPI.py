@@ -58,7 +58,7 @@ class API_Base(object):
 
 class API_Base_Frame(API_Base):
     """This class implements all of the tests required to ensure that the API is obeyed."""
-    attributes = ['FRAME','VALID','INVALID','SAME','SAMEDATA','SHOWTYPE','HDUTYPE','FRAMESTR']
+    attributes = ['FRAME','VALID','INVALID','SAME','SAMEDATA','SHOWTYPE','HDUTYPE','FRAMESTR','pmHDU','imHDU']
     
     @nt.raises(AttributeError)
     def test_init_empty(self):
@@ -100,8 +100,7 @@ class API_Base_Frame(API_Base):
     
     def test_read_PrimaryHDU(self):
         """__read__() primary HDU succeeds"""
-        HDU = pf.PrimaryHDU(self.VALID)
-        AFrame = self.FRAME.__read__(HDU,"Valid")
+        AFrame = self.FRAME.__read__(self.pmHDU(self.VALID),"Valid")
         assert isinstance(AFrame,self.FRAME)
         assert AFrame.label == "Valid"
         assert self.SAMEDATA(AFrame.data,self.VALID)
@@ -109,8 +108,7 @@ class API_Base_Frame(API_Base):
     
     def test_read_SecondaryHDU(self):
         """__read__() secondary HDU succeeds"""
-        HDU = self.HDUTYPE(self.VALID)
-        AFrame = self.FRAME.__read__(HDU,"Valid")
+        AFrame = self.FRAME.__read__(self.imHDU(self.VALID),"Valid")
         assert isinstance(AFrame,self.FRAME)
         assert AFrame.label == "Valid"
         assert self.SAMEDATA(AFrame.data,self.VALID)

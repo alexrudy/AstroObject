@@ -51,7 +51,9 @@ class test_ImageFrame(API_Base_Frame):
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.image.AxesImage
         self.FRAMEINST = AI.ImageFrame(self.image,"Hong Kong")
-        
+        self.imHDU = pf.ImageHDU
+        self.pmHDU = pf.PrimaryHDU
+            
         def SAMEDATA(first,second):
             """Return whether these two are the same data"""
             return not (np.abs(first-second) > 1e-6).any()
@@ -93,8 +95,8 @@ class test_ImageObject(API_Base_Object):
         self.FRAMEINST = AI.ImageFrame(self.image,"Hong Kong")
         self.FRAMELABEL = "Hong Kong"
         self.FRAME = AI.ImageFrame
-        self.HDU = pf.PrimaryHDU(self.image)
-        self.imHDU = pf.ImageHDU(self.image)
+        self.HDU = pf.PrimaryHDU
+        self.imHDU = pf.ImageHDU
         self.VALID = self.image
         self.INVALID = 20
         self.OBJECTSTR = None
@@ -166,8 +168,8 @@ class test_AstroImage_Functional(API_Base_Functional):
         self.FRAMEINST = AI.ImageFrame(self.image,"Hong Kong")
         self.FRAMELABEL = "Hong Kong"
         self.FRAME = AI.ImageFrame
-        self.HDU = pf.PrimaryHDU(self.image)
-        self.imHDU = pf.ImageHDU(self.image)
+        self.HDU = pf.PrimaryHDU
+        self.imHDU = pf.ImageHDU
         self.VALID = self.image
         self.INVALID = 20
         self.OBJECTSTR = None

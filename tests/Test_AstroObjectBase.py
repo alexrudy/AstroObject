@@ -43,14 +43,12 @@ class API_Abstract_Frame(API_Base_Frame):
     @nt.raises(AbstractError)
     def test_read_SecondaryHDU(self):
         """__read__() secondary HDU type should get an abstract error"""
-        HDU = self.HDUTYPE(self.INVALID)
-        self.FRAME.__read__(HDU,"Empty")
+        self.FRAME.__read__(self.imHDU(self.INVALID),"Empty")
         
     @nt.raises(AbstractError)
     def test_read_PrimaryHDU(self):
         """__read__() primary HDU type should get an abstract error"""
-        HDU = pf.PrimaryHDU(self.INVALID)
-        BFrame = self.FRAME.__read__(HDU,"Not Empty")
+        BFrame = self.FRAME.__read__(self.pmHDU(self.INVALID),"Not Empty")
     
     @nt.raises(AbstractError)
     def test_call(self):
@@ -118,6 +116,8 @@ class test_FITSFrame(API_Abstract_Frame):
         self.INVALID = np.array([1,2,3]).astype(np.int16)
         self.SHOWTYPE = None
         self.HDUTYPE = pf.ImageHDU
+        self.imHDU = pf.ImageHDU
+        self.pmHDU = pf.PrimaryHDU
         
         def SAMEDATA(first,second):
             """Return whether these two are the same data"""
@@ -171,8 +171,8 @@ class test_FITSObject(API_Abstract_Object):
         self.FRAMELABEL = "Empty"
         self.FRAMEINST = self.FRAME(None,"Empty")
         self.HDUTYPE = pf.ImageHDU
-        self.HDU = pf.PrimaryHDU()
-        self.imHDU = pf.ImageHDU()
+        self.HDU = pf.PrimaryHDU
+        self.imHDU = pf.ImageHDU
         self.SHOWTYPE = None
         self.OBJECTSTR = None
         
