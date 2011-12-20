@@ -127,12 +127,12 @@ class ImageFrame(AstroObjectBase.FITSFrame):
 class ImageObject(AstroObjectBase.FITSObject):
     """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.FITSObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`ImageFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.
     """
-    def __init__(self, array=None):
-        super(ImageObject, self).__init__()
+    def __init__(self, array=None, **kwargs):
+        super(ImageObject, self).__init__(**kwargs)
         self.dataClasses += [ImageFrame]
         self.dataClasses.remove(AstroObjectBase.FITSFrame)
         if array != None:
-            self.save(array)        # Save the initializing data
+            raise NotImplemented("Cannot initialize with data")        # Save the initializing data
             
     def loadFromFile(self,filename=None,statename=None):
         """This function can be used to load an image file (but not a FITS file) into this image frame. Image files should be formats accepatble to the Python Image Library, but that generally applies to most common image formats, such as .png and .jpg .

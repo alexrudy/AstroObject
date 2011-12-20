@@ -137,12 +137,11 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
 
 class SpectraObject(AstroObjectBase.FITSObject):
     """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.FITSObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`SpectraFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately."""
-    def __init__(self, array=None):
-        super(SpectraObject, self).__init__()
+    def __init__(self, **kwargs):
+        super(SpectraObject, self).__init__(**kwargs)
         self.dataClasses += [SpectraFrame]
         self.dataClasses.remove(AstroObjectBase.FITSFrame)
-        if array != None:
-            self.save(array)        # Save the initializing data
+
         
         
         

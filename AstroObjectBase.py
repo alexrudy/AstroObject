@@ -137,8 +137,8 @@ class FITSObject(object):
     .. Note::
         This is object only contains Abstract data objects. In order to use this class properly, you should set the dataClasses keyword for use when storing data.
     """
-    def __init__(self,filename=None,dataClasses=None):
-        super(FITSObject, self).__init__()
+    def __init__(self,filename=None,dataClasses=None,**kwargs):
+        super(FITSObject, self).__init__(**kwargs)
         # Image data variables.
         self.dataClasses = [FITSFrame]
         if dataClasses:
