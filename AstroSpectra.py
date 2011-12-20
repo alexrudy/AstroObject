@@ -40,11 +40,11 @@ LOG = logging.getLogger(__name__)
 
 class SpectraFrame(AstroObjectBase.FITSFrame):
     """A single frame of a spectrum. This will save the spectrum as an image, with the first row having flux, and second row having the wavelength equivalent. Further rows can accomodate further spectral frames when stored to a FITS image. However, the frame only accepts a single spectrum."""
-    def __init__(self, array, label, header=None, metadata=None):
-        self.data = array # The image data
-        self.size = array.size # The size of this image
-        self.shape = array.shape # The shape of this image
-        super(SpectraFrame, self).__init__(None, label, header, metadata)
+    def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
+        self.data = data # The image data
+        self.size = data.size # The size of this image
+        self.shape = data.shape # The shape of this image
+        super(SpectraFrame, self).__init__(label=label, header=header, metadata=metadata, **kwargs)
         
     
     def __valid__(self):

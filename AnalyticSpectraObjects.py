@@ -38,10 +38,10 @@ __all__ = ["BlackBodySpectrum","GaussianSpectrum","FlatSpectrum"]
 
 class BlackBodySpectrum(AnalyticSpectra.AnalyticSpectrum):
     """An analytic representation of a Blackbody Spectrum at a Kelvin Tempertaure"""
-    def __init__(self, temperature, label=None):
+    def __init__(self, temperature, label=None, **kwargs):
         if label == None:
             label = "Black Body Spectrum at %4.2eK" % temperature
-        super(BlackBodySpectrum, self).__init__(None,label)
+        super(BlackBodySpectrum, self).__init__(None,label,**kwargs)
         self.temperature = temperature
         
     def __call__(self,wavelengths=None,**kwargs):

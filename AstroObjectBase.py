@@ -46,8 +46,8 @@ class FITSFrame(object):
         This is an abstract object. Methods implemented here will *likely* raise an :exc:`AbstractError` indicating that you shouldn't be using these methods. This class is provided so that users can sub-class it for their own purposes. It also serves as the base class for other Frames in this package.
     
     """
-    def __init__(self, data, label, header=None, metadata=None):
-        super(FITSFrame, self).__init__()
+    def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
+        super(FITSFrame, self).__init__(**kwargs)
         if data != None:
             self.data = data
         self.label = label # A label for this frame, for selection in parent object
@@ -85,7 +85,6 @@ class FITSFrame(object):
     def __valid__(self):
         """Runs a series of assertions which ensure that the data for this frame is valid"""
         assert not hasattr(self,'data'), "Abstract Class cannot accept data!"
-        assert isinstance(self.label,str), "Frame requires a label, got %s" % self.label
     
     def __hdu__(self,primary=False):
         """Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.

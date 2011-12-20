@@ -40,11 +40,11 @@ class ImageFrame(AstroObjectBase.FITSFrame):
     This object requires *array*, the data, a *label*, and can optionally take *headers* and *metadata*.
     
     """
-    def __init__(self, array, label, header=None, metadata=None):
-        self.data = array # The image data
-        self.size = array.size # The size of this image
-        self.shape = array.shape # The shape of this image
-        super(ImageFrame, self).__init__(None, label, header, metadata)
+    def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
+        self.data = data # The image data
+        self.size = data.size # The size of this image
+        self.shape = data.shape # The shape of this image
+        super(ImageFrame, self).__init__(data=None, label=label, header=header, metadata=metadata, **kwargs)
         
     
     def __call__(self):
