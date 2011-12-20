@@ -28,53 +28,53 @@ class API_AnalyticSpectra(API_Abstract_Frame):
     
     def test_init_with_wavelengths(self):
         """__init__() works with wavelengths"""
-        SFrame = self.FRAME(self.VALID,"Empty",self.WAVELENGTHS)
+        SFrame = self.FRAME(data=self.VALID,label="Empty",wavelengths=self.WAVELENGTHS)
         assert not np.abs(self.WAVELENGTHS - SFrame.wavelengths > 1e-6).any()
     
     
     def test_call_with_arbitrary_arguments(self):
         """__call__() accepts arbitrary keyword arguments"""
-        AFrame = self.FRAME(self.VALID,"Valid")
+        AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
         data = AFrame(wavelengths=self.WAVELENGTHS,other=1,arbitrary="str",arguments="blah")
     
     def test_call(self):
         """__call__() yields data"""
-        AFrame = self.FRAME(self.VALID,"Valid")
+        AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
         data = AFrame(wavelengths=self.WAVELENGTHS)
     
     def test_init_empty(self):
         """__init__() abstract frame works without data"""
-        AFrame = self.FRAME(self.VALID,"Valid")
+        AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
     
     
     def test_add_objects(self):
         """__add__() Objects respont to + operator"""
-        SFrame1 = self.FRAME(self.VALID,"Empty")
-        SFrame2 = self.FRAME(self.VALID,"Empty")
+        SFrame1 = self.FRAME(data=self.VALID,label="Empty")
+        SFrame2 = self.FRAME(data=self.VALID,label="Empty")
         SFrame3 = SFrame1 + SFrame2
         assert isinstance(SFrame3,AS.CompositeSpectra)
     
     def test_sub_objects(self):
         """__sub__() Objects respont to - operator"""
-        SFrame1 = self.FRAME(self.VALID,"Empty")
-        SFrame2 = self.FRAME(self.VALID,"Empty")
+        SFrame1 = self.FRAME(data=self.VALID,label="Empty")
+        SFrame2 = self.FRAME(data=self.VALID,label="Empty")
         SFrame3 = SFrame1 - SFrame2
         assert isinstance(SFrame3,AS.CompositeSpectra)
     
     
     def test_mul_objects(self):
         """__mul__() Objects respont to * operator"""
-        SFrame1 = self.FRAME(self.VALID,"Empty")
-        SFrame2 = self.FRAME(self.VALID,"Empty")
+        SFrame1 = self.FRAME(data=self.VALID,label="Empty")
+        SFrame2 = self.FRAME(data=self.VALID,label="Empty")
         SFrame3 = SFrame1 * SFrame2
         assert isinstance(SFrame3,AS.CompositeSpectra)
     
     def test_add_other(self):
         """__add__() Handles adding of other simple classes"""
-        SFrame1 = self.FRAME(self.VALID,"Empty")
+        SFrame1 = self.FRAME(data=self.VALID,label="Empty")
         SFrame2 = 10.0
         SFrame3 = SFrame1 + SFrame2
         assert isinstance(SFrame3,AS.CompositeSpectra)
@@ -115,14 +115,14 @@ class test_AnalyticSpectraFrame(API_AnalyticSpectra):
     @nt.raises(AbstractError)
     def test_call(self):
         """__call__() raises abstract error"""
-        AFrame = self.FRAME(self.VALID,"Valid")
+        AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
         data = AFrame(wavelengths=self.WAVELENGTHS)
         
     @nt.raises(AbstractError)
     def test_call_with_arbitrary_arguments(self):
         """__call__() accepts arbitrary keyword arguments"""
-        AFrame = self.FRAME(self.VALID,"Valid")
+        AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
         data = AFrame(wavelengths=self.WAVELENGTHS,other=1,arbitrary="str",arguments="blah")
         
@@ -161,7 +161,7 @@ class test_InterpolatedSpectra(API_AnalyticSpectra):
     
     def test_show(self):
         """__show__() returns a valid type"""
-        AFrame = self.FRAME(self.VALID,"Valid")
+        AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
         figure = AFrame.__show__()
         assert isinstance(figure,self.SHOWTYPE), "Found type %s" % type(figure)
@@ -203,20 +203,20 @@ class test_ResampledSpectra(API_AnalyticSpectra):
     
     def test_show(self):
         """__show__() returns a valid type"""
-        AFrame = self.FRAME(self.VALID,"Valid")
+        AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
         figure = AFrame.__show__()
         assert isinstance(figure,self.SHOWTYPE), "Found type %s" % type(figure)
     
     def test_call(self):
         """__call__() yields data"""
-        AFrame = self.FRAME(self.VALID,"Valid")
+        AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
         data = AFrame(wavelengths=self.WAVELENGTHS[:-1],resolution=(self.WAVELENGTHS[:-1]/np.diff(self.WAVELENGTHS))/4)
         
     def test_call_with_arbitrary_arguments(self):
         """__call__() accepts arbitrary keyword arguments"""
-        AFrame = self.FRAME(self.VALID,"Valid")
+        AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
         data = AFrame(wavelengths=self.WAVELENGTHS[:-1],resolution=np.diff(self.WAVELENGTHS),other=1,arbitrary="str",arguments="blah")
     

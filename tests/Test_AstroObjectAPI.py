@@ -63,18 +63,18 @@ class API_Base_Frame(API_Base):
     @nt.raises(AttributeError)
     def test_init_empty(self):
         """__init__() fails without data"""
-        self.FRAME(None,"Label")
+        self.FRAME(data=None,label="Label")
     
     
     @nt.raises(AttributeError)
     def test_init_invalid(self):
         """__init__() fails with invalid data"""
-        self.FRAME(self.INVALID,"Invalid")
+        self.FRAME(data=self.INVALID,label="Invalid")
     
     
     def test_init_data(self):
         """__init__() succeeds with valid data"""
-        AFrame = self.FRAME(self.VALID,"Valid")
+        AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
         assert self.SAMEDATA(AFrame.data,self.VALID)
     
@@ -125,7 +125,7 @@ class API_Base_Frame(API_Base):
     
     def test_call(self):
         """__call__() yields data"""
-        AFrame = self.FRAME(self.VALID,"Valid")
+        AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
         data = AFrame()
         assert self.SAMEDATA(data,self.VALID)
@@ -133,7 +133,7 @@ class API_Base_Frame(API_Base):
     
     def test_HDU(self):
         """__hdu__() works for secondary HDUs"""
-        AFrame = self.FRAME(self.VALID,"Valid")
+        AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
         HDU = AFrame.__hdu__()
         assert isinstance(HDU,self.HDUTYPE)
@@ -142,7 +142,7 @@ class API_Base_Frame(API_Base):
     
     def test_PrimaryHDU(self):
         """__hdu__() works for primary HDUs"""
-        AFrame = self.FRAME(self.VALID,"Valid")
+        AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
         HDU = AFrame.__hdu__(primary=True)
         assert isinstance(HDU,pf.PrimaryHDU)
@@ -151,7 +151,7 @@ class API_Base_Frame(API_Base):
     
     def test_show(self):
         """__show__() returns a valid type"""
-        AFrame = self.FRAME(self.VALID,"Valid")
+        AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
         figure = AFrame.__show__()
         assert isinstance(figure,self.SHOWTYPE), "Found type %s" % type(figure)
@@ -159,7 +159,7 @@ class API_Base_Frame(API_Base):
     
     def test_string_representation(self):
         """__str__() String representation correct for Frame"""
-        AFrame = self.FRAME(self.VALID,"Valid")
+        AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
         assert str(AFrame) == self.FRAMESTR
     

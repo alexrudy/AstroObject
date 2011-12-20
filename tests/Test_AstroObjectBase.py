@@ -26,11 +26,11 @@ class API_Abstract_Frame(API_Base_Frame):
     
     def test_init_data(self):
         """__init__() succeds with None (Valid) data"""
-        self.FRAME(self.VALID,"Invalid")
+        self.FRAME(data=self.VALID,label="Invalid")
     
     def test_init_empty(self):
         """__init__() abstract frame works without data"""
-        AFrame = self.FRAME(None,"Valid")
+        AFrame = self.FRAME(data=None,label="Valid")
         assert AFrame.label == "Valid"
     
     @nt.raises(AbstractError)
@@ -55,28 +55,28 @@ class API_Abstract_Frame(API_Base_Frame):
     @nt.raises(AbstractError)
     def test_call(self):
         """__call__() a base frame should raise an AbstractError"""
-        BFrame = self.FRAME(self.VALID,"Empty")
+        BFrame = self.FRAME(data=self.VALID,label="Empty")
         assert BFrame.label == "Empty"
         BFrame()
     
     @nt.raises(AbstractError)
     def test_HDU(self):
         """__hdu__() raises an AbstractError"""
-        BFrame = self.FRAME(self.VALID,"Empty")
+        BFrame = self.FRAME(data=self.VALID,label="Empty")
         assert BFrame.label == "Empty"
         HDU = BFrame.__hdu__()
     
     @nt.raises(AbstractError)
     def test_PrimaryHDU(self):
         """__hdu__() primary raises an AbstractError"""
-        BFrame = self.FRAME(self.VALID,"Empty")
+        BFrame = self.FRAME(data=self.VALID,label="Empty")
         assert BFrame.label == "Empty"
         HDU = BFrame.__hdu__(primary=True)
     
     @nt.raises(AbstractError)
     def test_show(self):
         """__show__() a base frame should fail"""
-        BFrame = self.FRAME(self.VALID,"Empty")
+        BFrame = self.FRAME(data=self.VALID,label="Empty")
         assert BFrame.label == "Empty"
         BFrame.__show__()
     
@@ -135,7 +135,7 @@ class test_FITSFrame(API_Abstract_Frame):
     
     def test_HDU(self):
         """__hdu__() raises an AbstractError"""
-        BFrame = self.FRAME(self.VALID,"Empty")
+        BFrame = self.FRAME(data=self.VALID,label="Empty")
         assert BFrame.label == "Empty"
         HDU = BFrame.__hdu__()
         assert isinstance(HDU,pf.ImageHDU)
@@ -143,7 +143,7 @@ class test_FITSFrame(API_Abstract_Frame):
     
     def test_PrimaryHDU(self):
         """__hdu__() primary raises an AbstractError"""
-        BFrame = self.FRAME(self.VALID,"Empty")
+        BFrame = self.FRAME(data=self.VALID,label="Empty")
         assert BFrame.label == "Empty"
         HDU = BFrame.__hdu__(primary=True)
         assert isinstance(HDU,pf.PrimaryHDU)
@@ -169,7 +169,7 @@ class test_FITSObject(API_Abstract_Object):
         self.VALID = None
         self.INVALID = np.array([1,2,3]).astype(np.int16)
         self.FRAMELABEL = "Empty"
-        self.FRAMEINST = self.FRAME(None,"Empty")
+        self.FRAMEINST = self.FRAME(data=None,label="Empty")
         self.HDUTYPE = pf.ImageHDU
         self.HDU = pf.PrimaryHDU()
         self.imHDU = pf.ImageHDU()
