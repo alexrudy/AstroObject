@@ -100,11 +100,11 @@ class HDUFrame(AstroObjectBase.FITSFrame,pf.ImageHDU):
         The validation requires that the data be a type ``numpy.ndarray`` and that the data have 2 and only 2 dimensions.
         """
         LOG.debug("Attempting to save as %s" % cls)
-        # if not (isinstance(data,pf.ImageHDU) or isinstance(data,pf.PrimaryHDU)):
-        #     msg = "ImageFrame cannot handle objects of type %s, must be type %s or %s" % (type(data),pf.PrimaryHDU,pf.ImageHDU)
-        #     raise AbstractError(msg)
+        if not isinstance(data,np.ndarray):
+            msg = "ImageFrame cannot handle objects of type %s, must be type %s" % (type(data),np.ndarray)
+            raise AbstractError(msg)
         try:
-            Object = cls(data,label)
+            Object = cls(data=data,label=label)
         except AssertionError as AE:
             msg = "%s data did not validate: %s" % (cls.__name__,AE)
             raise AbstractError(msg)
@@ -123,7 +123,11 @@ class HDUFrame(AstroObjectBase.FITSFrame,pf.ImageHDU):
             msg = "HDU Data must be %s for %s, found data of %s" % (np.ndarray,cls.__name__,type(HDU.data))
             raise AbstractError(msg)
         try:
-            Object = cls(data=HDU.data,label=label,header=HDU.header)
+            # Swizzle:
+            HDU.__class__ = HDUFrame
+            HDU.label = label
+            Object = HDU
+            # Object = cls(data=HDU.data,label=label,header=HDU.header)
         except AssertionError as AE:
             msg = "%s data did not validate: %s" % (cls.__name__,AE)
             raise AbstractError(msg)
@@ -136,7 +140,7 @@ class HDUObject(AstroObjectBase.FITSObject):
     """This object tracks a number of HDU frames. This class is a simple subclass of :class:`AstroObjectBase.FITSObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. It uses only the :class:`HDUFrame` class for data.
     """
     def __init__(self, filename=None):
-        super(ImageObject, self).__init__()
+        super(HDUObject, self).__init__()
         self.dataClasses += [HDUFrame]
         self.dataClasses.remove(AstroObjectBase.FITSFrame)
         if filename != None:
