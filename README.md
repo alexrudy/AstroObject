@@ -78,5 +78,23 @@ As well, the library is useful for building object-based representations of new 
 	- AstroSpectra's `__hdu__` includes header information stored in the HDU.
 	- New utility function `npArrayInfo()` which handles array log messages for information about the array.
 	- Testing updates to conform to new Resampling function (better example Spectra provided)
-
+* 0.2.5
+	- All `__init__` functions now accept arbitrary keywords, and all arguments to these functions are keywords. This shouldn't have any effect on currently implemented items, but new unittests will not test against non-keyword schemed inits
+	- As such, the keyword for initializing data is always `data` and never `array`.
+	- Changes to the `ResampledSpectrum` resample algorithm
+		- Tightened tolerance on spectrum interpolation in resampled spectra.
+		- Added a warning if you are resampling a spectrum to a higher resolution than the original source. The warning will not affect operation, but will message stdout
+		- Now we clip zeros out of the flux, so that the resampled spectra will never return zero. The resulting value just won't be in the array.
+	- Added the HDU-based frame and object system. The HDU system allows more direct manipulaton of HDUs. I'm still not confident in HDU's ability to preserve data during reads and writes. (Specifically writes, but I'm unsure about reads as well...)
+	- `_default_state(self,states=None)` allows the user to filter states that you will use for the default collection
+	- Prevented object `write()` function from taking the primary state from outside of the set of written states.
+	- `write()` now uses the HDU header "LABEL" in order to set the state label
+	- Removed initilaizng frame data from object initialization.
+	- Added the `__version__` variable to all module components
+	- `__all__` filtering for Utilities (and other modules)
+	- `getVersion()` function which (by default) reads the `VERSION` file for version information.
+	- `npArrayInfo()` handles data that isn't `np.ndarray` or isn't normal
+	- Documentation of AstroFITS
+	- Documentation of Utilities
+	
 
