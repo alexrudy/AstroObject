@@ -94,6 +94,8 @@ class test_AnalyticSpectraFrame(API_AnalyticSpectra):
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.artist.Artist
         self.WAVELENGTHS = np.arange(100) + 1.0
+        self.imHDU = pf.ImageHDU
+        self.pmHDU = pf.PrimaryHDU
         
         self.attributes = copy.deepcopy(self.attributes) + ['WAVELENGTHS']
         
@@ -141,6 +143,9 @@ class test_InterpolatedSpectra(API_AnalyticSpectra):
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.artist.Artist
         self.WAVELENGTHS = np.arange(100) + 1.0
+        self.imHDU = pf.ImageHDU
+        self.pmHDU = pf.PrimaryHDU
+        
         
         self.attributes = copy.deepcopy(self.attributes) + ['WAVELENGTHS']
         
@@ -182,6 +187,9 @@ class test_ResampledSpectra(API_AnalyticSpectra):
         self.WAVELENGTHS = np.arange(100) + 1.0
         self.VALID = np.vstack((np.arange(50) * 2.0 + 1.0
         ,np.ones((50,))))
+        self.imHDU = pf.ImageHDU
+        self.pmHDU = pf.PrimaryHDU
+        
         
         
         self.attributes = copy.deepcopy(self.attributes) + ['WAVELENGTHS']
