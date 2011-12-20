@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>6. Image Objects and Storage AstroImage &mdash; AstroObject 0.2.4 documentation</title>
+    <title>6. Image Objects and Storage AstroImage &mdash; AstroObject 0.2.5 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2.4',
+        VERSION:     '0.2.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,9 +25,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.2.4 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.2.5 documentation" href="index.html" />
     <link rel="next" title="7. Raw Spectrum Management AstroSpectra" href="AstroSpectra.html" />
-    <link rel="prev" title="4. Base API for handling Objects AstroObjectBase.FITSObject" href="AstroObject.html" /> 
+    <link rel="prev" title="4. API for Objects: FITSObject" href="AstroObject.html" /> 
   </head>
   <body>
     <div class="related">
@@ -43,9 +43,9 @@
           <a href="AstroSpectra.html" title="7. Raw Spectrum Management AstroSpectra"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="AstroObject.html" title="4. Base API for handling Objects AstroObjectBase.FITSObject"
+          <a href="AstroObject.html" title="4. API for Objects: FITSObject"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.2.4 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.2.5 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -59,7 +59,7 @@
 <p>Objects for manipulating and managing images.</p>
 <dl class="class">
 <dt id="AstroImage.ImageObject">
-<em class="property">class </em><tt class="descclassname">AstroImage.</tt><tt class="descname">ImageObject</tt><big>(</big><em>array=None</em><big>)</big><a class="reference internal" href="_modules/AstroImage.html#ImageObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroImage.ImageObject" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">AstroImage.</tt><tt class="descname">ImageObject</tt><big>(</big><em>array=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroImage.html#ImageObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroImage.ImageObject" title="Permalink to this definition">¶</a></dt>
 <dd><p>This object tracks a number of data frames. This class is a simple subclass of <a class="reference internal" href="AstroObject.html#AstroObjectBase.FITSObject" title="AstroObjectBase.FITSObject"><tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.FITSObject</span></tt></a> and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the <a class="reference internal" href="#AstroImage.ImageFrame" title="AstroImage.ImageFrame"><tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt></a> class for data. As well, it accepts an array in the initializer that will be saved immediately.</p>
 <dl class="method">
 <dt id="AstroImage.ImageObject.clear">
@@ -164,7 +164,7 @@ This method takes a <em>filename</em> and a <em>statename</em> parameter. If eit
 
 <dl class="class">
 <dt id="AstroImage.ImageFrame">
-<em class="property">class </em><tt class="descclassname">AstroImage.</tt><tt class="descname">ImageFrame</tt><big>(</big><em>array</em>, <em>label</em>, <em>header=None</em>, <em>metadata=None</em><big>)</big><a class="reference internal" href="_modules/AstroImage.html#ImageFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroImage.ImageFrame" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">AstroImage.</tt><tt class="descname">ImageFrame</tt><big>(</big><em>data=None</em>, <em>label=None</em>, <em>header=None</em>, <em>metadata=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroImage.html#ImageFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroImage.ImageFrame" title="Permalink to this definition">¶</a></dt>
 <dd><p>A single frame of a FITS image.
 Frames are known as Header Data Units, or HDUs when written to a FITS file.
 This frame accepts (generally) 2-dimensional numpy arrays (<tt class="docutils literal"><span class="pre">ndarray</span></tt>), and will show those arrays as images. Currently, the system makes no attempt to ensure/check the data type of your data arrays. As such, data saved will often be saved as <tt class="docutils literal"><span class="pre">np.float</span></tt> rather than more compact data types such as <tt class="docutils literal"><span class="pre">np.int16</span></tt>. Pyfits handles the typing of your data automatically, so saving an array with the correct type will generate the proper FITS file.
@@ -223,7 +223,7 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
   <p class="topless"><a href="AstroObject.html"
-                        title="previous chapter">4. Base API for handling Objects <tt class="docutils literal"><span class="pre">AstroObjectBase.FITSObject</span></tt></a></p>
+                        title="previous chapter">4. API for Objects: <tt class="docutils literal"><span class="pre">FITSObject</span></tt></a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="AstroSpectra.html"
                         title="next chapter">7. Raw Spectrum Management <tt class="docutils literal docutils literal"><span class="pre">AstroSpectra</span></tt></a></p>
@@ -262,9 +262,9 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
           <a href="AstroSpectra.html" title="7. Raw Spectrum Management AstroSpectra"
              >next</a> |</li>
         <li class="right" >
-          <a href="AstroObject.html" title="4. Base API for handling Objects AstroObjectBase.FITSObject"
+          <a href="AstroObject.html" title="4. API for Objects: FITSObject"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.2.4 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.2.5 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

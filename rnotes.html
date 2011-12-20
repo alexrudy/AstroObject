@@ -1,0 +1,277 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>12. Release Notes &mdash; AstroObject 0.2.5 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.2.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="AstroObject 0.2.5 documentation" href="index.html" />
+    <link rel="prev" title="11. Development Plans" href="future.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="future.html" title="11. Development Plans"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">AstroObject 0.2.5 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="release-notes">
+<h1>12. Release Notes<a class="headerlink" href="#release-notes" title="Permalink to this headline">¶</a></h1>
+<ul>
+<li><dl class="first docutils">
+<dt>0.1.0</dt>
+<dd><ul class="first last simple">
+<li>Basic operation of Spectra</li>
+<li>Basic operation of Images</li>
+<li>Untested IRAF Interaction Lines</li>
+<li>Basic FITS File Writing</li>
+<li>NO Metadata and Header Features</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.1.1</dt>
+<dd><ul class="first last simple">
+<li>Fixed a log message formatting error in AstroImage which caused a printing error</li>
+<li>Removed the &#8220;Logs/&#8221; folder requirement from the module</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.1.2</dt>
+<dd><ul class="first last simple">
+<li>Logs only written to file when a &#8220;Logs/&#8221; folder is present.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.1.3</dt>
+<dd><ul class="first last simple">
+<li>Handling Overflows in Blackbody Function</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.1.4</dt>
+<dd><ul class="first last simple">
+<li>Logging cannot capture warnings in python 0.1.4, so don&#8217;t import that!</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.2.0</dt>
+<dd><ul class="first last simple">
+<li>API Has CHANGED! Please see SPEC.md to understand the 0.2 API</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.2.1</dt>
+<dd><ul class="first last">
+<li><p class="first">object.keep() only keeps the specified states</p>
+</li>
+<li><p class="first">object.keep() and object.remove() both accept arbitrary numbers of arguments</p>
+</li>
+<li><p class="first">derived classes now have a __valid__() method</p>
+</li>
+<li><p class="first">object.object() has become object.frame() for more naming consistency. NOTE: object.object() will be depreciated.</p>
+</li>
+<li><p class="first">AstroObject has been renamed AstroObjectBase to reflect its use as a base class. NOTE: AstroObject.AstroObject will be depreciated.</p>
+</li>
+<li><dl class="first docutils">
+<dt>improvement to nosetests/spec</dt>
+<dd><ul class="first last simple">
+<li>improvements to documentation</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.2.2</dt>
+<dd><ul class="first last simple">
+<li>Hotfix to include updated notes in the README and to update documentation</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.2.3</dt>
+<dd><ul class="first last simple">
+<li>Uniform <cite>__init__</cite> call signature (data,label,header=,metadata=) This will change to (<a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs) in the next release. The signature will primarily use (data=,label=), so that can be included now for future compatibility.</li>
+<li>Uniform <cite>__call__</cite> call signature for AnalyticSpectra items. This allows nested calls with a variety of keywords (see ResampledSpectrum)</li>
+<li>New InterpolatedSpectrum (using Spline by default) and ResampledSpectrum objects provide analytic interfaces to data-based spectra.</li>
+<li>AstroImage and AstroObject save header values to in <cite>__hdu__</cite> call.</li>
+<li>AstroObject now has a <cite>clobber</cite> mode which allows <cite>.save()</cite> to overwrite data</li>
+<li>AstroObject now has a <cite>.clear()</cite> method to delete all data.</li>
+<li>Fixed a bug which might crop up when saving only a single frame to a FITS file in AstroObject.</li>
+<li>AstroObject more consistently uses the <cite>._default_state()</cite> call to set statename.</li>
+<li>Made a temporary fix for data copying bugs</li>
+<li>Documentation of API</li>
+<li>Documentation of AnalyticSpectra</li>
+<li>Documentation includes examples</li>
+<li>Documentation intro improved</li>
+<li>Improvements to SpectraFrame <cite>__show__()</cite> plot limits</li>
+<li>Improvements to messaging from AstroObject</li>
+<li>Code style cleanup</li>
+<li><cite>__all__</cite> settings for modules</li>
+<li>Testing for AnalyticSpectra</li>
+<li>Testing for AstroImage functional test cases</li>
+<li>Tests now include an API for functional testing</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.2.4</dt>
+<dd><ul class="first last simple">
+<li>Better debugging information and errors from the AnaltyicSpectra.ResampledSpectra class&#8217;s <cite>resample()</cite></li>
+<li>AstroSpectra&#8217;s <cite>__hdu__</cite> includes header information stored in the HDU.</li>
+<li>New utility function <cite>npArrayInfo()</cite> which handles array log messages for information about the array.</li>
+<li>Testing updates to conform to new Resampling function (better example Spectra provided)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.2.5</dt>
+<dd><ul class="first last">
+<li><p class="first">All <cite>__init__</cite> functions now accept arbitrary keywords, and all arguments to these functions are keywords. This shouldn&#8217;t have any effect on currently implemented items, but new unittests will not test against non-keyword schemed inits</p>
+</li>
+<li><p class="first">As such, the keyword for initializing data is always <cite>data</cite> and never <cite>array</cite>.</p>
+</li>
+<li><dl class="first docutils">
+<dt>Changes to the <cite>ResampledSpectrum</cite> resample algorithm</dt>
+<dd><ul class="first last simple">
+<li>Tightened tolerance on spectrum interpolation in resampled spectra.</li>
+<li>Added a warning if you are resampling a spectrum to a higher resolution than the original source. The warning will not affect operation, but will message stdout</li>
+<li>Now we clip zeros out of the flux, so that the resampled spectra will never return zero. The resulting value just won&#8217;t be in the array.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">Added the HDU-based frame and object system. The HDU system allows more direct manipulaton of HDUs. I&#8217;m still not confident in HDU&#8217;s ability to preserve data during reads and writes. (Specifically writes, but I&#8217;m unsure about reads as well...)</p>
+</li>
+<li><p class="first"><cite>_default_state(self,states=None)</cite> allows the user to filter states that you will use for the default collection</p>
+</li>
+<li><p class="first">Prevented object <cite>write()</cite> function from taking the primary state from outside of the set of written states.</p>
+</li>
+<li><p class="first"><cite>write()</cite> now uses the HDU header &#8220;LABEL&#8221; in order to set the state label</p>
+</li>
+<li><p class="first">Removed initilaizng frame data from object initialization.</p>
+</li>
+<li><p class="first">Added the <cite>__version__</cite> variable to all module components</p>
+</li>
+<li><p class="first"><cite>__all__</cite> filtering for Utilities (and other modules)</p>
+</li>
+<li><p class="first"><cite>getVersion()</cite> function which (by default) reads the <cite>VERSION</cite> file for version information.</p>
+</li>
+<li><p class="first"><cite>npArrayInfo()</cite> handles data that isn&#8217;t <cite>np.ndarray</cite> or isn&#8217;t normal</p>
+</li>
+<li><p class="first">Documentation of AstroFITS</p>
+</li>
+<li><p class="first">Documentation of Utilities</p>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="future.html"
+                        title="previous chapter">11. Development Plans</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/rnotes.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="future.html" title="11. Development Plans"
+             >previous</a> |</li>
+        <li><a href="index.html">AstroObject 0.2.5 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Alexander Rudy.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

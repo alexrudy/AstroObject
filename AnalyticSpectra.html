@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>8. Analytic Spectra and Interpolation AnalyticSpectra &mdash; AstroObject 0.2.4 documentation</title>
+    <title>8. Analytic Spectra and Interpolation AnalyticSpectra &mdash; AstroObject 0.2.5 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2.4',
+        VERSION:     '0.2.5',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.2.4 documentation" href="index.html" />
-    <link rel="next" title="9. Development Plans" href="future.html" />
+    <link rel="top" title="AstroObject 0.2.5 documentation" href="index.html" />
+    <link rel="next" title="9. HDU Objects and Storage AstroFITS" href="AstroFITS.html" />
     <link rel="prev" title="7. Raw Spectrum Management AstroSpectra" href="AstroSpectra.html" /> 
   </head>
   <body>
@@ -40,12 +40,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="future.html" title="9. Development Plans"
+          <a href="AstroFITS.html" title="9. HDU Objects and Storage AstroFITS"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="AstroSpectra.html" title="7. Raw Spectrum Management AstroSpectra"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.2.4 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.2.5 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -75,7 +75,7 @@
 </div>
 <dl class="class">
 <dt id="AnalyticSpectra.AnalyticSpectrum">
-<em class="property">class </em><tt class="descclassname">AnalyticSpectra.</tt><tt class="descname">AnalyticSpectrum</tt><big>(</big><em>data</em>, <em>label</em>, <em>wavelengths=None</em>, <em>units=None</em><big>)</big><a class="reference internal" href="_modules/AnalyticSpectra.html#AnalyticSpectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalyticSpectra.AnalyticSpectrum" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">AnalyticSpectra.</tt><tt class="descname">AnalyticSpectrum</tt><big>(</big><em>data=None</em>, <em>label=None</em>, <em>wavelengths=None</em>, <em>units=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AnalyticSpectra.html#AnalyticSpectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalyticSpectra.AnalyticSpectrum" title="Permalink to this definition">¶</a></dt>
 <dd><p>A functional spectrum object for spectrum generation. The default implementation is a flat spectrum.</p>
 <dl class="method">
 <dt id="AnalyticSpectra.AnalyticSpectrum.__add__">
@@ -156,7 +156,7 @@
 <p>These objects provide simple expansions to the AnalyticSpectrum abstract class.</p>
 <dl class="class">
 <dt id="AnalyticSpectra.InterpolatedSpectrum">
-<em class="property">class </em><tt class="descclassname">AnalyticSpectra.</tt><tt class="descname">InterpolatedSpectrum</tt><big>(</big><em>array</em>, <em>label</em>, <em>wavelengths=None</em><big>)</big><a class="reference internal" href="_modules/AnalyticSpectra.html#InterpolatedSpectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalyticSpectra.InterpolatedSpectrum" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">AnalyticSpectra.</tt><tt class="descname">InterpolatedSpectrum</tt><big>(</big><em>data=None</em>, <em>label=None</em>, <em>wavelengths=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AnalyticSpectra.html#InterpolatedSpectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalyticSpectra.InterpolatedSpectrum" title="Permalink to this definition">¶</a></dt>
 <dd><p>An analytic representation of a generic, specified spectrum</p>
 <dl class="method">
 <dt id="AnalyticSpectra.InterpolatedSpectrum.__call__">
@@ -168,7 +168,7 @@
 
 <dl class="class">
 <dt id="AnalyticSpectra.ResampledSpectrum">
-<em class="property">class </em><tt class="descclassname">AnalyticSpectra.</tt><tt class="descname">ResampledSpectrum</tt><big>(</big><em>array</em>, <em>label</em>, <em>wavelengths=None</em>, <em>resolution=None</em><big>)</big><a class="reference internal" href="_modules/AnalyticSpectra.html#ResampledSpectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalyticSpectra.ResampledSpectrum" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">AnalyticSpectra.</tt><tt class="descname">ResampledSpectrum</tt><big>(</big><em>data=None</em>, <em>label=None</em>, <em>wavelengths=None</em>, <em>resolution=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AnalyticSpectra.html#ResampledSpectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AnalyticSpectra.ResampledSpectrum" title="Permalink to this definition">¶</a></dt>
 <dd><p>A spectrum that must be called with resampling information</p>
 <dl class="method">
 <dt id="AnalyticSpectra.ResampledSpectrum.__call__">
@@ -190,7 +190,7 @@
 <p>These objects actually have spectral functions included.</p>
 <dl class="class">
 <dt id="AnalyticSpectra.BlackBodySpectrum">
-<em class="property">class </em><tt class="descclassname">AnalyticSpectra.</tt><tt class="descname">BlackBodySpectrum</tt><big>(</big><em>temperature</em>, <em>label=None</em><big>)</big><a class="headerlink" href="#AnalyticSpectra.BlackBodySpectrum" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">AnalyticSpectra.</tt><tt class="descname">BlackBodySpectrum</tt><big>(</big><em>temperature</em>, <em>label=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AnalyticSpectra.BlackBodySpectrum" title="Permalink to this definition">¶</a></dt>
 <dd><p>An analytic representation of a Blackbody Spectrum at a Kelvin Tempertaure</p>
 <dl class="method">
 <dt id="AnalyticSpectra.BlackBodySpectrum.__call__">
@@ -246,8 +246,8 @@
   <p class="topless"><a href="AstroSpectra.html"
                         title="previous chapter">7. Raw Spectrum Management <tt class="docutils literal"><span class="pre">AstroSpectra</span></tt></a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="future.html"
-                        title="next chapter">9. Development Plans</a></p>
+  <p class="topless"><a href="AstroFITS.html"
+                        title="next chapter">9. HDU Objects and Storage <tt class="docutils literal"><span class="pre">AstroFITS</span></tt></a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/AnalyticSpectra.txt"
@@ -280,12 +280,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="future.html" title="9. Development Plans"
+          <a href="AstroFITS.html" title="9. HDU Objects and Storage AstroFITS"
              >next</a> |</li>
         <li class="right" >
           <a href="AstroSpectra.html" title="7. Raw Spectrum Management AstroSpectra"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.2.4 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.2.5 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
