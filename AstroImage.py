@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-04-28.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.4
+#  Version 0.2.5
 # 
 
 # Parent Modules
@@ -30,6 +30,8 @@ from Utilities import *
 
 __all__ = ["ImageFrame","ImageObject"]
 
+__version__ = getVersion()
+
 LOG = logging.getLogger(__name__)
 
 class ImageFrame(AstroObjectBase.FITSFrame):
@@ -40,11 +42,11 @@ class ImageFrame(AstroObjectBase.FITSFrame):
     This object requires *array*, the data, a *label*, and can optionally take *headers* and *metadata*.
     
     """
-    def __init__(self, array, label, header=None, metadata=None):
-        self.data = array # The image data
-        self.size = array.size # The size of this image
-        self.shape = array.shape # The shape of this image
-        super(ImageFrame, self).__init__(None, label, header, metadata)
+    def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
+        self.data = data # The image data
+        self.size = data.size # The size of this image
+        self.shape = data.shape # The shape of this image
+        super(ImageFrame, self).__init__(data=None, label=label, header=header, metadata=metadata, **kwargs)
         
     
     def __call__(self):
@@ -60,10 +62,10 @@ class ImageFrame(AstroObjectBase.FITSFrame):
         """Retruns an HDU which represents this frame. HDUs are either ``pyfits.PrimaryHDU`` or ``pyfits.ImageHDU`` depending on the *primary* keyword."""
         if primary:
             LOG.log(5,"Generating a primary HDU for %s" % self)
-            HDU = pyfits.PrimaryHDU(self())
+            HDU = pf.PrimaryHDU(self())
         else:
             LOG.log(5,"Generating an image HDU for %s" % self)
-            HDU = pyfits.ImageHDU(self())
+            HDU = pf.ImageHDU(self())
         HDU.header.update('label',self.label)
         HDU.header.update('object',self.label)
         for key,value in self.header.iteritems():
@@ -108,7 +110,7 @@ class ImageFrame(AstroObjectBase.FITSFrame):
         """Attempts to convert a given HDU into an object of type :class:`ImageFrame`. This method is similar to the :meth:`__save__` method, but instead of taking data as input, it takes a full HDU. The use of a full HDU allows this method to check for the correct type of HDU, and to gather header information from the HDU. When reading data from a FITS file, this is the prefered method to initialize a new frame.
         """
         LOG.log(2,"Attempting to read as %s" % cls)
-        if not isinstance(HDU,(pyfits.ImageHDU,pyfits.PrimaryHDU)):
+        if not isinstance(HDU,(pf.ImageHDU,pf.PrimaryHDU)):
             msg = "Must save a PrimaryHDU or ImageHDU to a %s, found %s" % (cls.__name__,type(HDU))
             raise AbstractError(msg)
         if not isinstance(HDU.data,np.ndarray):
@@ -127,12 +129,12 @@ class ImageFrame(AstroObjectBase.FITSFrame):
 class ImageObject(AstroObjectBase.FITSObject):
     """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.FITSObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`ImageFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.
     """
-    def __init__(self, array=None):
-        super(ImageObject, self).__init__()
+    def __init__(self, array=None, **kwargs):
+        super(ImageObject, self).__init__(**kwargs)
         self.dataClasses += [ImageFrame]
         self.dataClasses.remove(AstroObjectBase.FITSFrame)
         if array != None:
-            self.save(array)        # Save the initializing data
+            raise NotImplemented("Cannot initialize with data")        # Save the initializing data
             
     def loadFromFile(self,filename=None,statename=None):
         """This function can be used to load an image file (but not a FITS file) into this image frame. Image files should be formats accepatble to the Python Image Library, but that generally applies to most common image formats, such as .png and .jpg .
@@ -168,8 +170,8 @@ class OLDImageObject(AstroObjectBase.FITSObject):
         
         filename = validate_filename(filename)
         LOG.log(2,"Generating FITS File from state %s with filename %s" % (statename,filename))
-        HDU = pyfits.PrimaryHDU(self.states[statename]()    )
-        HDUList = pyfits.HDUList([HDU])
+        HDU = pf.PrimaryHDU(self.states[statename]())
+        HDUList = pf.HDUList([HDU])
         HDUList.writeto(filename)
         LOG.log(5,"Wrote FITS File %s" % filename)
         return filename

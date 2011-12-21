@@ -1,28 +1,5 @@
----
- README
- Astronomy ObjectModel
- 
- Created by Alexander Rudy on 2011-10-07.
- Copyright 2011 Alexander Rudy. All rights reserved.
-
-  Version 0.2.5
-
----
-
-# README
-
-This program consists of a few simple objects for the repersentation and manipulation of astronomical objects. It allows python programs to interact with FITS files and Raw Data without constantly re-saving such data to the system. It provides a consistent object model, and stores object history for all of your data so that you won't lose data unintentionally.
-
-Documentation is hosted by GitHub Pages <http://alexrudy.github.com/AstroObject/>
-
-There are two primary modules:
-
-- `AstroImage` for handling images.
-- `AstroSpectra` for handling 1D data like spectra.
-
-As well, the library is useful for building object-based representations of new data formats. The library comes with template classes that make it easy to expand the object oriented paradigm to whatever you are doing, and to add in custom manipulation functions.
-
-# Release Notes
+Release Notes
+=============
 
 * 0.1.0
 	- Basic operation of Spectra
@@ -52,8 +29,7 @@ As well, the library is useful for building object-based representations of new 
 * 0.2.2
 	- Hotfix to include updated notes in the README and to update documentation
 * 0.2.3
-	- Uniform `__init__` call signature (data,label,header=,metadata=)
-	This will change to (**kwargs) in the next release. The signature will primarily use (data=,label=), so that can be included now for future compatibility.
+	- Uniform `__init__` call signature (data,label,header=,metadata=) This will change to (**kwargs) in the next release. The signature will primarily use (data=,label=), so that can be included now for future compatibility.
 	- Uniform `__call__` call signature for AnalyticSpectra items. This allows nested calls with a variety of keywords (see ResampledSpectrum)
 	- New InterpolatedSpectrum (using Spline by default) and ResampledSpectrum objects provide analytic interfaces to data-based spectra.
 	- AstroImage and AstroObject save header values to in `__hdu__` call.
@@ -96,5 +72,3 @@ As well, the library is useful for building object-based representations of new 
 	- `npArrayInfo()` handles data that isn't `np.ndarray` or isn't normal
 	- Documentation of AstroFITS
 	- Documentation of Utilities
-	
-

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # 
 #  Test_AstroImage.py
 #  ObjectModel
@@ -36,6 +35,8 @@ class test_SpectraFrame(API_Base_Frame):
         self.FRAMESTR = "<'SpectraFrame' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.artist.Artist
+        self.imHDU = pf.ImageHDU
+        self.pmHDU = pf.PrimaryHDU
         def SAMEDATA(first,second):
             """Return whether these two are the same data"""
             return not (np.abs(first-second) > 1e-6).any()
