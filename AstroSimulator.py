@@ -11,14 +11,6 @@
 import numpy as np
 import pyfits as pf
 import scipy as sp
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-
-# Matplolib Extras
-import matplotlib.image as mpimage
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import cm
-from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
 
 # Scipy Extras
 from scipy import ndimage
@@ -30,6 +22,7 @@ import math, copy, sys, time, logging, os
 import argparse
 
 # Submodules from this system
+from AstroCache import *
 from Utilities import *
 
 __all__ = ["Simulator"]
@@ -89,6 +82,7 @@ class Simulator(object):
         self.macros = {}
         self.mparse = {}
         self.name = name
+        self.order = None
         if name == "__class__.__name__":
             self.name = self.__class__.__name__
         self.log = logging.getLogger(__name__)
@@ -100,10 +94,10 @@ class Simulator(object):
         self.debugging = False
         self.caching = True
         self.starting = False
+        self.paused = False
         self.commandLine = commandLine
-        
-        if commandLine:
-            self.initOptions()
+        self.Caches = CacheManager()
+        self.initOptions()
         
     def initOptions(self):
         """Initializes the command line options for this script"""
@@ -111,7 +105,7 @@ class Simulator(object):
         self.USAGEFMT = { 'command' : os.path.basename(sys.argv[0]), 'basicOpts': "[ -E | -D | -T ]", 'subcommand' : "{macro}" }
         ShortHelp = "Command Line Interface for %(name)s" % { 'name': self.name }
         self.parser = argparse.ArgumentParser(description=ShortHelp,
-            formatter_class=argparse.RawDescriptionHelpFormatter,usage=self.USAGE % self.USAGEFMT,prefix_chars="-+")
+            formatter_class=argparse.RawDescriptionHelpFormatter,usage=self.USAGE % self.USAGEFMT,prefix_chars="-+*")
         
         self.parser.add_argument('-f',metavar='filename',type=str,dest='filename',
             help="filename for output image (without .fits)")
@@ -127,13 +121,12 @@ class Simulator(object):
         # Config Commands
         self.parser.add_argument('--config',action='store',dest='config',type=str,help="use the specified configuration file",metavar="file.yaml")
         self.parser.add_argument('--dump-config',action='store_true',dest='dump',help=argparse.SUPPRESS)
-                
-        self.subparsers = self.parser.add_subparsers(title="macros",dest="command")
         
-        self.subparsers.add_parser("all",help="Run all stages")
-        self.subparsers.add_parser("none",help="Macro to run no stages",description="Explicitly use 'none' and +stage to only run a specific stage")
+        # self.parser.add_argument("macro",action='store',type=str,help="the macro to run")
         
-    def register(self,stage,name=None,description=None,position=None,exceptions=None):
+        self.parser.add_argument("*all",action='append_const',dest='macros',const="all",help=argparse.SUPPRESS)
+        
+    def registerStage(self,stage,name=None,description=None,position=None,exceptions=None):
         """Adds a stage object to this simulator"""
         if self.running or self.starting:
             raise ConfigurationError("Cannot add a new stage to the simulator, the simulation has already started!")
@@ -154,12 +147,17 @@ class Simulator(object):
         self.parser.add_argument("+"+name,action='append_const',dest='include',const=name,help=argparse.SUPPRESS)
         self.parser.add_argument("-"+name,action='append_const',dest='exclude',const=name,help=argparse.SUPPRESS)
         
-    def addMacro(self,name,*stages,**kwargs):
+    def registerMacro(self,name,*stages,**kwargs):
         """Adds a new macro to the simulation"""
         if self.running or self.starting:
             raise ConfigureError("Cannot add macro after simulator has started!")
             
-        self.mparse[name] = self.subparsers.add_parser(name,**kwargs)
+        if kwargs["help"] == None:
+            help = argparse.SUPPRESS
+        else:
+            help = kwargs["help"]
+        del kwargs["help"]
+        self.mparse[name] = self.parser.add_argument("*"+name,action='append_const',dest='macros',const=name,help=help,**kwargs)
         self.macros[name] = list(stages)
         
     def configure(self,configFile=None,configuration=None):
@@ -189,64 +187,124 @@ class Simulator(object):
         self.log.configure(configuration=self.config)
         self.log.start()
     
-    def parseArguments(self):
+    def parseArguments(self,*args):
         """Parse arguments, and pre-apply appropriate values to configuration"""
-        Namespace = self.parser.parse_args()
+        if args != None and not self.commandLine:
+            Namespace = self.parser.parse_args(*args)
+        elif self.commandLine:
+            Namespace = self.parser.parse_args()
+        else:
+            raise ConfigurationError("No Operational Arguments Provided...")
         self.options = vars(Namespace)
     
     def pre_applyArguments(self):
         """Apply arguments before configure"""
         if "config" in self.options and self.options["config"] != None:
             self.config["System"]["Configs"]["Main"] = self.options["config"]
+
+        
+    
+    
+    def post_applyArguments(self):
+        """Apply post-arguments"""
         if "exclude" not in self.options or not isinstance(self.options["exclude"],list):
             self.options["exclude"] = []
         if "include" not in self.options or not isinstance(self.options["include"],list):
             self.options["include"] = []
-        
+        self.macro = []
+        if "macro" in self.options and self.options["macro"] != None:
+            if self.options["macro"] not in self.macros:
+                self.parser.error("Macro %s not recognized" % self.options["macro"])
+            self.macro += self.macros[self.options["macro"]]
+        if "macros" in self.options and self.options["macros"] != None:
+            for m in self.options["macros"]:
+                self.macro += self.macros[m]
+        self.log.log(2,"Macro Stages %s" % (self.macro))
     
-    def post_applyArguments(self):
-        """Apply post-arguments"""
-        self.macro = self.options["command"]
-        self.log.log(2,"Macro '%s' Stages %s" % (self.macro,self.macros[self.macro]))
+    def expandMacros(self):
+        """Expand the macros to expand internal macros"""
+        for macro in self.macros:
+            self._expandMacros(macro)
+        self.macros["all"] = self.stages.keys()
+        self.macros["none"] = []
+        
+
+    def _expandMacros(self,macro,*expanded):
+        """Expand Macros on a certain macro"""
+        if macro in expanded:
+            raise ConfigurationError("I seem to be in a recursive macro")
+        newMacro = []
+        for stage in macro:
+            if stage in self.macros:
+                newMacro += self._expandMacros(self.macros[macro],macro,*expanded)
+            else:
+                newMacro += stage
+        return newMacro
+        
     
     def startup(self):
         """Basic actions for simulator startup"""
         self.starting = True
-        
-        self.macros["all"] = self.stages.keys()
-        self.macros["none"] = []
-        self.order = self.orders.keys()
-        self.order.sort()
-        
-        if self.commandLine:
-            self.parseArguments()
-            self.pre_applyArguments()
+        self.expandMacros()
+        self.parseArguments()
+        self.pre_applyArguments()
         self.configure(configFile=self.config["System"]["Configs"]["Main"])
-        if self.commandLine:
-            self.post_applyArguments()
-        
+        if self.caching:
+            self.Caches.load()
         self.starting = False
+        
+    def next(self):
+        """Return the name of the next stage"""
+        if self.starting:
+            raise ConfigurationError("Simulator hasn't finished starting")
+        if self.order == None:
+            self.order = min(self.orders.keys())
+            return self.orders[self.order]
+        next = self.order
+        while next <= max(self.orders.keys()):
+            next += 1
+            if next in self.orders:
+                self.order = next
+                return self.orders[next]
+        return False
+        
+        
         
     def run(self):
         """Run the actual simulator"""
         self.startup()
-        self.running = True
-        
-        for position in self.order:
-            use = False
-            stage = self.orders[position]
-            if stage in self.macros[self.macro]:
-                use = True
-            if stage in self.options["exclude"]:
-                use = False
-            if stage in self.options["include"]:
-                use = True
-            if not use:
-                self.log.log(2,"Skipping stage %s" % stage)
-            if use:
-                self.execute(stage)
-        
+        self.do()
         self.exit()
+    
+    def do(self,*args):
+        """Pass a series of modules etc. to this command, to run the system."""
+        if self.running:
+            raise ConfigurationError("Simulator is already running!")
+        
+        self.parseArguments(*args)
+        self.post_applyArguments()
+        self.running = True
+        completed = []
+        
+        while self.running and not self.paused:
+            stage = self.next()
+            if stage:
+                use = False
+                if stage in self.macro:
+                    use = True
+                if stage in self.options["exclude"]:
+                    use = False
+                if stage in self.options["include"]:
+                    use = True
+                if not use:
+                    self.log.log(2,"Skipping stage %s" % stage)
+                if use:
+                    self.execute(stage)
+                    completed.append(stage)
+            else:
+                self.running = False
+        
+        return completed
     
     def execute(self,stage):
         """Actually exectue a particular stage"""
@@ -269,6 +327,5 @@ class Simulator(object):
         
     def exit(self):
         """Cleanup function for when we are all done"""
-        self.log.debug("Simulation took %2.1f seconds" % (time.clock()-self.times["init"]))
-    
+        pass
         

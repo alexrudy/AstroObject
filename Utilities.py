@@ -16,7 +16,7 @@ import pyfits
 import math
 import logging,time,sys,collections,os
 
-__all__ = ["getVersion","expandLim","BlackBody","Gaussian","validate_filename","npArrayInfo","AbstractError","HDUFrameTypeError"]
+__all__ = ["getVersion","expandLim","BlackBody","Gaussian","validate_filename","update","npArrayInfo","AbstractError","HDUFrameTypeError","ConfigurationError"]
 
 LOG = logging.getLogger(__name__)
 
