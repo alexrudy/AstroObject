@@ -13,6 +13,7 @@ Docs/build/*
 Tests/*.png
 Tests/*.jpg
 Tests/*.fits
+Caches/*
 .noseids
 .coverage
 experiment.py
