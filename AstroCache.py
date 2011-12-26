@@ -202,6 +202,8 @@ class CacheManager(object):
         """Register a Numpy Cache"""
         if generate == None:
             raise CacheError("Cache %s must specify generate function" % name)
+        if directory == None and self.directory != None:
+            directory = self.directory            
         cache = NumpyCache(name=name,generate=generate,stage=stage,directory=directory, filename=filename, **kwargs)
         self.caches[name] = cache
         self.log.debug("Registered Cache %s" % name)
@@ -214,6 +216,8 @@ class CacheManager(object):
             raise CacheError("Cache %s must specify load function" % name)
         if save == None:
             raise CacheError("Cache %s must specify save function" % name)
+        if directory == None and self.directory != None:
+            directory = self.directory
         cache = Cache(name,generate,load,save,stage=stage,directory=directory,**kwargs)
         self.caches[name] = cache
         self.log.debug("Registered Cache %s" % name)
