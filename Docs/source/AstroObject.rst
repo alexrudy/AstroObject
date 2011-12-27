@@ -1,5 +1,7 @@
-Base API for handling Objects :class:`AstroObjectBase.FITSObject`
-*****************************************************************
+API for Objects: :class:`FITSObject` 
+************************************
+
+
 
 The Base API was introduced in version 0.2.1 to facilitate the creation and use of basic template classes.
 
@@ -28,8 +30,8 @@ This object will then have all of the functions provided by :class:`AstroObjectB
 
 
 
-Base API for handling Frames :class:`AstroObjectBase.FITSFrame`
-***************************************************************
+API for Frames :class:`FITSFrame`
+*********************************
 
 AstroObjectBase provides template objects for the Object-Oriented Modules :mod:`AstroImage` and :mod:`AstroSpectra`. Template classes implement all of the required methods. However, calling a method defined by a template class will usually raise an :exc:`AbstractError` indicating that an Abstract method was called.
 

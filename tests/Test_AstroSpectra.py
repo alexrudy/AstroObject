@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # 
 #  Test_AstroImage.py
 #  ObjectModel
@@ -19,7 +18,7 @@ import os
 import nose.tools as nt
 from nose.plugins.skip import Skip,SkipTest
 
-from AstroObject.tests.Test_AstroObjectAPI import *
+from tests.Test_AstroObjectAPI import *
 
 import AstroObject.AstroSpectra as AS
 from AstroObject.Utilities import AbstractError
@@ -36,6 +35,8 @@ class test_SpectraFrame(API_Base_Frame):
         self.FRAMESTR = "<'SpectraFrame' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.artist.Artist
+        self.imHDU = pf.ImageHDU
+        self.pmHDU = pf.PrimaryHDU
         def SAMEDATA(first,second):
             """Return whether these two are the same data"""
             return not (np.abs(first-second) > 1e-6).any()

@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.4
+#  Version 0.2.5
 # 
 
 # Parent Modules
@@ -42,8 +42,8 @@ LOG = logging.getLogger(__name__)
 
 class AnalyticSpectrum(AstroObjectBase.FITSFrame):
     """A functional spectrum object for spectrum generation. The default implementation is a flat spectrum."""
-    def __init__(self,data,label,wavelengths=None,units=None):
-        super(AnalyticSpectrum, self).__init__(data, label)
+    def __init__(self,data=None,label=None,wavelengths=None,units=None,**kwargs):
+        super(AnalyticSpectrum, self).__init__(data=data,label=label, **kwargs)
         self.wavelengths = wavelengths
         self.units = units #Future will be used for enforcing unit behaviors
         
@@ -151,11 +151,11 @@ class CompositeSpectra(AnalyticSpectrum):
 
 class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
     """An analytic representation of a generic, specified spectrum"""
-    def __init__(self, array, label, wavelengths=None):
-        self.data = array
-        self.size = array.size # The size of this image
-        self.shape = array.shape # The shape of this image
-        super(InterpolatedSpectrum, self).__init__(array,label)
+    def __init__(self, data=None, label=None, wavelengths=None, **kwargs):
+        self.data = data
+        self.size = data.size # The size of this image
+        self.shape = data.shape # The shape of this image
+        super(InterpolatedSpectrum, self).__init__(data=data,label=label,**kwargs)
         x,y = self.data
         self.func = sp.interpolate.interp1d(x,y)
         self.wavelengths = wavelengths
@@ -168,8 +168,8 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         
 class ResampledSpectrum(InterpolatedSpectrum):
     """A spectrum that must be called with resampling information"""
-    def __init__(self, array, label, wavelengths=None, resolution=None):
-        super(ResampledSpectrum, self).__init__(array,label)
+    def __init__(self, data=None, label=None, wavelengths=None, resolution=None, **kwargs):
+        super(ResampledSpectrum, self).__init__(data=data,label=label, **kwargs)
         self.wavelengths = wavelengths
         self.resolution = resolution
         
@@ -203,6 +203,12 @@ class ResampledSpectrum(InterpolatedSpectrum):
             LOG.log(2,"%s: %s" % (self,npArrayInfo(wavelengths,"centers")))
             LOG.log(2,"%s: %s" % (self,npArrayInfo(oldwl,"wls")))
             raise ValueError(msg)
+        
+        oldres = oldwl[:-1] / np.diff(oldwl)
+        if np.min(oldres) > np.min(resolution):
+            LOG.warning("The new resolution seems to expect more detail than the old one. %g -> %g" % (np.min(oldres),np.min(resolution)))
+            LOG.debug("%s: %s" % (self,npArrayInfo(oldres,"given resolution")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(resolution,"requested resoluton")))
         
         ones = np.ones(oldwl.shape)
         sigma = wavelengths / resolution / 2.35
