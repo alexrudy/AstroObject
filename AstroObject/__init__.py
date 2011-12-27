@@ -50,3 +50,4 @@ def set_log_file(filename):
     
 
 initLOG.info("Loaded the model %s, called command %s" % (__name__,sys.argv[0]))
+

@@ -15,8 +15,9 @@ import scipy.constants as spconst
 import pyfits
 import math
 import logging,time,sys,collections,os
+from pkg_resources import resource_string
 
-__all__ = ["getVersion","expandLim","BlackBody","Gaussian","validate_filename","npArrayInfo","AbstractError","HDUFrameTypeError"]
+__all__ = ["getVersion","expandLim","BlackBody","Gaussian","validate_filename","npArrayInfo","AbstractError","HDUFrameTypeError","resource_string"]
 
 LOG = logging.getLogger(__name__)
 
@@ -28,10 +29,9 @@ def enable_Console():
     """docstring for enable_Console"""
     logging.getLogger('').addHandler(console)
     
-def getVersion(rel=__file__,filename="VERSION",getTuple=False):
+def getVersion(rel=__name__,filename="../VERSION",getTuple=False):
     """Returns the version number as either a string or tuple. The version number is retrieved from the "VERSION" file, which should contain just the text for the version and nothing else. When the version is returned as a tuple, each component (level) of the version number is a seperate, integer element of the tuple."""
-    with open(os.path.abspath(os.path.join(os.path.dirname(rel),filename)),'r') as stream:
-        string = stream.read()
+    string = resource_string(rel,filename)
     if getTuple:
         stuple = string.split(".")
         stuple = [ int(val) for val in stuple ]
