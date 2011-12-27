@@ -145,7 +145,7 @@ class LogManager(logging.getLoggerClass()):
         self.removeHandler(self.buffer)
         self.buffer.flush()
         if not self.handling:
-            raise ConfigurationError("Logger not actually handling anything!")
+            self.log(8,"Logger not actually handling anything!")
             
     def toggleConsole(self,value=None):
         """Turn on or off the console logging"""

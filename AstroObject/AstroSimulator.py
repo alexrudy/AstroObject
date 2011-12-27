@@ -27,7 +27,7 @@ from Utilities import *
 
 __all__ = ["Simulator"]
 
-__version__ = getVersion(__file__)
+__version__ = getVersion()
 
 class Stage(object):
     """docstring for Stage"""
