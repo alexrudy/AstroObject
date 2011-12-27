@@ -10,5 +10,6 @@
 # This file maintains compatability with the 0.2 API for base classes
 
 from AstroObjectBase import *
+from AstroObjectBase import LOG
 
 LOG.warning("Using Depreciated Module: AstroObject, use AstroObjectBase instead!")

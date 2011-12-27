@@ -6,7 +6,7 @@
 #  Copyright 2011 Alexander Rudy. All rights reserved.
 # 
 
-from AstroObject.tests.Test_AstroObjectAPI import *
+from tests.Test_AstroObjectAPI import *
 import AstroObject.AstroObjectBase as AOB
 from AstroObject.Utilities import AbstractError
 import nose.tools as nt

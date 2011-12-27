@@ -7,7 +7,7 @@
 # 
 
 # Test API Imports
-from AstroObject.tests.Test_AstroObjectAPI import *
+from tests.Test_AstroObjectAPI import *
 
 # Parent Object Imports
 import AstroObject.AstroFITS as AF

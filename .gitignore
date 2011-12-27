@@ -17,3 +17,6 @@ Caches/*
 .noseids
 .coverage
 experiment.py
+*.egg-info
+*.egg
+Caches/*
