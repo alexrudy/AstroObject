@@ -96,5 +96,10 @@ As well, the library is useful for building object-based representations of new 
 	- `npArrayInfo()` handles data that isn't `np.ndarray` or isn't normal
 	- Documentation of AstroFITS
 	- Documentation of Utilities
-	
+* 0.3.0a1
+	**Alpha Release Software**
+	- New Simulator Module
+	- New Caches Module
+	- Unified Logging Module System
+	- Setup.py Distribution
 
