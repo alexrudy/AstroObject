@@ -20,6 +20,7 @@ from scipy.linalg import norm
 # Standard Python Modules
 import math, copy, sys, time, logging, os
 import argparse
+import yaml
 
 # Submodules from this system
 from AstroCache import *
@@ -56,7 +57,7 @@ class Simulator(object):
           },
           "file" : {
                 'enable' : True,
-                'format' : "%(asctime)s : %(levelname)-8s : %(module)-40s : %(funcName)-10s : %(message)s",
+                'format' : "%(asctime)s : %(levelname)-8s : %(module)-15s : %(funcName)-10s : %(message)s",
                 'dateformat' : "%Y-%m-%d-%H:%M:%S",
                 'filename' : "AstroObjectSim",
                 'level' : None,
@@ -70,7 +71,7 @@ class Simulator(object):
                 "Images" : "Images",
             },
             "Configs" : {
-                "Main" : "Simulator.yaml"
+                "Main" : "Simulator.yaml",
             },
         },
     }
@@ -152,11 +153,11 @@ class Simulator(object):
         if self.running or self.starting:
             raise ConfigureError("Cannot add macro after simulator has started!")
             
-        if kwargs["help"] == None:
+        if "help" not in kwargs:
             help = argparse.SUPPRESS
         else:
             help = kwargs["help"]
-        del kwargs["help"]
+            del kwargs["help"]
         self.mparse[name] = self.parser.add_argument("*"+name,action='append_const',dest='macros',const=name,help=help,**kwargs)
         self.macros[name] = list(stages)
         
