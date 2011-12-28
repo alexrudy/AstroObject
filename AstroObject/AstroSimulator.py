@@ -82,6 +82,7 @@ class Simulator(object):
         self.orders = {}
         self.macros = {}
         self.mparse = {}
+        self.exclude = []
         self.name = name
         self.order = None
         if name == "__class__.__name__":
@@ -122,12 +123,12 @@ class Simulator(object):
         # Config Commands
         self.parser.add_argument('--config',action='store',dest='config',type=str,help="use the specified configuration file",metavar="file.yaml")
         self.parser.add_argument('--dump-config',action='store_true',dest='dump',help=argparse.SUPPRESS)
+        self.macro_parser = self.parser.add_argument_group('Macros')
+        self.macro_parser.add_argument("*all",action='append_const',dest='macros',const="all",help="All Stages")
+        self.pos_stage_parser = self.parser.add_argument_group('Stages')
+        self.neg_stage_parser = self.parser.add_argument_group('Remove Stages')
         
-        # self.parser.add_argument("macro",action='store',type=str,help="the macro to run")
-        
-        self.parser.add_argument("*all",action='append_const',dest='macros',const="all",help=argparse.SUPPRESS)
-        
-    def registerStage(self,stage,name=None,description=None,position=None,exceptions=None):
+    def registerStage(self,stage,name=None,description=None,position=None,exceptions=None,help=None,include_all=True):
         """Adds a stage object to this simulator"""
         if self.running or self.starting:
             raise ConfigurationError("Cannot add a new stage to the simulator, the simulation has already started!")
@@ -141,12 +142,16 @@ class Simulator(object):
             description = name
         if exceptions == None:
             exceptions = tuple()
+        if help == False:
+            help = argparse.SUPPRESS
+        elif help == None:
+            help = "stage %s" % name
         
         stageObject = Stage(stage,name=name,description=description,order=position,exceptions=exceptions)
         self.stages[name] = stageObject
         self.orders[position] = name
-        self.parser.add_argument("+"+name,action='append_const',dest='include',const=name,help=argparse.SUPPRESS)
-        self.parser.add_argument("-"+name,action='append_const',dest='exclude',const=name,help=argparse.SUPPRESS)
+        self.pos_stage_parser.add_argument("+"+name,action='append_const',dest='include',const=name,help="Include "+help)
+        self.neg_stage_parser.add_argument("-"+name,action='append_const',dest='exclude',const=name,help="Exclude "+help)
         
     def registerMacro(self,name,*stages,**kwargs):
         """Adds a new macro to the simulation"""
@@ -158,7 +163,7 @@ class Simulator(object):
         else:
             help = kwargs["help"]
             del kwargs["help"]
-        self.mparse[name] = self.parser.add_argument("*"+name,action='append_const',dest='macros',const=name,help=help,**kwargs)
+        self.mparse[name] = self.macro_parser.add_argument("*"+name,action='append_const',dest='macros',const=name,help=help,**kwargs)
         self.macros[name] = list(stages)
         
     def configure(self,configFile=None,configuration=None):
@@ -213,10 +218,6 @@ class Simulator(object):
         if "include" not in self.options or not isinstance(self.options["include"],list):
             self.options["include"] = []
         self.macro = []
-        if "macro" in self.options and self.options["macro"] != None:
-            if self.options["macro"] not in self.macros:
-                self.parser.error("Macro %s not recognized" % self.options["macro"])
-            self.macro += self.macros[self.options["macro"]]
         if "macros" in self.options and self.options["macros"] != None:
             for m in self.options["macros"]:
                 self.macro += self.macros[m]
@@ -226,7 +227,7 @@ class Simulator(object):
         """Expand the macros to expand internal macros"""
         for macro in self.macros:
             self._expandMacros(macro)
-        self.macros["all"] = self.stages.keys()
+        self.macros["all"] = [s for s in self.stages.keys() if s not in self.exclude]
         self.macros["none"] = []
         
 
