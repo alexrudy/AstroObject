@@ -221,6 +221,8 @@ class Simulator(object):
         if "macros" in self.options and self.options["macros"] != None:
             for m in self.options["macros"]:
                 self.macro += self.macros[m]
+        if self.macro == [] and self.options["include"] == []:
+            self.parser.error("No stages specified for operation")
         self.log.log(2,"Macro Stages %s" % (self.macro))
     
     def expandMacros(self):
@@ -286,6 +288,7 @@ class Simulator(object):
         self.parseArguments(*args)
         self.post_applyArguments()
         self.running = True
+        self.inorder = True
         completed = []
         
         while self.running and not self.paused:
@@ -300,7 +303,10 @@ class Simulator(object):
                     use = True
                 if not use:
                     self.log.log(2,"Skipping stage %s" % stage)
+                    self.inorder = False
                 if use:
+                    if not self.inorder:
+                        self.log.warning("Stages have run out of order... mileage may vary.")
                     self.execute(stage)
                     completed.append(stage)
             else:
