@@ -96,5 +96,7 @@ As well, the library is useful for building object-based representations of new 
 	- `npArrayInfo()` handles data that isn't `np.ndarray` or isn't normal
 	- Documentation of AstroFITS
 	- Documentation of Utilities
+* 0.2.6
+	- Compatible with SetupTools setup.py paradigm
 	
 
