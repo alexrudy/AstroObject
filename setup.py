@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 setup(
     name = "AstroObject",
-    version = "0.2.6",
+    version = "0.2.7",
     py_modules=["AstroObject"],
     packages = find_packages(
         exclude=['tests.*'],
