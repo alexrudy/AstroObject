@@ -29,7 +29,7 @@ def enable_Console():
     """docstring for enable_Console"""
     logging.getLogger('').addHandler(console)
     
-def getVersion(rel=__name__,filename="../VERSION",getTuple=False):
+def getVersion(rel=__name__,filename="VERSION",getTuple=False):
     """Returns the version number as either a string or tuple. The version number is retrieved from the "VERSION" file, which should contain just the text for the version and nothing else. When the version is returned as a tuple, each component (level) of the version number is a seperate, integer element of the tuple."""
     string = resource_string(rel,filename)
     if getTuple:
