@@ -4,7 +4,7 @@
     contain the root `toctree` directive.
 
 Welcome to AstroObject!
-=======================================
+=======================
 
 AstroObject is a library for Object-Oriented Astronomy. Currently under development, it contains tools for object-oriented management of Spectrum Data, Image Data, and Analytic Spectrum Data. More features are planned for the future. To get a sense of the philosophy of this project, read the introduction.
 
@@ -27,6 +27,7 @@ About AstroObject:
     AstroSpectra
     AnalyticSpectra
     AstroFITS
+    AstroObjectLogging
     Utilities
     
     future
