@@ -1,18 +1,17 @@
+.. module:: AstroObject.AstroImage
+
 Image Objects and Storage :mod:`AstroImage`
 *******************************************
 
-.. module:: AstroImage
-
 Objects for manipulating and managing images.
 
-
 .. autoclass::
-    AstroImage.ImageObject
+    AstroObject.AstroImage.ImageObject
     :members:
     :inherited-members:
 
 
 .. autoclass::
-    AstroImage.ImageFrame
+    AstroObject.AstroImage.ImageFrame
     :members:
     :special-members:

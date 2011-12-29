@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>10. AstroObject Utilities &mdash; AstroObject 0.2.5 documentation</title>
+    <title>10. AstroObject Utilities &mdash; AstroObject 0.2.6 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.2.5',
+        VERSION:     '0.2.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.2.5 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.2.6 documentation" href="index.html" />
     <link rel="next" title="11. Development Plans" href="future.html" />
     <link rel="prev" title="9. HDU Objects and Storage AstroFITS" href="AstroFITS.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="AstroFITS.html" title="9. HDU Objects and Storage AstroFITS"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.2.5 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.2.6 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -54,18 +54,18 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="astroobject-utilities">
+  <span class="target" id="module-AstroObject.Utilities"></span><div class="section" id="astroobject-utilities">
 <h1>10. AstroObject Utilities<a class="headerlink" href="#astroobject-utilities" title="Permalink to this headline">¶</a></h1>
 <p>These are mostly internal module utility functions, documented here in case you find them useful. They are not guaranteed to function in any way.</p>
 <dl class="function">
-<dt id="Utilities.getVersion">
-<tt class="descclassname">Utilities.</tt><tt class="descname">getVersion</tt><big>(</big><em>rel='/Users/alexanderrudy/Development/Astronomy/AstroObject/Utilities.py'</em>, <em>filename='VERSION'</em>, <em>getTuple=False</em><big>)</big><a class="reference internal" href="_modules/Utilities.html#getVersion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Utilities.getVersion" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.Utilities.getVersion">
+<tt class="descclassname">AstroObject.Utilities.</tt><tt class="descname">getVersion</tt><big>(</big><em>rel='AstroObject.Utilities'</em>, <em>filename='../VERSION'</em>, <em>getTuple=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/Utilities.html#getVersion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.Utilities.getVersion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the version number as either a string or tuple. The version number is retrieved from the &#8220;VERSION&#8221; file, which should contain just the text for the version and nothing else. When the version is returned as a tuple, each component (level) of the version number is a seperate, integer element of the tuple.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="Utilities.npArrayInfo">
-<tt class="descclassname">Utilities.</tt><tt class="descname">npArrayInfo</tt><big>(</big><em>array</em>, <em>name</em><big>)</big><a class="reference internal" href="_modules/Utilities.html#npArrayInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Utilities.npArrayInfo" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.Utilities.npArrayInfo">
+<tt class="descclassname">AstroObject.Utilities.</tt><tt class="descname">npArrayInfo</tt><big>(</big><em>array</em>, <em>name</em><big>)</big><a class="reference internal" href="_modules/AstroObject/Utilities.html#npArrayInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.Utilities.npArrayInfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Message describing this array in excruciating detail. Used in debugging arrays where we don&#8217;t know what they contain. Returns a message string.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="go">&gt;&gt;&gt;arr = np.array([1,2,3,4,5,np.nan])</span>
 <span class="go">&gt;&gt;&gt;print npArrayInfo(arr,&quot;Some Array&quot;)</span>
@@ -74,20 +74,20 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="Utilities.expandLim">
-<tt class="descclassname">Utilities.</tt><tt class="descname">expandLim</tt><big>(</big><em>axis</em>, <em>scale=0.050000000000000003</em><big>)</big><a class="reference internal" href="_modules/Utilities.html#expandLim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Utilities.expandLim" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.Utilities.expandLim">
+<tt class="descclassname">AstroObject.Utilities.</tt><tt class="descname">expandLim</tt><big>(</big><em>axis</em>, <em>scale=0.050000000000000003</em><big>)</big><a class="reference internal" href="_modules/AstroObject/Utilities.html#expandLim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.Utilities.expandLim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Expands Axis Limits by <em>scale</em>, given present axis limits</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="Utilities.BlackBody">
-<tt class="descclassname">Utilities.</tt><tt class="descname">BlackBody</tt><big>(</big><em>wl</em>, <em>T</em><big>)</big><a class="reference internal" href="_modules/Utilities.html#BlackBody"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Utilities.BlackBody" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.Utilities.BlackBody">
+<tt class="descclassname">AstroObject.Utilities.</tt><tt class="descname">BlackBody</tt><big>(</big><em>wl</em>, <em>T</em><big>)</big><a class="reference internal" href="_modules/AstroObject/Utilities.html#BlackBody"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.Utilities.BlackBody" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return black-body flux as a function of wavelength. Usese constants from Scipy Constants, and expects SI units</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="Utilities.Gaussian">
-<tt class="descclassname">Utilities.</tt><tt class="descname">Gaussian</tt><big>(</big><em>x</em>, <em>mean</em>, <em>stdev</em>, <em>height</em><big>)</big><a class="reference internal" href="_modules/Utilities.html#Gaussian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Utilities.Gaussian" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.Utilities.Gaussian">
+<tt class="descclassname">AstroObject.Utilities.</tt><tt class="descname">Gaussian</tt><big>(</big><em>x</em>, <em>mean</em>, <em>stdev</em>, <em>height</em><big>)</big><a class="reference internal" href="_modules/AstroObject/Utilities.html#Gaussian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.Utilities.Gaussian" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rertun a gaussian at postion x, whith mean, stdev, and height</p>
 </dd></dl>
 
@@ -142,7 +142,7 @@
         <li class="right" >
           <a href="AstroFITS.html" title="9. HDU Objects and Storage AstroFITS"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.2.5 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.2.6 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
