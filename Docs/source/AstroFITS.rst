@@ -1,7 +1,8 @@
+.. module:: AstroObject.AstroFITS
+
 HDU Objects and Storage :mod:`AstroFITS`
 ****************************************
 
-.. module:: AstroFITS
 
 Objects for manipulating and managing HDUs directly.
 
@@ -9,12 +10,12 @@ Objects for manipulating and managing HDUs directly.
 
 
 .. autoclass::
-    AstroFITS.HDUFrame
+    AstroObject.AstroFITS.HDUFrame
     :members:
     :special-members:
 
 
 .. autoclass::
-    AstroFITS.HDUObject
+    AstroObject.AstroFITS.HDUObject
     :members:
     :inherited-members:

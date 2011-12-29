@@ -1,7 +1,8 @@
+.. module:: AstroObject.AnalyticSpectra
+
 Analytic Spectra and Interpolation :mod:`AnalyticSpectra`
 *********************************************************
 
-.. module:: AnalyticSpectra
 
 Objects for manipulating and managing spectra which are inherently analytic (i.e. you want interpolation, or your spectrum to be defined by a single function). The classes provided in this module are *FRAMES* not *OBJECTS*, i.e. they are individual representations of spectra etc.
 
@@ -25,12 +26,12 @@ This module provides basic analytic spectrum capabilites. There is a simple prin
 
 
 .. autoclass::
-    AnalyticSpectra.AnalyticSpectrum
+    AstroObject.AnalyticSpectra.AnalyticSpectrum
     :members:
     :special-members:
 
 .. autoclass::
-    AnalyticSpectra.CompositeSpectra
+    AstroObject.AnalyticSpectra.CompositeSpectra
     :members:
     :inherited-members:
     
@@ -42,7 +43,7 @@ Expansion Objects
 These objects provide simple expansions to the AnalyticSpectrum abstract class.
 
 .. autoclass::
-    AnalyticSpectra.InterpolatedSpectrum
+    AstroObject.AnalyticSpectra.InterpolatedSpectrum
     :members:
     :inherited-members:
     
@@ -50,7 +51,7 @@ These objects provide simple expansions to the AnalyticSpectrum abstract class.
     
 
 .. autoclass::
-    AnalyticSpectra.ResampledSpectrum
+    AstroObject.AnalyticSpectra.ResampledSpectrum
     :members:
     :inherited-members:
     
@@ -64,7 +65,7 @@ Analytic Spectrum Objects
 These objects actually have spectral functions included.
 
 .. autoclass::
-    AnalyticSpectra.BlackBodySpectrum
+    AstroObject.AnalyticSpectra.BlackBodySpectrum
     :members:
     :inherited-members:
     
@@ -72,7 +73,7 @@ These objects actually have spectral functions included.
     
 
 .. autoclass::
-    AnalyticSpectra.GaussianSpectrum
+    AstroObject.AnalyticSpectra.GaussianSpectrum
     :members:
     :inherited-members:
     
@@ -80,7 +81,7 @@ These objects actually have spectral functions included.
     
 
 .. autoclass::
-    AnalyticSpectra.FlatSpectrum
+    AstroObject.AnalyticSpectra.FlatSpectrum
     :members:
     :inherited-members:
     
