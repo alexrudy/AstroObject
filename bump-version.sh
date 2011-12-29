@@ -25,12 +25,14 @@ then
 fi
 
 VSPECFILE="VERSION"
+AVSPECFILE="AstroObject/VERSION"
 
 VERSION=`cat $VSPECFILE`
 
 echo "Version is currently $VERSION, changing to $1"
 
 echo "$1" > $VSPECFILE
+echo "$1" > $AVSPECFILE
 
 VERSION=`cat $VSPECFILE`
 
