@@ -18,7 +18,7 @@ import os,copy
 import nose.tools as nt
 from nose.plugins.skip import Skip,SkipTest
 
-from AstroObject.tests.Test_AstroObjectBase import *
+from tests.Test_AstroObjectBase import *
 
 import AstroObject.AnalyticSpectra as AS
 from AstroObject.Utilities import AbstractError
