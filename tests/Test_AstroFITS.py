@@ -31,12 +31,12 @@ import matplotlib.image as mpimage
 import math, copy, sys, time, logging, os
 
 class test_HDUFrame(API_Base_Frame):
-    """AstroFITS.ImageFrame"""
+    """AstroFITS.HDUFrame"""
     
     def setUp(self):
         """Sets up the test with some basic image data"""
-        self.testFITS = "Hong-Kong.fits"
-        if not os.access(self.testFITS,os.R_OK):
+        self.testFITS = "Data/Hong-Kong.fits"
+        if not os.access("../"+self.testFITS,os.R_OK):
             self.image = np.zeros((1000,1000))
             self.image[450:550,450:550] = np.ones((100,100))
         else:
@@ -86,7 +86,7 @@ class test_ImageObject(API_Base_Object):
     
     def setUp(self):
         """Fixture for setting up a basic image frame"""
-        self.testJPG = "Tests/Hong-Kong.jpg"
+        self.testJPG = "Data/Hong-Kong.jpg"
         if not os.access(self.testJPG,os.R_OK):
             self.image = np.zeros((1000,1000))
             self.image[450:550,450:550] = np.ones((100,100))

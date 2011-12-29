@@ -10,12 +10,10 @@
 Logs/*
 TODO/*
 Docs/build/*
-Tests/*.png
-Tests/*.jpg
-Tests/*.fits
 .noseids
 .coverage
 experiment.py
 *.egg-info
 *.egg
 Caches/*
+Data/*
