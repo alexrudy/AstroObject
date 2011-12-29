@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.6
+#  Version 0.2.7
 #
 
 import matplotlib as mpl
@@ -29,7 +29,7 @@ def enable_Console():
     """docstring for enable_Console"""
     logging.getLogger('').addHandler(console)
     
-def getVersion(rel=__name__,filename="../VERSION",getTuple=False):
+def getVersion(rel=__name__,filename="VERSION",getTuple=False):
     """Returns the version number as either a string or tuple. The version number is retrieved from the "VERSION" file, which should contain just the text for the version and nothing else. When the version is returned as a tuple, each component (level) of the version number is a seperate, integer element of the tuple."""
     string = resource_string(rel,filename)
     if getTuple:
