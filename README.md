@@ -5,7 +5,7 @@
  Created by Alexander Rudy on 2011-10-07.
  Copyright 2011 Alexander Rudy. All rights reserved.
 
-  Version 0.2.7
+  Version 0.2.8
 
 ---
 
@@ -98,5 +98,8 @@ As well, the library is useful for building object-based representations of new 
 	- Documentation of Utilities
 * 0.2.6
 	- Compatible with SetupTools setup.py paradigm
-	
+* 0.2.7
+	- Fix for missing VERSION file in `install`-ed package
+* 0.2.8
+    - Release Notes for 0.2.7 and 0.2.8
 
