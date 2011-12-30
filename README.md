@@ -102,4 +102,10 @@ As well, the library is useful for building object-based representations of new 
 	- Fix for missing VERSION file in `install`-ed package
 * 0.2.8
     - Release Notes for 0.2.7 and 0.2.8
-
+* 0.2.9
+	- Buildout compatiblity (Partially... buildout doesn't really work well with MatPlotLib, but its here in case that changes.)
+	- Setup.py Fixes
+		- dependencies have been lowered to coincide with UBUNTU package versions of things.
+		- data file inclusion is now done through `data_files` which seems to work a little better
+	- Now using distribute as a wrapper around setuptools to fix bugs etc.
+* NOTE: This is the LAST 0.2.x release. Future releases will be 0.2.9pX or 0.3.0 as new features are being introduced.
