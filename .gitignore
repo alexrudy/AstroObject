@@ -6,16 +6,34 @@
 #  Copyright 2011 Alexander Rudy. All rights reserved.
 # 
 
+# Compiled Python Files
 *.pyc
-Logs/*
+
+# Development
 TODO/*
+
+# Distribution
+*.egg-info
+*.egg
+dist/*
+build/*
+
+# Buildout
+bin/*
+develop-eggs/*
+parts/*
+eggs/*
+.installed.cfg
+
+# Ephemeral Files
+Logs/*
+Caches/*
+Data/*
+
+# Documentation
 Docs/build/*
-Tests/*.png
-Tests/*.jpg
-Tests/*.fits
+
+# TESTS
 .noseids
 .coverage
 experiment.py
-*.egg-info
-*.egg
-Caches/*
