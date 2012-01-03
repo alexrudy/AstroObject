@@ -85,7 +85,7 @@ class test_ImageObject(API_Base_Object):
     
     def setUp(self):
         """Fixture for setting up a basic image frame"""
-        self.testJPG = "Tests/Hong-Kong.jpg"
+        self.testJPG = "Data/Hong-Kong.jpg"
         if not os.access(self.testJPG,os.R_OK):
             self.image = np.zeros((1000,1000))
             self.image[450:550,450:550] = np.ones((100,100))
@@ -158,7 +158,7 @@ class test_AstroImage_Functional(API_Base_Functional):
     """Functional Tests for AstroImage"""
     def setUp(self):
         """Fixture for setting up a basic image frame"""
-        self.testJPG = "Tests/Hong-Kong.jpg"
+        self.testJPG = "Data/Hong-Kong.jpg"
         if not os.access(self.testJPG,os.R_OK):
             self.image = np.zeros((1000,1000))
             self.image[450:550,450:550] = np.ones((100,100))

@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.9
+#  Version 0.3.0a1
 #
 
 import matplotlib as mpl
@@ -17,7 +17,8 @@ import math
 import logging,time,sys,collections,os
 from pkg_resources import resource_string
 
-__all__ = ["getVersion","expandLim","BlackBody","Gaussian","validate_filename","npArrayInfo","AbstractError","HDUFrameTypeError","resource_string"]
+__all__ = ["getVersion","expandLim","BlackBody","Gaussian","validate_filename","update","npArrayInfo","AbstractError","HDUFrameTypeError","ConfigurationError","resource_string"]
+
 
 LOG = logging.getLogger(__name__)
 
@@ -41,11 +42,8 @@ def getVersion(rel=__name__,filename="VERSION",getTuple=False):
 
 def get_padding(*otherxy):
     """This function returns axis values to provide 5-percent padding around the given data."""
-    
     xs = ()
     ys = ()
-    
-    
     if len(otherxy) == 1:
         x,y = otherxy[0]
     else:
@@ -58,8 +56,6 @@ def get_padding(*otherxy):
     
     return [min(x)-(max(x)-min(x))*0.05, max(x)+(max(x)-min(x))*0.05, min(y)-(max(y)-min(y))*0.05, max(y)+(max(y)-min(y))*0.05]
     
-
-
 def expandLim(axis,scale=0.05):
     """Expands Axis Limits by *scale*, given present axis limits"""
     xmin,xmax,ymin,ymax = axis
@@ -85,7 +81,6 @@ def BlackBody(wl,T):
     
     return flux
 
-
 def Gaussian(x,mean,stdev,height):
     """Rertun a gaussian at postion x, whith mean, stdev, and height"""
     return height*np.exp(-(x-mean)**2.0/(2.0*stdev**2.0))
@@ -100,7 +95,19 @@ def validate_filename(string,extension=".fits"):
     elif filename[-len(extension):] == extension:
         filename = filename[:-len(extension)]
     return os.path.join(dirname,filename+extension)
-    
+
+def update(d, u):
+    """A deep update command for dictionaries.
+    This is because the normal dictionary.update() command does not handle nested dictionaries."""
+    if len(u)==0:
+        return d
+    for k, v in u.iteritems():
+        if isinstance(v, collections.Mapping):
+            r = update(d.get(k, {}), v)
+            d[k] = r
+        else:
+            d[k] = u[k]
+    return d    
 
 def npArrayInfo(array,name):
     """Message describing this array in excruciating detail. Used in debugging arrays where we don't know what they contain. Returns a message string.
@@ -112,35 +119,62 @@ def npArrayInfo(array,name):
         
     """
     fmtr = {}
-    fmtr["name"] = name
+    MSG = ""
+    if name != None:
+        fmtr["name"] = name
+        MSG += "%(name)s has "
+    else:
+        fmtr["name"] = str(array)
     fmtr["type"] = str(type(array))
+    
     if isinstance(array,np.ndarray):
-        MSG = "%(name)s has %(elements)d elements with shape %(shape)s."
+        
+        MSG += "%(elements)d elements with shape %(shape)s. "
+        
         fmtr["elements"] = array.size
         fmtr["shape"] = str(array.shape)
+        
         try:
             fmtr["min"] = np.min(array)
             fmtr["max"] = np.max(array)
             fmtr["range"] = "[%(min)5.5g,%(max)5.5g]" % fmtr
-
         except ValueError:
-            MSG += " Array does not appear to be numerical!"
+            MSG += "Array does not appear to be numerical! "
         else:
-            MSG += " Range %(range)s"
+            MSG += "Range %(range)s "
+        
         fmtr["zeros"] = np.sum(array == np.zeros(array.shape))
+        
         fmtr["zper"] = float(fmtr["zeros"]) / float(fmtr["elements"]) * 100
+        
         if fmtr["zeros"] > 0:
-            MSG += " Zeros %(zeros)d (%(zper)3d%%)."
+            MSG += "Zeros %(zeros)d (%(zper)3d%%). "
+        
         try:
             fmtr["nans"] = np.sum(np.isnan(array))
             fmtr["nper"] = float(fmtr["nans"]) / float(fmtr["elements"]) * 100
             if fmtr["nans"] > 0:
-                MSG += " NaNs %(nans)d (%(nper)3d%%)."
+                MSG += "NaNs %(nans)d (%(nper)3d%%). "
         except TypeError:
-            MSG += " Could not measure NaNs."    
+            MSG += "Could not measure NaNs. "
+        
         fmtr["dtype"] = array.dtype
+        
         if fmtr["dtype"] != np.float64:
             MSG += " Data Type %(dtype)s."
+    elif isinstance(array,list):
+        
+        fmtr["elements"] = len(array)
+        MSG += " %(elements)d elements "
+        
+        try:
+            fmtr["min"] = min(array)
+            fmtr["max"] = max(array)
+            fmtr["range"] = "[%(min)5.5g,%(max)5.5g]" % fmtr
+        except ValueError:
+            MSG += " List does not appear to contain numerical elements."
+        else:
+            MSG += "Range %(range)s "
     else:
         MSG = "%(name)s doesn't appear to be a Numpy Array! Type: %(type)s"
     return MSG % fmtr
@@ -152,5 +186,9 @@ class AbstractError(Exception):
 class HDUFrameTypeError(Exception):
     """An error caused because an HDUFrame is of the wrong type for interpretation."""
     pass
+    
+class ConfigurationError(Exception):
+    """Denotes an error caused by a bad configuration"""
+    pass    
         
 __version__ = getVersion()

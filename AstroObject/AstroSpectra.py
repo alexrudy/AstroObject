@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.9
+#  Version 0.3.0a1
 # 
 
 
@@ -68,10 +68,10 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
     def __hdu__(self,primary=False):
         """Retruns an HDU which represents this frame. HDUs are either ``pyfits.PrimaryHDU`` or ``pyfits.ImageHDU`` depending on the *primary* keyword."""
         if primary:
-            LOG.info("Generating a primary HDU for %s" % self)
+            LOG.log(5,"Generating a primary HDU for %s" % self)
             HDU = pf.PrimaryHDU(self())
         else:
-            LOG.info("Generating an image HDU for %s" % self)
+            LOG.log(5,"Generating an image HDU for %s" % self)
             HDU = pf.ImageHDU(self())
         HDU.header.update('label',self.label)
         HDU.header.update('object',self.label)
@@ -85,7 +85,7 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
         
         .. Note::
             This function serves as a quick view of the current state of the frame. It is not intended for robust plotting support, as that can be easily accomplished using ``matplotlib``. Rather, it attempts to do the minimum possible to create an acceptable image for immediate inspection."""
-        LOG.debug("Plotting %s using matplotlib.pyplot.plot" % self)
+        LOG.log(2,"Plotting %s using matplotlib.pyplot.plot" % self)
         x,y = self.data #Slice Data
         plt.plot(x,y,label=self.label)
         plt.axis(expandLim(plt.axis()))
@@ -100,7 +100,7 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
         If the data is saved successfully, this method will return an object of type :class:`ImageFrame`
         
         The validation requires that the data be a type ``numpy.ndarray`` and that the data have 2 and only 2 dimensions. As well, the data should pass the :meth:`validate` method."""
-        LOG.debug("Attempting to save as %s" % cls)
+        LOG.log(2,"Attempting to save as %s" % cls)
         dimensions = 2
         if not isinstance(data,np.ndarray):
             msg = "%s cannot handle objects of type %s, must be type %s" % (cls.__name__,type(data),np.ndarray)
@@ -112,13 +112,13 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
         except AssertionError as AE:
             msg = "%s data did not validate: %s" % (cls.__name__,AE)
             raise AbstractError(msg)
-        LOG.debug("Saved %s with size %d" % (Object,Object.size))
+        LOG.log(2,"Saved %s with size %d" % (Object,Object.size))
         return Object
     
     @classmethod
     def __read__(cls,HDU,label):
         """Attempts to convert a given HDU into an object of type :class:`ImageFrame`. This method is similar to the :meth:`__save__` method, but instead of taking data as input, it takes a full HDU. The use of a full HDU allows this method to check for the correct type of HDU, and to gather header information from the HDU. When reading data from a FITS file, this is the prefered method to initialize a new frame."""
-        LOG.debug("Attempting to read as %s" % cls)
+        LOG.log(2,"Attempting to read as %s" % cls)
         if not isinstance(HDU,(pf.ImageHDU,pf.PrimaryHDU)):
             msg = "Must save a PrimaryHDU or ImageHDU to a %s, found %s" % (cls.__name__,type(HDU))
             raise AbstractError(msg)
@@ -130,7 +130,7 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
         except AssertionError as AE:
             msg = "%s data did not validate: %s" % (cls.__name__,AE)
             raise AbstractError(msg)
-        LOG.debug("Read %s with size %s" % (Object,Object.size))
+        LOG.log(2,"Read %s with size %s" % (Object,Object.size))
         return Object
     
 
