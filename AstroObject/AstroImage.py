@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-04-28.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.9
+#  Version 0.3.0a1
 # 
 
 # Parent Modules
@@ -61,10 +61,10 @@ class ImageFrame(AstroObjectBase.FITSFrame):
     def __hdu__(self,primary=False):
         """Retruns an HDU which represents this frame. HDUs are either ``pyfits.PrimaryHDU`` or ``pyfits.ImageHDU`` depending on the *primary* keyword."""
         if primary:
-            LOG.info("Generating a primary HDU for %s" % self)
+            LOG.log(5,"Generating a primary HDU for %s" % self)
             HDU = pf.PrimaryHDU(self())
         else:
-            LOG.info("Generating an image HDU for %s" % self)
+            LOG.log(5,"Generating an image HDU for %s" % self)
             HDU = pf.ImageHDU(self())
         HDU.header.update('label',self.label)
         HDU.header.update('object',self.label)
@@ -78,7 +78,7 @@ class ImageFrame(AstroObjectBase.FITSFrame):
         .. Note::
             This function serves as a quick view of the current state of the frame. It is not intended for robust plotting support, as that can be easily accomplished using ``matplotlib``. Rather, it attempts to do the minimum possible to create an acceptable image for immediate inspection.
         """
-        LOG.debug("Plotting %s using matplotlib.pyplot.imshow" % self)
+        LOG.log(2,"Plotting %s using matplotlib.pyplot.imshow" % self)
         figure = plt.imshow(self())
         figure.set_cmap('binary_r')
         return figure
@@ -91,7 +91,7 @@ class ImageFrame(AstroObjectBase.FITSFrame):
         
         The validation requires that the data be a type ``numpy.ndarray`` and that the data have 2 and only 2 dimensions.
         """
-        LOG.debug("Attempting to save as %s" % cls)
+        LOG.log(2,"Attempting to save as %s" % cls)
         if not isinstance(data,np.ndarray):
             msg = "ImageFrame cannot handle objects of type %s, must be type %s" % (type(data),np.ndarray)
             raise AbstractError(msg)
@@ -102,14 +102,14 @@ class ImageFrame(AstroObjectBase.FITSFrame):
         except AssertionError as AE:
             msg = "%s data did not validate: %s" % (cls.__name__,AE)
             raise AbstractError(msg)
-        LOG.debug("Saved %s with size %d" % (Object,data.size))
+        LOG.log(2,"Saved %s with size %d" % (Object,data.size))
         return Object
     
     @classmethod
     def __read__(cls,HDU,label):
         """Attempts to convert a given HDU into an object of type :class:`ImageFrame`. This method is similar to the :meth:`__save__` method, but instead of taking data as input, it takes a full HDU. The use of a full HDU allows this method to check for the correct type of HDU, and to gather header information from the HDU. When reading data from a FITS file, this is the prefered method to initialize a new frame.
         """
-        LOG.debug("Attempting to read as %s" % cls)
+        LOG.log(2,"Attempting to read as %s" % cls)
         if not isinstance(HDU,(pf.ImageHDU,pf.PrimaryHDU)):
             msg = "Must save a PrimaryHDU or ImageHDU to a %s, found %s" % (cls.__name__,type(HDU))
             raise AbstractError(msg)
@@ -121,7 +121,7 @@ class ImageFrame(AstroObjectBase.FITSFrame):
         except AssertionError as AE:
             msg = "%s data did not validate: %s" % (cls.__name__,AE)
             raise AbstractError(msg)
-        LOG.debug("Created %s" % Object)
+        LOG.log(2,"Created %s" % Object)
         return Object
     
 
@@ -143,9 +143,9 @@ class ImageObject(AstroObjectBase.FITSObject):
             filename = self.filename
         if statename == None:
             statename = os.path.basename(filename)
-            LOG.debug("Set statename for image from filename: %s" % statename)
+            LOG.log(2,"Set statename for image from filename: %s" % statename)
         self.save(mpimage.imread(filename),statename)
-        LOG.info("Loaded Image from file: "+filename)
+        LOG.log(5,"Loaded Image from file: "+filename)
     
 
 
@@ -163,17 +163,17 @@ class OLDImageObject(AstroObjectBase.FITSObject):
         if not filename:
             if self.filename == None:
                 filename = statename
-                LOG.warning("Setting Filename from statename %s. No filename validation was performed." % filename)
+                LOG.log(8,"Setting Filename from statename %s. No filename validation was performed." % filename)
             else:
                 filename = self.filename
-                LOG.warning("Setting filename from default %s. No filename validation was performed" % filename)
+                LOG.log(8,"Setting filename from default %s. No filename validation was performed" % filename)
         
         filename = validate_filename(filename)
-        LOG.debug("Generating FITS File from state %s with filename %s" % (statename,filename))
-        HDU = pf.PrimaryHDU(self.states[statename]()    )
+        LOG.log(2,"Generating FITS File from state %s with filename %s" % (statename,filename))
+        HDU = pf.PrimaryHDU(self.states[statename]())
         HDUList = pf.HDUList([HDU])
         HDUList.writeto(filename)
-        LOG.info("Wrote FITS File %s" % filename)
+        LOG.log(5,"Wrote FITS File %s" % filename)
         return filename
     
     def outFITS(self,filename=None,statename=None):
@@ -187,10 +187,10 @@ class OLDImageObject(AstroObjectBase.FITSObject):
         if not filename:
             if self.filename == None:
                 filename = statename
-                LOG.warning("Setting Filename from statename %s. No filename validation was performed." % filename)
+                LOG.log(8,"Setting Filename from statename %s. No filename validation was performed." % filename)
             else:
                 filename = self.filename
-                LOG.warning("Setting filename from default %s. No filename validation was performed" % filename)
+                LOG.log(8,"Setting filename from default %s. No filename validation was performed" % filename)
                 
         filename = validate_filename(filename)
         if os.access(filename,os.F_OK):
@@ -219,13 +219,13 @@ class OLDImageObject(AstroObjectBase.FITSObject):
                 self.loadFromFITS(filename,statename)
                 if os.access(filename,os.F_OK):
                     os.remove(filename)
-                    LOG.info("Deleted FITS file %s" % filename)
+                    LOG.log(5,"Deleted FITS file %s" % filename)
         if self.inputData:
             for filename in self.inputData:
                 self.inputData = False
                 if os.access(filename,os.F_OK):
                     os.remove(filename)
-                    LOG.info("Deleted FITS file %s" % filename)
+                    LOG.log(5,"Deleted FITS file %s" % filename)
                 
     
     
@@ -240,7 +240,7 @@ class OLDImageObject(AstroObjectBase.FITSObject):
             bottom = top
         shape  = self.states[self.statename].shape
         masked = self.states[self.statename].data[left:shape[0]-right,top:shape[1]-bottom]
-        LOG.debug("Masked masked and saved image")
+        LOG.log(2,"Masked masked and saved image")
         self.save(masked,"Masked")
     
     def crop(self,x,y,xsize,ysize=None):
@@ -248,7 +248,7 @@ class OLDImageObject(AstroObjectBase.FITSObject):
         if not ysize:
             ysize = xsize
         cropped = self.states[self.statename].data[x-xsize:x+xsize,y-ysize:y+ysize]
-        LOG.debug("Cropped and Saved Image")
+        LOG.log(2,"Cropped and Saved Image")
         self.save(cropped,"Cropped")
     
     
@@ -259,7 +259,7 @@ class OLDImageObject(AstroObjectBase.FITSObject):
         """Shows the image"""
         plt.imshow(self.states[self.statename].data,interpolation="nearest")
         plt.colorbar()
-        LOG.debug("Plot Image using IMSHOW: %s" % self.statename)
+        LOG.log(2,"Plot Image using IMSHOW: %s" % self.statename)
     
     def show3D(self):
         """Shows a 3D contour of the image"""
@@ -267,11 +267,11 @@ class OLDImageObject(AstroObjectBase.FITSObject):
         Y = np.arange(self.states[self.statename].shape[1])
         X,Y = np.meshgrid(X,Y)
         Z = self.states[self.statename].data
-        LOG.debug("3D Plotting: Axis Size %s %s %s" % (X.size, Y.size, Z.size))
+        LOG.log(2,"3D Plotting: Axis Size %s %s %s" % (X.size, Y.size, Z.size))
         ax = plt.gca(projection='3d')
         surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.jet, linewidth=0, antialiased=False)
         plt.colorbar(surf, shrink=0.5, aspect=5)
-        LOG.debug("Plot Image in 3D: %s" % self.statename)
+        LOG.log(2,"Plot Image in 3D: %s" % self.statename)
     
 
                 
