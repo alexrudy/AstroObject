@@ -49,6 +49,15 @@ class Simulator(object):
     name = "Simulator"
     
     config = {
+        "Dirs" : {
+            "Caches" : "Caches",
+            "Logs" : "Logs/",
+            "Partials" : "Partials",
+            "Images" : "Images",
+        },
+        "Configs" : {
+            "Main" : "Simulator.yaml",
+        },
         "logging" : {
           "console" : {
               "enable" : True,
@@ -62,17 +71,6 @@ class Simulator(object):
                 'filename' : "AstroObjectSim",
                 'level' : None,
           },
-        },
-        "System" : {
-            "Dirs" : {
-                "Caches" : "Caches",
-                "Logs" : "Logs/",
-                "Partials" : "Partials",
-                "Images" : "Images",
-            },
-            "Configs" : {
-                "Main" : "Simulator.yaml",
-            },
         },
     }
     
@@ -123,12 +121,19 @@ class Simulator(object):
         # Config Commands
         self.parser.add_argument('--config',action='store',dest='config',type=str,help="use the specified configuration file",metavar="file.yaml")
         self.parser.add_argument('--dump-config',action='store_true',dest='dump',help=argparse.SUPPRESS)
+        self.parser.add_argument('--print-stages',action='store_true',dest='print_stages',help="Print the stages that the simulator intends to run")
+
         self.macro_parser = self.parser.add_argument_group('Macros')
         self.macro_parser.add_argument("*all",action='append_const',dest='macros',const="all",help="All Stages")
+        self.macro_parser.add_argument("*none",action='append_const',dest='macros',const='none',help=argparse.SUPPRESS)
         self.pos_stage_parser = self.parser.add_argument_group('Stages')
         self.neg_stage_parser = self.parser.add_argument_group('Remove Stages')
         
-    def registerStage(self,stage,name=None,description=None,position=None,exceptions=None,help=None,include_all=True):
+        self.macros["all"] = []
+        self.macros["none"] = []
+        
+        
+    def registerStage(self,stage,name=None,description=None,position=None,exceptions=None,include=True):
         """Adds a stage object to this simulator"""
         if self.running or self.starting:
             raise ConfigurationError("Cannot add a new stage to the simulator, the simulation has already started!")
@@ -152,6 +157,8 @@ class Simulator(object):
         self.orders[position] = name
         self.pos_stage_parser.add_argument("+"+name,action='append_const',dest='include',const=name,help="Include "+help)
         self.neg_stage_parser.add_argument("-"+name,action='append_const',dest='exclude',const=name,help="Exclude "+help)
+        if include:
+            self.macros["all"] += [name]
         
     def registerMacro(self,name,*stages,**kwargs):
         """Adds a new macro to the simulation"""
@@ -192,21 +199,26 @@ class Simulator(object):
             self.log.log(8,"No configuration provided or accessed. Using defaults.")
         self.log.configure(configuration=self.config)
         self.log.start()
+        with open(self.config["Dirs"]["Partials"]+"/config-%s.yaml" % (self.name),"w") as stream:
+            stream.write("# Configuration from %s\n" % self.name)
+            yaml.dump(self.config,stream,default_flow_style=False) 
+        
+        
     
     def parseArguments(self,*args):
         """Parse arguments, and pre-apply appropriate values to configuration"""
         if args != None and not self.commandLine:
-            Namespace = self.parser.parse_args(*args)
+            Namespace = self.parser.parse_args(list(args))
         elif self.commandLine:
             Namespace = self.parser.parse_args()
         else:
-            raise ConfigurationError("No Operational Arguments Provided...")
+            self.log.debug("Skipping argument parsing")
         self.options = vars(Namespace)
     
     def pre_applyArguments(self):
         """Apply arguments before configure"""
         if "config" in self.options and self.options["config"] != None:
-            self.config["System"]["Configs"]["Main"] = self.options["config"]
+            self.config["Configs"]["This"] = self.options["config"]
 
         
     
@@ -229,8 +241,12 @@ class Simulator(object):
         """Expand the macros to expand internal macros"""
         for macro in self.macros:
             self._expandMacros(macro)
+<<<<<<< Updated upstream
         self.macros["all"] = [s for s in self.stages.keys() if s not in self.exclude]
         self.macros["none"] = []
+=======
+
+>>>>>>> Stashed changes
         
 
     def _expandMacros(self,macro,*expanded):
@@ -245,6 +261,10 @@ class Simulator(object):
                 newMacro += stage
         return newMacro
         
+    def testLenslets(self):
+        """A test for lenslets"""
+        print "NOT HERE!!! :("
+        
     
     def startup(self):
         """Basic actions for simulator startup"""
@@ -252,7 +272,7 @@ class Simulator(object):
         self.expandMacros()
         self.parseArguments()
         self.pre_applyArguments()
-        self.configure(configFile=self.config["System"]["Configs"]["Main"])
+        self.configure(configFile=self.config["Configs"]["This"])
         if self.caching:
             self.Caches.load()
         self.starting = False
@@ -301,24 +321,33 @@ class Simulator(object):
                     use = False
                 if stage in self.options["include"]:
                     use = True
-                if not use:
+                if self.options['print_stages']:
+                    if use:
+                        completed.append(stage)    
+                elif not use:
                     self.log.log(2,"Skipping stage %s" % stage)
+<<<<<<< Updated upstream
                     self.inorder = False
                 if use:
                     if not self.inorder:
                         self.log.warning("Stages have run out of order... mileage may vary.")
+=======
+                elif use:
+>>>>>>> Stashed changes
                     self.execute(stage)
                     completed.append(stage)
             else:
                 self.running = False
         
+        if self.options['print_stages']:
+            print completed
         return completed
     
     def execute(self,stage):
         """Actually exectue a particular stage"""
         s = self.stages[stage]
         self.log.debug("Starting %s" % s.name)
-        self.log.info("Running %s" % s.description)
+        self.log.info("%s" % s.description)
         try:
             s.do()
         except s.exceptions as e:
