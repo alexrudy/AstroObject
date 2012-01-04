@@ -84,6 +84,9 @@ class Cache(object):
         if self.ready:
             self.log.debug("%(name)s Cache Load Unecessary: already %(result)s." % { 'name': self.name, 'result': "loaded" if self.loaded else "generated" })
             return self.loaded
+        if not self.enabled:
+            self.regenerate = True
+            return self.loaded
         try:
             with file(self.fullname,'r') as stream:
                 self.data = self.cache_load(stream)
