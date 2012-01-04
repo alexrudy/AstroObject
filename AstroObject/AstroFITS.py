@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-11-08.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.5
+#  Version 0.3.0a1
 # 
 
 # Parent Modules

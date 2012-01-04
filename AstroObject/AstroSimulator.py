@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-14.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.0
+#  Version 0.3.0a1
 # 
 
 # Standard Scipy Toolkits
@@ -87,7 +87,7 @@ class Simulator(object):
         self.order = None
         if name == "__class__.__name__":
             self.name = self.__class__.__name__
-        self.log = logging.getLogger(__name__)
+        self.log = logging.getLogger(self.name)
         # The following are boolean state values for the simulator
         self.configured = False
         self.logging = False
@@ -98,7 +98,7 @@ class Simulator(object):
         self.starting = False
         self.paused = False
         self.commandLine = commandLine
-        self.Caches = CacheManager()
+        self.Caches = CacheManager(self.name)
         self.initOptions()
         
     def initOptions(self):

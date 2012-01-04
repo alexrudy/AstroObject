@@ -1,15 +1,17 @@
+.. module:: AstroObject.Utilities
+
 AstroObject Utilities
 *********************
 
 These are mostly internal module utility functions, documented here in case you find them useful. They are not guaranteed to function in any way.
 
-.. autofunction:: Utilities.getVersion
+.. autofunction:: AstroObject.Utilities.getVersion
 
-.. autofunction:: Utilities.npArrayInfo
+.. autofunction:: AstroObject.Utilities.npArrayInfo
 
-.. autofunction:: Utilities.expandLim
+.. autofunction:: AstroObject.Utilities.expandLim
 
-.. autofunction:: Utilities.BlackBody
+.. autofunction:: AstroObject.Utilities.BlackBody
 
-.. autofunction:: Utilities.Gaussian
+.. autofunction:: AstroObject.Utilities.Gaussian
 

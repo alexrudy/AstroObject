@@ -191,10 +191,13 @@ class NumpyCache(Cache):
 
 class CacheManager(object):
     """An object for maintaining caches"""
-    def __init__(self,**kwargs):
+    def __init__(self,name=None,**kwargs):
         super(CacheManager, self).__init__()
-        self.log = logging.getLogger(__name__)
-        self.log.start()
+        if name == None:
+            self.name = self.__class__.__name__
+        else:
+            self.name = name
+        self.log = logging.getLogger(self.name)
         self.caches = {}
         self.enabled = True
         
