@@ -176,7 +176,7 @@ class Simulator(object):
     def configure(self,configFile=None,configuration=None):
         """Configure this logging object"""
         if self.running:
-            return ConfigurationError("Cannot add a new stage to the simulator, the simulation has already started!")
+            return ConfigurationError("Cannot configure the simulator, the simulation has already started!")
         if self.configured:
             raise ConfigurationError("%s appears to be already configured" % (self.name))
         # Configure from Variable
