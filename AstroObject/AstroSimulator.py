@@ -133,7 +133,7 @@ class Simulator(object):
         self.macros["none"] = []
         
         
-    def registerStage(self,stage,name=None,description=None,position=None,exceptions=None,include=True):
+    def registerStage(self,stage,name=None,description=None,position=None,exceptions=None,include=True,help=False):
         """Adds a stage object to this simulator"""
         if self.running or self.starting:
             raise ConfigurationError("Cannot add a new stage to the simulator, the simulation has already started!")
@@ -239,31 +239,22 @@ class Simulator(object):
     
     def expandMacros(self):
         """Expand the macros to expand internal macros"""
-        for macro in self.macros:
-            self._expandMacros(macro)
-<<<<<<< Updated upstream
-        self.macros["all"] = [s for s in self.stages.keys() if s not in self.exclude]
-        self.macros["none"] = []
-=======
-
->>>>>>> Stashed changes
-        
+        expanded = {}
+        for macro in self.macros.keys():
+            expanded[macro] = self._expandMacros(macro)
+        self.macros = expanded
 
     def _expandMacros(self,macro,*expanded):
         """Expand Macros on a certain macro"""
         if macro in expanded:
             raise ConfigurationError("I seem to be in a recursive macro")
         newMacro = []
-        for stage in macro:
-            if stage in self.macros:
-                newMacro += self._expandMacros(self.macros[macro],macro,*expanded)
+        for stage in self.macros[macro]:
+            if stage in self.macros.keys():
+                newMacro += self._expandMacros(stage,macro,*expanded)
             else:
-                newMacro += stage
+                newMacro += [stage]
         return newMacro
-        
-    def testLenslets(self):
-        """A test for lenslets"""
-        print "NOT HERE!!! :("
         
     
     def startup(self):
@@ -326,14 +317,10 @@ class Simulator(object):
                         completed.append(stage)    
                 elif not use:
                     self.log.log(2,"Skipping stage %s" % stage)
-<<<<<<< Updated upstream
                     self.inorder = False
-                if use:
+                elif use:
                     if not self.inorder:
                         self.log.warning("Stages have run out of order... mileage may vary.")
-=======
-                elif use:
->>>>>>> Stashed changes
                     self.execute(stage)
                     completed.append(stage)
             else:
