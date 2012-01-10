@@ -50,6 +50,8 @@ class LogManager(logging.getLoggerClass()):
         self.buffer.setLevel(0)
         self.addHandler(self.buffer)
         
+        self.null = logging.NullHandler()
+        
         self.running = True
     
     config = {
@@ -146,6 +148,7 @@ class LogManager(logging.getLoggerClass()):
         self.removeHandler(self.buffer)
         self.buffer.flush()
         if not self.handling:
+            self.addHandler(self.null)
             self.log(8,"Logger not actually handling anything!")
             
     def useConsole(self,use=None):
