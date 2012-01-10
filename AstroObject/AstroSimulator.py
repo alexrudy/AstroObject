@@ -31,7 +31,7 @@ __all__ = ["Simulator"]
 __version__ = getVersion()
 
 class Stage(object):
-    """docstring for Stage"""
+    """A stage object for maintaing data structure"""
     def __init__(self,stage,name="a Stage",description="A description",order=0,exceptions=None):
         super(Stage, self).__init__()
         self.do = stage
@@ -100,7 +100,31 @@ class Simulator(object):
         self.initOptions()
         
     def initOptions(self):
-        """Initializes the command line options for this script"""
+        """Initializes the command line options for this script.
+        
+        Command line options are:
+        
+        ============= =====================
+        CLI Option    Description
+        ============= =====================
+        --version     Display version information about this module
+        --do-plot     Show debugging plots which will be stored in the Partials directory
+        --no-cache    Disable all caching mechanisms
+        --debug,-d    Turn on debugging messages
+        --config      Specify a configuration file
+        --dump-config Write the current configuration to file
+        ============= =====================
+        
+        Macros defined at this level are:
+        
+        ======== ===========
+        Macro    Result
+        ======== ===========
+        *all     Includes every stage
+        *none    Doesn't include any stages
+        ======== ===========
+        
+        """
         self.USAGE = "%(command)s %(basicOpts)s %(subcommand)s"
         self.USAGEFMT = { 'command' : os.path.basename(sys.argv[0]), 'basicOpts': "[ -E | -D | -T ]", 'subcommand' : "{macro}" }
         ShortHelp = "Command Line Interface for %(name)s" % { 'name': self.name }
@@ -149,14 +173,22 @@ class Simulator(object):
             exceptions = tuple()
         if help == False:
             help = argparse.SUPPRESS
+            inhelp = help
+            exhelp = help
         elif help == None:
             help = "stage %s" % name
+            inhelp = "Include " + help
+            exhelp = "Exclude " + help
+        else:
+            inhelp = "Include " + help
+            exhelp = "Exclude " + help
+            
         
         stageObject = Stage(stage,name=name,description=description,order=position,exceptions=exceptions)
         self.stages[name] = stageObject
         self.orders[position] = name
-        self.pos_stage_parser.add_argument("+"+name,action='append_const',dest='include',const=name,help="Include "+help)
-        self.neg_stage_parser.add_argument("-"+name,action='append_const',dest='exclude',const=name,help="Exclude "+help)
+        self.pos_stage_parser.add_argument("+"+name,action='append_const',dest='include',const=name,help=inhelp)
+        self.neg_stage_parser.add_argument("-"+name,action='append_const',dest='exclude',const=name,help=exhelp)
         if include:
             self.macros["all"] += [name]
         
