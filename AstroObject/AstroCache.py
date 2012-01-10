@@ -44,7 +44,11 @@ class Cache(object):
     """A simple cache object"""
     def __init__(self,name=None,generate=None,load=None,save=None,stage=None,autosave=True,enabled=True,filename=None,directory=None,**kwargs):
         super(Cache, self).__init__()
+        
         self.name = name
+        
+        self.log = logging.getLogger(__name__)
+        
         self.cache_generate = generate
         self.cache_save = save
         self.cache_load = load
@@ -63,7 +67,7 @@ class Cache(object):
         if directory == None:
             directory = "Caches"
         if not os.path.isdir(directory):
-            raise CacheError("Specified directory is invalid: %s" % directory)
+            self.log.warn("Specified directory is invalid: %s" % directory)
         self.directory = directory
         self.fullname = os.path.join(self.directory,self.filename)
         
@@ -75,7 +79,6 @@ class Cache(object):
         self.ready = False
         self.saved = False
         
-        self.log = logging.getLogger(__name__)
         
         self.data = None
         
