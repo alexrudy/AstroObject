@@ -204,7 +204,7 @@ class FITSObject(object):
         if statename != None and statename in self.states:
             return np.copy(self.states[statename]())
         else:
-            raise KeyError("Object %s not instantiated with any data..." % self)
+            raise KeyError("%s: State %s does not exist" % (self,statename))
     
     def frame(self,statename=None):
         """Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.
@@ -227,7 +227,7 @@ class FITSObject(object):
         if statename != None and statename in self.states:
             return self.states[statename]
         else:
-            raise KeyError("Object %s not instantiated with any data..." % self)
+            raise KeyError("%s: State %s does not exist" % (self,statename))
     
     def object(self,statename=None):
         LOG.log(5,"Method \".object()\" on %s has been depreciated. Please use \".frame()\" instead." % self)
@@ -236,7 +236,7 @@ class FITSObject(object):
     def select(self,statename):
         """Sets the default frame to the given statename. Normally, the default frame is the one that was last saved."""
         if statename not in self.states:
-            raise IndexError("State %s does not exist!" % statename)
+            raise IndexError("%s: State %s does not exist" % (self,statename))
         self.statename = statename
         LOG.log(5,"Selected state \'%s\'" % statename)
         return
@@ -271,7 +271,7 @@ class FITSObject(object):
         newStates = {}
         for statename in statenames:
             if statename not in self.states:
-                raise IndexError("%s: Object %s does not exist!" % (self,statename))
+                raise IndexError("%s: State %s does not exist!" % (self,statename))
             newStates[statename] = oldStates[statename]
         LOG.log(5,"%s: Kept states %s" % (self,list(statenames)))
         self.states = newStates
@@ -299,7 +299,7 @@ class FITSObject(object):
         if statename != None and statename in self.states:
             return self.states[statename].__show__()
         else:
-            raise KeyError("Object not instantiated with any data...")
+            raise KeyError("State %s does not exist" % statename)
     
     def write(self,filename=None,states=None,primaryState=None,clobber=False):
         """Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify ``states`` then only those states will be used. ``primaryState`` should be the state of the front HDU. When not specified, the latest state will be used. It uses the :attr:`dataClasses` :meth:`FITSFrame.__hdu__` method to return a valid HDU object for each Frame."""
