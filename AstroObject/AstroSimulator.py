@@ -44,7 +44,7 @@ class Stage(object):
         self.order = order
 
 class Simulator(object):
-    """A Simulator, used for running large segements of code with detailed logging and progress checking"""
+    """A Simulator, used for running large segements of code with detailed logging and progress checking. Simulators have a name, the `name` parameter can be left as is to use the name of the simulator's class (mostly useful if you subclassed it!). The `commandLine` parameter can be set to False to prevent the simulator collecting arguments from `sys.argv` for use. This allows you to programatically call the simulator with the :meth:`do` method."""
     
     name = "Simulator"
     
@@ -57,6 +57,7 @@ class Simulator(object):
         },
         "Configs" : {
             "Main" : "Simulator.yaml",
+            "This" : "Simulator.yaml",
         },
         "logging" : {
           "console" : {
@@ -100,29 +101,30 @@ class Simulator(object):
         self.initOptions()
         
     def initOptions(self):
-        """Initializes the command line options for this script.
+        """Initializes the command line options for this script. This function is automatically called on construction, and provides the following default command options which are already supported by the simulator
         
         Command line options are:
         
-        ============= =====================
-        CLI Option    Description
-        ============= =====================
-        --version     Display version information about this module
-        --do-plot     Show debugging plots which will be stored in the Partials directory
-        --no-cache    Disable all caching mechanisms
-        --debug,-d    Turn on debugging messages
-        --config      Specify a configuration file
-        --dump-config Write the current configuration to file
-        ============= =====================
+        ================ =====================
+        CLI Option       Description
+        ================ =====================
+        `--version`      Display version information about this module
+        `--do-plot`      Show debugging plots which will be stored in the Partials directory
+        `--no-cache`     Disable all caching mechanisms
+        `--debug`,`-d`   Turn on debugging messages
+        `--config`       Specify a configuration file
+        `--dump-config`  Write the current configuration to file
+        `--print-stages` Print the stages that the command will execute, do not do anything
+        ================ =====================
         
         Macros defined at this level are:
         
-        ======== ===========
+        ======== ==================================================
         Macro    Result
-        ======== ===========
-        *all     Includes every stage
-        *none    Doesn't include any stages
-        ======== ===========
+        ======== ==================================================
+        `*all`   Includes every stage
+        `*none`  Doesn't include any stages (technically redundant)
+        ======== ==================================================
         
         """
         self.USAGE = "%(command)s %(basicOpts)s %(subcommand)s"
@@ -158,11 +160,42 @@ class Simulator(object):
         
         
     def registerStage(self,stage,name=None,description=None,position=None,exceptions=None,include=True,help=False):
-        """Adds a stage object to this simulator"""
+        """Register a stage for operation with the simulator. The stage will then be available as a command line option, and will be operated with the simulator.
+        
+        Registered stages can be explicity run from the command line by including::
+            
+            $ Simulator +stage
+            
+        And can be explicity excluded from the command line::
+            
+            $ Simulator -stage
+            
+        Where `+stage` will override `-stage` so::
+            
+            $ Simulator +test -test
+            $ Simulator -test +test
+            
+        will both run the `test` stage.
+        
+        =================== ==============
+        keyword             Description
+        =================== ==============
+        stage               The function to run for this stage. Should not take any arguments
+        name                The command-line name of this stage (no spaces, `+`, `-`, or `*`)
+        description         A short description, which will be used by the logger when displaying information about the stage
+        position            A number, describing the position in the ordering for this stage. If None, stages are appended to the end of the stage list.
+        exceptions          A tuple of exceptions which are acceptable results for this stage. These exceptions will be caught and logged, but will allow the simulator to continue
+        include             A boolean, Whether to include this stage in the `*all` macro or not.
+        help                Help text for the command line argument. A value of False excludes the help, None includes generic help.
+        =================== ==============
+        """
         if self.running or self.starting:
             raise ConfigurationError("Cannot add a new stage to the simulator, the simulation has already started!")
         if position == None:
-            position = len(self.stages)
+            if len(self.orders.keys()) == 0:
+                position = 0
+            else:
+                position = max(self.orders.keys()) + 1
         if name == None:
             raise ValueError("Stage must have a name")
         if position in self.orders:
@@ -193,7 +226,8 @@ class Simulator(object):
             self.macros["all"] += [name]
         
     def registerMacro(self,name,*stages,**kwargs):
-        """Adds a new macro to the simulation"""
+        """Add a new macro to the simulation. Macros are groups of stages (and other macros) which can be called fromthe command line using the `*` parameter. Macros are registered with the command name (without the `*`) and the remaining arguments are the stage/macro names to be included. Kewyord argumetns can be included, and will be passed to argparse.add_argument
+        """
         if self.running or self.starting:
             raise ConfigureError("Cannot add macro after simulator has started!")
             
@@ -231,9 +265,10 @@ class Simulator(object):
             self.log.log(8,"No configuration provided or accessed. Using defaults.")
         self.log.configure(configuration=self.config)
         self.log.start()
-        with open(self.config["Dirs"]["Partials"]+"/config-%s.yaml" % (self.name),"w") as stream:
-            stream.write("# Configuration from %s\n" % self.name)
-            yaml.dump(self.config,stream,default_flow_style=False) 
+        if os.path.isdir(self.config["Dirs"]["Partials"]):
+            with open(self.config["Dirs"]["Partials"]+"/config-%s.yaml" % (self.name),"w") as stream:
+                stream.write("# Configuration from %s\n" % self.name)
+                yaml.dump(self.config,stream,default_flow_style=False) 
         
         
     
