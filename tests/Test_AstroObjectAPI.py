@@ -25,7 +25,7 @@ import matplotlib.image as mpimage
 # Python Imports
 import math, copy, sys, time, logging, os
 
-__all__ = ["API_Base_Frame","API_Base_Object","API_Base_Functional"]
+__all__ = ["API_Base","API_Base_Frame","API_Base_Object","API_Base_Functional"]
 
 class API_Base(object):
     """Methods common to all tests!"""

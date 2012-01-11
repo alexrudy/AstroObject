@@ -16,6 +16,8 @@ from scipy import ndimage
 from scipy.spatial.distance import cdist
 from scipy.linalg import norm
 
+import yaml
+
 # Standard Python Modules
 import math, copy, sys, time, logging, os
 import argparse
@@ -23,7 +25,7 @@ import argparse
 # Submodules from this system
 from Utilities import *
 
-__all__ = ["CacheManager","CacheIOError"]
+__all__ = ["CacheManager","CacheIOError","YAMLCache"]
 
 class CacheError(Exception):
     """Error in caching"""
@@ -42,7 +44,11 @@ class Cache(object):
     """A simple cache object"""
     def __init__(self,name=None,generate=None,load=None,save=None,stage=None,autosave=True,enabled=True,filename=None,directory=None,**kwargs):
         super(Cache, self).__init__()
+        
         self.name = name
+        
+        self.log = logging.getLogger(__name__)
+        
         self.cache_generate = generate
         self.cache_save = save
         self.cache_load = load
@@ -61,7 +67,7 @@ class Cache(object):
         if directory == None:
             directory = "Caches"
         if not os.path.isdir(directory):
-            raise CacheError("Specified directory is invalid: %s" % directory)
+            self.log.warn("Specified directory is invalid: %s" % directory)
         self.directory = directory
         self.fullname = os.path.join(self.directory,self.filename)
         
@@ -73,13 +79,16 @@ class Cache(object):
         self.ready = False
         self.saved = False
         
-        self.log = logging.getLogger(__name__)
         
         self.data = None
         
     def load(self):
         """Load the contents of this cache into the cache object, using the load function."""
         if self.ready:
+            self.log.debug("%(name)s Cache Load Unecessary: already %(result)s." % { 'name': self.name, 'result': "loaded" if self.loaded else "generated" })
+            return self.loaded
+        if not self.enabled:
+            self.regenerate = True
             return self.loaded
         try:
             with file(self.fullname,'r') as stream:
@@ -96,9 +105,10 @@ class Cache(object):
         
     def generate(self,save=True):
         """Generate the cache data."""
-        if self.ready:
+        if self.generated:
+            self.log.debug("%(name)s Cache Generate Unecessary: already %(result)s." % { 'name': self.name, 'result': "loaded" if self.loaded else "generated" })
             return self.generated
-        if self.regenerate:
+        else:
             try:
                 self.data = self.cache_generate()
             except (IOError,CacheError) as e:
@@ -117,6 +127,7 @@ class Cache(object):
     def save(self):
         """Save the cache files"""
         if not self.enabled or not self.ready:
+            self.log.log(2,"Cache not saved because it is not %s" % "enabled" if not self.enabled else "ready")
             return False
         if self.ready and not self.regenerate:
             try:
@@ -127,11 +138,20 @@ class Cache(object):
                 self.log.critical("%(name)s Cache Save Failure. %(msg)s." % { 'name': self.name, 'msg': self.cache_msg })
                 raise
             else:
-                self.log.debug("%(name)s saved Cache Files." % { 'name': self.name })
+                self.log.debug("%(name)s saved Cache Files to %(fn)s." % { 'name': self.name ,'fn':self.fullname})
                 self.saved = True
         else:
             raise CacheStateError("Data needs to be %s" % ("regenerated" if self.regenerate else "generated"))
         return self.saved
+       
+    def reset(self):
+        """Reset the cache object to its starting state"""
+        self.regenerate = False
+        self.generated = False
+        self.loaded = False
+        self.ready = False
+        self.saved = False
+        self.data = None
         
     def clear(self):
         """Clear the cache file"""
@@ -187,7 +207,22 @@ class NumpyCache(Cache):
             self.cache_msg = str(e)
             raise CacheIOError(self.cache_msg)
         return self.data
-            
+
+class YAMLCache(Cache):
+    """A cached YAML document"""
+    def __init__(self, **kwargs):
+        super(YAMLCache, self).__init__(**kwargs)
+        if self.cache_load != None:
+            raise CacheError("Function provided for LOAD in YAML cache... hmmm")
+        self.cache_save = self.write
+        self.cache_load = yaml.load
+        
+    def write(self,stream,data):
+        """Write the cache"""
+        yaml.dump(data,stream,default_flow_style=False)
+        
+        
+           
 
 class CacheManager(object):
     """An object for maintaining caches"""
@@ -197,9 +232,18 @@ class CacheManager(object):
             self.name = self.__class__.__name__
         else:
             self.name = name
-        self.log = logging.getLogger(self.name)
+        self.log = logging.getLogger(__name__)
         self.caches = {}
         self.enabled = True
+        self.directory = None
+        
+    def registerCustom(self,name,kind=Cache,directory=None,**kwargs):
+        """Register a custom type of caching object"""
+        if directory == None and self.directory != None:
+            directory = self.directory
+        cache = kind(name=name,directory=directory,**kwargs)
+        self.caches[name] = cache
+        self.log.debug("Registered Cache %s of kind %s" % (name,kind))
         
     def registerNPY(self,name,generate=None,stage=None,directory=None,filename=None,**kwargs):
         """Register a Numpy Cache"""
@@ -243,6 +287,45 @@ class CacheManager(object):
             generate |= self.caches[cache].regenerate
         return generate
     
+    def check(self,*caches,**kwargs):
+        """docstring for check"""
+        self.load()
+        if len(caches) == 0:
+            caches = tuple(self.caches.keys())
+        check = self.shouldGenerate(*caches)
+        if "master" in kwargs:
+            check |= not self.checkCache(kwargs["master"])
+        if check:
+            self.trigger()
+            self.log.info("Caches appear out of date. Regenerating.")
+        return check
+    
+    def checkCache(self,*caches):
+        """Checks to see if the cache is the same as the generated output."""
+        cached = True
+        if len(caches) == 0:
+            caches = tuple(self.caches.keys())
+        for cache in caches:
+            cacheObject = self.caches[cache]
+            cacheObject.reset()
+            if not cacheObject.load():
+                cached = False
+                self.log.log(2,"Manager thinks %(cache)s %(result)s need regenerating, because it couldn't be loaded" % {'cache':cache,'result':"does"})
+            else:
+                saved = cacheObject()
+                cacheObject.reset()
+                cacheObject.generate(save=False)
+                gened = cacheObject()
+                cacheObject.reset()
+                result = saved == gened
+                cached &= result
+                if not result:
+                    with open("Partials/CACHETEST.dat",'w') as stream:
+                        stream.write(str(saved)+"\n\n\n"+str(gened))
+                self.log.log(2,"Manager thinks %(cache)s %(result)s need regenerating" % {'cache':cache,'result':"doesn't" if result else "does"})
+        self.log.log(5,"Manager %(action)s the caches %(list)s" % {'action': "checked",'list': str(caches) })
+        return cached
+    
     def generate(self,*caches):
         """Generate caches for each of the called items"""
         generated = []
@@ -251,6 +334,7 @@ class CacheManager(object):
         for cache in caches:
             if self.caches[cache].generate():
                 generated += [cache]
+        self.log.log(5,"Manager %(action)s the caches %(list)s" % {'action': "generated",'list': str(generated) })
         return generated
         
     def load(self,*caches):
@@ -261,6 +345,7 @@ class CacheManager(object):
         for cache in caches:
             if self.caches[cache].load():
                 loaded += [cache]
+        self.log.log(5,"Manager %(action)s the caches %(list)s" % {'action': "loaded",'list': str(loaded) })
         return loaded
         
     def save(self,*caches):
@@ -271,7 +356,21 @@ class CacheManager(object):
         for cache in caches:
             if self.caches[cache].save():
                 saved += [cache]
+        self.log.log(5,"Manager %(action)s the caches %(list)s" % {'action': "saved",'list': str(saved) })
         return saved
+    
+    def reset(self):
+        """docstring for reset"""
+        reset = []
+        if len(caches) == 0:
+            caches = tuple(self.caches.keys())
+        for cache in caches:
+            self.caches[cache].reset()
+            reset += [cache]
+        self.log.log(5,"Manager %(action)s the caches %(list)s" % {'action': "reset",'list': str(reset) })
+        return reset
+        
+    
     
     def clear(self,*caches):
         """Save the caches to files"""
@@ -281,6 +380,7 @@ class CacheManager(object):
         for cache in caches:
             if self.caches[cache].clear():
                 cleared += [cache]
+        self.log.log(5,"Manager %(action)s the caches %(list)s" % {'action': "cleared",'list': str(cleared) })
         return cleared
     
         
@@ -292,6 +392,7 @@ class CacheManager(object):
         for cache in caches:
             if self.caches[cache].trigger():
                 triggered += [cache]
+        self.log.log(5,"Manager %(action)s the caches %(list)s" % {'action': "triggered",'list': str(triggered) })
         return triggered
         
     def disable(self,*caches):
@@ -303,6 +404,7 @@ class CacheManager(object):
             if self.caches[cache].enabled:
                 disabled += [cache]
             self.caches[cache].enabled = False
+        self.log.log(5,"Manager %(action)s the caches %(list)s" % {'action': "disabled",'list': str(disabled) })
         return disabled
         
     def enabled(self,*caches):
@@ -314,6 +416,7 @@ class CacheManager(object):
             if self.caches[cache].enabled:
                 enabled += [cache]
             self.caches[cache].enabled = True
+        self.log.log(5,"Manager %(action)s the caches %(list)s" % {'action': "enabled",'list': str(enabled) })
         return enabled
         
     def get(self,cache):

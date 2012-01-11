@@ -28,6 +28,7 @@ class LogManager(logging.getLoggerClass()):
     
     def __init__(self,name):
         super(LogManager,self).__init__(name)
+        self.name = name
         self.configured = False
         self.running = False
         self.handling = False
@@ -49,6 +50,8 @@ class LogManager(logging.getLoggerClass()):
         self.buffer.setLevel(0)
         self.addHandler(self.buffer)
         
+        self.null = logging.NullHandler()
+        
         self.running = True
     
     config = {
@@ -66,11 +69,9 @@ class LogManager(logging.getLoggerClass()):
                         'level' : None,
                     },
                 },
-                'System' : {
                     'Dirs': {
                         'Logs' : "Logs/"
                     },
-                },
             }
     
     def configure(self,configFile=None,configuration=None):
@@ -122,11 +123,11 @@ class LogManager(logging.getLoggerClass()):
             self.handling |= True
         
         self.logfile = None
-        self.logfolder = self.config["System"]["Dirs"]["Logs"]
+        self.logfolder = self.config["Dirs"]["Logs"]
         
         # Only set up the file log handler if we can actually access the folder
         if os.access(self.logfolder,os.F_OK):
-            filename = self.config["System"]["Dirs"]["Logs"] + self.config["logging"]["file"]["filename"]+".log"
+            filename = self.config["Dirs"]["Logs"] + self.config["logging"]["file"]["filename"]+".log"
             
             self.logfile = logging.handlers.TimedRotatingFileHandler(filename=filename,when='midnight')
             fileformatter = logging.Formatter(self.config["logging"]["file"]["format"],datefmt=self.config["logging"]["file"]["dateformat"])
@@ -147,14 +148,17 @@ class LogManager(logging.getLoggerClass()):
         self.removeHandler(self.buffer)
         self.buffer.flush()
         if not self.handling:
+            self.addHandler(self.null)
             self.log(8,"Logger not actually handling anything!")
             
-    def toggleConsole(self,value=None):
+    def useConsole(self,use=None):
         """Turn on or off the console logging"""
-        if value != None:
-            self.doConsole = not value
+        if use != None:
+            # THIS SHOULD BE BACKWARDS
+            # If we turn the console on now, then this very function will turn it off in a minute!
+            self.doConsole = not use
         if not self.handling:
-            raise ConfigurationError("Logger appears to be already handling messages")
+            self.log(8,"Logger appears to not already be handling messages")
         if not self.running:
             raise ConfigurationError("Logger appears to not be running. This should never happen")
         if not self.config["logging"]["console"]["enable"]:
