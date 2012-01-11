@@ -158,7 +158,7 @@ class LogManager(logging.getLoggerClass()):
             # If we turn the console on now, then this very function will turn it off in a minute!
             self.doConsole = not use
         if not self.handling:
-            raise ConfigurationError("Logger appears to be already handling messages")
+            self.log(8,"Logger appears to not already be handling messages")
         if not self.running:
             raise ConfigurationError("Logger appears to not be running. This should never happen")
         if not self.config["logging"]["console"]["enable"]:
