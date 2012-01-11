@@ -183,7 +183,7 @@ class FITSObject(object):
         else:
             Object.label = statename
         if statename in self.states and not (clobber or self.clobber):
-            raise KeyError("Cannot Duplicate State Name: %s \nUse remove(\'%s\') to clear" % (statename,statename))
+            raise KeyError("Cannot Duplicate State Name: \'%s\' Use this.remove(\'%s\') or clobber=True" % (statename,statename))
         elif statename in self.states:
             LOG.log(2,"Overwiting the frame %s" % statename)
         # Save the actual state
@@ -281,6 +281,7 @@ class FITSObject(object):
     def remove(self,*statenames):
         """Removes the specified frame(s) from the object."""
         removed = []
+        LOG.log(2,"%s: Requested remove %s" % (self,statenames))
         for statename in statenames:
             if statename not in self.states:
                 raise IndexError("%s: Object %s does not exist!" % (self,statename))
