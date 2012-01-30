@@ -228,7 +228,7 @@ class ResampledSpectrum(InterpolatedSpectrum):
         exps =  - 0.5 * (MWL - MCENT) ** 2.0 / (MSIGM ** 2.0)
         
         base = np.sum(curves * ones, axis=1)
-        top = np.sum(curves * oldfl,axis=1)
+        top  = np.sum(curves * oldfl,axis=1)
         
         zeros = base == np.zeros(base.shape)
         if np.sum(zeros) > 0:

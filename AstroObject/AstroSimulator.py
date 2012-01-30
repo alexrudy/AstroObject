@@ -240,7 +240,7 @@ class Simulator(object):
         self.macros[name] = list(stages)
         
     def configure(self,configFile=None,configuration=None):
-        """Configure this logging object"""
+        """Configure this object. Configuration happens first from passed dictionaries (`configuration` variable) and then from files. The result is that configuration will use the values from files in place of values from passed in dictionaries. Running this function twice requires re-setting the `self.configured`."""
         if self.running:
             return ConfigurationError("Cannot configure the simulator, the simulation has already started!")
         if self.configured:
@@ -270,20 +270,19 @@ class Simulator(object):
                 stream.write("# Configuration from %s\n" % self.name)
                 yaml.dump(self.config,stream,default_flow_style=False) 
         
-        
-    
     def parseArguments(self,*args):
-        """Parse arguments, and pre-apply appropriate values to configuration"""
+        """Parse arguments. Argumetns can be passed into this function like they would be passed to the command line. These arguments will only be parsed when the system is not in `commandLine` mode."""
         if args != None and not self.commandLine:
             Namespace = self.parser.parse_args(list(args))
+            self.options = vars(Namespace)
         elif self.commandLine:
             Namespace = self.parser.parse_args()
+            self.options = vars(Namespace)
         else:
             self.log.debug("Skipping argument parsing")
-        self.options = vars(Namespace)
     
     def pre_applyArguments(self):
-        """Apply arguments before configure"""
+        """Applies arguments before configuration. Only argument applied is the name of the configuration file, allowing the command line to change the configuration file name."""
         if "config" in self.options and self.options["config"] != None:
             self.config["Configs"]["This"] = self.options["config"]
 
@@ -291,7 +290,7 @@ class Simulator(object):
     
     
     def post_applyArguments(self):
-        """Apply post-arguments"""
+        """Apply arguments after configuration. The arguments applied here flesh out macros, and copy data from the configuration system into the operations system."""
         if "exclude" not in self.options or not isinstance(self.options["exclude"],list):
             self.options["exclude"] = []
         if "include" not in self.options or not isinstance(self.options["include"],list):
@@ -305,14 +304,14 @@ class Simulator(object):
         self.log.log(2,"Macro Stages %s" % (self.macro))
     
     def expandMacros(self):
-        """Expand the macros to expand internal macros"""
+        """Recursively traverse macros and turn them into lists of stages, rather than lists of stages and macros."""
         expanded = {}
         for macro in self.macros.keys():
             expanded[macro] = self._expandMacros(macro)
         self.macros = expanded
 
     def _expandMacros(self,macro,*expanded):
-        """Expand Macros on a certain macro"""
+        """Recursive macro expansion function"""
         if macro in expanded:
             raise ConfigurationError("I seem to be in a recursive macro")
         newMacro = []
@@ -323,9 +322,8 @@ class Simulator(object):
                 newMacro += [stage]
         return newMacro
         
-    
     def startup(self):
-        """Basic actions for simulator startup"""
+        """Start up the simulation. """
         self.starting = True
         self.expandMacros()
         self.parseArguments()
@@ -336,7 +334,7 @@ class Simulator(object):
         self.starting = False
         
     def next(self):
-        """Return the name of the next stage"""
+        """Return the name of the next stage for the simulator."""
         if self.starting:
             raise ConfigurationError("Simulator hasn't finished starting")
         if self.order == None:
@@ -359,7 +357,7 @@ class Simulator(object):
         self.exit()
     
     def do(self,*args):
-        """Pass a series of modules etc. to this command, to run the system."""
+        """Run the simulator. Parses arguments (*args) passed in to take control of the system"""
         if self.running:
             raise ConfigurationError("Simulator is already running!")
         
@@ -384,7 +382,8 @@ class Simulator(object):
                         completed.append(stage)    
                 elif not use:
                     self.log.log(2,"Skipping stage %s" % stage)
-                    self.inorder = False
+                    if stage in self.macros["all"]:
+                        self.inorder = False
                 elif use:
                     if not self.inorder:
                         self.log.warning("Stages have run out of order... mileage may vary.")

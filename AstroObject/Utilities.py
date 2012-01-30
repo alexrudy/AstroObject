@@ -114,9 +114,13 @@ def npArrayInfo(array,name):
     
     ::
         
-        >>>arr = np.array([1,2,3,4,5,np.nan])
-        >>>print npArrayInfo(arr,"Some Array")
+        >>> arr = np.array([0,1,2,3,4,5,np.nan])
+        >>> print npArrayInfo(arr,"Some Array")
+        Some Array has 7 elements with shape (7,). Range [  nan,  nan] Zeros 1 ( 14%). NaNs 1 ( 14%). 
+        >>> print npArrayInfo(arr[1:-1],"Some Array")
+        Some Array has 5 elements with shape (5,). Range [    1,    5]
         
+      
     """
     fmtr = {}
     MSG = ""
