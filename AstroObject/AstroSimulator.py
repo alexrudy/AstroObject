@@ -32,7 +32,7 @@ __version__ = getVersion()
 
 class Stage(object):
     """A stage object for maintaing data structure"""
-    def __init__(self,stage,name="a Stage",description="A description",order=0,exceptions=None):
+    def __init__(self,stage,name="a Stage",description="A description",order=0,exceptions=None,dependencies=None):
         super(Stage, self).__init__()
         self.do = stage
         if exceptions == None:
@@ -42,6 +42,7 @@ class Stage(object):
         self.name = name
         self.description = description
         self.order = order
+        self.deps = dependencies
 
 class Simulator(object):
     """A Simulator, used for running large segements of code with detailed logging and progress checking. Simulators have a name, the `name` parameter can be left as is to use the name of the simulator's class (mostly useful if you subclassed it!). The `commandLine` parameter can be set to False to prevent the simulator collecting arguments from `sys.argv` for use. This allows you to programatically call the simulator with the :meth:`do` method."""
@@ -128,7 +129,7 @@ class Simulator(object):
         
         """
         self.USAGE = "%(command)s %(basicOpts)s %(subcommand)s"
-        self.USAGEFMT = { 'command' : os.path.basename(sys.argv[0]), 'basicOpts': "[ -E | -D | -T ]", 'subcommand' : "{macro}" }
+        self.USAGEFMT = { 'command' : "%(prog)s", 'basicOpts': "[ configuartion options ]", 'subcommand' : "{macro}" }
         ShortHelp = "Command Line Interface for %(name)s" % { 'name': self.name }
         self.parser = argparse.ArgumentParser(description=ShortHelp,
             formatter_class=argparse.RawDescriptionHelpFormatter,usage=self.USAGE % self.USAGEFMT,prefix_chars="-+*")
@@ -154,6 +155,7 @@ class Simulator(object):
         self.macro_parser.add_argument("*none",action='append_const',dest='macros',const='none',help=argparse.SUPPRESS)
         self.pos_stage_parser = self.parser.add_argument_group('Stages')
         self.neg_stage_parser = self.parser.add_argument_group('Remove Stages')
+        self.config_parser = self.parser.add_argument_group("Configuration")
         
         self.macros["all"] = []
         self.macros["none"] = []
@@ -239,6 +241,20 @@ class Simulator(object):
         self.mparse[name] = self.macro_parser.add_argument("*"+name,action='append_const',dest='macros',const=name,help=help,**kwargs)
         self.macros[name] = list(stages)
         
+    def registerConfigOpts(self,argument,configuration,**kwargs):
+        """Registers a bulk configuration option which will be provided with the USAGE statement"""
+        if self.running or self.starting:
+            raise ConfigureError("Cannot add macro after simulator has started!")
+        
+        if "help" not in kwargs:
+            help = argparse.SUPPRESS
+        else:
+            help = kwargs["help"]
+            del kwargs["help"]
+        
+        self.config_parser.add_argument("-"+argument,action='append_const',dest='preconfig',const=configuration,help=help,**kwargs)
+        
+        
     def configure(self,configFile=None,configuration=None):
         """Configure this object. Configuration happens first from passed dictionaries (`configuration` variable) and then from files. The result is that configuration will use the values from files in place of values from passed in dictionaries. Running this function twice requires re-setting the `self.configured`."""
         if self.running:
@@ -263,8 +279,12 @@ class Simulator(object):
         
         if not self.configured:
             self.log.log(8,"No configuration provided or accessed. Using defaults.")
+        
+        # Start Logging
         self.log.configure(configuration=self.config)
         self.log.start()
+        
+        # Write Configuration to Partials Directory
         if os.path.isdir(self.config["Dirs"]["Partials"]):
             with open(self.config["Dirs"]["Partials"]+"/config-%s.yaml" % (self.name),"w") as stream:
                 stream.write("# Configuration from %s\n" % self.name)
@@ -285,6 +305,10 @@ class Simulator(object):
         """Applies arguments before configuration. Only argument applied is the name of the configuration file, allowing the command line to change the configuration file name."""
         if "config" in self.options and self.options["config"] != None:
             self.config["Configs"]["This"] = self.options["config"]
+        if "preconfig" in self.options and self.options["preconfig"] != None:
+            for config in self.options["preconfig"]:
+                self.config = update(self.config,config)
+        
 
         
     
