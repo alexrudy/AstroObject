@@ -25,7 +25,7 @@ for name,lvl in levels.iteritems():
 
 
 class LogManager(logging.getLoggerClass()):
-    
+    """A customized logging class. This class is automatically used whenever you are using an AstroObject module elsewhere in your program. It subsumes other logging classes, regardless of the situation. This logger provides many specialized functions useful for logging, but can be used just like a normal logger. By default, the logger starts in buffering mode, collecting messages until it is configured. The configuration then allows it to write messages to the console and to a log file."""
     def __init__(self,name):
         super(LogManager,self).__init__(name)
         self.name = name
@@ -35,10 +35,10 @@ class LogManager(logging.getLoggerClass()):
         self.doConsole = False
         self.level = False
         self.setLevel(1)
-        self.initialize()
+        self._initialize()
     
-    def initialize(self):
-        """Initializes this logger to buffer"""
+    def _initialize(self):
+        """Initializes this logger to buffer logs sent this way."""
         if self.handling:
             raise ConfigurationError("Logger appears to be already handling messages")
         if self.running:
@@ -75,7 +75,7 @@ class LogManager(logging.getLoggerClass()):
             }
     
     def configure(self,configFile=None,configuration=None):
-        """Configure this logging object"""
+        """Configure this logging object using a configuration dictionary. Configuration dictionaries can be provided by a YAML file or directly to the configuration argument. If both are provided, the YAML file will over-ride the explicit dictionary."""
         if self.configured:
             raise ConfigurationError("Logger appears to be already configured")
         if self.handling:
@@ -93,6 +93,7 @@ class LogManager(logging.getLoggerClass()):
                     self.config = update(self.config,loaded)
             except IOError as e:
                 self.warning("Couldn't load Configuration File %s" % configFile)
+                self.configured |= False
             else:
                 self.configured |= True
         
@@ -100,7 +101,7 @@ class LogManager(logging.getLoggerClass()):
             self.log(8,"No configuration provided or accessed. Using defaults.")
     
     def start(self):
-        """Starts this logger outputing"""
+        """Starts this logger running, using the configuration set using :meth:`configure`. The configuration can configure a file handler and a console handler. Arbitrary configurations are not possible at this point."""
         if self.handling:
             raise ConfigurationError("Logger appears to be already handling messages")
         if not self.running:
