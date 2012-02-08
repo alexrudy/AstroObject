@@ -7,16 +7,6 @@
 #  Version 0.3.0a1
 # 
 
-# Standard Scipy Toolkits
-import numpy as np
-import pyfits as pf
-import scipy as sp
-
-# Scipy Extras
-from scipy import ndimage
-from scipy.spatial.distance import cdist
-from scipy.linalg import norm
-
 # Standard Python Modules
 import math, copy, sys, time, logging, os,collections
 import yaml
@@ -61,6 +51,10 @@ class Configuration(dict):
             self.merge(new)
             loaded = True
         return loaded
+        
+    def extract(self):
+        """Extract the dictionary from this object"""
+        return dict(self)
     
 
 class StructuredConfiguration(Configuration):
