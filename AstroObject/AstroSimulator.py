@@ -24,6 +24,7 @@ import yaml
 
 # Submodules from this system
 from AstroCache import *
+from AstroConfig import *
 from Utilities import *
 
 __all__ = ["Simulator"]
@@ -49,7 +50,16 @@ class Simulator(object):
     
     name = "Simulator"
     
-    config = {
+    def __init__(self,name="__class__.__name__",commandLine=True):
+        super(Simulator, self).__init__()
+        self.stages = {}
+        self.orders = {}
+        self.macros = {}
+        self.mparse = {}
+        self.exclude = []
+        self.name = name
+        self.order = None
+        self.config = StructuredConfiguration({
         "Dirs" : {
             "Caches" : "Caches",
             "Logs" : "Logs/",
@@ -74,17 +84,7 @@ class Simulator(object):
                 'level' : None,
           },
         },
-    }
-    
-    def __init__(self,name="__class__.__name__",commandLine=True):
-        super(Simulator, self).__init__()
-        self.stages = {}
-        self.orders = {}
-        self.macros = {}
-        self.mparse = {}
-        self.exclude = []
-        self.name = name
-        self.order = None
+       })
         if name == "__class__.__name__":
             self.name = self.__class__.__name__
         self.log = logging.getLogger(self.name)
@@ -263,19 +263,12 @@ class Simulator(object):
             raise ConfigurationError("%s appears to be already configured" % (self.name))
         # Configure from Variable
         if configuration != None:
-            self.config = update(self.config,configuration)
+            self.config.merge(configuration)
             self.log.debug("Updated Configuration from variable")            
             self.configured |= True
         # Configure from File
         if configFile != None:
-            try:
-                with open(configFile,'r') as stream:
-                    loaded = yaml.load(stream)
-                    self.config = update(self.config,loaded)
-            except IOError as e:
-                self.log.warning("Couldn't load Configuration File %s" % configFile)
-            else:
-                self.configured |= True
+            self.configured |= self.config.load(configFile)
         
         if not self.configured:
             self.log.log(8,"No configuration provided or accessed. Using defaults.")
