@@ -283,10 +283,14 @@ class Simulator(object):
         # Start Logging
         self.log.configure(configuration=self.config)
         self.log.start()
+        if os.path.isdir(self.config["Dirs"]["Partials"]):
+            with open(self.config["Dirs"]["Partials"]+"/config-%s.yaml" % (self.name),"w") as stream:
+                stream.write("# Configuration from %s\n" % self.name)
+                yaml.dump(self.config,stream,default_flow_style=False) 
         
         # Write Configuration to Partials Directory
         if os.path.isdir(self.config["Dirs"]["Partials"]):
-            with open(self.config["Dirs"]["Partials"]+"/config-%s.yaml" % (self.name),"w") as stream:
+            with open("%s/config-%s.yaml" % (self.config["Dirs"]["Partials"],self.name),"w") as stream:
                 stream.write("# Configuration from %s\n" % self.name)
                 yaml.dump(self.config,stream,default_flow_style=False) 
         
