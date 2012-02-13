@@ -7,16 +7,6 @@
 #  Version 0.3.0a1
 # 
 
-# Standard Scipy Toolkits
-import numpy as np
-import pyfits as pf
-import scipy as sp
-
-# Scipy Extras
-from scipy import ndimage
-from scipy.spatial.distance import cdist
-from scipy.linalg import norm
-
 # Standard Python Modules
 import math, copy, sys, time, logging, os
 import argparse
@@ -24,6 +14,7 @@ import yaml
 
 # Submodules from this system
 from AstroCache import *
+from AstroConfig import *
 from Utilities import *
 
 __all__ = ["Simulator"]
@@ -53,7 +44,17 @@ class Simulator(object):
     
     name = "Simulator"
     
-    config = {
+    def __init__(self,name="__class__.__name__",commandLine=True):
+        super(Simulator, self).__init__()
+        self.stages = {}
+        self.macros = {}
+        self.exclude = []
+        self.include = []
+        self.attempt = []
+        self.complete = []
+        self.name = name
+        self.order = None
+        self.config = StructuredConfiguration({
         "Dirs" : {
             "Caches" : "Caches",
             "Logs" : "Logs/",
@@ -78,17 +79,7 @@ class Simulator(object):
                 'level' : None,
           },
         },
-    }
-    
-    def __init__(self,name="__class__.__name__",commandLine=True):
-        super(Simulator, self).__init__()
-        self.stages = {}
-        self.macros = {}
-        self.exclude = []
-        self.include = []
-        self.attempt = []
-        self.complete = []
-        self.name = name
+       })
         if name == "__class__.__name__":
             self.name = self.__class__.__name__
         self.log = logging.getLogger(self.name)
@@ -148,6 +139,7 @@ class Simulator(object):
         self.parser.add_argument('--do-plot',action='store_true',dest='plot',help="Enable debugging plots")
         self.parser.add_argument('--no-cache',action='store_false',dest='cache',
             help="ignore cached data from the simulator")
+        self.parser.add_argument('--clear-cache',action='store_true',dest='clear_cache')
         self.parser.add_argument('-d','--debug',action='store_true',dest='debug',help="enable debugging messages and plots")
         
         # Config Commands
@@ -249,19 +241,12 @@ class Simulator(object):
             raise ConfigurationError("%s appears to be already configured" % (self.name))
         # Configure from Variable
         if configuration != None:
-            self.config = update(self.config,configuration)
+            self.config.merge(configuration)
             self.log.debug("Updated Configuration from variable")            
             self.configured |= True
         # Configure from File
         if configFile != None:
-            try:
-                with open(configFile,'r') as stream:
-                    loaded = yaml.load(stream)
-                    self.config = update(self.config,loaded)
-            except IOError as e:
-                self.log.warning("Couldn't load Configuration File %s" % configFile)
-            else:
-                self.configured |= True
+            self.configured |= self.config.load(configFile)
         
         if not self.configured:
             self.log.log(8,"No configuration provided or accessed. Using defaults.")
@@ -296,7 +281,7 @@ class Simulator(object):
         if "preconfig" in self.options and self.options["preconfig"] != None:
             for config in self.options["preconfig"]:
                 self.config = update(self.config,config)
-    
+            
     def postConfiguration(self):
         """Apply arguments after configuration. The arguments applied here flesh out macros, and copy data from the configuration system into the operations system."""
         if "exclude" not in self.options or not isinstance(self.options["exclude"],list):
@@ -376,7 +361,7 @@ class Simulator(object):
         if s.macro:
             return use
         
-        self.log.debug("Starting %s" % s.name)
+        self.log.debug("Starting \'%s\'" % s.name)
         self.log.info("%s" % s.description)
         
         try:
@@ -389,10 +374,10 @@ class Simulator(object):
             self.log.critical("Error: %(msg)s" % {'msg':e})
             raise
         else:
-            self.log.debug("Successfully completed stage %s" % s.name)
+            self.log.debug("Completed \'%s\'" % s.name)
             self.complete += [stage]
         finally:
-            self.log.debug("Finished %s" % s.name)
+            self.log.debug("Finished \'%s\'" % s.name)
         
         return use
         

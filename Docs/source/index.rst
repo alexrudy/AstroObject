@@ -27,8 +27,8 @@ About AstroObject:
     AstroSpectra
     AnalyticSpectra
     AstroFITS
-    AstroObjectLogging
     Simulator
+    AstroObjectLogging
     Utilities
     
     future
