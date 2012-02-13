@@ -289,7 +289,7 @@ class CacheManager(object):
     
     def check(self,*caches,**kwargs):
         """docstring for check"""
-        self.load()
+        self.load(*caches)
         if len(caches) == 0:
             caches = tuple(self.caches.keys())
         check = self.shouldGenerate(*caches)
@@ -421,7 +421,7 @@ class CacheManager(object):
         
     def get(self,cache):
         """Get a particular cache"""
-        if self.shouldGenerate(cache):
+        if self.shouldGenerate(cache) or (not self.load(cache)):
             self.generate(cache)
         return self.caches[cache]()
         

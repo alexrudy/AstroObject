@@ -23,7 +23,7 @@ __version__ = getVersion()
 
 class Stage(object):
     """A stage object for maintaing data structure"""
-    def __init__(self,stage,name="a Stage",description="A description",exceptions=None,dependencies=None):
+    def __init__(self,stage,name="a Stage",description="A description",exceptions=None,dependencies=None,replaces=None,optional=False):
         super(Stage, self).__init__()
         self.macro = False
         if callable(stage):
@@ -38,6 +38,8 @@ class Stage(object):
         self.name = name
         self.description = description
         self.deps = dependencies
+        self.reps = replaces
+        self.optional = optional
 
 class Simulator(object):
     """A Simulator, used for running large segements of code with detailed logging and progress checking. Simulators have a name, the `name` parameter can be left as is to use the name of the simulator's class (mostly useful if you subclassed it!). The `commandLine` parameter can be set to False to prevent the simulator collecting arguments from `sys.argv` for use. This allows you to programatically call the simulator with the :meth:`do` method."""
@@ -78,6 +80,11 @@ class Simulator(object):
                 'filename' : "AstroObjectSim",
                 'level' : None,
           },
+          'growl' : {
+              'enable' : True,
+              'level'  : None,
+              'name' : "AstroSimulator",
+          }
         },
        })
         if name == "__class__.__name__":
@@ -126,7 +133,11 @@ class Simulator(object):
         """
         self.USAGE = "%(command)s %(basicOpts)s %(subcommand)s"
         self.USAGEFMT = { 'command' : "%(prog)s", 'basicOpts': "[ configuartion options ]", 'subcommand' : "{macro}" }
+        
+        
         ShortHelp = "Command Line Interface for %(name)s" % { 'name': self.name }
+        LongHelp = """The command line interface to %(name)s normally takes a stage or stages as arguments. Each stage is specified on the command line prefixed by the *,+, or - characters. The * will run the stage and all dependents. The + will run solely that stage. The - will specifically exclude that stage (and so skip it's dependents)."""
+        
         self.parser = argparse.ArgumentParser(description=ShortHelp,
             formatter_class=argparse.RawDescriptionHelpFormatter,usage=self.USAGE % self.USAGEFMT,prefix_chars="-+*")
         
@@ -149,9 +160,9 @@ class Simulator(object):
 
         # Parsers
         self.config_parser = self.parser.add_argument_group("Configuration")
-        self.pos_stage_parser = self.parser.add_argument_group('Stages')
+        self.pos_stage_parser = self.parser.add_argument_group('Single Use Stages')
         self.neg_stage_parser = self.parser.add_argument_group('Remove Stages')
-        self.inc_stage_parser = self.parser.add_argument_group('Macro Stage')
+        self.inc_stage_parser = self.parser.add_argument_group('Stages')
         
         # Default Macro
         self.registerStage(None,"all",description="Run all stages",help="Run all stages",include=False)
@@ -159,7 +170,7 @@ class Simulator(object):
         
         
         
-    def registerStage(self,stage,name,description=None,position=None,exceptions=None,include=True,help=False,dependencies=None):
+    def registerStage(self,stage,name,description=None,position=None,exceptions=None,include=True,help=False,dependencies=None,replaces=None,optional=False):
         """Register a stage for operation with the simulator. The stage will then be available as a command line option, and will be operated with the simulator.
         
         Registered stages can be explicity run from the command line by including::
@@ -203,6 +214,12 @@ class Simulator(object):
             dependencies = []
         if not isinstance(dependencies,list):
             raise ValueError("Invalid type for dependencies: %s" % type(dependencies))
+            
+        if replaces == None:
+            replaces = []
+        if not isinstance(replaces,list):
+            raise ValueError("Invalid type for dependencies: %s" % type(replaces))
+            
         if help == False:
             help = argparse.SUPPRESS
         elif help == None:
@@ -210,7 +227,7 @@ class Simulator(object):
 
             
         
-        stageObject = Stage(stage,name=name,description=description,exceptions=exceptions,dependencies=dependencies)
+        stageObject = Stage(stage,name=name,description=description,exceptions=exceptions,dependencies=dependencies,replaces=replaces,optional=optional)
         self.stages[name] = stageObject
         if not stageObject.macro:
             self.pos_stage_parser.add_argument("+"+name,action='append_const',dest='include',const=name,help=argparse.SUPPRESS)
@@ -279,8 +296,8 @@ class Simulator(object):
         if "config" in self.options and self.options["config"] != None:
             self.config["Configs"]["This"] = self.options["config"]
         if "preconfig" in self.options and self.options["preconfig"] != None:
-            for config in self.options["preconfig"]:
-                self.config = update(self.config,config)
+            for preconfig in self.options["preconfig"]:
+                self.config.merge(preconfig)
             
     def postConfiguration(self):
         """Apply arguments after configuration. The arguments applied here flesh out macros, and copy data from the configuration system into the operations system."""
@@ -290,6 +307,8 @@ class Simulator(object):
             self.options["include"] = []
         if "macro" not in self.options or not isinstance(self.options["macro"],list):
             self.options["macro"] = []
+        if self.options["debug"]:
+            self.config["Debug"] = self.options["debug"]
         
     def startup(self):
         """Start up the simulation. """
@@ -346,19 +365,24 @@ class Simulator(object):
         if not use:
             return use
         
-        self.attempt += [stage]
+        self.attempt += [stage] + self.stages[stage].reps
          
         if deps:
+            
             for dependent in self.stages[stage].deps:
                 if dependent not in self.attempt:
                     self.execute(dependent)
                 if dependent not in self.complete:
-                    self.log.warning("Stages have skipped dependents.")
+                    if self.stages[dependent].optional:
+                        self.log.debug("Stage \'%s\' requested by \'%s\' but skipped" % (dependent,stage))
+                    else:
+                        self.log.warning("Stage \'%s\' required by \'%s\' but failed to complete." % (dependent,stage))
         else:
             self.log.warning("Explicity skipping dependents")
         
         s = self.stages[stage]
         if s.macro:
+            self.complete += [stage] + s.reps
             return use
         
         self.log.debug("Starting \'%s\'" % s.name)
@@ -369,13 +393,15 @@ class Simulator(object):
         except s.exceptions as e:
             self.log.error("Error %(name)s in stage %(desc)s. Stage indicated that this error was not critical" % {'name': e.__class__.__name__, 'desc': s.description})
             self.log.error("Error: %(msg)s" % {'msg':e})
+            if self.config["Debug"]:
+                raise
         except Exception as e:
             self.log.critical("Error %(name)s in stage %(desc)s!" % {'name': e.__class__.__name__, 'desc': s.description})
             self.log.critical("Error: %(msg)s" % {'msg':e})
             raise
         else:
             self.log.debug("Completed \'%s\'" % s.name)
-            self.complete += [stage]
+            self.complete += [stage] + s.reps
         finally:
             self.log.debug("Finished \'%s\'" % s.name)
         
