@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.5
+#  Version 0.3.0a1
 # 
 
 # Parent Modules
@@ -188,20 +188,26 @@ class ResampledSpectrum(InterpolatedSpectrum):
     def resample(self,wavelengths,resolution,z=0.0):
         """Resample the given spectrum to a lower resolution"""
         
-        if resolution.size != wavelengths.size:
-            LOG.log(2,"%s: Wavelength Size: %d, Resolution Size %d" % (self,wavelengths.size,resolution.size))
+        if resolution.shape != wavelengths.shape:
+            LOG.debug("%s: Wavelength Size: %d, Resolution Size %d" % (self,wavelengths.size,resolution.size))
             raise AttributeError("You must provide resolution appropriate for resampling. Size mismatch!")
         
         oldwl,oldfl = self.data
         oldwl = oldwl * (1.0 + z)
-        mintol = wavelengths[0] * resolution[0] / 4
-        maxtol = wavelengths[-1] * resolution[-1] / 4
+        
+        if np.min(oldwl) < 1e-12 or np.max(oldwl) > 1e-3:
+            msg = "%s: It looks like your defining wavelength units are wrong: "
+            LOG.warning(msg % self + npArrayInfo(oldwl,"WL"))
+        
+        mintol = wavelengths[0] * resolution[0] / 8
+        maxtol = wavelengths[-1] * resolution[-1] / 8
         
         if np.min(oldwl) - mintol > np.min(wavelengths) or np.max(oldwl) + maxtol < np.max(wavelengths):
             msg = "Cannot extrapolate during reampling process. Please provide new wavelengths that are within the range of old ones."
             LOG.critical(msg)
-            LOG.log(2,"%s: %s" % (self,npArrayInfo(wavelengths,"centers")))
-            LOG.log(2,"%s: %s" % (self,npArrayInfo(oldwl,"wls")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(wavelengths,"New Wavelengths")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(oldwl,"Old Wavelengths")))
+            LOG.debug("%s: Tolerance Range for New Wavelengths: [%g,%g]" % (self,mintol,maxtol))
             raise ValueError(msg)
         
         oldres = oldwl[:-1] / np.diff(oldwl)
@@ -213,13 +219,23 @@ class ResampledSpectrum(InterpolatedSpectrum):
         ones = np.ones(oldwl.shape)
         sigma = wavelengths / resolution / 2.35
         curve = lambda wl,center,sig : (1.0/np.sqrt(np.pi * sig ** 2.0 )) * np.exp( - 0.5 * (wl - center) ** 2.0 / (sig ** 2.0) ).astype(np.float)
+        
         MWL,MCENT = np.meshgrid(oldwl,wavelengths)
         MWL,MSIGM = np.meshgrid(oldwl,sigma)
+        
         curves = curve(MWL,MCENT,MSIGM)
+        
         exps =  - 0.5 * (MWL - MCENT) ** 2.0 / (MSIGM ** 2.0)
+        
         base = np.sum(curves * ones, axis=1)
-        top = np.sum(curves * oldfl,axis=1)
+        top  = np.sum(curves * oldfl,axis=1)
+        
         zeros = base == np.zeros(base.shape)
+        if np.sum(zeros) > 0:
+            LOG.warning("%s: Removed %d zeros from re-weighting." % (self,np.sum(zeros)))
+            LOG.debug("%s: %s" % (self,npArrayInfo(base,"Normalization Denominator")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(base,"Normalization Numerator")))
+            
         base[zeros] = np.ones(np.sum(zeros))
         top[zeros] = np.zeros(np.sum(zeros))
         
@@ -228,17 +244,17 @@ class ResampledSpectrum(InterpolatedSpectrum):
         if np.isnan(flux).any():
             msg = "Detected NaN in result of Resampling!"
             LOG.critical("%s: %s" % (self,msg))
-            LOG.log(2,"%s: %s" % (self,npArrayInfo(wavelengths,"centers")))
-            LOG.log(2,"%s: %s" % (self,npArrayInfo(oldwl,"wls")))
-            LOG.log(2,"%s: %s" % (self,npArrayInfo(sigma,"sigmas")))
-            LOG.log(2,"%s: %s" % (self,npArrayInfo(exps,"exps")))
-            LOG.log(2,"%s: %s" % (self,npArrayInfo(np.exp(exps),"exps-calc")))
-            LOG.log(2,"%s: %s" % (self,npArrayInfo(curves,"curves")))
-            LOG.log(2,"%s: %s" % (self,npArrayInfo(base,"base")))
-            LOG.log(2,"%s: %s" % (self,npArrayInfo(flux,"flux")))
-            LOG.log(2,"%s: %s" % (self,npArrayInfo(oldfl,"oldfl")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(wavelengths,"New Wavelengths")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(oldwl,"Old Wavelengths")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(sigma,"Resolution Sigmas")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(exps,"Exponent Value")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(np.exp(exps),"Exponent Evaluated")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(curves,"Curve Evaluated")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(base,"Normalization Denominator")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(flux,"Resulting Flux")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(oldfl,"Original Flux")))
             raise ValueError(msg)
-        LOG.log(2,"%s: %s" % (self,npArrayInfo(flux,"flux")))
+        LOG.debug("%s: %s" % (self,npArrayInfo(flux,"New Flux")))
         return np.vstack((wavelengths,flux))
 
 import AnalyticSpectraObjects

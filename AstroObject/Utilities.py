@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.2.5
+#  Version 0.3.0a1
 #
 
 import matplotlib as mpl
@@ -29,7 +29,7 @@ def enable_Console():
     """docstring for enable_Console"""
     logging.getLogger('').addHandler(console)
     
-def getVersion(rel=__name__,filename="../VERSION",getTuple=False):
+def getVersion(rel=__name__,filename="VERSION",getTuple=False):
     """Returns the version number as either a string or tuple. The version number is retrieved from the "VERSION" file, which should contain just the text for the version and nothing else. When the version is returned as a tuple, each component (level) of the version number is a seperate, integer element of the tuple."""
     string = resource_string(rel,filename)
     if getTuple:
@@ -113,40 +113,71 @@ def npArrayInfo(array,name):
     
     ::
         
-        >>>arr = np.array([1,2,3,4,5,np.nan])
-        >>>print npArrayInfo(arr,"Some Array")
+        >>> arr = np.array([0,1,2,3,4,5,np.nan])
+        >>> print npArrayInfo(arr,"Some Array")
+        Some Array has 7 elements with shape (7,). Range [  nan,  nan] Zeros 1 ( 14%). NaNs 1 ( 14%). 
+        >>> print npArrayInfo(arr[1:-1],"Some Array")
+        Some Array has 5 elements with shape (5,). Range [    1,    5]
         
+      
     """
     fmtr = {}
-    fmtr["name"] = name
+    MSG = ""
+    if name != None:
+        fmtr["name"] = name
+        MSG += "%(name)s has "
+    else:
+        fmtr["name"] = str(array)
     fmtr["type"] = str(type(array))
+    
     if isinstance(array,np.ndarray):
-        MSG = "%(name)s has %(elements)d elements with shape %(shape)s."
+        
+        MSG += "%(elements)d elements with shape %(shape)s. "
+        
         fmtr["elements"] = array.size
         fmtr["shape"] = str(array.shape)
+        
         try:
             fmtr["min"] = np.min(array)
             fmtr["max"] = np.max(array)
             fmtr["range"] = "[%(min)5.5g,%(max)5.5g]" % fmtr
-
         except ValueError:
-            MSG += " Array does not appear to be numerical!"
+            MSG += "Array does not appear to be numerical! "
         else:
-            MSG += " Range %(range)s"
+            MSG += "Range %(range)s "
+        
         fmtr["zeros"] = np.sum(array == np.zeros(array.shape))
+        
         fmtr["zper"] = float(fmtr["zeros"]) / float(fmtr["elements"]) * 100
+        
         if fmtr["zeros"] > 0:
-            MSG += " Zeros %(zeros)d (%(zper)3d%%)."
+            MSG += "Zeros %(zeros)d (%(zper)3d%%). "
+        
         try:
             fmtr["nans"] = np.sum(np.isnan(array))
             fmtr["nper"] = float(fmtr["nans"]) / float(fmtr["elements"]) * 100
             if fmtr["nans"] > 0:
-                MSG += " NaNs %(nans)d (%(nper)3d%%)."
+                MSG += "NaNs %(nans)d (%(nper)3d%%). "
         except TypeError:
-            MSG += " Could not measure NaNs."    
+            MSG += "Could not measure NaNs. "
+        
         fmtr["dtype"] = array.dtype
+        
         if fmtr["dtype"] != np.float64:
             MSG += " Data Type %(dtype)s."
+    elif isinstance(array,list):
+        
+        fmtr["elements"] = len(array)
+        MSG += " %(elements)d elements "
+        
+        try:
+            fmtr["min"] = min(array)
+            fmtr["max"] = max(array)
+            fmtr["range"] = "[%(min)5.5g,%(max)5.5g]" % fmtr
+        except ValueError:
+            MSG += " List does not appear to contain numerical elements."
+        else:
+            MSG += "Range %(range)s "
     else:
         MSG = "%(name)s doesn't appear to be a Numpy Array! Type: %(type)s"
     return MSG % fmtr
