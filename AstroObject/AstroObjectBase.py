@@ -257,15 +257,19 @@ class FITSObject(object):
         youngest = states[np.argmin(Ages)]
         return youngest
     
-    def clear(self):
+    def clear(self,delete=False):
         """Clears all states from this object. Returns an empty list representing the currently known states."""
+        if delete:
+            for state in self.states.keys():
+                del self.states[state]
+            del self.states
         self.states = {}
         self.statename = self._default_state()
         LOG.log(5,"%s: Cleared all states. Remaining: %s" % (self,self.list()))
         return self.list()
     
     
-    def keep(self,*statenames):
+    def keep(self,*statenames,**kwargs):
         """Removes all states except the specified frame(s) in the object"""
         oldStates = self.states
         newStates = {}
@@ -274,18 +278,26 @@ class FITSObject(object):
                 raise IndexError("%s: State %s does not exist!" % (self,statename))
             newStates[statename] = oldStates[statename]
         LOG.log(5,"%s: Kept states %s" % (self,list(statenames)))
+        if "delete" in kwargs and kwargs["delete"]:
+            for state in self.states.keys():
+                if state not in statenames:
+                    del self.states[state]
+            del self.states
         self.states = newStates
         self.statename = self._default_state()
         return self.list()
     
-    def remove(self,*statenames):
+    def remove(self,*statenames,**kwargs):
         """Removes the specified frame(s) from the object."""
         removed = []
         LOG.log(2,"%s: Requested remove %s" % (self,statenames))
         for statename in statenames:
             if statename not in self.states:
                 raise IndexError("%s: Object %s does not exist!" % (self,statename))
-            self.states.pop(statename)
+            if "delete" in kwargs and kwargs["delete"]:
+                del self.states[statename]
+            else:
+                self.states.pop(statename)
             removed += [statename]
         self.statename = self._default_state()
         LOG.log(5,"%s: Removed states %s" % (self,removed))
