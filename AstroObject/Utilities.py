@@ -70,6 +70,19 @@ def expandLim(axis,scale=0.05):
     axis = (xmin,xmax,ymin,ymax)
     return axis
 
+def bin(array,factor):
+    """Bins an array by the given factor"""
+    
+    finalShape = tuple((np.array(array.shape) / factor).astype(np.int))
+    Aout = np.zeros(finalShape)
+    
+    for i in range(factor):
+        Ai = array[i::factor,i::factor]
+        Aout += Ai
+    
+    return Aout
+
+
 def BlackBody(wl,T):
     """Return black-body flux as a function of wavelength. Usese constants from Scipy Constants, and expects SI units"""
     h = spconst.h
