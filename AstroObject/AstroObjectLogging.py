@@ -22,7 +22,58 @@ levels = {"LIBDEBUG":2,"LIBINFO":5,"LIBWARN":8}
 for name,lvl in levels.iteritems():
     logging.addLevelName(lvl,name)
 
+class GrowlHandler(logging.Handler):
+    """Handler that emits growl notifications"""
+    def __init__(self,name=None):
+        super(GrowlHandler, self).__init__()
+        self.name = name
+        if self.name == None:
+            self.name = "AstroObject"
+        try:
+            import gntp.notifier
+            self.gntp = gntp
+        except ImportError as e:
+            self.disable = True
+            self.notifier = None
+        else:
+            self.disable = False
+            self.notifier = self.gntp.notifier.GrowlNotifier(
+                applicationName=self.name,
+                notifications=["Info Message","Warning Message","Critical Message","Error Message","Debug Message"],
+                defaultNotifications=["Info Message","Warning Message","Critical Message","Error Message"],
+            )
+            self.notifier.register()
+        self.titles = {
+            logging.DEBUG:"%s Debug" % self.name,
+            logging.INFO:"%s Info" % self.name,
+            logging.WARNING:"%s Warning" % self.name,
+            logging.CRITICAL:"%s Critical" % self.name,
+            logging.ERROR:"%s Error" % self.name}
+        
+    
+    mapping = {logging.DEBUG:"Debug Message",logging.INFO:"Info Message",logging.WARNING:"Warning Message",logging.CRITICAL:"Critical Message",logging.ERROR:"Error Message"}
 
+    
+    
+    def emit(self,record):
+        """Emits a growl notification"""
+        if self.disable:
+            return
+        try:
+            msg = self.format(record)
+            self.notifier.notify(
+                noteType = self.mapping[record.levelno],
+                title = self.titles[record.levelno],
+                description = msg,
+                sticky = False,
+                priority = 1,
+            )
+        except (KeyboardInterrupt, SystemExit):
+            raise
+        except:
+            self.handleError(record)
+
+        
 
 class LogManager(logging.getLoggerClass()):
     """A customized logging class. This class is automatically used whenever you are using an AstroObject module elsewhere in your program. It subsumes other logging classes, regardless of the situation. This logger provides many specialized functions useful for logging, but can be used just like a normal logger. By default, the logger starts in buffering mode, collecting messages until it is configured. The configuration then allows it to write messages to the console and to a log file."""
@@ -56,6 +107,11 @@ class LogManager(logging.getLoggerClass()):
     
     config = {
                 'logging' : {
+                    'growl' : {
+                        'enable' : False,
+                        'level'  : None,
+                        'name' : "AstroObject",
+                    },
                     'file' : {
                         'enable' : True,
                         'format' : "%(asctime)s : %(levelname)-8s : %(module)-40s : %(funcName)-10s : %(message)s",
@@ -124,11 +180,11 @@ class LogManager(logging.getLoggerClass()):
             self.handling |= True
         
         self.logfile = None
-        self.logfolder = self.config["Dirs"]["Logs"]
+        self.logfolder = self.config["Dirs"]["Logs"]+"/"
         
         # Only set up the file log handler if we can actually access the folder
         if os.access(self.logfolder,os.F_OK):
-            filename = self.config["Dirs"]["Logs"] + self.config["logging"]["file"]["filename"]+".log"
+            filename = "%(dir)s/%(name)s.log" % {'dir':self.config["Dirs"]["Logs"],'name':self.config["logging"]["file"]["filename"]}
             
             self.logfile = logging.handlers.TimedRotatingFileHandler(filename=filename,when='midnight')
             fileformatter = logging.Formatter(self.config["logging"]["file"]["format"],datefmt=self.config["logging"]["file"]["dateformat"])
@@ -145,6 +201,19 @@ class LogManager(logging.getLoggerClass()):
                 # Finally, we should flush the old buffers
                 self.buffer.setTarget(self.logfile)
                 self.handling |= True
+        
+        if self.config["logging"]["growl"]["enable"]:
+            self.growlHandler = GrowlHandler(name=self.config["logging"]["growl"]["name"])
+            if self.growlHandler.disable:
+                self.config["logging"]["growl"]["enable"] = False
+            else:
+                if self.config["logging"]["file"]["level"]:
+                    self.growlHandler.setLevel(self.config["logging"]["file"]["level"])
+                elif self.level:
+                    self.growlHandler.setLevel(logging.INFO)
+                self.addHandler(self.growlHandler)
+                self.handling |= True
+                
         
         self.removeHandler(self.buffer)
         self.buffer.flush()
