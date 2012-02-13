@@ -19,7 +19,6 @@ from pkg_resources import resource_string
 
 __all__ = ["getVersion","expandLim","BlackBody","Gaussian","validate_filename","update","npArrayInfo","AbstractError","HDUFrameTypeError","ConfigurationError","resource_string"]
 
-
 LOG = logging.getLogger(__name__)
 
 def disable_Console():

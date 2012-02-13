@@ -18,6 +18,6 @@ __all__ = ['AnalyticSpectra','AstroImage','AstroObjectBase','AstroSpectra','Astr
 __config__ = "logging.yaml"
 
 LOG = logging.getLogger(__name__)
-LOG.configure(configFile = __config__)
+LOG.configure(configFile = __config__ )
 LOG.start()
 
