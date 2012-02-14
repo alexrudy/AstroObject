@@ -264,6 +264,7 @@ class Simulator(object):
         # Configure from File
         if configFile != None:
             self.configured |= self.config.load(configFile)
+        self.configured |= self.config.load()
         
         if not self.configured:
             self.log.log(8,"No configuration provided or accessed. Using defaults.")
