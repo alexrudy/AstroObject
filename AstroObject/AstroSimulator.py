@@ -31,7 +31,7 @@ __all__ = ["Simulator"]
 __version__ = getVersion()
 
 class Stage(object):
-    """A stage object for maintaing data structure"""
+    """A stage object for maintaing data structure about simulators. Not accessible to the outside world."""
     def __init__(self,stage,name="a Stage",description="A description",order=0,exceptions=None,dependencies=None):
         super(Stage, self).__init__()
         self.do = stage
@@ -102,7 +102,7 @@ class Simulator(object):
         self.initOptions()
         
     def initOptions(self):
-        """Initializes the command line options for this script. This function is automatically called on construction, and provides the following default command options which are already supported by the simulator
+        """Initializes the command line options for this script. This function is automatically called on construction, and provides the following default command options which are already supported by the simulator:
         
         Command line options are:
         
@@ -162,7 +162,7 @@ class Simulator(object):
         
         
     def registerStage(self,stage,name=None,description=None,position=None,exceptions=None,include=True,help=False):
-        """Register a stage for operation with the simulator. The stage will then be available as a command line option, and will be operated with the simulator.
+        """Register a stage for operation with the simulator. The stage will then be available as a command line option, and will be operated with the simulator. Stages should be registered early in the operation of the simulator (preferably in the initialization, after the simulator class itself has initialized) so that the program is aware of the stages for running. Stages cannot be added dynamically. Once the simulator starts running (i.e. processing stages) the order and settings are fixed. Attempting to adjsut the stages at this point will raise an error. Stages can be passed a tuple of exceptions for use in operation. These exceptions will be logged as ERRORs, but will not cause the program to crash. They will thus keep the simulator running even if the stage encounters a problem.
         
         Registered stages can be explicity run from the command line by including::
             
@@ -242,7 +242,7 @@ class Simulator(object):
         self.macros[name] = list(stages)
         
     def registerConfigOpts(self,argument,configuration,**kwargs):
-        """Registers a bulk configuration option which will be provided with the USAGE statement"""
+        """Registers a bulk configuration option which will be provided with the USAGE statement. This configuration option can easily override normal configuration settings. Configuration provided here will override programmatically specified configuration options. It will not override configuration provided by the configuration file. These configuration options are meant to provide alterantive *defaults*, not alternative configurations."""
         if self.running or self.starting:
             raise ConfigureError("Cannot add macro after simulator has started!")
         
@@ -379,13 +379,13 @@ class Simulator(object):
         
         
     def run(self):
-        """Run the actual simulator"""
+        """Run the actual simulator. This command handles simulators which can be run from the command line. Calling :meth:`run` will run all of the stages specified on the command line. If you do not want this effect, use :meth:`startup` to prepare the simulator, and :meth:`do` to run the actual simulator. Calling :meth:`exit` at the end will allow the simulator to close out and perform any output tasks, but will also end the current python session."""
         self.startup()
         self.do()
         self.exit()
     
     def do(self,*args):
-        """Run the simulator. Parses arguments (*args) passed in to take control of the system"""
+        """Run the simulator. Parses arguments (`*args`) passed in to take control of the system"""
         if self.running:
             raise ConfigurationError("Simulator is already running!")
         
