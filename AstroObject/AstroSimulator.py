@@ -170,6 +170,13 @@ class Simulator(object):
         self.registerStage(None,"none",description="Run no stages",help="Run no stages",include=False)
         
         
+    def defaultMacros(self):
+        """Establish default macros for the system."""
+        self.orders.remove("all")
+        self.orders += ["all"]
+
+        
+        
         
     def registerStage(self,stage,name,description=None,position=None,exceptions=None,include=True,help=False,dependencies=None,replaces=None,optional=False):
         """Register a stage for operation with the simulator. The stage will then be available as a command line option, and will be operated with the simulator.
@@ -315,6 +322,7 @@ class Simulator(object):
         
     def startup(self):
         """Start up the simulation. """
+        self.defaultMacros()
         self.starting = True
         self.parseArguments()
         self.preConfiguration()
