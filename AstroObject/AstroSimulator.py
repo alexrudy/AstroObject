@@ -53,6 +53,7 @@ class Simulator(object):
         self.exclude = []
         self.include = []
         self.attempt = []
+        self.orders = []
         self.complete = []
         self.name = name
         self.order = None
@@ -229,6 +230,7 @@ class Simulator(object):
         
         stageObject = Stage(stage,name=name,description=description,exceptions=exceptions,dependencies=dependencies,replaces=replaces,optional=optional)
         self.stages[name] = stageObject
+        self.orders += [name]
         if not stageObject.macro:
             self.pos_stage_parser.add_argument("+"+name,action='append_const',dest='include',const=name,help=argparse.SUPPRESS)
             self.neg_stage_parser.add_argument("-"+name,action='append_const',dest='exclude',const=name,help=argparse.SUPPRESS)
@@ -343,10 +345,11 @@ class Simulator(object):
             self.complete = []
         
         while self.running and not self.paused:
-            for stage in self.options["macro"]:
-                self.execute(stage)
-            for stage in self.options["include"]:
-                self.execute(stage,deps=False)
+            for stage in self.orders:
+                if stage in self.options["macro"]:
+                    self.execute(stage)
+                elif stage in self.options["include"]:
+                    self.execute(stage,deps=False)
             self.running = False
         
         if self.options['print_stages']:
