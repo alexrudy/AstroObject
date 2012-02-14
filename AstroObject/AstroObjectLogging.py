@@ -25,7 +25,7 @@ for name,lvl in levels.iteritems():
 
 
 class LogManager(logging.getLoggerClass()):
-    
+    """The logging class which handles the log messages. It handles its own limited configuration, and buffers messages before it starts, so that early messages are still written to a file."""
     def __init__(self,name):
         super(LogManager,self).__init__(name)
         self.name = name
@@ -38,7 +38,7 @@ class LogManager(logging.getLoggerClass()):
         self.initialize()
     
     def initialize(self):
-        """Initializes this logger to buffer"""
+        """Initializes this logger to buffer messages it receives before it is configured. This initialization is automatically handled when the :class:`LogManager` is created."""
         if self.handling:
             raise ConfigurationError("Logger appears to be already handling messages")
         if self.running:
@@ -75,7 +75,7 @@ class LogManager(logging.getLoggerClass()):
             }
     
     def configure(self,configFile=None,configuration=None):
-        """Configure this logging object"""
+        """Configure this logging object. The configuration happens from a file (`configFile`) and then from an object `configuration`. As such, values in the object will override values from the file, and both will override the defaults. The default settings place messages in a file called AstroObject.log in the Logs/ folder."""
         if self.configured:
             raise ConfigurationError("Logger appears to be already configured")
         if self.handling:
@@ -100,7 +100,7 @@ class LogManager(logging.getLoggerClass()):
             self.log(8,"No configuration provided or accessed. Using defaults.")
     
     def start(self):
-        """Starts this logger outputing"""
+        """Starts this logger outputing, based on the configuration. It is recommended that you call :meth:`configure` first."""
         if self.handling:
             raise ConfigurationError("Logger appears to be already handling messages")
         if not self.running:
@@ -152,7 +152,7 @@ class LogManager(logging.getLoggerClass()):
             self.log(8,"Logger not actually handling anything!")
             
     def useConsole(self,use=None):
-        """Turn on or off the console logging"""
+        """Turn on or off the console logging. Specify the parameter `use` to force console logging into one state or the other. If the `use` parameter is not given, console logging will be toggled."""
         if use != None:
             # THIS SHOULD BE BACKWARDS
             # If we turn the console on now, then this very function will turn it off in a minute!
