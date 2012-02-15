@@ -40,8 +40,8 @@ __all__ = ["AnalyticSpectrum","CompositeSpectra","InterpolatedSpectrum"]
 
 LOG = logging.getLogger(__name__)
 
-class AnalyticSpectrum(AstroObjectBase.FITSFrame):
-    """A functional spectrum object for spectrum generation. The default implementation is a flat spectrum."""
+class AnalyticSpectrum(AstroObjectBase.BaseFrame):
+    """A functional spectrum object for spe ctrum generation. The default implementation is a flat spectrum."""
     def __init__(self,data=None,label=None,wavelengths=None,units=None,**kwargs):
         super(AnalyticSpectrum, self).__init__(data=data,label=label, **kwargs)
         self.wavelengths = wavelengths
