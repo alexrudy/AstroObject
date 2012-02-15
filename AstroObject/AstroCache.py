@@ -92,7 +92,7 @@ class Cache(object):
             self.regenerate = True
             return self.loaded
         try:
-            with file(self.fullname,'r') as stream:
+            with open(self.fullname,'r') as stream:
                 self.data = self.cache_load(stream)
         except (IOError,CacheIOError) as e:
             self.cache_msg = str(e)
@@ -132,7 +132,7 @@ class Cache(object):
             return False
         if self.ready and not self.regenerate:
             try:
-                with file(self.fullname,'w') as stream:
+                with open(self.fullname,'w') as stream:
                     self.cache_save(stream,self.data)
             except (IOError,CacheIOError) as e:
                 self.cache_msg = str(e)
