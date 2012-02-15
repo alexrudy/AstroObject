@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.0a1
+#  Version 0.3.0a2+dep
 #
 
 import matplotlib as mpl
@@ -18,7 +18,6 @@ import logging,time,sys,collections,os
 from pkg_resources import resource_string
 
 __all__ = ["getVersion","expandLim","BlackBody","Gaussian","validate_filename","update","npArrayInfo","AbstractError","HDUFrameTypeError","ConfigurationError","resource_string"]
-
 
 LOG = logging.getLogger(__name__)
 
@@ -69,6 +68,19 @@ def expandLim(axis,scale=0.05):
 
     axis = (xmin,xmax,ymin,ymax)
     return axis
+
+def bin(array,factor):
+    """Bins an array by the given factor"""
+    
+    finalShape = tuple((np.array(array.shape) / factor).astype(np.int))
+    Aout = np.zeros(finalShape)
+    
+    for i in range(factor):
+        Ai = array[i::factor,i::factor]
+        Aout += Ai
+    
+    return Aout
+
 
 def BlackBody(wl,T):
     """Return black-body flux as a function of wavelength. Usese constants from Scipy Constants, and expects SI units"""
