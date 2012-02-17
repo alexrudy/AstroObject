@@ -368,7 +368,7 @@ class FLambdaSpectrum(ResampledSpectrum,AstroSpectra.SpectraFrame):
             LOG.debug("%s : %s" % (self,npArrayInfo(wlEnd[:-1],"Upper Bounds")))
             
         
-        flux = np.array([ sp.integrate.quad(self.func,wlS,wlE,limit=self.intSteps)[0] for wlS,wlE in zip(wlStart,wlEnd) ])
+        flux = np.array([ sp.integrate.quad(self.func,wlS,wlE,limit=self.intSteps,full_output=1)[0] for wlS,wlE in zip(wlStart,wlEnd) ])
         
         # This is our sanity check. Everything we calculated should be a number. If it comes out as nan, then we have done something wrong.
         # In that case, we raise an error after printing information about the whole calculation.
