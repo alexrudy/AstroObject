@@ -19,6 +19,8 @@ import nose.tools as nt
 from nose.plugins.skip import Skip,SkipTest
 
 from tests.Test_AstroObjectBase import *
+from tests.Test_AstroObjectAPI import *
+from tests.Test_AstroSpectra import *
 
 import AstroObject.AnalyticSpectra as AS
 from AstroObject.Utilities import AbstractError
@@ -131,7 +133,7 @@ class test_AnalyticSpectraFrame(API_AnalyticSpectra):
 
 
 
-class test_InterpolatedSpectra(API_AnalyticSpectra):
+class test_InterpolatedSpectra(API_AnalyticSpectra,test_SpectraFrame):
     """AnalyticSpecra.InterpolatedSpectra"""
     def setUp(self):
         """Sets up the test with some basic image data."""
@@ -174,7 +176,7 @@ class test_InterpolatedSpectra(API_AnalyticSpectra):
 
 
 
-class test_ResampledSpectra(API_AnalyticSpectra):
+class test_ResampledSpectra(API_AnalyticSpectra,test_SpectraFrame):
     """AnalyticSpectra.ResampledSpectra"""
     def setUp(self):
         """Sets up the test with some basic image data."""
