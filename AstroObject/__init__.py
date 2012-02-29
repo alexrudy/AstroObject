@@ -4,14 +4,14 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.0a2+dep
+#  Version 0.3.0a2
 #  
  
 import time,sys,os
 
 from AstroObjectLogging import *
 
-__version__ = '0.3.0a2+dep'
+__version__ = '0.3.0a2'
 
 __all__ = ['AnalyticSpectra','AstroImage','AstroObjectBase','AstroSpectra','AstroObjectLogging','Utilities']
 

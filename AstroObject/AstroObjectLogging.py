@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.0a2+dep
+#  Version 0.3.0a2
 #
 
 import logging
@@ -89,7 +89,7 @@ class LogManager(logging.getLoggerClass()):
         self._initialize()
     
     def _initialize(self):
-        """Initializes this logger to buffer logs sent this way."""
+        """Initializes this logger to buffer messages it receives before it is configured. This initialization is automatically handled when the :class:`LogManager` is created."""
         if self.handling:
             raise ConfigurationError("Logger appears to be already handling messages")
         if self.running:
@@ -222,7 +222,7 @@ class LogManager(logging.getLoggerClass()):
             self.log(8,"Logger not actually handling anything!")
             
     def useConsole(self,use=None):
-        """Turn on or off the console logging"""
+        """Turn on or off the console logging. Specify the parameter `use` to force console logging into one state or the other. If the `use` parameter is not given, console logging will be toggled."""
         if use != None:
             # THIS SHOULD BE BACKWARDS
             # If we turn the console on now, then this very function will turn it off in a minute!

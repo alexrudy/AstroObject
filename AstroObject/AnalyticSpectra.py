@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.0a2+dep
+#  Version 0.3.0a2
 # 
 
 # Parent Modules
@@ -42,7 +42,9 @@ __all__ = ["AnalyticSpectrum","CompositeSpectra","InterpolatedSpectrum"]
 LOG = logging.getLogger(__name__)
 
 class AnalyticSpectrum(AstroObjectBase.BaseFrame):
-    """A functional spectrum object for spe ctrum generation. The default implementation is a flat spectrum."""
+    """A functional spectrum object for spe ctrum generation. The default implementation is a flat spectrum.
+    
+    The Analytic spectrum can be provided with a set of wavelengths upon intialization. The `wavelengths` keyword will be stored and used when this spectrum is later called by the system. The `units` keyword is currently unused."""
     def __init__(self,data=None,label=None,wavelengths=None,units=None,**kwargs):
         super(AnalyticSpectrum, self).__init__(data=data,label=label, **kwargs)
         self.wavelengths = wavelengths
@@ -93,7 +95,7 @@ class CompositeSpectra(AnalyticSpectrum):
         
     
     def __call__(self,wavelengths=None,**kwargs):
-        """Calls the composite function components. The keyword arguments are passed on to calls to spectra contained within this composite spectra. All spectra varieties should accept arbitrary keywords, so this argument is used to pass keywords to spectra which require specific alternatives."""
+        """Calls the composite function components. The keyword arguments are passed on to calls to spectra contained within this composite spectra. All spectra varieties should accept arbitrary keywords, so this argument is used to pass keywords to spectra which require specific alternatives. Pass in `wavelengths` to use the given wavelengths. If none are passed in, it will look for object-level saved wavelengths, which you can specify simply by setting the `self.wavelengths` parameter on the object."""
         if wavelengths == None:
             wavelengths = self.wavelengths
         if wavelengths == None:
@@ -124,7 +126,10 @@ class CompositeSpectra(AnalyticSpectrum):
 
 
 class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
-    """An analytic representation of a generic, specified spectrum"""
+    """An analytic representation of a generic, specified spectrum. The spectrum provided will be used to create an infintiely dense interpolation function. This function can then be used to call the spectrum at any wavelength. The interpolation used is a simple 1d interpolation.
+    
+    .. Warning:: 
+        No checks are currently provided to prevent extraneous interpoaltion outside of the originally specified range."""
     def __init__(self, data=None, label=None, wavelengths=None, **kwargs):
         self.data = data
         self.size = data.size # The size of this image
@@ -183,7 +188,7 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         
     
 class ResampledSpectrum(InterpolatedSpectrum):
-    """A spectrum that must be called with resampling information"""
+    """A spectrum that must be called with resampling information, but which correctly reamples down to given resoluton at each requested wavelength. The spectrum provided must have a greater resolution than the one requested in the end. Supplying the `resoulution` and `wavelength` keywords at initialization only sets defaults."""
     def __init__(self, data=None, label=None, wavelengths=None, resolution=None, **kwargs):
         super(ResampledSpectrum, self).__init__(data=data,label=label, **kwargs)
         self.wavelengths = wavelengths
@@ -204,8 +209,7 @@ class ResampledSpectrum(InterpolatedSpectrum):
     def resample(self,wavelengths,resolution,z=0.0):
         """Resample the given spectrum to a lower resolution. 
         
-        This is a vector-based calculation, and so should be relatively fast. This function contains ZERO for loops, and uses entirely numpy-based vector mathematics. Sanity checks try to keep your input clean. It can also redshift a spectrum by a given z parameter, if that is necessary."""
-        
+        This is a vector-based calculation, and so should be relatively fast. This function contains ZERO for loops, and uses entirely numpy-based vector mathematics. Sanity checks try to keep your input clean. It can also redshift a spectrum by a given z parameter, if that is necessary."""        
         # Data sanity check
         if resolution.shape != wavelengths.shape:
             LOG.debug("%s: Wavelength Size: %d, Resolution Size %d" % (self,wavelengths.size,resolution.size))
