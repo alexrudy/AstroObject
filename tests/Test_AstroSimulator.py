@@ -34,13 +34,6 @@ class test_Simulator(API_Base):
         """registerStage()"""
         self.SIMULATOR.registerStage(abs,"abs")
         assert "abs" in self.SIMULATOR.stages
-        assert "abs" in self.SIMULATOR.orders.values()
-        
-    def test_registerMacro(self):
-        """registerMacro()"""
-        self.SIMULATOR.registerStage(max,"max")
-        self.SIMULATOR.registerStage(min,"min")
-        self.SIMULATOR.registerMacro("minmax","min","max")
         
         
 class test_SimulatorFunctional(object):
@@ -98,12 +91,12 @@ class test_SimulatorFunctional(object):
         SIM.registerStage(stage.run,name="examp",description="Example Stage")
         SIM.registerStage(stage.other,name="other",description="Other Stage")
         SIM.registerStage(stage.last,name="last",description="Last Stage")
-        SIM.registerMacro("ex","examp",help="example Macro")
+        SIM.registerStage(None,"ex",dependencies=["examp","other"],help="example Macro")
         SIM.Caches.register("Random Image",stage.cache,stage.load,stage.save)
         SIM.Caches.registerNPY("Random NPY",stage.cache,directory="Caches/",filename="Random.npy")
         SIM.Caches.clear()
         SIM.startup()
-        SIM.do("*all")
+        SIM.do("all")
         log.useConsole(True)
         
         assert stage.A == stage.C

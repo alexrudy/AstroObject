@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.0a1
+#  Version 0.3.0a2+dep
 #
 
 import matplotlib as mpl
@@ -18,7 +18,6 @@ import logging,time,sys,collections,os
 from pkg_resources import resource_string
 
 __all__ = ["getVersion","expandLim","BlackBody","Gaussian","validate_filename","update","npArrayInfo","AbstractError","HDUFrameTypeError","ConfigurationError","resource_string"]
-
 
 LOG = logging.getLogger(__name__)
 

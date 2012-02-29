@@ -4,20 +4,20 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.0a1
+#  Version 0.3.0a2+dep
 #  
  
 import time,sys,os
 
 from AstroObjectLogging import *
 
-__version__ = '0.3.0a1'
+__version__ = '0.3.0a2+dep'
 
 __all__ = ['AnalyticSpectra','AstroImage','AstroObjectBase','AstroSpectra','AstroObjectLogging','Utilities']
 
 __config__ = "logging.yaml"
 
 LOG = logging.getLogger(__name__)
-LOG.configure(configFile = __config__)
+LOG.configure(configFile = __config__ )
 LOG.start()
 
