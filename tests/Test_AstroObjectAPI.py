@@ -25,7 +25,7 @@ import matplotlib.image as mpimage
 # Python Imports
 import math, copy, sys, time, logging, os
 
-__all__ = ["API_Base_Frame","API_Base_Object","API_Base_Functional"]
+__all__ = ["API_Base","API_Base_Frame","API_Base_Object","API_Base_Functional"]
 
 class API_Base(object):
     """Methods common to all tests!"""
@@ -204,14 +204,14 @@ class API_Base_Object(API_Base):
     
     
     def test_double_saving_an_object_should_reference(self):
-        """save() should prevent data in frames from referencing each other"""
+        """save() should prevent data in frames from referencing each other"""        
+        NewLabel = "Other"
+        AObject = self.OBJECT()
+        AObject.save(self.FRAMEINST)
+        AObject.save(self.FRAMEINST,NewLabel)
+        assert AObject.statename == NewLabel
+        assert AObject.frame().label == NewLabel
         try:
-            NewLabel = "Other"
-            AObject = self.OBJECT()
-            AObject.save(self.FRAMEINST)
-            AObject.save(self.FRAMEINST,NewLabel)
-            assert AObject.statename == NewLabel
-            assert AObject.frame().label == NewLabel
             AObject.select(self.FRAMELABEL)
             assert AObject.statename == self.FRAMELABEL
             assert AObject.frame().label == self.FRAMELABEL
@@ -223,13 +223,13 @@ class API_Base_Object(API_Base):
     
     def test_double_saving_data_should_not_reference(self):
         """data() should prevent data from referencing each other."""
+        NewLabel = "Other"
+        AObject = self.OBJECT()
+        AObject.save(self.FRAMEINST)
+        AObject.save(AObject.data(),NewLabel)
+        assert AObject.statename == NewLabel
+        assert AObject.frame().label == NewLabel
         try:
-            NewLabel = "Other"
-            AObject = self.OBJECT()
-            AObject.save(self.FRAMEINST)
-            AObject.save(AObject.data(),NewLabel)
-            assert AObject.statename == NewLabel
-            assert AObject.frame().label == NewLabel
             AObject.select(self.FRAMELABEL)
             assert AObject.statename == self.FRAMELABEL
             assert AObject.frame().label == self.FRAMELABEL

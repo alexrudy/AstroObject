@@ -4,8 +4,8 @@
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.0a1
-# 
+#  Version 0.3.0a2
+#
 
 
 # Standard Scipy Toolkits
@@ -183,7 +183,7 @@ class FITSObject(object):
         else:
             Object.label = statename
         if statename in self.states and not (clobber or self.clobber):
-            raise KeyError("Cannot Duplicate State Name: %s \nUse remove(\'%s\') to clear" % (statename,statename))
+            raise KeyError("Cannot Duplicate State Name: \'%s\' Use this.remove(\'%s\') or clobber=True" % (statename,statename))
         elif statename in self.states:
             LOG.log(2,"Overwiting the frame %s" % statename)
         # Save the actual state
@@ -204,7 +204,7 @@ class FITSObject(object):
         if statename != None and statename in self.states:
             return np.copy(self.states[statename]())
         else:
-            raise KeyError("Object %s not instantiated with any data..." % self)
+            raise KeyError("%s: State %s does not exist" % (self,statename))
     
     def frame(self,statename=None):
         """Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.
@@ -227,7 +227,7 @@ class FITSObject(object):
         if statename != None and statename in self.states:
             return self.states[statename]
         else:
-            raise KeyError("Object %s not instantiated with any data..." % self)
+            raise KeyError("%s: State %s does not exist" % (self,statename))
     
     def object(self,statename=None):
         LOG.log(5,"Method \".object()\" on %s has been depreciated. Please use \".frame()\" instead." % self)
@@ -236,7 +236,7 @@ class FITSObject(object):
     def select(self,statename):
         """Sets the default frame to the given statename. Normally, the default frame is the one that was last saved."""
         if statename not in self.states:
-            raise IndexError("State %s does not exist!" % statename)
+            raise IndexError("%s: State %s does not exist" % (self,statename))
         self.statename = statename
         LOG.log(5,"Selected state \'%s\'" % statename)
         return
@@ -257,34 +257,47 @@ class FITSObject(object):
         youngest = states[np.argmin(Ages)]
         return youngest
     
-    def clear(self):
+    def clear(self,delete=False):
         """Clears all states from this object. Returns an empty list representing the currently known states."""
+        if delete:
+            for state in self.states.keys():
+                del self.states[state]
+            del self.states
         self.states = {}
         self.statename = self._default_state()
         LOG.log(5,"%s: Cleared all states. Remaining: %s" % (self,self.list()))
         return self.list()
     
     
-    def keep(self,*statenames):
+    def keep(self,*statenames,**kwargs):
         """Removes all states except the specified frame(s) in the object"""
         oldStates = self.states
         newStates = {}
         for statename in statenames:
             if statename not in self.states:
-                raise IndexError("%s: Object %s does not exist!" % (self,statename))
+                raise IndexError("%s: State %s does not exist!" % (self,statename))
             newStates[statename] = oldStates[statename]
         LOG.log(5,"%s: Kept states %s" % (self,list(statenames)))
+        if "delete" in kwargs and kwargs["delete"]:
+            for state in self.states.keys():
+                if state not in statenames:
+                    del self.states[state]
+            del self.states
         self.states = newStates
         self.statename = self._default_state()
         return self.list()
     
-    def remove(self,*statenames):
+    def remove(self,*statenames,**kwargs):
         """Removes the specified frame(s) from the object."""
         removed = []
+        LOG.log(2,"%s: Requested remove %s" % (self,statenames))
         for statename in statenames:
             if statename not in self.states:
                 raise IndexError("%s: Object %s does not exist!" % (self,statename))
-            self.states.pop(statename)
+            if "delete" in kwargs and kwargs["delete"]:
+                del self.states[statename]
+            else:
+                self.states.pop(statename)
             removed += [statename]
         self.statename = self._default_state()
         LOG.log(5,"%s: Removed states %s" % (self,removed))
@@ -298,7 +311,7 @@ class FITSObject(object):
         if statename != None and statename in self.states:
             return self.states[statename].__show__()
         else:
-            raise KeyError("Object not instantiated with any data...")
+            raise KeyError("State %s does not exist" % statename)
     
     def write(self,filename=None,states=None,primaryState=None,clobber=False):
         """Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify ``states`` then only those states will be used. ``primaryState`` should be the state of the front HDU. When not specified, the latest state will be used. It uses the :attr:`dataClasses` :meth:`FITSFrame.__hdu__` method to return a valid HDU object for each Frame."""

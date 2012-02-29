@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-04-28.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.0a1
+#  Version 0.3.0a2
 # 
 
 # Parent Modules
@@ -99,7 +99,7 @@ class ImageFrame(AstroObjectBase.FITSFrame):
             LOG.warning("The data appears to be %d dimensional. This object expects 2 dimensional data." % len(data.shape))
         try:
             Object = cls(data,label)
-        except AssertionError as AE:
+        except AttributeError as AE:
             msg = "%s data did not validate: %s" % (cls.__name__,AE)
             raise AbstractError(msg)
         LOG.log(2,"Saved %s with size %d" % (Object,data.size))
@@ -147,6 +147,22 @@ class ImageObject(AstroObjectBase.FITSObject):
         self.save(mpimage.imread(filename),statename)
         LOG.log(5,"Loaded Image from file: "+filename)
     
+    def show3D(self,statename=None):
+        """Shows a 3D contour of the image"""
+        if not statename:
+            statename = self._default_state()
+        if statename != None and statename in self.states:
+            X = np.arange(self.states[self.statename]().shape[0])
+            Y = np.arange(self.states[self.statename]().shape[1])
+            X,Y = np.meshgrid(X,Y)
+            Z = self.states[self.statename]()
+            LOG.log(2,"3D Plotting: Axis Size %s %s %s" % (X.size, Y.size, Z.size))
+            ax = plt.gca(projection='3d')
+            surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.jet, linewidth=0, antialiased=False)
+            plt.colorbar(surf, shrink=0.5, aspect=5)
+            LOG.log(2,"Plot Image in 3D: %s" % self.statename)
+        else:
+            raise KeyError("Object not instantiated with any data...")
 
 
 class OLDImageObject(AstroObjectBase.FITSObject):

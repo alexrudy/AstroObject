@@ -1,3 +1,5 @@
+.. module:: AstroObject.AstroSpectra
+
 Raw Spectrum Management :mod:`AstroSpectra`
 *******************************************
 
@@ -5,15 +7,13 @@ An object and frame class which can handle raw spectrum data. This module only h
 
 .. warning:: The class implemented here does not yet use a sophisticated enough method for saving FITS header data etc. As such, it will not preserve state names etc. The development of this class should bring it inline with the STSCI spectra classes in the future.
 
-.. module:: AstroSpectra
-
 .. autoclass::
-    AstroSpectra.SpectraFrame
+    AstroObject.AstroSpectra.SpectraFrame
     :members:
     :special-members:
 
 .. autoclass::
-    AstroSpectra.SpectraObject
+    AstroObject.AstroSpectra.SpectraObject
     :members:
     :inherited-members:
 

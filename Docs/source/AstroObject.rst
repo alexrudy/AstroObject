@@ -1,3 +1,6 @@
+.. module:: 
+    AstroObject.AstroObjectBase
+
 API for Objects: :class:`FITSObject` 
 ************************************
 
@@ -20,11 +23,8 @@ The FITSObject container is useful for handling many data frames. It can be sub-
     
 This object will then have all of the functions provided by :class:`AstroObjectBase.FITSObject`, but will only accept and handle data of type :class:`FooFrame`. :class:`FooFrame` should then implement all of the functions described in the :ref:`AstroObjectAPI`.
 
-.. module:: 
-    AstroObjectBase
-
 .. autoclass::
-    AstroObjectBase.FITSObject
+    AstroObject.AstroObjectBase.FITSObject
     :members:
     
 
@@ -39,7 +39,7 @@ AstroObjectBase provides template objects for the Object-Oriented Modules :mod:`
     You should still use Template Classes even though they really only raise abstract errors. This helps you to ensure that you have implemented all of the required methods. As well, if new methods are added to the APIs in the future, using the Abstract class will likely cause your program to fail quietly on these new API calls, allowing you to mix old and new code with out too much concern for what has changed.
 
 .. autoclass:: 
-    AstroObjectBase.FITSFrame
+    AstroObject.AstroObjectBase.FITSFrame
     :members:
     :special-members:
     

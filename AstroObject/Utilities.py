@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.0a1
+#  Version 0.3.0a2
 #
 
 import matplotlib as mpl
@@ -70,6 +70,19 @@ def expandLim(axis,scale=0.05):
     axis = (xmin,xmax,ymin,ymax)
     return axis
 
+def bin(array,factor):
+    """Bins an array by the given factor"""
+    
+    finalShape = tuple((np.array(array.shape) / factor).astype(np.int))
+    Aout = np.zeros(finalShape)
+    
+    for i in range(factor):
+        Ai = array[i::factor,i::factor]
+        Aout += Ai
+    
+    return Aout
+
+
 def BlackBody(wl,T):
     """Return black-body flux as a function of wavelength. Usese constants from Scipy Constants, and expects SI units"""
     h = spconst.h
@@ -114,9 +127,13 @@ def npArrayInfo(array,name):
     
     ::
         
-        >>>arr = np.array([1,2,3,4,5,np.nan])
-        >>>print npArrayInfo(arr,"Some Array")
+        >>> arr = np.array([0,1,2,3,4,5,np.nan])
+        >>> print npArrayInfo(arr,"Some Array")
+        Some Array has 7 elements with shape (7,). Range [  nan,  nan] Zeros 1 ( 14%). NaNs 1 ( 14%). 
+        >>> print npArrayInfo(arr[1:-1],"Some Array")
+        Some Array has 5 elements with shape (5,). Range [    1,    5]
         
+      
     """
     fmtr = {}
     MSG = ""
