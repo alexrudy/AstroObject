@@ -402,12 +402,21 @@ class Simulator(object):
         
         try:
             s.do()
+        except KeyboardInterrupt as e:
+            self.log.useConsole(True)
+            self.log.critical("Keyboard Interrupt... ending simulator.")
+            self.log.critical("Last completed stage: %(stage)s" % {'stage':self.complete.pop()})
+            self.log.debug("Stages completed: %s" % self.complete)
+            self.exit()
         except s.exceptions as e:
+            if self.config["Debug"]:
+                self.log.useConsole(True)
             self.log.error("Error %(name)s in stage %(desc)s. Stage indicated that this error was not critical" % {'name': e.__class__.__name__, 'desc': s.description})
             self.log.error("Error: %(msg)s" % {'msg':e})
             if self.config["Debug"]:
                 raise
         except Exception as e:
+            self.log.useConsole(True)
             self.log.critical("Error %(name)s in stage %(desc)s!" % {'name': e.__class__.__name__, 'desc': s.description})
             self.log.critical("Error: %(msg)s" % {'msg':e})
             raise
@@ -421,5 +430,5 @@ class Simulator(object):
         
     def exit(self):
         """Cleanup function for when we are all done"""
-        pass
+        sys.exit()
         
