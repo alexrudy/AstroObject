@@ -1,0 +1,375 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>10. Simulator and Complex Task Management AstroSimulator &mdash; AstroObject 0.3.0a2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.3.0a2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="AstroObject 0.3.0a2 documentation" href="index.html" />
+    <link rel="next" title="11. Easy Logging AstroObjectLogging" href="Logging.html" />
+    <link rel="prev" title="9. HDU Objects and Storage AstroFITS" href="AstroFITS.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Logging.html" title="11. Easy Logging AstroObjectLogging"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="AstroFITS.html" title="9. HDU Objects and Storage AstroFITS"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">AstroObject 0.3.0a2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-AstroObject.AstroSimulator"></span><div class="section" id="simulator-and-complex-task-management-astrosimulator">
+<h1>10. Simulator and Complex Task Management <tt class="xref py py-mod docutils literal"><span class="pre">AstroSimulator</span></tt><a class="headerlink" href="#simulator-and-complex-task-management-astrosimulator" title="Permalink to this headline">¶</a></h1>
+<p>The Simulator is designed to provide a high level, command-line useful interface to large computational tasks. As the name suggests, Simulators often do a lot of programming work, and do so across many distinct &#8220;stages&#8221;, whcih can be configured in any way the user desires. All of the abilities in this program are simply object abstraction techniques to provide a complex program with a command line interface and better control and reporting on the activiites carreid out to successfully complete the program. It allows for the configuration of simple test cases and &#8220;macros&#8221; from within the program, eliminating the need to provide small wrapper scripts and test handlers.</p>
+<p>An example (simple) program using the simulator:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">AstroObject.AstroSimulator</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">AstroObject.AstroCache</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="k">class</span> <span class="nc">SimpleModel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">SIM</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SimpleStage</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;SimpleStage&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim</span> <span class="o">=</span> <span class="n">SIM</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&quot;Hello from </span><span class="si">%s</span><span class="s"> Object&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">Caches</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;Random Image&quot;</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">img</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">other</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Other Stage Function&quot;&quot;&quot;</span>
+        <span class="k">print</span> <span class="s">&quot;Hello from </span><span class="si">%s</span><span class="s"> Stage&quot;</span> <span class="o">%</span> <span class="s">&quot;other&quot;</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">Caches</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;Random NPY&quot;</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">img</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">last</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Last Stage Function&quot;&quot;&quot;</span>
+        <span class="k">print</span> <span class="s">&quot;Last Stage&quot;</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim</span><span class="o">.</span><span class="n">Caches</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;Random Image&quot;</span><span class="p">)</span>
+        <span class="k">print</span> <span class="n">img</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">stream</span><span class="p">,</span><span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Saves some cache data&quot;&quot;&quot;</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span><span class="n">data</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">cache</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Cache this image&quot;&quot;&quot;</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">,(</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1000</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">img</span>
+
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">stream</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load the image&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">CacheIOError</span><span class="p">(</span><span class="s">&quot;Couldn&#39;t find Cache File&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">img</span>
+
+<span class="n">SIM</span> <span class="o">=</span> <span class="n">Simulator</span><span class="p">(</span><span class="n">commandLine</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">stage</span> <span class="o">=</span> <span class="n">SimpleModel</span><span class="p">(</span><span class="n">SIM</span><span class="p">)</span>
+
+<span class="n">SIM</span><span class="o">.</span><span class="n">registerStage</span><span class="p">(</span><span class="n">stage</span><span class="o">.</span><span class="n">run</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;examp&quot;</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="s">&quot;Example Stage&quot;</span><span class="p">)</span>
+<span class="n">SIM</span><span class="o">.</span><span class="n">registerStage</span><span class="p">(</span><span class="n">stage</span><span class="o">.</span><span class="n">other</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;other&quot;</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="s">&quot;Other Stage&quot;</span><span class="p">)</span>
+<span class="n">SIM</span><span class="o">.</span><span class="n">registerStage</span><span class="p">(</span><span class="n">stage</span><span class="o">.</span><span class="n">last</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;last&quot;</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="s">&quot;Last Stage&quot;</span><span class="p">)</span>
+<span class="n">SIM</span><span class="o">.</span><span class="n">registerMacro</span><span class="p">(</span><span class="s">&quot;ex&quot;</span><span class="p">,</span><span class="s">&quot;examp&quot;</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s">&quot;example Macro&quot;</span><span class="p">)</span>
+<span class="n">SIM</span><span class="o">.</span><span class="n">Caches</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s">&quot;Random Image&quot;</span><span class="p">,</span><span class="n">stage</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span><span class="n">stage</span><span class="o">.</span><span class="n">load</span><span class="p">,</span><span class="n">stage</span><span class="o">.</span><span class="n">save</span><span class="p">)</span>
+<span class="n">SIM</span><span class="o">.</span><span class="n">Caches</span><span class="o">.</span><span class="n">registerNPY</span><span class="p">(</span><span class="s">&quot;Random NPY&quot;</span><span class="p">,</span><span class="n">stage</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span><span class="n">directory</span><span class="o">=</span><span class="s">&quot;Caches/&quot;</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;Random.npy&quot;</span><span class="p">)</span>
+<span class="n">SIM</span><span class="o">.</span><span class="n">Caches</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+<span class="n">SIM</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="class">
+<dt id="AstroObject.AstroSimulator.Simulator">
+<em class="property">class </em><tt class="descclassname">AstroObject.AstroSimulator.</tt><tt class="descname">Simulator</tt><big>(</big><em>name='__class__.__name__'</em>, <em>commandLine=True</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Simulator, used for running large segements of code with detailed logging and progress checking. Simulators have a name, the <cite>name</cite> parameter can be left as is to use the name of the simulator&#8217;s class (mostly useful if you subclassed it!). The <cite>commandLine</cite> parameter can be set to False to prevent the simulator collecting arguments from <cite>sys.argv</cite> for use. This allows you to programatically call the simulator with the <a class="reference internal" href="#AstroObject.AstroSimulator.Simulator.do" title="AstroObject.AstroSimulator.Simulator.do"><tt class="xref py py-meth docutils literal"><span class="pre">do()</span></tt></a> method.</p>
+<dl class="method">
+<dt id="AstroObject.AstroSimulator.Simulator.configure">
+<tt class="descname">configure</tt><big>(</big><em>configFile=None</em>, <em>configuration=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.configure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.configure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configure this object. Configuration happens first from passed dictionaries (<cite>configuration</cite> variable) and then from files. The result is that configuration will use the values from files in place of values from passed in dictionaries. Running this function twice requires re-setting the <cite>self.configured</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroSimulator.Simulator.do">
+<tt class="descname">do</tt><big>(</big><em>*args</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.do"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.do" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the simulator. Parses arguments (<cite>*args</cite>) passed in to take control of the system</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroSimulator.Simulator.execute">
+<tt class="descname">execute</tt><big>(</big><em>stage</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.execute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Actually exectue a particular stage</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroSimulator.Simulator.exit">
+<tt class="descname">exit</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.exit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.exit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cleanup function for when we are all done</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroSimulator.Simulator.expandMacros">
+<tt class="descname">expandMacros</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.expandMacros"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.expandMacros" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursively traverse macros and turn them into lists of stages, rather than lists of stages and macros.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroSimulator.Simulator.initOptions">
+<tt class="descname">initOptions</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.initOptions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.initOptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the command line options for this script. This function is automatically called on construction, and provides the following default command options which are already supported by the simulator:</p>
+<p>Command line options are:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="81%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">CLI Option</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><cite>&#8211;version</cite></td>
+<td>Display version information about this module</td>
+</tr>
+<tr class="row-odd"><td><cite>&#8211;do-plot</cite></td>
+<td>Show debugging plots which will be stored in the Partials directory</td>
+</tr>
+<tr class="row-even"><td><cite>&#8211;no-cache</cite></td>
+<td>Disable all caching mechanisms</td>
+</tr>
+<tr class="row-odd"><td><cite>&#8211;debug</cite>,`-d`</td>
+<td>Turn on debugging messages</td>
+</tr>
+<tr class="row-even"><td><cite>&#8211;config</cite></td>
+<td>Specify a configuration file</td>
+</tr>
+<tr class="row-odd"><td><cite>&#8211;dump-config</cite></td>
+<td>Write the current configuration to file</td>
+</tr>
+<tr class="row-even"><td><cite>&#8211;print-stages</cite></td>
+<td>Print the stages that the command will execute, do not do anything</td>
+</tr>
+</tbody>
+</table>
+<p>Macros defined at this level are:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="86%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Macro</th>
+<th class="head">Result</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><cite>*all</cite></td>
+<td>Includes every stage</td>
+</tr>
+<tr class="row-odd"><td><cite>*none</cite></td>
+<td>Doesn&#8217;t include any stages (technically redundant)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroSimulator.Simulator.next">
+<tt class="descname">next</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the name of the next stage for the simulator.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroSimulator.Simulator.parseArguments">
+<tt class="descname">parseArguments</tt><big>(</big><em>*args</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.parseArguments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.parseArguments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse arguments. Argumetns can be passed into this function like they would be passed to the command line. These arguments will only be parsed when the system is not in <cite>commandLine</cite> mode.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroSimulator.Simulator.post_applyArguments">
+<tt class="descname">post_applyArguments</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.post_applyArguments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.post_applyArguments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply arguments after configuration. The arguments applied here flesh out macros, and copy data from the configuration system into the operations system.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroSimulator.Simulator.pre_applyArguments">
+<tt class="descname">pre_applyArguments</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.pre_applyArguments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.pre_applyArguments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies arguments before configuration. Only argument applied is the name of the configuration file, allowing the command line to change the configuration file name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroSimulator.Simulator.registerConfigOpts">
+<tt class="descname">registerConfigOpts</tt><big>(</big><em>argument</em>, <em>configuration</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.registerConfigOpts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Registers a bulk configuration option which will be provided with the USAGE statement. This configuration option can easily override normal configuration settings. Configuration provided here will override programmatically specified configuration options. It will not override configuration provided by the configuration file. These configuration options are meant to provide alterantive <em>defaults</em>, not alternative configurations.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroSimulator.Simulator.registerMacro">
+<tt class="descname">registerMacro</tt><big>(</big><em>name</em>, <em>*stages</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.registerMacro"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.registerMacro" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new macro to the simulation. Macros are groups of stages (and other macros) which can be called fromthe command line using the <cite>*</cite> parameter. Macros are registered with the command name (without the <cite>*</cite>) and the remaining arguments are the stage/macro names to be included. Kewyord argumetns can be included, and will be passed to argparse.add_argument</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroSimulator.Simulator.registerStage">
+<tt class="descname">registerStage</tt><big>(</big><em>stage</em>, <em>name=None</em>, <em>description=None</em>, <em>position=None</em>, <em>exceptions=None</em>, <em>include=True</em>, <em>help=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.registerStage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.registerStage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register a stage for operation with the simulator. The stage will then be available as a command line option, and will be operated with the simulator. Stages should be registered early in the operation of the simulator (preferably in the initialization, after the simulator class itself has initialized) so that the program is aware of the stages for running. Stages cannot be added dynamically. Once the simulator starts running (i.e. processing stages) the order and settings are fixed. Attempting to adjsut the stages at this point will raise an error. Stages can be passed a tuple of exceptions for use in operation. These exceptions will be logged as ERRORs, but will not cause the program to crash. They will thus keep the simulator running even if the stage encounters a problem.</p>
+<p>Registered stages can be explicity run from the command line by including:</p>
+<div class="highlight-python"><pre>$ Simulator +stage</pre>
+</div>
+<p>And can be explicity excluded from the command line:</p>
+<div class="highlight-python"><pre>$ Simulator -stage</pre>
+</div>
+<p>Where <cite>+stage</cite> will override <cite>-stage</cite> so:</p>
+<div class="highlight-python"><pre>$ Simulator +test -test
+$ Simulator -test +test</pre>
+</div>
+<p>will both run the <cite>test</cite> stage.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="89%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">keyword</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>stage</td>
+<td>The function to run for this stage. Should not take any arguments</td>
+</tr>
+<tr class="row-odd"><td>name</td>
+<td>The command-line name of this stage (no spaces, <cite>+</cite>, <cite>-</cite>, or <cite>*</cite>)</td>
+</tr>
+<tr class="row-even"><td>description</td>
+<td>A short description, which will be used by the logger when displaying information about the stage</td>
+</tr>
+<tr class="row-odd"><td>position</td>
+<td>A number, describing the position in the ordering for this stage. If None, stages are appended to the end of the stage list.</td>
+</tr>
+<tr class="row-even"><td>exceptions</td>
+<td>A tuple of exceptions which are acceptable results for this stage. These exceptions will be caught and logged, but will allow the simulator to continue</td>
+</tr>
+<tr class="row-odd"><td>include</td>
+<td>A boolean, Whether to include this stage in the <cite>*all</cite> macro or not.</td>
+</tr>
+<tr class="row-even"><td>help</td>
+<td>Help text for the command line argument. A value of False excludes the help, None includes generic help.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroSimulator.Simulator.run">
+<tt class="descname">run</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the actual simulator. This command handles simulators which can be run from the command line. Calling <a class="reference internal" href="#AstroObject.AstroSimulator.Simulator.run" title="AstroObject.AstroSimulator.Simulator.run"><tt class="xref py py-meth docutils literal"><span class="pre">run()</span></tt></a> will run all of the stages specified on the command line. If you do not want this effect, use <a class="reference internal" href="#AstroObject.AstroSimulator.Simulator.startup" title="AstroObject.AstroSimulator.Simulator.startup"><tt class="xref py py-meth docutils literal"><span class="pre">startup()</span></tt></a> to prepare the simulator, and <a class="reference internal" href="#AstroObject.AstroSimulator.Simulator.do" title="AstroObject.AstroSimulator.Simulator.do"><tt class="xref py py-meth docutils literal"><span class="pre">do()</span></tt></a> to run the actual simulator. Calling <a class="reference internal" href="#AstroObject.AstroSimulator.Simulator.exit" title="AstroObject.AstroSimulator.Simulator.exit"><tt class="xref py py-meth docutils literal"><span class="pre">exit()</span></tt></a> at the end will allow the simulator to close out and perform any output tasks, but will also end the current python session.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroSimulator.Simulator.startup">
+<tt class="descname">startup</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.startup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.startup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start up the simulation.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="AstroFITS.html"
+                        title="previous chapter">9. HDU Objects and Storage <tt class="docutils literal docutils literal docutils literal"><span class="pre">AstroFITS</span></tt></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Logging.html"
+                        title="next chapter">11. Easy Logging <tt class="docutils literal docutils literal"><span class="pre">AstroObjectLogging</span></tt></a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/Simulator.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Logging.html" title="11. Easy Logging AstroObjectLogging"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="AstroFITS.html" title="9. HDU Objects and Storage AstroFITS"
+             >previous</a> |</li>
+        <li><a href="index.html">AstroObject 0.3.0a2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Alexander Rudy.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

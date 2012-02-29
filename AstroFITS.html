@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>9. HDU Objects and Storage AstroFITS &mdash; AstroObject 0.3.0a1 documentation</title>
+    <title>9. HDU Objects and Storage AstroFITS &mdash; AstroObject 0.3.0a2 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.0a1',
+        VERSION:     '0.3.0a2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.0a1 documentation" href="index.html" />
-    <link rel="next" title="10. AstroObject Utilities" href="Utilities.html" />
+    <link rel="top" title="AstroObject 0.3.0a2 documentation" href="index.html" />
+    <link rel="next" title="10. Simulator and Complex Task Management AstroSimulator" href="Simulator.html" />
     <link rel="prev" title="8. Analytic Spectra and Interpolation AnalyticSpectra" href="AnalyticSpectra.html" /> 
   </head>
   <body>
@@ -40,12 +40,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Utilities.html" title="10. AstroObject Utilities"
+          <a href="Simulator.html" title="10. Simulator and Complex Task Management AstroSimulator"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="AnalyticSpectra.html" title="8. Analytic Spectra and Interpolation AnalyticSpectra"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0a1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.0a2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -118,7 +118,7 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
 <dd><p>This object tracks a number of HDU frames. This class is a simple subclass of <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.FITSObject</span></tt> and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. It uses only the <a class="reference internal" href="#AstroObject.AstroFITS.HDUFrame" title="AstroObject.AstroFITS.HDUFrame"><tt class="xref py py-class docutils literal"><span class="pre">HDUFrame</span></tt></a> class for data.</p>
 <dl class="method">
 <dt id="AstroObject.AstroFITS.HDUObject.clear">
-<tt class="descname">clear</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.clear" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">clear</tt><big>(</big><em>delete=False</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.clear" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clears all states from this object. Returns an empty list representing the currently known states.</p>
 </dd></dl>
 
@@ -156,7 +156,7 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
 
 <dl class="method">
 <dt id="AstroObject.AstroFITS.HDUObject.keep">
-<tt class="descname">keep</tt><big>(</big><em>*statenames</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.keep" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">keep</tt><big>(</big><em>*statenames</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.keep" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes all states except the specified frame(s) in the object</p>
 </dd></dl>
 
@@ -180,7 +180,7 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
 
 <dl class="method">
 <dt id="AstroObject.AstroFITS.HDUObject.remove">
-<tt class="descname">remove</tt><big>(</big><em>*statenames</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.remove" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">remove</tt><big>(</big><em>*statenames</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.remove" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes the specified frame(s) from the object.</p>
 </dd></dl>
 
@@ -222,8 +222,8 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
   <p class="topless"><a href="AnalyticSpectra.html"
                         title="previous chapter">8. Analytic Spectra and Interpolation <tt class="docutils literal docutils literal"><span class="pre">AnalyticSpectra</span></tt></a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Utilities.html"
-                        title="next chapter">10. AstroObject Utilities</a></p>
+  <p class="topless"><a href="Simulator.html"
+                        title="next chapter">10. Simulator and Complex Task Management <tt class="docutils literal"><span class="pre">AstroSimulator</span></tt></a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/AstroFITS.txt"
@@ -256,12 +256,12 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Utilities.html" title="10. AstroObject Utilities"
+          <a href="Simulator.html" title="10. Simulator and Complex Task Management AstroSimulator"
              >next</a> |</li>
         <li class="right" >
           <a href="AnalyticSpectra.html" title="8. Analytic Spectra and Interpolation AnalyticSpectra"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0a1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.0a2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

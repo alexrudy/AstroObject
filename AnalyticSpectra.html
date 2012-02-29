@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>8. Analytic Spectra and Interpolation AnalyticSpectra &mdash; AstroObject 0.3.0a1 documentation</title>
+    <title>8. Analytic Spectra and Interpolation AnalyticSpectra &mdash; AstroObject 0.3.0a2 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.0a1',
+        VERSION:     '0.3.0a2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.0a1 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.3.0a2 documentation" href="index.html" />
     <link rel="next" title="9. HDU Objects and Storage AstroFITS" href="AstroFITS.html" />
     <link rel="prev" title="7. Raw Spectrum Management AstroSpectra" href="AstroSpectra.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="AstroSpectra.html" title="7. Raw Spectrum Management AstroSpectra"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0a1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.0a2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -76,7 +76,8 @@
 <dl class="class">
 <dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum">
 <em class="property">class </em><tt class="descclassname">AstroObject.AnalyticSpectra.</tt><tt class="descname">AnalyticSpectrum</tt><big>(</big><em>data=None</em>, <em>label=None</em>, <em>wavelengths=None</em>, <em>units=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="Permalink to this definition">¶</a></dt>
-<dd><p>A functional spectrum object for spectrum generation. The default implementation is a flat spectrum.</p>
+<dd><p>A functional spectrum object for spectrum generation. The default implementation is abstract, and will throw errors if you try to call it.</p>
+<p>The Analytic spectrum can be provided with a set of wavelengths upon intialization. The <cite>wavelengths</cite> keyword will be stored and used when this spectrum is later called by the system. The <cite>units</cite> keyword is currently unused.</p>
 <dl class="method">
 <dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__add__">
 <tt class="descname">__add__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__add__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__add__" title="Permalink to this definition">¶</a></dt>
@@ -146,7 +147,7 @@
 <dl class="method">
 <dt id="AstroObject.AnalyticSpectra.CompositeSpectra.__call__">
 <tt class="descname">__call__</tt><big>(</big><em>wavelengths=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#CompositeSpectra.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.CompositeSpectra.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calls the composite function components. The keyword arguments are passed on to calls to spectra contained within this composite spectra. All spectra varieties should accept arbitrary keywords, so this argument is used to pass keywords to spectra which require specific alternatives.</p>
+<dd><p>Calls the composite function components. The keyword arguments are passed on to calls to spectra contained within this composite spectra. All spectra varieties should accept arbitrary keywords, so this argument is used to pass keywords to spectra which require specific alternatives. Pass in <cite>wavelengths</cite> to use the given wavelengths. If none are passed in, it will look for object-level saved wavelengths, which you can specify simply by setting the <cite>self.wavelengths</cite> parameter on the object.</p>
 </dd></dl>
 
 </dd></dl>
@@ -157,7 +158,11 @@
 <dl class="class">
 <dt id="AstroObject.AnalyticSpectra.InterpolatedSpectrum">
 <em class="property">class </em><tt class="descclassname">AstroObject.AnalyticSpectra.</tt><tt class="descname">InterpolatedSpectrum</tt><big>(</big><em>data=None</em>, <em>label=None</em>, <em>wavelengths=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#InterpolatedSpectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum" title="Permalink to this definition">¶</a></dt>
-<dd><p>An analytic representation of a generic, specified spectrum</p>
+<dd><p>An analytic representation of a generic, specified spectrum. The spectrum provided will be used to create an infintiely dense interpolation function. This function can then be used to call the spectrum at any wavelength. The interpolation used is a simple 1d interpolation.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">No checks are currently provided to prevent extraneous interpoaltion outside of the originally specified range.</p>
+</div>
 <dl class="method">
 <dt id="AstroObject.AnalyticSpectra.InterpolatedSpectrum.__call__">
 <tt class="descname">__call__</tt><big>(</big><em>wavelengths=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#InterpolatedSpectrum.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum.__call__" title="Permalink to this definition">¶</a></dt>
@@ -169,7 +174,7 @@
 <dl class="class">
 <dt id="AstroObject.AnalyticSpectra.ResampledSpectrum">
 <em class="property">class </em><tt class="descclassname">AstroObject.AnalyticSpectra.</tt><tt class="descname">ResampledSpectrum</tt><big>(</big><em>data=None</em>, <em>label=None</em>, <em>wavelengths=None</em>, <em>resolution=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#ResampledSpectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.ResampledSpectrum" title="Permalink to this definition">¶</a></dt>
-<dd><p>A spectrum that must be called with resampling information</p>
+<dd><p>A spectrum that must be called with resampling information, but which correctly reamples down to given resoluton at each requested wavelength. The spectrum provided must have a greater resolution than the one requested in the end. Supplying the <cite>resoulution</cite> and <cite>wavelength</cite> keywords at initialization only sets defaults.</p>
 <dl class="method">
 <dt id="AstroObject.AnalyticSpectra.ResampledSpectrum.__call__">
 <tt class="descname">__call__</tt><big>(</big><em>wavelengths=None</em>, <em>resolution=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#ResampledSpectrum.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.ResampledSpectrum.__call__" title="Permalink to this definition">¶</a></dt>
@@ -179,7 +184,7 @@
 <dl class="method">
 <dt id="AstroObject.AnalyticSpectra.ResampledSpectrum.resample">
 <tt class="descname">resample</tt><big>(</big><em>wavelengths</em>, <em>resolution</em>, <em>z=0.0</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#ResampledSpectrum.resample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.ResampledSpectrum.resample" title="Permalink to this definition">¶</a></dt>
-<dd><p>Resample the given spectrum to a lower resolution</p>
+<dd><p>Resample the given spectrum to a lower resolution. This algorithm is a vectorized version of the one provided by Robert Quimby in IDL code.</p>
 </dd></dl>
 
 </dd></dl>
@@ -285,7 +290,7 @@
         <li class="right" >
           <a href="AstroSpectra.html" title="7. Raw Spectrum Management AstroSpectra"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0a1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.0a2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

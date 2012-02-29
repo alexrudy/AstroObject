@@ -20,6 +20,8 @@ This object will then have all of the functions provided by :class:`AstroObjectB
 
 To use this API, it is recommended that you sub-class :class:`AstroObjectBase.FITSFrame`. This template class will implement all of the required functions, and will raise abstract errors on functions that must be overwritten by your subclass.
 
+-----
+
 .. py:class:: AstroFrameAPI()
     
     This is the API for frame objects, that is, objects which represnet a single state of data. See :class:`AstroObjectBase.FITSFrame`. This API is generally not called by the end user, but rather is called by the parent *Object* function. For an example of a parent object, see :class:`AstroObjectBase.FITSObject`
@@ -56,7 +58,7 @@ To use this API, it is recommended that you sub-class :class:`AstroObjectBase.FI
                     msg = "%s data did not validate: %s" % (cls.__name__,AE)
                     raise AbstractError(msg)
                 
-            This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like :exc:`AttributeError`) which are diffult to track and diagnose without the code in :meth:`__save__`. See :meth:`AstroImage.__save__` for an example ``__read__`` function which uses this trick, but also includes some basic data validation.
+            This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like :exc:`AttributeError`) which are diffult to track and diagnose without the code in :meth:`__save__`. See :meth:`AstroImage.__save__` for an example ``__save__`` function which uses this trick, but also includes some basic data validation.
         
     .. py:classmethod:: __read__(HDU,label)
     

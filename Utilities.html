@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>10. AstroObject Utilities &mdash; AstroObject 0.3.0a1 documentation</title>
+    <title>12. AstroObject Utilities &mdash; AstroObject 0.3.0a2 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.0a1',
+        VERSION:     '0.3.0a2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,9 +25,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.0a1 documentation" href="index.html" />
-    <link rel="next" title="11. Development Plans" href="future.html" />
-    <link rel="prev" title="9. HDU Objects and Storage AstroFITS" href="AstroFITS.html" /> 
+    <link rel="top" title="AstroObject 0.3.0a2 documentation" href="index.html" />
+    <link rel="next" title="13. Development Plans" href="future.html" />
+    <link rel="prev" title="11. Easy Logging AstroObjectLogging" href="Logging.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,12 +40,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="future.html" title="11. Development Plans"
+          <a href="future.html" title="13. Development Plans"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="AstroFITS.html" title="9. HDU Objects and Storage AstroFITS"
+          <a href="Logging.html" title="11. Easy Logging AstroObjectLogging"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0a1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.0a2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -55,7 +55,7 @@
           <div class="body">
             
   <span class="target" id="module-AstroObject.Utilities"></span><div class="section" id="astroobject-utilities">
-<h1>10. AstroObject Utilities<a class="headerlink" href="#astroobject-utilities" title="Permalink to this headline">¶</a></h1>
+<h1>12. AstroObject Utilities<a class="headerlink" href="#astroobject-utilities" title="Permalink to this headline">¶</a></h1>
 <p>These are mostly internal module utility functions, documented here in case you find them useful. They are not guaranteed to function in any way.</p>
 <dl class="function">
 <dt id="AstroObject.Utilities.getVersion">
@@ -67,8 +67,11 @@
 <dt id="AstroObject.Utilities.npArrayInfo">
 <tt class="descclassname">AstroObject.Utilities.</tt><tt class="descname">npArrayInfo</tt><big>(</big><em>array</em>, <em>name</em><big>)</big><a class="reference internal" href="_modules/AstroObject/Utilities.html#npArrayInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.Utilities.npArrayInfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Message describing this array in excruciating detail. Used in debugging arrays where we don&#8217;t know what they contain. Returns a message string.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="go">&gt;&gt;&gt;arr = np.array([1,2,3,4,5,np.nan])</span>
-<span class="go">&gt;&gt;&gt;print npArrayInfo(arr,&quot;Some Array&quot;)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">npArrayInfo</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span><span class="s">&quot;Some Array&quot;</span><span class="p">)</span>
+<span class="go">Some Array has 7 elements with shape (7,). Range [  nan,  nan] Zeros 1 ( 14%). NaNs 1 ( 14%). </span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">npArrayInfo</span><span class="p">(</span><span class="n">arr</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="s">&quot;Some Array&quot;</span><span class="p">)</span>
+<span class="go">Some Array has 5 elements with shape (5,). Range [    1,    5]</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -100,11 +103,11 @@
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="AstroFITS.html"
-                        title="previous chapter">9. HDU Objects and Storage <tt class="docutils literal docutils literal docutils literal"><span class="pre">AstroFITS</span></tt></a></p>
+  <p class="topless"><a href="Logging.html"
+                        title="previous chapter">11. Easy Logging <tt class="docutils literal docutils literal docutils literal"><span class="pre">AstroObjectLogging</span></tt></a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="future.html"
-                        title="next chapter">11. Development Plans</a></p>
+                        title="next chapter">13. Development Plans</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/Utilities.txt"
@@ -137,12 +140,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="future.html" title="11. Development Plans"
+          <a href="future.html" title="13. Development Plans"
              >next</a> |</li>
         <li class="right" >
-          <a href="AstroFITS.html" title="9. HDU Objects and Storage AstroFITS"
+          <a href="Logging.html" title="11. Easy Logging AstroObjectLogging"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0a1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.0a2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3. AstroObject API &mdash; AstroObject 0.3.0a1 documentation</title>
+    <title>3. AstroObject API &mdash; AstroObject 0.3.0a2 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.0a1',
+        VERSION:     '0.3.0a2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.0a1 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.3.0a2 documentation" href="index.html" />
     <link rel="next" title="4. API for Objects: FITSObject" href="AstroObject.html" />
     <link rel="prev" title="2. Development of AstroObject" href="development.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="development.html" title="2. Development of AstroObject"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0a1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.0a2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -69,6 +69,7 @@
 </div>
 <p>This object will then have all of the functions provided by <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.FITSObject</span></tt>, but will only accept and handle data of type <tt class="xref py py-class docutils literal"><span class="pre">FooFrame</span></tt>. <tt class="xref py py-class docutils literal"><span class="pre">FooFrame</span></tt> should then implement all of the functions described in the API below.</p>
 <p>To use this API, it is recommended that you sub-class <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.FITSFrame</span></tt>. This template class will implement all of the required functions, and will raise abstract errors on functions that must be overwritten by your subclass.</p>
+<hr class="docutils" />
 <dl class="class">
 <dt id="AstroFrameAPI">
 <em class="property">class </em><tt class="descname">AstroFrameAPI</tt><a class="headerlink" href="#AstroFrameAPI" title="Permalink to this definition">¶</a></dt>
@@ -117,7 +118,7 @@
     <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </pre></div>
 </div>
-<p class="last">This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like <tt class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></tt>) which are diffult to track and diagnose without the code in <a class="reference internal" href="#AstroFrameAPI.__save__" title="AstroFrameAPI.__save__"><tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt></a>. See <tt class="xref py py-meth docutils literal"><span class="pre">AstroImage.__save__()</span></tt> for an example <tt class="docutils literal"><span class="pre">__read__</span></tt> function which uses this trick, but also includes some basic data validation.</p>
+<p class="last">This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like <tt class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></tt>) which are diffult to track and diagnose without the code in <a class="reference internal" href="#AstroFrameAPI.__save__" title="AstroFrameAPI.__save__"><tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt></a>. See <tt class="xref py py-meth docutils literal"><span class="pre">AstroImage.__save__()</span></tt> for an example <tt class="docutils literal"><span class="pre">__save__</span></tt> function which uses this trick, but also includes some basic data validation.</p>
 </div>
 </dd></dl>
 
@@ -196,7 +197,7 @@
         <li class="right" >
           <a href="development.html" title="2. Development of AstroObject"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0a1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.0a2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
