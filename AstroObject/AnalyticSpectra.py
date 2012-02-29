@@ -77,7 +77,6 @@ class AnalyticSpectrum(AstroObjectBase.BaseFrame):
     def __radd__(self):
         """Reverse Addition"""
         return CompositeSpectra(self,other,'add')
-    
 
 
 class CompositeSpectra(AnalyticSpectrum):

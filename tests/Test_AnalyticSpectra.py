@@ -20,12 +20,12 @@ from nose.plugins.skip import Skip,SkipTest
 
 from tests.Test_AstroObjectBase import *
 from tests.Test_AstroObjectAPI import *
-
+from tests.Test_AstroSpectra import *
 
 import AstroObject.AnalyticSpectra as AS
 from AstroObject.Utilities import AbstractError
 
-class API_AnalyticSpectra(API_Base_Frame):
+class API_AnalyticSpectra(API_Abstract_Frame):
     """Set up and basic tests for analytic spectra"""
     
     def test_init_with_wavelengths(self):
@@ -132,7 +132,8 @@ class test_AnalyticSpectraFrame(API_AnalyticSpectra,API_Abstract_Frame):
 
 
 
-class test_InterpolatedSpectra(API_AnalyticSpectra,API_Abstract_Frame):
+
+class test_InterpolatedSpectra(API_AnalyticSpectra,test_SpectraFrame):
     """AnalyticSpecra.InterpolatedSpectra"""
     def setUp(self):
         """Sets up the test with some basic image data."""
@@ -175,7 +176,7 @@ class test_InterpolatedSpectra(API_AnalyticSpectra,API_Abstract_Frame):
 
 
 
-class test_ResampledSpectra(API_AnalyticSpectra,API_Abstract_Frame):
+class test_ResampledSpectra(API_AnalyticSpectra,test_SpectraFrame):
     """AnalyticSpectra.ResampledSpectra"""
     def setUp(self):
         """Sets up the test with some basic image data."""
@@ -229,7 +230,7 @@ class test_ResampledSpectra(API_AnalyticSpectra,API_Abstract_Frame):
         assert AFrame.label == "Valid"
         data = AFrame(wavelengths=self.WAVELENGTHS[:-1],resolution=np.diff(self.WAVELENGTHS),other=1,arbitrary="str",arguments="blah")
     
-class test_FLambdaSpectra(API_AnalyticSpectra,API_Abstract_Frame):
+class test_FLambdaSpectra(API_AnalyticSpectra,API_Base_Frame):
     """AnalyticSpecra.FLambdaSpectra"""
     def setUp(self):
         """Sets up the test with some basic image data."""
