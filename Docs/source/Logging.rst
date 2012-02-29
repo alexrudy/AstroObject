@@ -12,7 +12,7 @@ To use the logging::
 	LOG = logging.getLogger(__name__)
 	LOG.info("Buffered Message Saved for later output")
 	LOG.configure(configFile="some.yaml")
-	LOG.info("Buffered Message, which will never get to the console")
+	LOG.info("Buffered Message, saved for later output")
 	LOG.start()
 	LOG.info("Normal Message")
 	LOG.useConsole(False)

@@ -20,6 +20,8 @@ This object will then have all of the functions provided by :class:`AstroObjectB
 
 To use this API, it is recommended that you sub-class :class:`AstroObjectBase.FITSFrame`. This template class will implement all of the required functions, and will raise abstract errors on functions that must be overwritten by your subclass.
 
+-----
+
 .. py:class:: AstroFrameAPI()
     
     This is the API for frame objects, that is, objects which represnet a single state of data. See :class:`AstroObjectBase.FITSFrame`. This API is generally not called by the end user, but rather is called by the parent *Object* function. For an example of a parent object, see :class:`AstroObjectBase.FITSObject`
