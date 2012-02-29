@@ -81,28 +81,7 @@ class AnalyticSpectrum(AstroObjectBase.BaseFrame):
     def __call__(self,wavelengths=None,**kwargs):
         """Returns the Flux data for this spectrum"""
         msg = "%s: Cannot Call: Abstract Spectra not instantiated with any properies." % (self)
-        raise AbstractError(msg)
-    
-    def __hdu__(self,primary=False):
-        """Returns a pyfits HDU representing this object"""
-        msg = "%s: Cannot make HDU: Abstract Spectra not instantiated with any properies." % (self)
-        raise AbstractError(msg)
-    
-    
-    @classmethod
-    def __save__(cls,data,label):
-        """A generic class method for saving to this object with data directly"""
-        msg = "%s: Abstract Analytic Structure cannot be the target of a save operation!" % (cls)
-        raise AbstractError(msg)
-    
-    
-    @classmethod
-    def __read__(cls,HDU,label):
-        """An abstract method for reading empty data HDU Frames"""
-        LOG.log(2,"%s: Attempting to read data" % cls)
-        msg = "%s: Cannot save HDU as Analytic Spectra" % (cls)
-        raise AbstractError(msg)
-    
+        raise AbstractError(msg)    
 
 
 class CompositeSpectra(AnalyticSpectrum):

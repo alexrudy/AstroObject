@@ -18,67 +18,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import os
 
-__all__ = ['API_Abstract_Frame','API_Abstract_Object']
-
-class API_Abstract_Frame(API_Base_Frame):
-    """Tests an Abstract Frame"""
-    
-    
-    def test_init_data(self):
-        """__init__() succeds with None (Valid) data"""
-        self.FRAME(data=self.VALID,label="Invalid")
-    
-    def test_init_empty(self):
-        """__init__() abstract frame works without data"""
-        AFrame = self.FRAME(data=None,label="Valid")
-        assert AFrame.label == "Valid"
-    
-    @nt.raises(AbstractError)
-    def test_save_data(self):
-        """__save__() to an abstract base class raises an AbstractError"""
-        # raise SkipTest("This is a bug, related to argument ordering on the frame.__init__() call.")
-        # The following arguments are treated as label and header respectivley. The lack of abstract type cheking and/or a data argument means that this call doesn't fail when it should.
-        self.FRAME.__save__(self.VALID,"None")
-    
-    @nt.raises(AbstractError)
-    def test_read_SecondaryHDU(self):
-        """__read__() secondary HDU type should get an abstract error"""
-        self.FRAME.__read__(self.imHDU(self.INVALID),"Empty")
-        
-    @nt.raises(AbstractError)
-    def test_read_PrimaryHDU(self):
-        """__read__() primary HDU type should get an abstract error"""
-        BFrame = self.FRAME.__read__(self.pmHDU(self.INVALID),"Not Empty")
-    
-    @nt.raises(AbstractError)
-    def test_call(self):
-        """__call__() a base frame should raise an AbstractError"""
-        BFrame = self.FRAME(data=self.VALID,label="Empty")
-        assert BFrame.label == "Empty"
-        BFrame()
-    
-    @nt.raises(AbstractError)
-    def test_HDU(self):
-        """__hdu__() raises an AbstractError"""
-        BFrame = self.FRAME(data=self.VALID,label="Empty")
-        assert BFrame.label == "Empty"
-        HDU = BFrame.__hdu__()
-    
-    @nt.raises(AbstractError)
-    def test_PrimaryHDU(self):
-        """__hdu__() primary raises an AbstractError"""
-        BFrame = self.FRAME(data=self.VALID,label="Empty")
-        assert BFrame.label == "Empty"
-        HDU = BFrame.__hdu__(primary=True)
-    
-    @nt.raises(AbstractError)
-    def test_show(self):
-        """__show__() a base frame should fail"""
-        BFrame = self.FRAME(data=self.VALID,label="Empty")
-        assert BFrame.label == "Empty"
-        BFrame.__show__()
-    
-    
+__all__ = ['API_Abstract_Object']    
 
 
 
@@ -106,6 +46,20 @@ class API_Abstract_Object(API_Base_Object):
         
 
 
+class test_BASEFrame(API_Abstract_Frame):
+    """AstroObjectBase.BaseFrame"""
+    def setUp(self):
+        self.FRAME = AOB.BaseFrame
+        self.FRAMESTR = "<'BaseFrame' labeled 'Valid'>"
+        self.VALID = None
+        self.INVALID = np.array([1,2,3]).astype(np.int16)
+        self.SHOWTYPE = None
+        self.HDUTYPE = pf.ImageHDU
+        self.imHDU = pf.ImageHDU
+        self.pmHDU = pf.PrimaryHDU
+    
+
+        
 
 class test_FITSFrame(API_Abstract_Frame):
     """AstroObjectBase.FITSFrame"""
@@ -134,7 +88,7 @@ class test_FITSFrame(API_Abstract_Frame):
         self.doSetUp()
     
     def test_HDU(self):
-        """__hdu__() raises an AbstractError"""
+        """__hdu__() generates an empty Image HDU"""
         BFrame = self.FRAME(data=self.VALID,label="Empty")
         assert BFrame.label == "Empty"
         HDU = BFrame.__hdu__()
@@ -142,7 +96,7 @@ class test_FITSFrame(API_Abstract_Frame):
         assert HDU.data == None
     
     def test_PrimaryHDU(self):
-        """__hdu__() primary raises an AbstractError"""
+        """__hdu__() primary generates an empty Primary HDU"""
         BFrame = self.FRAME(data=self.VALID,label="Empty")
         assert BFrame.label == "Empty"
         HDU = BFrame.__hdu__(primary=True)
