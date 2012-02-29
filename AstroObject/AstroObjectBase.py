@@ -59,7 +59,7 @@ class BaseFrame(object):
         except AssertionError as e:
             raise AttributeError(str(e))
 
-    def __call__(self):
+    def __call__(self,**kwargs):
         """Should return the data within this frame, usually as a *numpy* array.
         
         :class:`AstroImage.ImageFrame` implements this method as::
