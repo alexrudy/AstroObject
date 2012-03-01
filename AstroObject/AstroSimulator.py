@@ -158,7 +158,8 @@ class Simulator(object):
         self.parser.add_argument('--config',action='store',dest='config',type=str,help="use the specified configuration file",metavar="file.yaml")
         self.parser.add_argument('--dump-config',action='store_true',dest='dump',help=argparse.SUPPRESS)
         self.parser.add_argument('--print-stages',action='store_true',dest='print_stages',help="Print the stages that the simulator intends to run")
-
+        self.parser.add_argument('--stages',action='store_true',dest='list_stages',help="List all of the stages initialized")
+        
         # Parsers
         self.config_parser = self.parser.add_argument_group("Configuration")
         self.pos_stage_parser = self.parser.add_argument_group('Single Use Stages')
@@ -324,6 +325,16 @@ class Simulator(object):
         if self.options["debug"]:
             self.config["Debug"] = self.options["debug"]
         
+    def shortExits(self):
+        """Options which short out and exit"""
+        if self.options["list_stages"]:
+            text = "Stages:\n"
+            for stage in self.orders:
+                s = self.stages[stage]
+                text += "%(command)-20s : %(desc)s" % {'command':s.name,'desc':s.description}
+                text += "\n"
+            self.parser.exit(message=text)
+                
     def startup(self):
         """Start up the simulation. """
         self.defaultMacros()
@@ -334,6 +345,7 @@ class Simulator(object):
         if self.caching:
             self.Caches.load()
         self.postConfiguration()
+        self.shortExits()
         self.starting = False
         
         
