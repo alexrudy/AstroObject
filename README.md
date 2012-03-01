@@ -5,11 +5,7 @@
  Created by Alexander Rudy on 2011-10-07.
  Copyright 2011 Alexander Rudy. All rights reserved.
 
-<<<<<<< HEAD
-  Version 0.3.0a1
-=======
   Version 0.3.0a2
->>>>>>> release/0.3.0a2
 
 ---
 
