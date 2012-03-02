@@ -83,11 +83,13 @@ class AnalyticSpectrum(AstroObjectBase.BaseFrame):
 
 class CompositeSpectra(AnalyticSpectrum):
     """Binary composition of two functional spectra. This object should not be initialized by the user. Instead, this class is returned when you combine two spectra of different types, or combine a spectra with any other type. As such, do not initialze composite spectra idependently. See the :meth:`__call__` function for documentation of how to use this type of object."""
+    ops = {'sub':"-",'add':"+",'mul':"*"}
     def __init__(self, partA, partB, operation):
-        label = ""
+        label = "("
         label += partA.label if hasattr(partA,'label') else str(partA)
-        label += " " + operation + " "
+        label += ") " + self.ops[operation] + " ("
         label += partB.label if hasattr(partB,'label') else str(partB)
+        label += ")"
         super(CompositeSpectra, self).__init__(None,label)
         self.A = partA
         self.B = partB

@@ -383,6 +383,10 @@ class Simulator(object):
         """Actually exectue a particular stage"""
         if self.paused or not self.running:
             return False
+            
+        if stage not in self.stages:
+            self.log.critical("Stage %s does not exist.")
+            self.exit(1)
         use = True
         if stage in self.options["exclude"]:
             use = False
@@ -427,13 +431,13 @@ class Simulator(object):
         except s.exceptions as e:
             if self.config["Debug"]:
                 self.log.useConsole(True)
-            self.log.error("Error %(name)s in stage %(desc)s. Stage indicated that this error was not critical" % {'name': e.__class__.__name__, 'desc': s.description})
+            self.log.error("Error %(name)s in stage %(stage)s:%(desc)s. Stage indicated that this error was not critical" % {'name': e.__class__.__name__, 'desc': s.description,'stage':s.name})
             self.log.error("Error: %(msg)s" % {'msg':e})
             if self.config["Debug"]:
                 raise
         except Exception as e:
             self.log.useConsole(True)
-            self.log.critical("Error %(name)s in stage %(desc)s!" % {'name': e.__class__.__name__, 'desc': s.description})
+            self.log.critical("Error %(name)s in stage %(stage)s:%(desc)s!" % {'name': e.__class__.__name__, 'desc': s.description,'stage':s.name})
             self.log.critical("Error: %(msg)s" % {'msg':e})
             raise
         else:
@@ -444,7 +448,7 @@ class Simulator(object):
         
         return use
         
-    def exit(self):
+    def exit(self,code=0):
         """Cleanup function for when we are all done"""
-        sys.exit()
+        sys.exit(code)
         
