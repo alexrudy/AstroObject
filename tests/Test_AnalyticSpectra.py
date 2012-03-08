@@ -181,9 +181,9 @@ class test_ResampledSpectra(API_AnalyticSpectra,test_SpectraFrame):
     def setUp(self):
         """Sets up the test with some basic image data."""
         
-        self.FRAME = AS.ResampledSpectrum
+        self.FRAME = AS.InterpolatedSpectrum
         self.INVALID = np.array([1,2,3])
-        self.FRAMESTR = "<'ResampledSpectrum' labeled 'Valid'>"
+        self.FRAMESTR = "<'InterpolatedSpectrum' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.artist.Artist
         self.WAVELENGTHS = np.arange(100) + 1.0
@@ -203,7 +203,7 @@ class test_ResampledSpectra(API_AnalyticSpectra,test_SpectraFrame):
         
         def SAME(first,second):
             """Return whether these two are the same"""
-            return SAMEDATA(first(),second())
+            return SAMEDATA(first(method='resampled'),second(method='resampled'))
         
         self.SAME = SAME
         self.SAMEDATA = SAMEDATA
@@ -222,13 +222,13 @@ class test_ResampledSpectra(API_AnalyticSpectra,test_SpectraFrame):
         """__call__() yields data"""
         AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
-        data = AFrame(wavelengths=self.WAVELENGTHS[:-1],resolution=(self.WAVELENGTHS[:-1]/np.diff(self.WAVELENGTHS))/4)
+        data = AFrame(wavelengths=self.WAVELENGTHS[:-1],resolution=(self.WAVELENGTHS[:-1]/np.diff(self.WAVELENGTHS))/4,method='resample')
         
     def test_call_with_arbitrary_arguments(self):
         """__call__() accepts arbitrary keyword arguments"""
         AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
-        data = AFrame(wavelengths=self.WAVELENGTHS[:-1],resolution=np.diff(self.WAVELENGTHS),other=1,arbitrary="str",arguments="blah")
+        data = AFrame(wavelengths=self.WAVELENGTHS[:-1],resolution=np.diff(self.WAVELENGTHS),other=1,arbitrary="str",arguments="blah",method='resample')
     
 class test_FLambdaSpectra(API_AnalyticSpectra,API_Base_Frame):
     """AnalyticSpecra.FLambdaSpectra"""
@@ -236,9 +236,9 @@ class test_FLambdaSpectra(API_AnalyticSpectra,API_Base_Frame):
         """Sets up the test with some basic image data."""
         
         self.VALID = np.array([[-100.0,200.0,300.0],[1,3,5]])
-        self.FRAME = AS.FLambdaSpectrum
+        self.FRAME = AS.InterpolatedSpectrum
         self.INVALID = np.array([1,2,3])
-        self.FRAMESTR = "<'FLambdaSpectrum' labeled 'Valid'>"
+        self.FRAMESTR = "<'InterpolatedSpectrum' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.artist.Artist
         self.WAVELENGTHS = np.arange(100) + 1.0
@@ -255,7 +255,7 @@ class test_FLambdaSpectra(API_AnalyticSpectra,API_Base_Frame):
         
         def SAME(first,second):
             """Return whether these two are the same"""
-            return SAMEDATA(first(),second())
+            return SAMEDATA(first(method="integrate"),second(method="integrate"))
         
         self.SAME = SAME
         self.SAMEDATA = SAMEDATA
@@ -274,11 +274,11 @@ class test_FLambdaSpectra(API_AnalyticSpectra,API_Base_Frame):
         """__call__() yields data"""
         AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
-        data = AFrame(wavelengths=self.WAVELENGTHS[:-1],resolution=(self.WAVELENGTHS[:-1]/np.diff(self.WAVELENGTHS)))
+        data = AFrame(wavelengths=self.WAVELENGTHS[:-1],resolution=(self.WAVELENGTHS[:-1]/np.diff(self.WAVELENGTHS)),method='integrate')
         
     def test_call_with_arbitrary_arguments(self):
         """__call__() accepts arbitrary keyword arguments"""
         AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
-        data = AFrame(wavelengths=self.WAVELENGTHS[:-1],resolution=np.diff(self.WAVELENGTHS),other=1,arbitrary="str",arguments="blah")
+        data = AFrame(wavelengths=self.WAVELENGTHS[:-1],resolution=np.diff(self.WAVELENGTHS),other=1,arbitrary="str",arguments="blah",method='integrate')
     

@@ -132,24 +132,31 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
     
     .. Warning:: 
         No checks are currently provided to prevent extraneous interpoaltion outside of the originally specified range."""
-    def __init__(self, data=None, label=None, wavelengths=None, **kwargs):
+    def __init__(self, data=None, label=None, wavelengths=None,resolution=None, intSteps=150, method="interpolate", **kwargs):
         self.data = data
         self.size = data.size # The size of this image
         self.shape = data.shape # The shape of this image
         super(InterpolatedSpectrum, self).__init__(data=data,label=label,**kwargs)
-        x,y = self.data
-        self.func = sp.interpolate.interp1d(x,y,bounds_error=False,fill_value=0)
         self.wavelengths = wavelengths
+        self.resolution = resolution
+        self.intSteps = intSteps
+        self.method = getattr(self,method)
+        
+        
     
-    def __call__(self,wavelengths=None,**kwargs):
+    def __call__(self,method=None,**kwargs):
         """Calls this interpolated spectrum over certain wavelengths"""
+        if method == None:
+            method = self.method
+        return self.method(**kwargs)
+        
+    def interpolate(self,wavelengths=None,**kwargs):
+        """docstring for interpolate"""
         if wavelengths == None:
             wavelengths = self.wavelengths
-        return self.interpolate(wavelengths)
         
-    def interpolate(self,wavelengths):
-        """docstring for interpolate"""
         oldwl,oldfl = self.data
+        self.func = sp.interpolate.interp1d(oldwl,oldfl,bounds_error=False,fill_value=0)
         
         # Unit sanity check
         if np.min(oldwl) < 1e-12 or np.max(oldwl) > 1e-3:
@@ -185,19 +192,11 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         
         # Finally, return the data in a way that makes sense for the just-in-time spectrum calculation objects
         return np.vstack((wavelengths,flux))
-         
         
+    def resample(self,wavelengths=None,resolution=None,z=0.0,**kwargs):
+        """Resample the given spectrum to a lower resolution. 
         
-    
-class ResampledSpectrum(InterpolatedSpectrum):
-    """A spectrum that must be called with resampling information, but which correctly reamples down to given resoluton at each requested wavelength. The spectrum provided must have a greater resolution than the one requested in the end. Supplying the `resoulution` and `wavelength` keywords at initialization only sets defaults."""
-    def __init__(self, data=None, label=None, wavelengths=None, resolution=None, **kwargs):
-        super(ResampledSpectrum, self).__init__(data=data,label=label, **kwargs)
-        self.wavelengths = wavelengths
-        self.resolution = resolution
-        
-    def __call__(self,wavelengths=None,resolution=None,**kwargs):
-        """Calls this resampled spectrum over certain wavelengths"""
+        This is a vector-based calculation, and so should be relatively fast. This function contains ZERO for loops, and uses entirely numpy-based vector mathematics. Sanity checks try to keep your input clean. It can also redshift a spectrum by a given z parameter, if that is necessary."""        
         if wavelengths == None:
             wavelengths = self.wavelengths
         if resolution == None:
@@ -206,12 +205,6 @@ class ResampledSpectrum(InterpolatedSpectrum):
             raise ValueError("Requires Wavelenths")
         if resolution == None:
             raise ValueError("Requires Resolution")
-        return self.resample(wavelengths,resolution)
-        
-    def resample(self,wavelengths,resolution,z=0.0):
-        """Resample the given spectrum to a lower resolution. 
-        
-        This is a vector-based calculation, and so should be relatively fast. This function contains ZERO for loops, and uses entirely numpy-based vector mathematics. Sanity checks try to keep your input clean. It can also redshift a spectrum by a given z parameter, if that is necessary."""        
         # Data sanity check
         if resolution.shape != wavelengths.shape:
             LOG.debug("%s: Wavelength Size: %d, Resolution Size %d" % (self,wavelengths.size,resolution.size))
@@ -307,15 +300,9 @@ class ResampledSpectrum(InterpolatedSpectrum):
         
         # Finally, return the data in a way that makes sense for the just-in-time spectrum calculation objects
         return np.vstack((wavelengths,flux))
-        
-class FLambdaSpectrum(ResampledSpectrum,AstroSpectra.SpectraFrame):
-    """A spectrum that must be integrated to get data values."""
-    def __init__(self, data=None, label=None, intSteps=150, **kwargs):
-        super(FLambdaSpectrum, self).__init__(data=data,label=label, **kwargs)
-        self.intSteps = intSteps
-        
-    def __call__(self,wavelengths=None,resolution=None,**kwargs):
-        """Calls this FLambda spectrum over certain wavelengths"""
+
+    def integrate(self,wavelengths=None,resolution=None,z=0.0,**kwargs):
+        """Performs wavelength-integration for flambda spectra"""
         if wavelengths == None:
             wavelengths = self.wavelengths
         if resolution == None:
@@ -324,11 +311,7 @@ class FLambdaSpectrum(ResampledSpectrum,AstroSpectra.SpectraFrame):
             raise ValueError("Requires Wavelenths")
         if resolution == None:
             raise ValueError("Requires Resolution")
-        return self.integrate(wavelengths,resolution)
-
-
-    def integrate(self,wavelengths,resolution,z=0.0):
-        """Performs wavelength-integration for flambda spectra"""
+        
         # Data sanity check
         oldwl,oldfl = self.data
         
