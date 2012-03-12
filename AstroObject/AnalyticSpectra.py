@@ -128,28 +128,40 @@ class CompositeSpectra(AnalyticSpectrum):
 
 
 class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
-    """An analytic representation of a generic, specified spectrum. The spectrum provided will be used to create an infintiely dense interpolation function. This function can then be used to call the spectrum at any wavelength. The interpolation used is a simple 1d interpolation.
+    """An analytic representation of a generic, specified spectrum. The spectrum provided will be used to create an infintiely dense interpolation function. This function can then be used to call the spectrum at any wavelength. The interpolation used by default is a simple 1d interpolation.
     
-    .. Warning:: 
-        No checks are currently provided to prevent extraneous interpoaltion outside of the originally specified range."""
-    def __init__(self, data=None, label=None, wavelengths=None, **kwargs):
+    Passing the name of any member function in this class to the `method` parameter will change the interpolation/method used for this spectrum.
+    
+    """
+    def __init__(self, data=None, label=None, wavelengths=None,resolution=None, intSteps=150, method="interpolate", **kwargs):
         self.data = data
         self.size = data.size # The size of this image
         self.shape = data.shape # The shape of this image
         super(InterpolatedSpectrum, self).__init__(data=data,label=label,**kwargs)
-        x,y = self.data
-        self.func = sp.interpolate.interp1d(x,y,bounds_error=False,fill_value=0)
         self.wavelengths = wavelengths
+        self.resolution = resolution
+        self.intSteps = intSteps
+        self.method = getattr(self,method)
+        
+        
     
-    def __call__(self,wavelengths=None,**kwargs):
-        """Calls this interpolated spectrum over certain wavelengths"""
+    def __call__(self,method=None,**kwargs):
+        """Calls this interpolated spectrum over certain wavelengths. The method parameter will default to the one set for the object, and controls the method used to interpret this spectrum."""
+        if method == None:
+            method = self.method
+        if isinstance(method,str):
+            method = getattr(self,method)
+        return self.method(**kwargs)
+        
+    def interpolate(self,wavelengths=None,**kwargs):
+        """Uses a 1d Interpolation to fill in missing spectrum values.
+        
+        This interpolator uses the scipy.interpolate.interp1d method to interpolate between data points in the original spectrum. This method will not handle changes in resolution appropriately."""
         if wavelengths == None:
             wavelengths = self.wavelengths
-        return self.interpolate(wavelengths)
         
-    def interpolate(self,wavelengths):
-        """docstring for interpolate"""
         oldwl,oldfl = self.data
+        self.func = sp.interpolate.interp1d(oldwl,oldfl,bounds_error=False,fill_value=0)
         
         # Unit sanity check
         if np.min(oldwl) < 1e-12 or np.max(oldwl) > 1e-3:
@@ -185,19 +197,11 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         
         # Finally, return the data in a way that makes sense for the just-in-time spectrum calculation objects
         return np.vstack((wavelengths,flux))
-         
         
+    def resample(self,wavelengths=None,resolution=None,z=0.0,**kwargs):
+        """Resample the given spectrum to a lower resolution. 
         
-    
-class ResampledSpectrum(InterpolatedSpectrum):
-    """A spectrum that must be called with resampling information, but which correctly reamples down to given resoluton at each requested wavelength. The spectrum provided must have a greater resolution than the one requested in the end. Supplying the `resoulution` and `wavelength` keywords at initialization only sets defaults."""
-    def __init__(self, data=None, label=None, wavelengths=None, resolution=None, **kwargs):
-        super(ResampledSpectrum, self).__init__(data=data,label=label, **kwargs)
-        self.wavelengths = wavelengths
-        self.resolution = resolution
-        
-    def __call__(self,wavelengths=None,resolution=None,**kwargs):
-        """Calls this resampled spectrum over certain wavelengths"""
+        This is a vector-based calculation, and so should be relatively fast. This function contains ZERO for loops, and uses entirely numpy-based vector mathematics. Sanity checks try to keep your input clean. It can also redshift a spectrum by a given z parameter, if that is necessary."""        
         if wavelengths == None:
             wavelengths = self.wavelengths
         if resolution == None:
@@ -206,12 +210,6 @@ class ResampledSpectrum(InterpolatedSpectrum):
             raise ValueError("Requires Wavelenths")
         if resolution == None:
             raise ValueError("Requires Resolution")
-        return self.resample(wavelengths,resolution)
-        
-    def resample(self,wavelengths,resolution,z=0.0):
-        """Resample the given spectrum to a lower resolution. 
-        
-        This is a vector-based calculation, and so should be relatively fast. This function contains ZERO for loops, and uses entirely numpy-based vector mathematics. Sanity checks try to keep your input clean. It can also redshift a spectrum by a given z parameter, if that is necessary."""        
         # Data sanity check
         if resolution.shape != wavelengths.shape:
             LOG.debug("%s: Wavelength Size: %d, Resolution Size %d" % (self,wavelengths.size,resolution.size))
@@ -307,15 +305,11 @@ class ResampledSpectrum(InterpolatedSpectrum):
         
         # Finally, return the data in a way that makes sense for the just-in-time spectrum calculation objects
         return np.vstack((wavelengths,flux))
+
+    def integrate(self,wavelengths=None,resolution=None,**kwargs):
+        """Performs wavelength-integration for flambda spectra. 
         
-class FLambdaSpectrum(ResampledSpectrum,AstroSpectra.SpectraFrame):
-    """A spectrum that must be integrated to get data values."""
-    def __init__(self, data=None, label=None, intSteps=150, **kwargs):
-        super(FLambdaSpectrum, self).__init__(data=data,label=label, **kwargs)
-        self.intSteps = intSteps
-        
-    def __call__(self,wavelengths=None,resolution=None,**kwargs):
-        """Calls this FLambda spectrum over certain wavelengths"""
+        This takes spectra which have theoretically infinite resolution, and performs an integration using the quadratic pack integrator on an interpolated F_Lambda function. The integration can be a little slow. Sanity checks confirm validity of input data."""
         if wavelengths == None:
             wavelengths = self.wavelengths
         if resolution == None:
@@ -324,11 +318,7 @@ class FLambdaSpectrum(ResampledSpectrum,AstroSpectra.SpectraFrame):
             raise ValueError("Requires Wavelenths")
         if resolution == None:
             raise ValueError("Requires Resolution")
-        return self.integrate(wavelengths,resolution)
-
-
-    def integrate(self,wavelengths,resolution,z=0.0):
-        """Performs wavelength-integration for flambda spectra"""
+        
         # Data sanity check
         oldwl,oldfl = self.data
         
@@ -366,7 +356,7 @@ class FLambdaSpectrum(ResampledSpectrum,AstroSpectra.SpectraFrame):
             raise ValueError(msg)
         
         # Check for resolution registry to pixel size
-        if np.allclose(wlStart[1:],wlEnd[:-1]):
+        if (np.abs(wlStart[1:]-wlEnd[:-1]) > 1e-12).any():
             LOG.warning("Resolution doesn't seem to register to pixel positions")
             LOG.debug("%s : %s" % (self,npArrayInfo(wlStart[1:]-wlEnd[:-1],"Difference in Bounds")))
             LOG.debug("%s : %s" % (self,npArrayInfo(wlStart[1:],"Lower Bounds")))
@@ -394,11 +384,88 @@ class FLambdaSpectrum(ResampledSpectrum,AstroSpectra.SpectraFrame):
         
         
         return np.vstack((wavelengths,flux))
+    
+    def resolve(self,wavelengths,resolution,upscaling=1e2,resolve_method='integrate',**kwargs):
+        """Oversample underlying spectra.
+        
+        Using the `resolve_method` method (by default :meth:`integrate`), this function gets a high resolution copy of the underlying data. The high resolution data can later be downsampled using the :meth:`resample` method. This is a faster way to access integrated spectra many times. The speed advantages come over the integrator. By default the system gets 100x the requested resolution. This can be tuned with the `upscaling` keyword to optimize between speed and resolution coverage."""
+        self.resolver = getattr(self,resolve_method)
                 
+        # Save the original data
+        self.original_data = self.data
+            
+        # Make a much more detailed spectrum
+        # Build the sample request by upscaling the resolution requested
+        dense_resolution = resolution * upscaling
+            
+        min_wl = np.min(wavelengths)
+        dwl = [min_wl]
+        new_wl = min_wl
+        for R,wl in zip(dense_resolution,wavelengths):
+            while new_wl <= wl:
+                new_wl += (new_wl / R)
+                dwl += [new_wl]
+            
+        dense_wavelengths = np.array(dwl)
+        dense_resolution = dense_wavelengths[:-1] / np.diff(dense_wavelengths)
+        dense_wavelengths = dense_wavelengths[:-1]
+            
+        # Sanity checks about our newly generated wavelengths
+        if np.max(dense_wavelengths) > np.max(wavelengths):
+            msg = "Wavelength generation for dense spectrum exceeded requested bounds."
+            LOG.warning("%s: %s" % (self,msg))
+            LOG.debug("%s: %s" % (self,npArrayInfo(wavelengths,"Requested Wavelengths")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(dense_wavelengths,"Dense Wavelengths")))
+        if np.max(dense_wavelengths) < np.max(wavelengths):
+            msg = "Wavelength generation for dense spectrum did not reach requested bounds."
+            LOG.warning("%s: %s" % (self,msg))
+            LOG.debug("%s: %s" % (self,npArrayInfo(wavelengths,"Requested Wavelengths")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(dense_wavelengths,"Dense Wavelengths")))
+            
+        # Do the actual integration, and save it to the object.
+        dwl,dfl = self.resolver(wavelengths=dense_wavelengths,resolution=dense_resolution,**kwargs)
+        self.data = np.vstack((dwl,dfl))
+        self.resolved = True
+        return self.data
+        
+                
+    def resolve_and_resample(self,wavelengths,resolution,upscaling=1e2,resolve_method='integrate',resample_method='resample',**kwargs):
+        """Resolve a spectrum at very high resolution, then re-sample down the proper size.
+        
+        This method reduces the use of computationally intensive integrators in spectral calculation. The intensive integrator is used only on the first pass over the spectrum. The integrator is called at a higher resolution (normally 100x, controlled by the `upscaling` parameter). This higher resolution copy is saved in the object, and downsampled for each request for spectrum information."""
+        
+        # Set up flag variables.
+        self.resolved = False if not hasattr(self,'resolved') else self.resolved
+        
+        # First pass resolving the spectrum to a denser data set.
+        # This pass uses the upscaling parameter to find a much denser resolution.
+        if not self.resolved:
+            self.resolve(wavelengths=wavelengths,resolution=resolution,upscaling=upscaling,resolve_method=resolve_method,**kwargs)
+        
+        self.resampler = getattr(self,resample_method)
+        return self.resampler(wavelengths=wavelengths,resolution=resolution,**kwargs)
+        
+    def pre_resolve(self,**kwargs):
+        """Instead of resolving a spectrum at call time, the spectrum can be called to resolve at creation time. In this case, the resolving method uses the raw data values for wavelengths. This pre-computation serves a similar purpose to :meth:`resolve_and_resample` but can also be used to collapse large collections of spectra. In the case of collapsing large collections (usually the collections are all constructed, but unresolved :class:`CompositeSpectra`), the collapse occurs at construction time, removing computation time from other areas of the program."""        
+        oldwl,oldfl = self.data
+        
+        res = oldwl[:-1] / np.diff(oldwl)
+        
+        return self.resolve(wavelengths = oldwl[:-1], resolution = res, **kwargs)
         
         
-
         
+        
+class UnitarySpectrum(InterpolatedSpectrum):
+    """This spectrum calls all contained spectra and resolves them. The resolved spectra are high resolution (using :meth:`pre_resolve` and :meth:`resolve`) and stored for later use. When this spectrum is later called, it will (by default) use :meth:`resolve_and_resample`."""
+    def __init__(self, spectrum, resolution=1e2, method='pre_resolve',**kwargs):
+        label = "R[" + spectrum.label + "]"
+        data = spectrum(method=method,upscaling=resolution,**kwargs)
+        super(UniarySpectrum, self).__init__(data=data, label=label,method='resolve_and_resample',**kwargs)
+        self.resolved = True
+        self.original_data = spectrum.original_data
+        
+                    
 
 import AnalyticSpectraObjects
 from AnalyticSpectraObjects import *
