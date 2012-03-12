@@ -25,7 +25,7 @@ import matplotlib.image as mpimage
 # Python Imports
 import math, copy, sys, time, logging, os
 
-__all__ = ["API_Base","API_Base_Frame","API_Base_Object","API_Base_Functional"]
+__all__ = ["API_Base","API_Base_Frame","API_Abstract_Frame","API_Base_Object","API_Base_Functional"]
 
 class API_Base(object):
     """Methods common to all tests!"""
@@ -56,39 +56,106 @@ class API_Base(object):
                 os.remove(self.FILENAME)
 
 
-class API_Base_Frame(API_Base):
-    """This class implements all of the tests required to ensure that the API is obeyed."""
+class API_Abstract_Frame(API_Base):
+    """Tests an Abstract Frame"""
     attributes = ['FRAME','VALID','INVALID','SAME','SAMEDATA','SHOWTYPE','HDUTYPE','FRAMESTR','pmHDU','imHDU']
     
-    @nt.raises(AttributeError)
-    def test_init_empty(self):
-        """__init__() fails without data"""
-        self.FRAME(data=None,label="Label")
+    def test_init_data(self):
+        """__init__() succeds with None (Valid) data"""
+        self.FRAME(data=self.VALID,label="Invalid")
     
+    def test_init_empty(self):
+        """__init__() abstract frame works without data"""
+        AFrame = self.FRAME(data=None,label="Valid")
+        assert AFrame.label == "Valid"
     
     @nt.raises(AttributeError)
     def test_init_invalid(self):
         """__init__() fails with invalid data"""
         self.FRAME(data=self.INVALID,label="Invalid")
-    
-    
-    def test_init_data(self):
-        """__init__() succeeds with valid data"""
-        AFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert AFrame.label == "Valid"
-        assert self.SAMEDATA(AFrame.data,self.VALID)
-    
-    
+        
     @nt.raises(AttributeError)
     def test_init_nolabel(self):
         """__init__() fails with valid data but no label"""
         AFrame = self.FRAME(self.VALID,None)
     
+    @nt.raises(AbstractError)
+    def test_save_data(self):
+        """__save__() to an abstract base class raises an AbstractError"""
+        # raise SkipTest("This is a bug, related to argument ordering on the frame.__init__() call.")
+        # The following arguments are treated as label and header respectivley. The lack of abstract type cheking and/or a data argument means that this call doesn't fail when it should.
+        self.FRAME.__save__(self.VALID,"None")
     
     @nt.raises(AbstractError)
     def test_save_none(self):
         """__save__() with none object raises an AbstractError"""
         self.FRAME.__save__(None,"None")
+    @nt.raises(AbstractError)
+    def test_read_SecondaryHDU(self):
+        """__read__() secondary HDU type should get an abstract error"""
+        self.FRAME.__read__(self.imHDU(self.INVALID),"Empty")
+        
+    @nt.raises(AbstractError)
+    def test_read_PrimaryHDU(self):
+        """__read__() primary HDU type should get an abstract error"""
+        BFrame = self.FRAME.__read__(self.pmHDU(self.INVALID),"Not Empty")
+    
+    @nt.raises(AbstractError)
+    def test_read_empty_HDU(self):
+        """__read__() an empty primary HDU fails"""
+        HDU = pf.PrimaryHDU()
+        AFrame = self.FRAME.__read__(HDU,"Empty")
+    
+    @nt.raises(AbstractError)
+    def test_call(self):
+        """__call__() a base frame should raise an AbstractError"""
+        BFrame = self.FRAME(data=self.VALID,label="Empty")
+        assert BFrame.label == "Empty"
+        BFrame()
+    
+    @nt.raises(AbstractError)
+    def test_HDU(self):
+        """__hdu__() raises an AbstractError"""
+        BFrame = self.FRAME(data=self.VALID,label="Empty")
+        assert BFrame.label == "Empty"
+        HDU = BFrame.__hdu__()
+    
+    @nt.raises(AbstractError)
+    def test_PrimaryHDU(self):
+        """__hdu__() primary raises an AbstractError"""
+        BFrame = self.FRAME(data=self.VALID,label="Empty")
+        assert BFrame.label == "Empty"
+        HDU = BFrame.__hdu__(primary=True)
+    
+    @nt.raises(AbstractError)
+    def test_show(self):
+        """__show__() a base frame should fail"""
+        BFrame = self.FRAME(data=self.VALID,label="Empty")
+        assert BFrame.label == "Empty"
+        BFrame.__show__()
+    
+
+
+    def test_string_representation(self):
+        """__str__() String representation correct for Frame"""
+        AFrame = self.FRAME(data=self.VALID,label="Valid")
+        assert AFrame.label == "Valid"
+        assert str(AFrame) == self.FRAMESTR
+    
+
+class API_Base_Frame(API_Abstract_Frame):
+    """This class implements all of the tests required to ensure that the API is obeyed."""
+    
+    @nt.raises(AttributeError)
+    def test_init_empty(self):
+        """__init__() fails without data"""
+        self.FRAME(data=None,label="Label")
+
+    def test_init_data(self):
+        """__init__() succeeds with valid data"""
+        AFrame = self.FRAME(data=self.VALID,label="Valid")
+        assert AFrame.label == "Valid"
+        assert self.SAMEDATA(AFrame.data,self.VALID)
     
     
     def test_save_data(self):
@@ -114,11 +181,6 @@ class API_Base_Frame(API_Base):
         assert self.SAMEDATA(AFrame.data,self.VALID)
     
     
-    @nt.raises(AbstractError)
-    def test_read_empty_HDU(self):
-        """__read__() an empty primary HDU fails"""
-        HDU = pf.PrimaryHDU()
-        AFrame = self.FRAME.__read__(HDU,"Empty")
     
     
     def test_call(self):
@@ -155,12 +217,7 @@ class API_Base_Frame(API_Base):
         assert isinstance(figure,self.SHOWTYPE), "Found type %s" % type(figure)
     
     
-    def test_string_representation(self):
-        """__str__() String representation correct for Frame"""
-        AFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert AFrame.label == "Valid"
-        assert str(AFrame) == self.FRAMESTR
-    
+
 
 
 class API_Base_Object(API_Base):

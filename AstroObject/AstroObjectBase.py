@@ -4,8 +4,8 @@
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.0a2
-#
+#  Version 0.3.0
+# 
 
 
 # Standard Scipy Toolkits
@@ -32,24 +32,16 @@ import math, copy, sys, time, logging, os
 # Submodules from this system
 from Utilities import *
 
-__all__ = ["FITSFrame","FITSObject"]
+__all__ = ["FITSFrame","FITSObject","BaseFrame"]
 
 __version__ = getVersion()
 
 LOG = logging.getLogger(__name__)
 
-class FITSFrame(object):
-    """A single frame of a FITS image.
-    Frames are known as Header Data Units, or HDUs when written to a FITS file.
-    This frame is generic. It does not legitimately implement any functions. Rather, each function implemented is a placeholder, and will generate an :exc:`AbstractError` if called. Several objects inherit from this one to create HDUs which have some semantic meaning.
-    This object requires a *label*, and can optionally take *headers* and *metadata*.
-    
-    .. Warning::
-        This is an abstract object. Methods implemented here will *likely* raise an :exc:`AbstractError` indicating that you shouldn't be using these methods. This class is provided so that users can sub-class it for their own purposes. It also serves as the base class for other Frames in this package.
-    
-    """
+class BaseFrame(object):
+    """A base frame with abstract methods for proper inheritance"""
     def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
-        super(FITSFrame, self).__init__(**kwargs)
+        super(BaseFrame, self).__init__(**kwargs)
         if data != None:
             self.data = data
         self.label = label # A label for this frame, for selection in parent object
@@ -66,9 +58,8 @@ class FITSFrame(object):
             assert isinstance(self.label,str), "Frame requires a label, got %s" % self.label
         except AssertionError as e:
             raise AttributeError(str(e))
-        
-    
-    def __call__(self):
+
+    def __call__(self,**kwargs):
         """Should return the data within this frame, usually as a *numpy* array.
         
         :class:`AstroImage.ImageFrame` implements this method as::
@@ -91,16 +82,9 @@ class FITSFrame(object):
     def __hdu__(self,primary=False):
         """Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.
         Subclasses should provide a *primary* keyword argument, and if that keyword is set, the method should return a primaryHDU."""
-        if primary:
-            HDU = pf.PrimaryHDU()
-        else:
-            HDU = pf.ImageHDU()
-        LOG.log(8,"%s: Generating an Empty %sHDU" % (self,"primary " if primary else ""))
-        HDU.header.update('label',self.label)
-        HDU.header.update('object',self.label)
-        for key,value in self.header.iteritems():
-            HDU.header.update(key,value)
-        return HDU
+        msg = "Abstract Data Structure %s cannot be used for HDU Generation!" % (self)
+        raise AbstractError(msg)
+
     
     def __show__(self):
         """Should return a plot object for the current frame, after setting up this plot in matplotlib. 
@@ -115,6 +99,43 @@ class FITSFrame(object):
         msg = "Abstract Data Structure %s cannot be the target of a save operation!" % (cls)
         raise AbstractError(msg)
         
+    
+    @classmethod
+    def __read__(cls,HDU,label):
+        """An abstract method for reading empty data HDU Frames"""
+        msg = "Abstract Data Structure %s cannot be the target of a read operation!" % (cls)
+        raise AbstractError(msg)
+        
+
+    
+        
+
+class FITSFrame(BaseFrame):
+    """A single frame of a FITS image.
+    Frames are known as Header Data Units, or HDUs when written to a FITS file.
+    This frame is generic. It does not legitimately implement any functions. Rather, each function implemented is a placeholder, and will generate an :exc:`AbstractError` if called. Several objects inherit from this one to create HDUs which have some semantic meaning.
+    This object requires a *label*, and can optionally take *headers* and *metadata*.
+    
+    .. Warning::
+        This is an abstract object. Methods implemented here will *likely* raise an :exc:`AbstractError` indicating that you shouldn't be using these methods. This class is provided so that users can sub-class it for their own purposes. It also serves as the base class for other Frames in this package.
+    
+    """
+    def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
+        super(FITSFrame, self).__init__(data=data, label=label, header=header, metadata=metadata,**kwargs)
+    
+    def __hdu__(self,primary=False):
+        """Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.
+        Subclasses should provide a *primary* keyword argument, and if that keyword is set, the method should return a primaryHDU."""
+        if primary:
+            HDU = pf.PrimaryHDU()
+        else:
+            HDU = pf.ImageHDU()
+        LOG.log(8,"%s: Generating an Empty %sHDU" % (self,"primary " if primary else ""))
+        HDU.header.update('label',self.label)
+        HDU.header.update('object',self.label)
+        for key,value in self.header.iteritems():
+            HDU.header.update(key,value)
+        return HDU
     
     @classmethod
     def __read__(cls,HDU,label):

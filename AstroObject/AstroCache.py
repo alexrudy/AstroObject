@@ -4,6 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-22.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
+#  Version 0.3.0
 # 
 
 # Standard Scipy Toolkits
@@ -91,7 +92,7 @@ class Cache(object):
             self.regenerate = True
             return self.loaded
         try:
-            with file(self.fullname,'r') as stream:
+            with open(self.fullname,'r') as stream:
                 self.data = self.cache_load(stream)
         except (IOError,CacheIOError) as e:
             self.cache_msg = str(e)
@@ -131,7 +132,7 @@ class Cache(object):
             return False
         if self.ready and not self.regenerate:
             try:
-                with file(self.fullname,'w') as stream:
+                with open(self.fullname,'w') as stream:
                     self.cache_save(stream,self.data)
             except (IOError,CacheIOError) as e:
                 self.cache_msg = str(e)
@@ -289,7 +290,7 @@ class CacheManager(object):
     
     def check(self,*caches,**kwargs):
         """docstring for check"""
-        self.load()
+        self.load(*caches)
         if len(caches) == 0:
             caches = tuple(self.caches.keys())
         check = self.shouldGenerate(*caches)
@@ -421,7 +422,7 @@ class CacheManager(object):
         
     def get(self,cache):
         """Get a particular cache"""
-        if self.shouldGenerate(cache):
+        if self.shouldGenerate(cache) or (not self.load(cache)):
             self.generate(cache)
         return self.caches[cache]()
         

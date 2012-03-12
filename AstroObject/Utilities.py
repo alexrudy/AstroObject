@@ -4,11 +4,9 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.0a2
+#  Version 0.3.0
 #
 
-import matplotlib as mpl
-import matplotlib.pyplot as plt
 import numpy as np
 import scipy as sp
 import scipy.constants as spconst
@@ -18,7 +16,6 @@ import logging,time,sys,collections,os
 from pkg_resources import resource_string
 
 __all__ = ["getVersion","expandLim","BlackBody","Gaussian","validate_filename","update","npArrayInfo","AbstractError","HDUFrameTypeError","ConfigurationError","resource_string"]
-
 
 LOG = logging.getLogger(__name__)
 
@@ -122,7 +119,7 @@ def update(d, u):
             d[k] = u[k]
     return d    
 
-def npArrayInfo(array,name):
+def npArrayInfo(array,name=None):
     """Message describing this array in excruciating detail. Used in debugging arrays where we don't know what they contain. Returns a message string.
     
     ::

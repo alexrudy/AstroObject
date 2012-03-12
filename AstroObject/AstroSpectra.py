@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.0a2
+#  Version 0.3.0
 # 
 
 
@@ -69,10 +69,10 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
         """Retruns an HDU which represents this frame. HDUs are either ``pyfits.PrimaryHDU`` or ``pyfits.ImageHDU`` depending on the *primary* keyword."""
         if primary:
             LOG.log(5,"Generating a primary HDU for %s" % self)
-            HDU = pf.PrimaryHDU(self())
+            HDU = pf.PrimaryHDU(self.data)
         else:
             LOG.log(5,"Generating an image HDU for %s" % self)
-            HDU = pf.ImageHDU(self())
+            HDU = pf.ImageHDU(self.data)
         HDU.header.update('label',self.label)
         HDU.header.update('object',self.label)
         for key,value in self.header.iteritems():

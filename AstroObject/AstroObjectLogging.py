@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.0a2
+#  Version 0.3.0
 #
 
 import logging
@@ -22,10 +22,61 @@ levels = {"LIBDEBUG":2,"LIBINFO":5,"LIBWARN":8}
 for name,lvl in levels.iteritems():
     logging.addLevelName(lvl,name)
 
+class GrowlHandler(logging.Handler):
+    """Handler that emits growl notifications"""
+    def __init__(self,name=None):
+        super(GrowlHandler, self).__init__()
+        self.name = name
+        if self.name == None:
+            self.name = "AstroObject"
+        try:
+            import gntp.notifier
+            self.gntp = gntp
+        except ImportError as e:
+            self.disable = True
+            self.notifier = None
+        else:
+            self.disable = False
+            self.notifier = self.gntp.notifier.GrowlNotifier(
+                applicationName=self.name,
+                notifications=["Info Message","Warning Message","Critical Message","Error Message","Debug Message"],
+                defaultNotifications=["Info Message","Warning Message","Critical Message","Error Message"],
+            )
+            self.notifier.register()
+        self.titles = {
+            logging.DEBUG:"%s Debug" % self.name,
+            logging.INFO:"%s Info" % self.name,
+            logging.WARNING:"%s Warning" % self.name,
+            logging.CRITICAL:"%s Critical" % self.name,
+            logging.ERROR:"%s Error" % self.name}
+        
+    
+    mapping = {logging.DEBUG:"Debug Message",logging.INFO:"Info Message",logging.WARNING:"Warning Message",logging.CRITICAL:"Critical Message",logging.ERROR:"Error Message"}
 
+    
+    
+    def emit(self,record):
+        """Emits a growl notification"""
+        if self.disable:
+            return
+        try:
+            msg = self.format(record)
+            self.notifier.notify(
+                noteType = self.mapping[record.levelno],
+                title = self.titles[record.levelno],
+                description = msg,
+                sticky = False,
+                priority = 1,
+            )
+        except (KeyboardInterrupt, SystemExit):
+            raise
+        except:
+            self.handleError(record)
+
+        
 
 class LogManager(logging.getLoggerClass()):
-    """The logging class which handles the log messages. It handles its own limited configuration, and buffers messages before it starts, so that early messages are still written to a file."""
+    """A customized logging class. This class is automatically used whenever you are using an AstroObject module elsewhere in your program. It subsumes other logging classes, regardless of the situation. This logger provides many specialized functions useful for logging, but can be used just like a normal logger. By default, the logger starts in buffering mode, collecting messages until it is configured. The configuration then allows it to write messages to the console and to a log file."""
     def __init__(self,name):
         super(LogManager,self).__init__(name)
         self.name = name
@@ -35,9 +86,9 @@ class LogManager(logging.getLoggerClass()):
         self.doConsole = False
         self.level = False
         self.setLevel(1)
-        self.initialize()
+        self._initialize()
     
-    def initialize(self):
+    def _initialize(self):
         """Initializes this logger to buffer messages it receives before it is configured. This initialization is automatically handled when the :class:`LogManager` is created."""
         if self.handling:
             raise ConfigurationError("Logger appears to be already handling messages")
@@ -56,6 +107,11 @@ class LogManager(logging.getLoggerClass()):
     
     config = {
                 'logging' : {
+                    'growl' : {
+                        'enable' : False,
+                        'level'  : None,
+                        'name' : "AstroObject",
+                    },
                     'file' : {
                         'enable' : True,
                         'format' : "%(asctime)s : %(levelname)-8s : %(module)-40s : %(funcName)-10s : %(message)s",
@@ -75,7 +131,7 @@ class LogManager(logging.getLoggerClass()):
             }
     
     def configure(self,configFile=None,configuration=None):
-        """Configure this logging object. The configuration happens from a file (`configFile`) and then from an object `configuration`. As such, values in the object will override values from the file, and both will override the defaults. The default settings place messages in a file called AstroObject.log in the Logs/ folder."""
+        """Configure this logging object using a configuration dictionary. Configuration dictionaries can be provided by a YAML file or directly to the configuration argument. If both are provided, the YAML file will over-ride the explicit dictionary."""
         if self.configured:
             raise ConfigurationError("Logger appears to be already configured")
         if self.handling:
@@ -93,6 +149,7 @@ class LogManager(logging.getLoggerClass()):
                     self.config = update(self.config,loaded)
             except IOError as e:
                 self.warning("Couldn't load Configuration File %s" % configFile)
+                self.configured |= False
             else:
                 self.configured |= True
         
@@ -100,7 +157,7 @@ class LogManager(logging.getLoggerClass()):
             self.log(8,"No configuration provided or accessed. Using defaults.")
     
     def start(self):
-        """Starts this logger outputing, based on the configuration. It is recommended that you call :meth:`configure` first."""
+        """Starts this logger running, using the configuration set using :meth:`configure`. The configuration can configure a file handler and a console handler. Arbitrary configurations are not possible at this point."""
         if self.handling:
             raise ConfigurationError("Logger appears to be already handling messages")
         if not self.running:
@@ -123,11 +180,11 @@ class LogManager(logging.getLoggerClass()):
             self.handling |= True
         
         self.logfile = None
-        self.logfolder = self.config["Dirs"]["Logs"]
+        self.logfolder = self.config["Dirs"]["Logs"]+"/"
         
         # Only set up the file log handler if we can actually access the folder
         if os.access(self.logfolder,os.F_OK):
-            filename = self.config["Dirs"]["Logs"] + self.config["logging"]["file"]["filename"]+".log"
+            filename = "%(dir)s/%(name)s.log" % {'dir':self.config["Dirs"]["Logs"],'name':self.config["logging"]["file"]["filename"]}
             
             self.logfile = logging.handlers.TimedRotatingFileHandler(filename=filename,when='midnight')
             fileformatter = logging.Formatter(self.config["logging"]["file"]["format"],datefmt=self.config["logging"]["file"]["dateformat"])
@@ -144,6 +201,19 @@ class LogManager(logging.getLoggerClass()):
                 # Finally, we should flush the old buffers
                 self.buffer.setTarget(self.logfile)
                 self.handling |= True
+        
+        if self.config["logging"]["growl"]["enable"]:
+            self.growlHandler = GrowlHandler(name=self.config["logging"]["growl"]["name"])
+            if self.growlHandler.disable:
+                self.config["logging"]["growl"]["enable"] = False
+            else:
+                if self.config["logging"]["file"]["level"]:
+                    self.growlHandler.setLevel(self.config["logging"]["file"]["level"])
+                elif self.level:
+                    self.growlHandler.setLevel(logging.INFO)
+                self.addHandler(self.growlHandler)
+                self.handling |= True
+                
         
         self.removeHandler(self.buffer)
         self.buffer.flush()
