@@ -40,7 +40,7 @@ This module provides basic analytic spectrum capabilites. There is a simple prin
 Expansion Objects
 -----------------
 
-These objects provide simple expansions to the AnalyticSpectrum abstract class.
+These objects expand the concept of an analytic spectrum to be any spectrum which can respond to calls with arbitrary wavelength boundaries. The spectra in the InterpolatedSpectrum class can be triggered to respond as if they are infintely dense FLambda spectra, or as if they require resampling from one resolution to another. Finally, such spectra can be used as a 1-dimensional interpolation function.
 
 .. autoclass::
     AstroObject.AnalyticSpectra.InterpolatedSpectrum
@@ -49,14 +49,12 @@ These objects provide simple expansions to the AnalyticSpectrum abstract class.
     
     .. automethod:: __call__
     
-
 .. autoclass::
-    AstroObject.AnalyticSpectra.ResampledSpectrum
+    AstroObject.AnalyticSpectra.UnitarySpectrum
     :members:
     :inherited-members:
     
     .. automethod:: __call__
-    
     
 
 Analytic Spectrum Objects
