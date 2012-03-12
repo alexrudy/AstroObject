@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>4. API for Objects: FITSObject &mdash; AstroObject 0.3.0a2 documentation</title>
+    <title>4. API for Objects: FITSObject &mdash; AstroObject 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.0a2',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.0a2 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.3.0 documentation" href="index.html" />
     <link rel="next" title="6. Image Objects and Storage AstroImage" href="AstroImage.html" />
     <link rel="prev" title="3. AstroObject API" href="api.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="api.html" title="3. AstroObject API"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0a2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -192,39 +192,13 @@ This object requires a <em>label</em>, and can optionally take <em>headers</em> 
 </div>
 <dl class="method">
 <dt id="AstroObject.AstroObjectBase.FITSFrame.__call__">
-<tt class="descname">__call__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#FITSFrame.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.FITSFrame.__call__" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">__call__</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#FITSFrame.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.FITSFrame.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Should return the data within this frame, usually as a <em>numpy</em> array.</p>
 <p><tt class="xref py py-class docutils literal"><span class="pre">AstroImage.ImageFrame</span></tt> implements this method as:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
 </pre></div>
 </div>
-</dd></dl>
-
-<dl class="method">
-<dt id="AstroObject.AstroObjectBase.FITSFrame.__hdu__">
-<tt class="descname">__hdu__</tt><big>(</big><em>primary=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#FITSFrame.__hdu__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.FITSFrame.__hdu__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.
-Subclasses should provide a <em>primary</em> keyword argument, and if that keyword is set, the method should return a primaryHDU.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="AstroObject.AstroObjectBase.FITSFrame.__read__">
-<em class="property">classmethod </em><tt class="descname">__read__</tt><big>(</big><em>HDU</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#FITSFrame.__read__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.FITSFrame.__read__" title="Permalink to this definition">¶</a></dt>
-<dd><p>An abstract method for reading empty data HDU Frames</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="AstroObject.AstroObjectBase.FITSFrame.__save__">
-<em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>data</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#FITSFrame.__save__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.FITSFrame.__save__" title="Permalink to this definition">¶</a></dt>
-<dd><p>A class save method is called when the parent object is trying to save raw data. In this case, the save method will take raw data and attempt to cast it as an object of its own type, returning such an object. If it can&#8217;t do that (because the data doesn&#8217;t appear to fit, or for pretty much any other reason) it should raise an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> which will be handled by the calling object.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="AstroObject.AstroObjectBase.FITSFrame.__show__">
-<tt class="descname">__show__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#FITSFrame.__show__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.FITSFrame.__show__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Should return a plot object for the current frame, after setting up this plot in matplotlib.</p>
-<p>In general, this method should display data nicely, but should not do too much work, so as to be flexible for use with other plotting commands. It is best to do the minimal amount of work to simply show the data. The intent is for the user to call Object.show() when they want a quick view of the data in a given frame.</p>
 </dd></dl>
 
 <dl class="method">
@@ -239,10 +213,30 @@ Subclasses should provide a <em>primary</em> keyword argument, and if that keywo
 <dd><p>Runs a series of assertions which ensure that the data for this frame is valid</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="AstroObject.AstroObjectBase.FITSFrame.__weakref__">
-<tt class="descname">__weakref__</tt><a class="headerlink" href="#AstroObject.AstroObjectBase.FITSFrame.__weakref__" title="Permalink to this definition">¶</a></dt>
-<dd><p>list of weak references to the object (if defined)</p>
+<dl class="method">
+<dt id="AstroObject.AstroObjectBase.FITSFrame.__hdu__">
+<tt class="descname">__hdu__</tt><big>(</big><em>primary=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#FITSFrame.__hdu__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.FITSFrame.__hdu__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.
+Subclasses should provide a <em>primary</em> keyword argument, and if that keyword is set, the method should return a primaryHDU.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroObjectBase.FITSFrame.__show__">
+<tt class="descname">__show__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#FITSFrame.__show__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.FITSFrame.__show__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Should return a plot object for the current frame, after setting up this plot in matplotlib.</p>
+<p>In general, this method should display data nicely, but should not do too much work, so as to be flexible for use with other plotting commands. It is best to do the minimal amount of work to simply show the data. The intent is for the user to call Object.show() when they want a quick view of the data in a given frame.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="AstroObject.AstroObjectBase.FITSFrame.__save__">
+<em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>data</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#FITSFrame.__save__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.FITSFrame.__save__" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class save method is called when the parent object is trying to save raw data. In this case, the save method will take raw data and attempt to cast it as an object of its own type, returning such an object. If it can&#8217;t do that (because the data doesn&#8217;t appear to fit, or for pretty much any other reason) it should raise an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> which will be handled by the calling object.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="AstroObject.AstroObjectBase.FITSFrame.__read__">
+<em class="property">classmethod </em><tt class="descname">__read__</tt><big>(</big><em>HDU</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#FITSFrame.__read__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.FITSFrame.__read__" title="Permalink to this definition">¶</a></dt>
+<dd><p>An abstract method for reading empty data HDU Frames</p>
 </dd></dl>
 
 </dd></dl>
@@ -304,7 +298,7 @@ Subclasses should provide a <em>primary</em> keyword argument, and if that keywo
         <li class="right" >
           <a href="api.html" title="3. AstroObject API"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0a2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

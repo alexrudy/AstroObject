@@ -10,7 +10,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Index &mdash; AstroObject 0.3.0a2 documentation</title>
+    <title>Index &mdash; AstroObject 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.0a2',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.0a2 documentation" href="index.html" /> 
+    <link rel="top" title="AstroObject 0.3.0 documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0a2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -85,10 +85,6 @@
 
       <dd><dl>
         
-  <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.AnalyticSpectrum.__call__">(AstroObject.AnalyticSpectra.AnalyticSpectrum method)</a>
-  </dt>
-
-        
   <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.BlackBodySpectrum.__call__">(AstroObject.AnalyticSpectra.BlackBodySpectrum method)</a>
   </dt>
 
@@ -109,7 +105,7 @@
   </dt>
 
         
-  <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.ResampledSpectrum.__call__">(AstroObject.AnalyticSpectra.ResampledSpectrum method)</a>
+  <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.UnitarySpectrum.__call__">(AstroObject.AnalyticSpectra.UnitarySpectrum method)</a>
   </dt>
 
         
@@ -134,10 +130,6 @@
   </dt>
 
       <dd><dl>
-        
-  <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.AnalyticSpectrum.__hdu__">(AstroObject.AnalyticSpectra.AnalyticSpectrum method)</a>
-  </dt>
-
         
   <dt><a href="AstroFITS.html#AstroObject.AstroFITS.HDUFrame.__hdu__">(AstroObject.AstroFITS.HDUFrame method)</a>
   </dt>
@@ -168,10 +160,6 @@
   </dt>
 
       <dd><dl>
-        
-  <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.AnalyticSpectrum.__read__">(AstroObject.AnalyticSpectra.AnalyticSpectrum class method)</a>
-  </dt>
-
         
   <dt><a href="AstroFITS.html#AstroObject.AstroFITS.HDUFrame.__read__">(AstroObject.AstroFITS.HDUFrame class method)</a>
   </dt>
@@ -204,10 +192,6 @@
   </dt>
 
       <dd><dl>
-        
-  <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.AnalyticSpectrum.__save__">(AstroObject.AnalyticSpectra.AnalyticSpectrum class method)</a>
-  </dt>
-
         
   <dt><a href="AstroFITS.html#AstroObject.AstroFITS.HDUFrame.__save__">(AstroObject.AstroFITS.HDUFrame class method)</a>
   </dt>
@@ -283,10 +267,6 @@
   </dt>
 
       </dl></dd>
-      
-  <dt><a href="AstroObject.html#AstroObject.AstroObjectBase.FITSFrame.__weakref__">__weakref__ (AstroObject.AstroObjectBase.FITSFrame attribute)</a>
-  </dt>
-
   </dl></td>
 </tr></table>
 
@@ -415,6 +395,10 @@
   </dt>
 
       </dl></dd>
+      
+  <dt><a href="Simulator.html#AstroObject.AstroSimulator.Simulator.defaultMacros">defaultMacros() (AstroObject.AstroSimulator.Simulator method)</a>
+  </dt>
+
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
@@ -439,10 +423,6 @@
   <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="Utilities.html#AstroObject.Utilities.expandLim">expandLim() (in module AstroObject.Utilities)</a>
-  </dt>
-
-      
-  <dt><a href="Simulator.html#AstroObject.AstroSimulator.Simulator.expandMacros">expandMacros() (AstroObject.AstroSimulator.Simulator method)</a>
   </dt>
 
   </dl></td>
@@ -534,15 +514,31 @@
   </dt>
 
       
-  <dt><a href="Logging.html#AstroObject.AstroObjectLogging.LogManager.initialize">initialize() (AstroObject.AstroObjectLogging.LogManager method)</a>
+  <dt><a href="Simulator.html#AstroObject.AstroSimulator.Simulator.initOptions">initOptions() (AstroObject.AstroSimulator.Simulator method)</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="Simulator.html#AstroObject.AstroSimulator.Simulator.initOptions">initOptions() (AstroObject.AstroSimulator.Simulator method)</a>
+  <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.InterpolatedSpectrum.integrate">integrate() (AstroObject.AnalyticSpectra.InterpolatedSpectrum method)</a>
   </dt>
 
+      <dd><dl>
+        
+  <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.UnitarySpectrum.integrate">(AstroObject.AnalyticSpectra.UnitarySpectrum method)</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.InterpolatedSpectrum.interpolate">interpolate() (AstroObject.AnalyticSpectra.InterpolatedSpectrum method)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.UnitarySpectrum.interpolate">(AstroObject.AnalyticSpectra.UnitarySpectrum method)</a>
+  </dt>
+
+      </dl></dd>
       
   <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.InterpolatedSpectrum">InterpolatedSpectrum (class in AstroObject.AnalyticSpectra)</a>
   </dt>
@@ -612,12 +608,6 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="Simulator.html#AstroObject.AstroSimulator.Simulator.next">next() (AstroObject.AstroSimulator.Simulator method)</a>
-  </dt>
-
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
-      
   <dt><a href="Utilities.html#AstroObject.Utilities.npArrayInfo">npArrayInfo() (in module AstroObject.Utilities)</a>
   </dt>
 
@@ -632,13 +622,23 @@
   </dt>
 
       
-  <dt><a href="Simulator.html#AstroObject.AstroSimulator.Simulator.post_applyArguments">post_applyArguments() (AstroObject.AstroSimulator.Simulator method)</a>
+  <dt><a href="Simulator.html#AstroObject.AstroSimulator.Simulator.postConfiguration">postConfiguration() (AstroObject.AstroSimulator.Simulator method)</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="Simulator.html#AstroObject.AstroSimulator.Simulator.pre_applyArguments">pre_applyArguments() (AstroObject.AstroSimulator.Simulator method)</a>
+  <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.InterpolatedSpectrum.pre_resolve">pre_resolve() (AstroObject.AnalyticSpectra.InterpolatedSpectrum method)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.UnitarySpectrum.pre_resolve">(AstroObject.AnalyticSpectra.UnitarySpectrum method)</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="Simulator.html#AstroObject.AstroSimulator.Simulator.preConfiguration">preConfiguration() (AstroObject.AstroSimulator.Simulator method)</a>
   </dt>
 
   </dl></td>
@@ -670,15 +670,9 @@
   </dt>
 
       
-  <dt><a href="Simulator.html#AstroObject.AstroSimulator.Simulator.registerMacro">registerMacro() (AstroObject.AstroSimulator.Simulator method)</a>
-  </dt>
-
-      
   <dt><a href="Simulator.html#AstroObject.AstroSimulator.Simulator.registerStage">registerStage() (AstroObject.AstroSimulator.Simulator method)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="AstroFITS.html#AstroObject.AstroFITS.HDUObject.remove">remove() (AstroObject.AstroFITS.HDUObject method)</a>
   </dt>
@@ -697,14 +691,38 @@
   </dt>
 
       </dl></dd>
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.ResampledSpectrum.resample">resample() (AstroObject.AnalyticSpectra.ResampledSpectrum method)</a>
+  <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.InterpolatedSpectrum.resample">resample() (AstroObject.AnalyticSpectra.InterpolatedSpectrum method)</a>
   </dt>
 
-      
-  <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.ResampledSpectrum">ResampledSpectrum (class in AstroObject.AnalyticSpectra)</a>
+      <dd><dl>
+        
+  <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.UnitarySpectrum.resample">(AstroObject.AnalyticSpectra.UnitarySpectrum method)</a>
   </dt>
 
+      </dl></dd>
+      
+  <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.InterpolatedSpectrum.resolve">resolve() (AstroObject.AnalyticSpectra.InterpolatedSpectrum method)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.UnitarySpectrum.resolve">(AstroObject.AnalyticSpectra.UnitarySpectrum method)</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.InterpolatedSpectrum.resolve_and_resample">resolve_and_resample() (AstroObject.AnalyticSpectra.InterpolatedSpectrum method)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.UnitarySpectrum.resolve_and_resample">(AstroObject.AnalyticSpectra.UnitarySpectrum method)</a>
+  </dt>
+
+      </dl></dd>
       
   <dt><a href="Simulator.html#AstroObject.AstroSimulator.Simulator.run">run() (AstroObject.AstroSimulator.Simulator method)</a>
   </dt>
@@ -752,6 +770,10 @@
 
       </dl></dd>
       
+  <dt><a href="Simulator.html#AstroObject.AstroSimulator.Simulator.shortExits">shortExits() (AstroObject.AstroSimulator.Simulator method)</a>
+  </dt>
+
+      
   <dt><a href="AstroFITS.html#AstroObject.AstroFITS.HDUObject.show">show() (AstroObject.AstroFITS.HDUObject method)</a>
   </dt>
 
@@ -773,12 +795,12 @@
   <dt><a href="AstroImage.html#AstroObject.AstroImage.ImageObject.show3D">show3D() (AstroObject.AstroImage.ImageObject method)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="Simulator.html#AstroObject.AstroSimulator.Simulator">Simulator (class in AstroObject.AstroSimulator)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraFrame">SpectraFrame (class in AstroObject.AstroSpectra)</a>
   </dt>
@@ -800,6 +822,12 @@
 
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.UnitarySpectrum">UnitarySpectrum (class in AstroObject.AnalyticSpectra)</a>
+  </dt>
+
+  </dl></td>
   <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="Logging.html#AstroObject.AstroObjectLogging.LogManager.useConsole">useConsole() (AstroObject.AstroObjectLogging.LogManager method)</a>
@@ -868,7 +896,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0a2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

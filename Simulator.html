@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>10. Simulator and Complex Task Management AstroSimulator &mdash; AstroObject 0.3.0a2 documentation</title>
+    <title>10. Simulator and Complex Task Management AstroSimulator &mdash; AstroObject 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.0a2',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.0a2 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.3.0 documentation" href="index.html" />
     <link rel="next" title="11. Easy Logging AstroObjectLogging" href="Logging.html" />
     <link rel="prev" title="9. HDU Objects and Storage AstroFITS" href="AstroFITS.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="AstroFITS.html" title="9. HDU Objects and Storage AstroFITS"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0a2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -128,27 +128,27 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="AstroObject.AstroSimulator.Simulator.defaultMacros">
+<tt class="descname">defaultMacros</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.defaultMacros" title="Permalink to this definition">¶</a></dt>
+<dd><p>Establish default macros for the system.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="AstroObject.AstroSimulator.Simulator.do">
-<tt class="descname">do</tt><big>(</big><em>*args</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.do"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.do" title="Permalink to this definition">¶</a></dt>
-<dd><p>Run the simulator. Parses arguments (<cite>*args</cite>) passed in to take control of the system</p>
+<tt class="descname">do</tt><big>(</big><em>*stages</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.do"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.do" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the simulator. Macro runs stages passed in.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="AstroObject.AstroSimulator.Simulator.execute">
-<tt class="descname">execute</tt><big>(</big><em>stage</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.execute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.execute" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">execute</tt><big>(</big><em>stage</em>, <em>deps=True</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.execute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.execute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Actually exectue a particular stage</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="AstroObject.AstroSimulator.Simulator.exit">
-<tt class="descname">exit</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.exit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.exit" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">exit</tt><big>(</big><em>code=0</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.exit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.exit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Cleanup function for when we are all done</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="AstroObject.AstroSimulator.Simulator.expandMacros">
-<tt class="descname">expandMacros</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.expandMacros"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.expandMacros" title="Permalink to this definition">¶</a></dt>
-<dd><p>Recursively traverse macros and turn them into lists of stages, rather than lists of stages and macros.</p>
 </dd></dl>
 
 <dl class="method">
@@ -213,26 +213,20 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroSimulator.Simulator.next">
-<tt class="descname">next</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.next" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the name of the next stage for the simulator.</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="AstroObject.AstroSimulator.Simulator.parseArguments">
-<tt class="descname">parseArguments</tt><big>(</big><em>*args</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.parseArguments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.parseArguments" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">parseArguments</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.parseArguments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.parseArguments" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parse arguments. Argumetns can be passed into this function like they would be passed to the command line. These arguments will only be parsed when the system is not in <cite>commandLine</cite> mode.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroSimulator.Simulator.post_applyArguments">
-<tt class="descname">post_applyArguments</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.post_applyArguments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.post_applyArguments" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.AstroSimulator.Simulator.postConfiguration">
+<tt class="descname">postConfiguration</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.postConfiguration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply arguments after configuration. The arguments applied here flesh out macros, and copy data from the configuration system into the operations system.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroSimulator.Simulator.pre_applyArguments">
-<tt class="descname">pre_applyArguments</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.pre_applyArguments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.pre_applyArguments" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.AstroSimulator.Simulator.preConfiguration">
+<tt class="descname">preConfiguration</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.preConfiguration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Applies arguments before configuration. Only argument applied is the name of the configuration file, allowing the command line to change the configuration file name.</p>
 </dd></dl>
 
@@ -243,14 +237,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroSimulator.Simulator.registerMacro">
-<tt class="descname">registerMacro</tt><big>(</big><em>name</em>, <em>*stages</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.registerMacro"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.registerMacro" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a new macro to the simulation. Macros are groups of stages (and other macros) which can be called fromthe command line using the <cite>*</cite> parameter. Macros are registered with the command name (without the <cite>*</cite>) and the remaining arguments are the stage/macro names to be included. Kewyord argumetns can be included, and will be passed to argparse.add_argument</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="AstroObject.AstroSimulator.Simulator.registerStage">
-<tt class="descname">registerStage</tt><big>(</big><em>stage</em>, <em>name=None</em>, <em>description=None</em>, <em>position=None</em>, <em>exceptions=None</em>, <em>include=True</em>, <em>help=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.registerStage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.registerStage" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">registerStage</tt><big>(</big><em>stage</em>, <em>name</em>, <em>description=None</em>, <em>position=None</em>, <em>exceptions=None</em>, <em>include=True</em>, <em>help=False</em>, <em>dependencies=None</em>, <em>replaces=None</em>, <em>optional=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.registerStage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.registerStage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register a stage for operation with the simulator. The stage will then be available as a command line option, and will be operated with the simulator. Stages should be registered early in the operation of the simulator (preferably in the initialization, after the simulator class itself has initialized) so that the program is aware of the stages for running. Stages cannot be added dynamically. Once the simulator starts running (i.e. processing stages) the order and settings are fixed. Attempting to adjsut the stages at this point will raise an error. Stages can be passed a tuple of exceptions for use in operation. These exceptions will be logged as ERRORs, but will not cause the program to crash. They will thus keep the simulator running even if the stage encounters a problem.</p>
 <p>Registered stages can be explicity run from the command line by including:</p>
 <div class="highlight-python"><pre>$ Simulator +stage</pre>
@@ -303,6 +291,12 @@ $ Simulator -test +test</pre>
 <dt id="AstroObject.AstroSimulator.Simulator.run">
 <tt class="descname">run</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the actual simulator. This command handles simulators which can be run from the command line. Calling <a class="reference internal" href="#AstroObject.AstroSimulator.Simulator.run" title="AstroObject.AstroSimulator.Simulator.run"><tt class="xref py py-meth docutils literal"><span class="pre">run()</span></tt></a> will run all of the stages specified on the command line. If you do not want this effect, use <a class="reference internal" href="#AstroObject.AstroSimulator.Simulator.startup" title="AstroObject.AstroSimulator.Simulator.startup"><tt class="xref py py-meth docutils literal"><span class="pre">startup()</span></tt></a> to prepare the simulator, and <a class="reference internal" href="#AstroObject.AstroSimulator.Simulator.do" title="AstroObject.AstroSimulator.Simulator.do"><tt class="xref py py-meth docutils literal"><span class="pre">do()</span></tt></a> to run the actual simulator. Calling <a class="reference internal" href="#AstroObject.AstroSimulator.Simulator.exit" title="AstroObject.AstroSimulator.Simulator.exit"><tt class="xref py py-meth docutils literal"><span class="pre">exit()</span></tt></a> at the end will allow the simulator to close out and perform any output tasks, but will also end the current python session.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroSimulator.Simulator.shortExits">
+<tt class="descname">shortExits</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.shortExits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Options which short out and exit</p>
 </dd></dl>
 
 <dl class="method">
@@ -364,7 +358,7 @@ $ Simulator -test +test</pre>
         <li class="right" >
           <a href="AstroFITS.html" title="9. HDU Objects and Storage AstroFITS"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0a2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

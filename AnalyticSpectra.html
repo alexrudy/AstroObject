@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>8. Analytic Spectra and Interpolation AnalyticSpectra &mdash; AstroObject 0.3.0a2 documentation</title>
+    <title>8. Analytic Spectra and Interpolation AnalyticSpectra &mdash; AstroObject 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.0a2',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.0a2 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.3.0 documentation" href="index.html" />
     <link rel="next" title="9. HDU Objects and Storage AstroFITS" href="AstroFITS.html" />
     <link rel="prev" title="7. Raw Spectrum Management AstroSpectra" href="AstroSpectra.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="AstroSpectra.html" title="7. Raw Spectrum Management AstroSpectra"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0a2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -76,24 +76,12 @@
 <dl class="class">
 <dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum">
 <em class="property">class </em><tt class="descclassname">AstroObject.AnalyticSpectra.</tt><tt class="descname">AnalyticSpectrum</tt><big>(</big><em>data=None</em>, <em>label=None</em>, <em>wavelengths=None</em>, <em>units=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="Permalink to this definition">¶</a></dt>
-<dd><p>A functional spectrum object for spectrum generation. The default implementation is abstract, and will throw errors if you try to call it.</p>
+<dd><p>A functional spectrum object for spe ctrum generation. The default implementation is a flat spectrum.</p>
 <p>The Analytic spectrum can be provided with a set of wavelengths upon intialization. The <cite>wavelengths</cite> keyword will be stored and used when this spectrum is later called by the system. The <cite>units</cite> keyword is currently unused.</p>
 <dl class="method">
 <dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__add__">
 <tt class="descname">__add__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__add__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__add__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implements spectrum addition</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__call__">
-<tt class="descname">__call__</tt><big>(</big><em>wavelengths=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the Flux data for this spectrum</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__hdu__">
-<tt class="descname">__hdu__</tt><big>(</big><em>primary=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__hdu__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__hdu__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a pyfits HDU representing this object</p>
 </dd></dl>
 
 <dl class="method">
@@ -108,12 +96,6 @@
 <dd><p>Reverse Addition</p>
 </dd></dl>
 
-<dl class="classmethod">
-<dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__read__">
-<em class="property">classmethod </em><tt class="descname">__read__</tt><big>(</big><em>HDU</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__read__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__read__" title="Permalink to this definition">¶</a></dt>
-<dd><p>An abstract method for reading empty data HDU Frames</p>
-</dd></dl>
-
 <dl class="method">
 <dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__rmul__">
 <tt class="descname">__rmul__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__rmul__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__rmul__" title="Permalink to this definition">¶</a></dt>
@@ -124,12 +106,6 @@
 <dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__rsub__">
 <tt class="descname">__rsub__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__rsub__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__rsub__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reverse subtraction</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__save__">
-<em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>data</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__save__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__save__" title="Permalink to this definition">¶</a></dt>
-<dd><p>A generic class method for saving to this object with data directly</p>
 </dd></dl>
 
 <dl class="method">
@@ -154,37 +130,110 @@
 
 <div class="section" id="expansion-objects">
 <h2>8.1. Expansion Objects<a class="headerlink" href="#expansion-objects" title="Permalink to this headline">¶</a></h2>
-<p>These objects provide simple expansions to the AnalyticSpectrum abstract class.</p>
+<p>These objects expand the concept of an analytic spectrum to be any spectrum which can respond to calls with arbitrary wavelength boundaries. The spectra in the InterpolatedSpectrum class can be triggered to respond as if they are infintely dense FLambda spectra, or as if they require resampling from one resolution to another. Finally, such spectra can be used as a 1-dimensional interpolation function.</p>
 <dl class="class">
 <dt id="AstroObject.AnalyticSpectra.InterpolatedSpectrum">
-<em class="property">class </em><tt class="descclassname">AstroObject.AnalyticSpectra.</tt><tt class="descname">InterpolatedSpectrum</tt><big>(</big><em>data=None</em>, <em>label=None</em>, <em>wavelengths=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#InterpolatedSpectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum" title="Permalink to this definition">¶</a></dt>
-<dd><p>An analytic representation of a generic, specified spectrum. The spectrum provided will be used to create an infintiely dense interpolation function. This function can then be used to call the spectrum at any wavelength. The interpolation used is a simple 1d interpolation.</p>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">No checks are currently provided to prevent extraneous interpoaltion outside of the originally specified range.</p>
-</div>
+<em class="property">class </em><tt class="descclassname">AstroObject.AnalyticSpectra.</tt><tt class="descname">InterpolatedSpectrum</tt><big>(</big><em>data=None</em>, <em>label=None</em>, <em>wavelengths=None</em>, <em>resolution=None</em>, <em>intSteps=150</em>, <em>method='interpolate'</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#InterpolatedSpectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>An analytic representation of a generic, specified spectrum. The spectrum provided will be used to create an infintiely dense interpolation function. This function can then be used to call the spectrum at any wavelength. The interpolation used by default is a simple 1d interpolation.</p>
+<p>Passing the name of any member function in this class to the <cite>method</cite> parameter will change the interpolation/method used for this spectrum.</p>
 <dl class="method">
 <dt id="AstroObject.AnalyticSpectra.InterpolatedSpectrum.__call__">
-<tt class="descname">__call__</tt><big>(</big><em>wavelengths=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#InterpolatedSpectrum.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calls this interpolated spectrum over certain wavelengths</p>
+<tt class="descname">__call__</tt><big>(</big><em>method=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#InterpolatedSpectrum.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls this interpolated spectrum over certain wavelengths. The method parameter will default to the one set for the object, and controls the method used to interpret this spectrum.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AnalyticSpectra.InterpolatedSpectrum.integrate">
+<tt class="descname">integrate</tt><big>(</big><em>wavelengths=None</em>, <em>resolution=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum.integrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs wavelength-integration for flambda spectra.</p>
+<p>This takes spectra which have theoretically infinite resolution, and performs an integration using the quadratic pack integrator on an interpolated F_Lambda function. The integration can be a little slow. Sanity checks confirm validity of input data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AnalyticSpectra.InterpolatedSpectrum.interpolate">
+<tt class="descname">interpolate</tt><big>(</big><em>wavelengths=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum.interpolate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses a 1d Interpolation to fill in missing spectrum values.</p>
+<p>This interpolator uses the scipy.interpolate.interp1d method to interpolate between data points in the original spectrum. This method will not handle changes in resolution appropriately.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AnalyticSpectra.InterpolatedSpectrum.pre_resolve">
+<tt class="descname">pre_resolve</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum.pre_resolve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instead of resolving a spectrum at call time, the spectrum can be called to resolve at creation time. In this case, the resolving method uses the raw data values for wavelengths. This pre-computation serves a similar purpose to <a class="reference internal" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum.resolve_and_resample" title="AstroObject.AnalyticSpectra.InterpolatedSpectrum.resolve_and_resample"><tt class="xref py py-meth docutils literal"><span class="pre">resolve_and_resample()</span></tt></a> but can also be used to collapse large collections of spectra. In the case of collapsing large collections (usually the collections are all constructed, but unresolved <a class="reference internal" href="#AstroObject.AnalyticSpectra.CompositeSpectra" title="AstroObject.AnalyticSpectra.CompositeSpectra"><tt class="xref py py-class docutils literal"><span class="pre">CompositeSpectra</span></tt></a>), the collapse occurs at construction time, removing computation time from other areas of the program.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AnalyticSpectra.InterpolatedSpectrum.resample">
+<tt class="descname">resample</tt><big>(</big><em>wavelengths=None</em>, <em>resolution=None</em>, <em>z=0.0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum.resample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resample the given spectrum to a lower resolution.</p>
+<p>This is a vector-based calculation, and so should be relatively fast. This function contains ZERO for loops, and uses entirely numpy-based vector mathematics. Sanity checks try to keep your input clean. It can also redshift a spectrum by a given z parameter, if that is necessary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AnalyticSpectra.InterpolatedSpectrum.resolve">
+<tt class="descname">resolve</tt><big>(</big><em>wavelengths</em>, <em>resolution</em>, <em>upscaling=100.0</em>, <em>resolve_method='integrate'</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum.resolve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Oversample underlying spectra.</p>
+<p>Using the <cite>resolve_method</cite> method (by default <a class="reference internal" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum.integrate" title="AstroObject.AnalyticSpectra.InterpolatedSpectrum.integrate"><tt class="xref py py-meth docutils literal"><span class="pre">integrate()</span></tt></a>), this function gets a high resolution copy of the underlying data. The high resolution data can later be downsampled using the <a class="reference internal" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum.resample" title="AstroObject.AnalyticSpectra.InterpolatedSpectrum.resample"><tt class="xref py py-meth docutils literal"><span class="pre">resample()</span></tt></a> method. This is a faster way to access integrated spectra many times. The speed advantages come over the integrator. By default the system gets 100x the requested resolution. This can be tuned with the <cite>upscaling</cite> keyword to optimize between speed and resolution coverage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AnalyticSpectra.InterpolatedSpectrum.resolve_and_resample">
+<tt class="descname">resolve_and_resample</tt><big>(</big><em>wavelengths</em>, <em>resolution</em>, <em>upscaling=100.0</em>, <em>resolve_method='integrate'</em>, <em>resample_method='resample'</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum.resolve_and_resample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resolve a spectrum at very high resolution, then re-sample down the proper size.</p>
+<p>This method reduces the use of computationally intensive integrators in spectral calculation. The intensive integrator is used only on the first pass over the spectrum. The integrator is called at a higher resolution (normally 100x, controlled by the <cite>upscaling</cite> parameter). This higher resolution copy is saved in the object, and downsampled for each request for spectrum information.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
-<dt id="AstroObject.AnalyticSpectra.ResampledSpectrum">
-<em class="property">class </em><tt class="descclassname">AstroObject.AnalyticSpectra.</tt><tt class="descname">ResampledSpectrum</tt><big>(</big><em>data=None</em>, <em>label=None</em>, <em>wavelengths=None</em>, <em>resolution=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#ResampledSpectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.ResampledSpectrum" title="Permalink to this definition">¶</a></dt>
-<dd><p>A spectrum that must be called with resampling information, but which correctly reamples down to given resoluton at each requested wavelength. The spectrum provided must have a greater resolution than the one requested in the end. Supplying the <cite>resoulution</cite> and <cite>wavelength</cite> keywords at initialization only sets defaults.</p>
+<dt id="AstroObject.AnalyticSpectra.UnitarySpectrum">
+<em class="property">class </em><tt class="descclassname">AstroObject.AnalyticSpectra.</tt><tt class="descname">UnitarySpectrum</tt><big>(</big><em>spectrum</em>, <em>resolution=100.0</em>, <em>method='pre_resolve'</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.UnitarySpectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>This spectrum calls all contained spectra and resolves them. The resolved spectra are high resolution (using <a class="reference internal" href="#AstroObject.AnalyticSpectra.UnitarySpectrum.pre_resolve" title="AstroObject.AnalyticSpectra.UnitarySpectrum.pre_resolve"><tt class="xref py py-meth docutils literal"><span class="pre">pre_resolve()</span></tt></a> and <a class="reference internal" href="#AstroObject.AnalyticSpectra.UnitarySpectrum.resolve" title="AstroObject.AnalyticSpectra.UnitarySpectrum.resolve"><tt class="xref py py-meth docutils literal"><span class="pre">resolve()</span></tt></a>) and stored for later use. When this spectrum is later called, it will (by default) use <a class="reference internal" href="#AstroObject.AnalyticSpectra.UnitarySpectrum.resolve_and_resample" title="AstroObject.AnalyticSpectra.UnitarySpectrum.resolve_and_resample"><tt class="xref py py-meth docutils literal"><span class="pre">resolve_and_resample()</span></tt></a>.</p>
 <dl class="method">
-<dt id="AstroObject.AnalyticSpectra.ResampledSpectrum.__call__">
-<tt class="descname">__call__</tt><big>(</big><em>wavelengths=None</em>, <em>resolution=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#ResampledSpectrum.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.ResampledSpectrum.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calls this resampled spectrum over certain wavelengths</p>
+<dt id="AstroObject.AnalyticSpectra.UnitarySpectrum.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>method=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.UnitarySpectrum.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls this interpolated spectrum over certain wavelengths. The method parameter will default to the one set for the object, and controls the method used to interpret this spectrum.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AnalyticSpectra.ResampledSpectrum.resample">
-<tt class="descname">resample</tt><big>(</big><em>wavelengths</em>, <em>resolution</em>, <em>z=0.0</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#ResampledSpectrum.resample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.ResampledSpectrum.resample" title="Permalink to this definition">¶</a></dt>
-<dd><p>Resample the given spectrum to a lower resolution. This algorithm is a vectorized version of the one provided by Robert Quimby in IDL code.</p>
+<dt id="AstroObject.AnalyticSpectra.UnitarySpectrum.integrate">
+<tt class="descname">integrate</tt><big>(</big><em>wavelengths=None</em>, <em>resolution=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.UnitarySpectrum.integrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs wavelength-integration for flambda spectra.</p>
+<p>This takes spectra which have theoretically infinite resolution, and performs an integration using the quadratic pack integrator on an interpolated F_Lambda function. The integration can be a little slow. Sanity checks confirm validity of input data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AnalyticSpectra.UnitarySpectrum.interpolate">
+<tt class="descname">interpolate</tt><big>(</big><em>wavelengths=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.UnitarySpectrum.interpolate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses a 1d Interpolation to fill in missing spectrum values.</p>
+<p>This interpolator uses the scipy.interpolate.interp1d method to interpolate between data points in the original spectrum. This method will not handle changes in resolution appropriately.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AnalyticSpectra.UnitarySpectrum.pre_resolve">
+<tt class="descname">pre_resolve</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.UnitarySpectrum.pre_resolve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instead of resolving a spectrum at call time, the spectrum can be called to resolve at creation time. In this case, the resolving method uses the raw data values for wavelengths. This pre-computation serves a similar purpose to <a class="reference internal" href="#AstroObject.AnalyticSpectra.UnitarySpectrum.resolve_and_resample" title="AstroObject.AnalyticSpectra.UnitarySpectrum.resolve_and_resample"><tt class="xref py py-meth docutils literal"><span class="pre">resolve_and_resample()</span></tt></a> but can also be used to collapse large collections of spectra. In the case of collapsing large collections (usually the collections are all constructed, but unresolved <a class="reference internal" href="#AstroObject.AnalyticSpectra.CompositeSpectra" title="AstroObject.AnalyticSpectra.CompositeSpectra"><tt class="xref py py-class docutils literal"><span class="pre">CompositeSpectra</span></tt></a>), the collapse occurs at construction time, removing computation time from other areas of the program.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AnalyticSpectra.UnitarySpectrum.resample">
+<tt class="descname">resample</tt><big>(</big><em>wavelengths=None</em>, <em>resolution=None</em>, <em>z=0.0</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.UnitarySpectrum.resample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resample the given spectrum to a lower resolution.</p>
+<p>This is a vector-based calculation, and so should be relatively fast. This function contains ZERO for loops, and uses entirely numpy-based vector mathematics. Sanity checks try to keep your input clean. It can also redshift a spectrum by a given z parameter, if that is necessary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AnalyticSpectra.UnitarySpectrum.resolve">
+<tt class="descname">resolve</tt><big>(</big><em>wavelengths</em>, <em>resolution</em>, <em>upscaling=100.0</em>, <em>resolve_method='integrate'</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.UnitarySpectrum.resolve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Oversample underlying spectra.</p>
+<p>Using the <cite>resolve_method</cite> method (by default <a class="reference internal" href="#AstroObject.AnalyticSpectra.UnitarySpectrum.integrate" title="AstroObject.AnalyticSpectra.UnitarySpectrum.integrate"><tt class="xref py py-meth docutils literal"><span class="pre">integrate()</span></tt></a>), this function gets a high resolution copy of the underlying data. The high resolution data can later be downsampled using the <a class="reference internal" href="#AstroObject.AnalyticSpectra.UnitarySpectrum.resample" title="AstroObject.AnalyticSpectra.UnitarySpectrum.resample"><tt class="xref py py-meth docutils literal"><span class="pre">resample()</span></tt></a> method. This is a faster way to access integrated spectra many times. The speed advantages come over the integrator. By default the system gets 100x the requested resolution. This can be tuned with the <cite>upscaling</cite> keyword to optimize between speed and resolution coverage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AnalyticSpectra.UnitarySpectrum.resolve_and_resample">
+<tt class="descname">resolve_and_resample</tt><big>(</big><em>wavelengths</em>, <em>resolution</em>, <em>upscaling=100.0</em>, <em>resolve_method='integrate'</em>, <em>resample_method='resample'</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.UnitarySpectrum.resolve_and_resample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resolve a spectrum at very high resolution, then re-sample down the proper size.</p>
+<p>This method reduces the use of computationally intensive integrators in spectral calculation. The intensive integrator is used only on the first pass over the spectrum. The integrator is called at a higher resolution (normally 100x, controlled by the <cite>upscaling</cite> parameter). This higher resolution copy is saved in the object, and downsampled for each request for spectrum information.</p>
 </dd></dl>
 
 </dd></dl>
@@ -290,7 +339,7 @@
         <li class="right" >
           <a href="AstroSpectra.html" title="7. Raw Spectrum Management AstroSpectra"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0a2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

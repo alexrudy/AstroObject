@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>14. Release Notes &mdash; AstroObject 0.3.0a2 documentation</title>
+    <title>14. Release Notes &mdash; AstroObject 0.3.0 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.0a2',
+        VERSION:     '0.3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.0a2 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.3.0 documentation" href="index.html" />
     <link rel="prev" title="13. Development Plans" href="future.html" /> 
   </head>
   <body>
@@ -41,7 +41,7 @@
         <li class="right" >
           <a href="future.html" title="13. Development Plans"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0a2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -108,25 +108,14 @@
 </li>
 <li><dl class="first docutils">
 <dt>0.2.1</dt>
-<dd><ul class="first last">
-<li><p class="first">object.keep() only keeps the specified states</p>
-</li>
-<li><p class="first">object.keep() and object.remove() both accept arbitrary numbers of arguments</p>
-</li>
-<li><p class="first">derived classes now have a __valid__() method</p>
-</li>
-<li><p class="first">object.object() has become object.frame() for more naming consistency. NOTE: object.object() will be depreciated.</p>
-</li>
-<li><p class="first">AstroObject has been renamed AstroObjectBase to reflect its use as a base class. NOTE: AstroObject.AstroObject will be depreciated.</p>
-</li>
-<li><dl class="first docutils">
-<dt>improvement to nosetests/spec</dt>
 <dd><ul class="first last simple">
+<li>object.keep() only keeps the specified states</li>
+<li>object.keep() and object.remove() both accept arbitrary numbers of arguments</li>
+<li>derived classes now have a __valid__() method</li>
+<li>object.object() has become object.frame() for more naming consistency. NOTE: object.object() will be depreciated.</li>
+<li>AstroObject has been renamed AstroObjectBase to reflect its use as a base class. NOTE: AstroObject.AstroObject will be depreciated.</li>
+<li>improvement to nosetests/spec</li>
 <li>improvements to documentation</li>
-</ul>
-</dd>
-</dl>
-</li>
 </ul>
 </dd>
 </dl>
@@ -142,7 +131,7 @@
 <li><dl class="first docutils">
 <dt>0.2.3</dt>
 <dd><ul class="first last simple">
-<li>Uniform <cite>__init__</cite> call signature (data,label,header=,metadata=) This will change to (<a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs) in the next release. The signature will primarily use (data=,label=), so that can be included now for future compatibility.</li>
+<li>Uniform <cite>__init__</cite> call signature (data,label,header=,metadata=) This will change to (**kwargs) in the next release. The signature will primarily use (data=,label=), so that can be included now for future compatibility.</li>
 <li>Uniform <cite>__call__</cite> call signature for AnalyticSpectra items. This allows nested calls with a variety of keywords (see ResampledSpectrum)</li>
 <li>New InterpolatedSpectrum (using Spline by default) and ResampledSpectrum objects provide analytic interfaces to data-based spectra.</li>
 <li>AstroImage and AstroObject save header values to in <cite>__hdu__</cite> call.</li>
@@ -220,6 +209,66 @@
 </dd>
 </dl>
 </li>
+<li><dl class="first docutils">
+<dt>0.2.6</dt>
+<dd><ul class="first last simple">
+<li>Compatible with SetupTools setup.py paradigm</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.2.7</dt>
+<dd><ul class="first last simple">
+<li>Fix for missing VERSION file in <cite>install</cite>-ed package</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.2.8</dt>
+<dd><ul class="first last simple">
+<li>Release Notes for 0.2.7 and 0.2.8</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.2.9</dt>
+<dd><ul class="first last">
+<li><p class="first">Buildout compatiblity (Partially... buildout doesn&#8217;t really work well with MatPlotLib, but its here in case that changes.)</p>
+</li>
+<li><dl class="first docutils">
+<dt>Setup.py Fixes</dt>
+<dd><ul class="first last simple">
+<li>dependencies have been lowered to coincide with UBUNTU package versions of things.</li>
+<li>data file inclusion is now done through <cite>data_files</cite> which seems to work a little better</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">Now using distribute as a wrapper around setuptools to fix bugs etc.</p>
+</li>
+<li><p class="first"><strong>Note</strong>: This is the LAST 0.2.x release. Future releases will be 0.2.9pX or 0.3.0 as new features are being introduced.</p>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.3.0</dt>
+<dd><ul class="first last simple">
+<li>New Simulator Module</li>
+<li>New Caches Module</li>
+<li>Unified Logging Module System</li>
+<li>Setup.py Distribution</li>
+<li>Unified Analytic Spectrum interface when using interpolation.</li>
+<li>Unitary spectrum to collapse interpolated spectra early.</li>
+<li>Ability to resolve and resample analytic spectra.</li>
+</ul>
+</dd>
+</dl>
+</li>
 </ul>
 </div>
 
@@ -266,7 +315,7 @@
         <li class="right" >
           <a href="future.html" title="13. Development Plans"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0a2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

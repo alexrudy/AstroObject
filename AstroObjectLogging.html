@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>11. Easy Logging AstroObjectLogging &mdash; AstroObject 0.3.0 documentation</title>
+    <title>Logging API &mdash; AstroObject 0.3.0a2 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.0',
+        VERSION:     '0.3.0a2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,9 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.0 documentation" href="index.html" />
-    <link rel="next" title="12. AstroObject Utilities" href="Utilities.html" />
-    <link rel="prev" title="10. Simulator and Complex Task Management AstroSimulator" href="Simulator.html" /> 
+    <link rel="top" title="AstroObject 0.3.0a2 documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,13 +37,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="Utilities.html" title="12. AstroObject Utilities"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="Simulator.html" title="10. Simulator and Complex Task Management AstroSimulator"
-             accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.0a2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -54,23 +46,9 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <span class="target" id="module-AstroObject.AstroObjectLogging"></span><div class="section" id="easy-logging-astroobjectlogging">
-<h1>11. Easy Logging <tt class="xref py py-mod docutils literal"><span class="pre">AstroObjectLogging</span></tt><a class="headerlink" href="#easy-logging-astroobjectlogging" title="Permalink to this headline">¶</a></h1>
-<p>This module provides basic access to logging functions. It elimiates much of the variablity in logging, replacing it with the simple logging configuration options that AstroObject is constantly using. It is, however, built on the normal logging module, and so shouldn&#8217;t break any other logging schemes. &lt;<a class="reference external" href="http://docs.python.org/library/logging.html">http://docs.python.org/library/logging.html</a>&gt;</p>
-<p>Other than a simpler set of possible configuration options, this object has the advantage that it allows for dynamic configurations which vary from run to run. As is common in complex programs, a lot happens before reading a configuration file. However, without the configuration file, the system can&#8217;t start logging. This logger holds all the messages it recieves pre-configuration for use once the logger starts, preserving these messages for later debugging.</p>
-<p>To use the logging:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
-<span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Buffered Message Saved for later output&quot;</span><span class="p">)</span>
-<span class="n">LOG</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">configFile</span><span class="o">=</span><span class="s">&quot;some.yaml&quot;</span><span class="p">)</span>
-<span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Buffered Message, saved for later output&quot;</span><span class="p">)</span>
-<span class="n">LOG</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-<span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Normal Message&quot;</span><span class="p">)</span>
-<span class="n">LOG</span><span class="o">.</span><span class="n">useConsole</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Not on the console&quot;</span><span class="p">)</span>
-<span class="n">LOG</span><span class="o">.</span><span class="n">useConsole</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
-<span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Back to the console!&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
+  <span class="target" id="module-AstroObjectLogging"></span><div class="section" id="logging-api">
+<h1>Logging API<a class="headerlink" href="#logging-api" title="Permalink to this headline">¶</a></h1>
+<p>The AstroObjectLogging module provides a customized logging class whcih can be automatically and easily configured for various functions. For full documentation of the Logging module, see &lt;<a class="reference external" href="http://docs.python.org/library/logging.html">http://docs.python.org/library/logging.html</a>&gt;.</p>
 <dl class="class">
 <dt id="AstroObject.AstroObjectLogging.LogManager">
 <em class="property">class </em><tt class="descclassname">AstroObject.AstroObjectLogging.</tt><tt class="descname">LogManager</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectLogging.html#LogManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectLogging.LogManager" title="Permalink to this definition">¶</a></dt>
@@ -84,7 +62,7 @@
 <dl class="method">
 <dt id="AstroObject.AstroObjectLogging.LogManager.start">
 <tt class="descname">start</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectLogging.html#LogManager.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectLogging.LogManager.start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Starts this logger running, using the configuration set using <a class="reference internal" href="#AstroObject.AstroObjectLogging.LogManager.configure" title="AstroObject.AstroObjectLogging.LogManager.configure"><tt class="xref py py-meth docutils literal"><span class="pre">configure()</span></tt></a>. The configuration can configure a file handler and a console handler. Arbitrary configurations are not possible at this point.</p>
+<dd><p>Starts this logger running, using the configuration set using <tt class="xref py py-meth docutils literal"><span class="pre">configure()</span></tt>. The configuration can configure a file handler and a console handler. Arbitrary configurations are not possible at this point.</p>
 </dd></dl>
 
 <dl class="method">
@@ -103,15 +81,9 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="Simulator.html"
-                        title="previous chapter">10. Simulator and Complex Task Management <tt class="docutils literal docutils literal"><span class="pre">AstroSimulator</span></tt></a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="Utilities.html"
-                        title="next chapter">12. AstroObject Utilities</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
-    <li><a href="_sources/Logging.txt"
+    <li><a href="_sources/AstroObjectLogging.txt"
            rel="nofollow">Show Source</a></li>
   </ul>
 <div id="searchbox" style="display: none">
@@ -140,13 +112,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="Utilities.html" title="12. AstroObject Utilities"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="Simulator.html" title="10. Simulator and Complex Task Management AstroSimulator"
-             >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.0a2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
