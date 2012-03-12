@@ -41,8 +41,20 @@ AstroObjectBase provides template objects for the Object-Oriented Modules :mod:`
 .. autoclass:: 
     AstroObject.AstroObjectBase.FITSFrame
     :members:
-    :special-members:
+    :inherited-members:
     
-
+    .. automethod:: __call__
+    
+    .. automethod:: __str__    
+    
+    .. automethod:: __valid__
+    
+    .. automethod:: __hdu__
+    
+    .. automethod:: __show__
+    
+    .. automethod:: __save__
+    
+    .. automethod:: __read__
 
     

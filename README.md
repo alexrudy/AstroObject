@@ -5,7 +5,7 @@
  Created by Alexander Rudy on 2011-10-07.
  Copyright 2011 Alexander Rudy. All rights reserved.
 
- Version 0.3.0a2
+  Version 0.3.0
 
 ---
 
@@ -109,14 +109,11 @@ As well, the library is useful for building object-based representations of new 
 		- data file inclusion is now done through `data_files` which seems to work a little better
 	- Now using distribute as a wrapper around setuptools to fix bugs etc.
 	- **Note**: This is the LAST 0.2.x release. Future releases will be 0.2.9pX or 0.3.0 as new features are being introduced.
-* 0.3.0a1
-	**Alpha Release Software**
+* 0.3.0
 	- New Simulator Module
 	- New Caches Module
 	- Unified Logging Module System
 	- Setup.py Distribution
-* 0.3.0a2
-	- Documentation for Logging System
-	- Simulator Stability Improvements. **However** there are huge improvements coming in a later 0.3.0 alpha release. Please hold off until then for use of the simulator API or check out the features/dependencies branch of the repository to see that work in action.
-	- Documentation of Simulator
-	- Documentation of AnalyticSpectrum Objects
+    - Unified Analytic Spectrum interface when using interpolation.
+    - Unitary spectrum to collapse interpolated spectra early. 
+    - Ability to resolve and resample analytic spectra.
