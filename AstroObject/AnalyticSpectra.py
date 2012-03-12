@@ -349,7 +349,7 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
             raise ValueError(msg)
         
         # Check for resolution registry to pixel size
-        if np.allclose(wlStart[1:],wlEnd[:-1]):
+        if (np.abs(wlStart[1:]-wlEnd[:-1]) > 1e-12).any():
             LOG.warning("Resolution doesn't seem to register to pixel positions")
             LOG.debug("%s : %s" % (self,npArrayInfo(wlStart[1:]-wlEnd[:-1],"Difference in Bounds")))
             LOG.debug("%s : %s" % (self,npArrayInfo(wlStart[1:],"Lower Bounds")))
@@ -377,11 +377,82 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         
         
         return np.vstack((wavelengths,flux))
+    
+    def resolve(self,wavelengths,resolution,upscaling=1e2,resolve_method='integrate',**kwargs):
+        """Resolve underlying spectra"""
+        self.resolver = getattr(self,resolve_method)
                 
+        # Save the original data
+        self.original_data = self.data
+            
+        # Make a much more detailed spectrum
+        # Build the sample request by upscaling the resolution requested
+        dense_resolution = resolution * upscaling
+            
+        min_wl = np.min(wavelengths)
+        dwl = [min_wl]
+        new_wl = min_wl
+        for R,wl in zip(dense_resolution,wavelengths):
+            while new_wl <= wl:
+                new_wl += (new_wl / R)
+                dwl += [new_wl]
+            
+        dense_wavelengths = np.array(dwl)
+        dense_resolution = dense_wavelengths[:-1] / np.diff(dense_wavelengths)
+        dense_wavelengths = dense_wavelengths[:-1]
+            
+        # Sanity checks about our newly generated wavelengths
+        if np.max(dense_wavelengths) > np.max(wavelengths):
+            msg = "Wavelength generation for dense spectrum exceeded requested bounds."
+            LOG.warning("%s: %s" % (self,msg))
+            LOG.debug("%s: %s" % (self,npArrayInfo(wavelengths,"Requested Wavelengths")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(dense_wavelengths,"Dense Wavelengths")))
+        if np.max(dense_wavelengths) < np.max(wavelengths):
+            msg = "Wavelength generation for dense spectrum did not reach requested bounds."
+            LOG.warning("%s: %s" % (self,msg))
+            LOG.debug("%s: %s" % (self,npArrayInfo(wavelengths,"Requested Wavelengths")))
+            LOG.debug("%s: %s" % (self,npArrayInfo(dense_wavelengths,"Dense Wavelengths")))
+            
+        # Do the actual integration, and save it to the object.
+        dwl,dfl = self.resolver(wavelengths=dense_wavelengths,resolution=dense_resolution,**kwargs)
+        self.data = np.vstack((dwl,dfl))
+        self.resolved = True
+        
+                
+    def resolve_and_resample(self,wavelengths,resolution,upscaling=1e2,resolve_method='integrate',resample_method='resample',**kwargs):
+        """Resolve and resample uses the integrate method on the first pass of the spectrum, to generate a higher resolution spectrum for use later on. It then re-resolves the spectrum whenever necessary using the gaussian resample function to properly downsample."""
+        
+        # Set up flag variables.
+        self.resolved = False if not hasattr(self,'resolved') else self.resolved
+        
+        # First pass resolving the spectrum to a denser data set.
+        # This pass uses the upscaling parameter to find a much denser resolution.
+        if not self.resolved:
+            self.resolve(wavelengths=wavelengths,resolution=resolution,upscaling=upscaling,resolve_method=resolve_method,**kwargs)
+        
+        self.resampler = getattr(self,resample_method)
+        return self.resampler(wavelengths=wavelengths,resolution=resolution,**kwargs)
+        
+    def pre_resolve(self,const_resolution=1e2,**kwargs):
+        """docstring for pre_resolve"""        
+        oldwl,oldfl = self.data
+        
+        res = oldwl[:-1] / np.diff(oldwl)
+        
+        self.resolve(wavelengths = oldwl[:-1], resolution = res, upscaling = const_resoltuion, **kwargs)
+        return self.data
         
         
-
         
+        
+class UniarySpectrum(InterpolatedSpectrum):
+    """This spectrum calls all contained spectra and resolves them."""
+    def __init__(self, spectrum, resolution=1e2, method='pre_resolve',**kwargs):
+        label = "R[" + spectrum.label + "]"
+        data = spectrum(method='pre_resolve',const_resolution=resolution)
+        super(UniarySpectrum, self).__init__(data=data, label=label,method=spectrum.method,**kwargs)
+        
+                    
 
 import AnalyticSpectraObjects
 from AnalyticSpectraObjects import *
