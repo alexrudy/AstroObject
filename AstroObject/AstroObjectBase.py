@@ -310,12 +310,23 @@ class FITSObject(object):
     
     def remove(self,*statenames,**kwargs):
         """Removes the specified frame(s) from the object."""
+        if "clobber" in kwargs and kwargs["clobber"]:
+            clobber = True
+        else:
+            clobber = False
+        if "delete" in kwargs and kwargs["delete"]:
+            delete = True
+        else:
+            delete = False
         removed = []
         LOG.log(2,"%s: Requested remove %s" % (self,statenames))
         for statename in statenames:
             if statename not in self.states:
-                raise IndexError("%s: Object %s does not exist!" % (self,statename))
-            if "delete" in kwargs and kwargs["delete"]:
+                if clobber:
+                    LOG.info("%s: Not removing state %s as it does not exist" % (self,statename))
+                else:
+                    raise IndexError("%s: Object %s does not exist!" % (self,statename))
+            if delete:
                 del self.states[statename]
             else:
                 self.states.pop(statename)
