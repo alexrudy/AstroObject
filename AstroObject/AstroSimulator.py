@@ -8,7 +8,7 @@
 # 
 
 # Standard Python Modules
-import math, copy, sys, time, logging, os, ast
+import math, copy, sys, time, logging, os, json
 import argparse
 import yaml
 
@@ -324,7 +324,7 @@ class Simulator(object):
         if "preconfig" in self.options and self.options["preconfig"] != None:
             for preconfig in self.options["preconfig"]:
                 if isinstance(preconfig,str):
-                    preconfig = ast.literal_eval(preconfig)
+                    preconfig = json.loads(unicode(preconfig))
                 self.config.merge(preconfig)
             
     def postConfiguration(self):
@@ -338,7 +338,7 @@ class Simulator(object):
         if "postconfig" in self.options and self.options["postconfig"] != None:
             for preconfig in self.options["postconfig"]:
                 if isinstance(preconfig,str):
-                    preconfig = ast.literal_eval(preconfig)
+                    preconfig = json.loads(unicode(preconfig))
                 self.config.merge(preconfig)
         
         if "postfunc" in self.options and self.options["postfunc"] != None:
