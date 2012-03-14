@@ -8,7 +8,7 @@
 # 
 
 # Standard Python Modules
-import math, copy, sys, time, logging, os
+import math, copy, sys, time, logging, os, json
 import argparse
 import yaml
 
@@ -142,29 +142,27 @@ class Simulator(object):
         self.parser = argparse.ArgumentParser(description=ShortHelp,
             formatter_class=argparse.RawDescriptionHelpFormatter,usage=self.USAGE % self.USAGEFMT,prefix_chars="-+*")
         
-        self.parser.add_argument('-f',metavar='filename',type=str,dest='filename',
-            help="filename for output image (without .fits)")
-        # Add the basic controls for the script
-        self.parser.add_argument('--version',action='version',version=__version__)
-        
-        # Operational Controls
-        self.parser.add_argument('--do-plot',action='store_true',dest='plot',help="Enable debugging plots")
-        self.parser.add_argument('--no-cache',action='store_false',dest='cache',
-            help="ignore cached data from the simulator")
-        self.parser.add_argument('--clear-cache',action='store_true',dest='clear_cache')
-        self.parser.add_argument('-d','--debug',action='store_true',dest='debug',help="enable debugging messages and plots")
-        
-        # Config Commands
-        self.parser.add_argument('--config',action='store',dest='config',type=str,help="use the specified configuration file",metavar="file.yaml")
-        self.parser.add_argument('--dump-config',action='store_true',dest='dump',help=argparse.SUPPRESS)
-        self.parser.add_argument('--print-stages',action='store_true',dest='print_stages',help="Print the stages that the simulator intends to run")
-        self.parser.add_argument('--stages',action='store_true',dest='list_stages',help="List all of the stages initialized")
-        
         # Parsers
         self.config_parser = self.parser.add_argument_group("Configuration")
         self.pos_stage_parser = self.parser.add_argument_group('Single Use Stages')
         self.neg_stage_parser = self.parser.add_argument_group('Remove Stages')
         self.inc_stage_parser = self.parser.add_argument_group('Stages')
+        
+        # Add the basic controls for the script
+        self.parser.add_argument('--version',action='version',version=__version__)
+        
+        # Operational Controls
+        self.registerConfigOpts('d',{'Debug':True},help="enable debugging messages and plots")
+        
+        # Config Commands
+        self.parser.add_argument('--pre-configure',action='append',help=argparse.SUPPRESS,metavar="{'config':'value'}",dest='preconfigure')
+        self.parser.add_argument('--configure',action='append',metavar="{'config':'value'}",help="Add configuration items in the form of python dictionaries",dest='postconfig')
+        self.parser.add_argument('--cf',action='store',dest='config',type=str,help="use the specified configuration file",metavar="file.yaml")
+        self.parser.add_argument('--dry-run',action='store_true',dest='dry_run',help="Print the stages that the simulator wishes to run, without executing.")
+        self.registerFunction('--dump',self.dump_config)
+        self.registerFunction('--stages',self.list_stages,help="List all of the stages initialized")
+        
+
         
         # Default Macro
         self.registerStage(None,"all",description="Run all stages",help="Run all stages",include=False)
@@ -246,8 +244,8 @@ class Simulator(object):
         if include:
             self.stages["all"].deps += [name]
         
-    def registerConfigOpts(self,argument,configuration,**kwargs):
-        """Registers a bulk configuration option which will be provided with the USAGE statement. This configuration option can easily override normal configuration settings. Configuration provided here will override programmatically specified configuration options. It will not override configuration provided by the configuration file. These configuration options are meant to provide alterantive *defaults*, not alternative configurations."""
+    def registerFunction(self,argument,function,**kwargs):
+        """Register a function to run using a flag"""
         if self.running or self.starting:
             raise ConfigureError("Cannot add macro after simulator has started!")
         
@@ -257,7 +255,24 @@ class Simulator(object):
             help = kwargs["help"]
             del kwargs["help"]
         
-        self.config_parser.add_argument("-"+argument,action='append_const',dest='preconfig',const=configuration,help=help,**kwargs)
+        self.parser.add_argument(argument,action='append_const',dest='postfunc',const=function,help=help,**kwargs)
+        
+        
+    def registerConfigOpts(self,argument,configuration,preconfig=True,**kwargs):
+        """Registers a bulk configuration option which will be provided with the USAGE statement. This configuration option can easily override normal configuration settings. Configuration provided here will override programmatically specified configuration options. It will not override configuration provided by the configuration file. These configuration options are meant to provide alterantive *defaults*, not alternative configurations."""
+        if self.running or self.starting:
+            raise ConfigureError("Cannot add macro after simulator has started!")
+        
+        if "help" not in kwargs:
+            help = argparse.SUPPRESS
+        else:
+            help = kwargs["help"]
+            del kwargs["help"]
+        if preconfig:
+            dest = 'preconfig'
+        else:
+            dest = 'postconifg'
+        self.config_parser.add_argument("-"+argument,action='append_const',dest=dest,const=configuration,help=help,**kwargs)
         
         
     def configure(self,configFile=None,configuration=None):
@@ -282,10 +297,6 @@ class Simulator(object):
         # Start Logging
         self.log.configure(configuration=self.config)
         self.log.start()
-        if os.path.isdir(self.config["Dirs"]["Partials"]):
-            with open(self.config["Dirs"]["Partials"]+"/config-%s.yaml" % (self.name),"w") as stream:
-                stream.write("# Configuration from %s\n" % self.name)
-                yaml.dump(self.config,stream,default_flow_style=False) 
         
         # Write Configuration to Partials Directory
         if os.path.isdir(self.config["Dirs"]["Partials"]):
@@ -312,6 +323,8 @@ class Simulator(object):
             self.config["Configs"]["This"] = self.options["config"]
         if "preconfig" in self.options and self.options["preconfig"] != None:
             for preconfig in self.options["preconfig"]:
+                if isinstance(preconfig,str):
+                    preconfig = json.loads(unicode(preconfig))
                 self.config.merge(preconfig)
             
     def postConfiguration(self):
@@ -322,18 +335,32 @@ class Simulator(object):
             self.options["include"] = []
         if "macro" not in self.options or not isinstance(self.options["macro"],list):
             self.options["macro"] = []
-        if self.options["debug"]:
-            self.config["Debug"] = self.options["debug"]
+        if "postconfig" in self.options and self.options["postconfig"] != None:
+            for preconfig in self.options["postconfig"]:
+                if isinstance(preconfig,str):
+                    preconfig = json.loads(unicode(preconfig))
+                self.config.merge(preconfig)
         
-    def shortExits(self):
-        """Options which short out and exit"""
-        if self.options["list_stages"]:
-            text = "Stages:\n"
-            for stage in self.orders:
-                s = self.stages[stage]
-                text += "%(command)-20s : %(desc)s" % {'command':s.name,'desc':s.description}
-                text += "\n"
-            self.parser.exit(message=text)
+        if "postfunc" in self.options and self.options["postfunc"] != None:
+            for f in self.options["postfunc"]:
+                f()
+        
+        
+    def list_stages(self):
+        """List stages and exit"""
+        text = "Stages:\n"
+        for stage in self.orders:
+            s = self.stages[stage]
+            text += "%(command)-20s : %(desc)s" % {'command':s.name,'desc':s.description}
+            text += "\n"
+        self.parser.exit(message=text)
+        
+    def dump_config(self):
+        """Dump the configuration to a file"""
+        with open(self.config["Configs"]["This"]+"-dump.yaml","w") as stream:
+            stream.write("# Configuration from %s\n" % self.name)
+            yaml.dump(self.config.extract(),stream,default_flow_style=False) 
+        
                 
     def startup(self):
         """Start up the simulation. """
@@ -345,7 +372,6 @@ class Simulator(object):
         if self.caching:
             self.Caches.load()
         self.postConfiguration()
-        self.shortExits()
         self.starting = False
         
         
@@ -376,9 +402,14 @@ class Simulator(object):
                     self.execute(stage,deps=False)
             self.running = False
         
-        if self.options['print_stages']:
-            print self.completed
-    
+        if self.options['dry_run']:
+            text = "Stages completed:\n"
+            for stage in self.complete:
+                s = self.stages[stage]
+                text += "%(command)-20s : %(desc)s" % {'command':s.name,'desc':s.description}
+                text += "\n"
+            self.exit(msg=text)
+            
     def execute(self,stage,deps=True):
         """Actually exectue a particular stage"""
         if self.paused or not self.running:
@@ -417,6 +448,10 @@ class Simulator(object):
             self.complete += [stage] + s.reps
             return use
         
+        if self.options["dry_run"]:
+            self.complete += [stage] + s.reps
+            return use
+        
         self.log.debug("Starting \'%s\'" % s.name)
         self.log.info("%s" % s.description)
         
@@ -448,7 +483,11 @@ class Simulator(object):
         
         return use
         
-    def exit(self,code=0):
+    def exit(self,code=0,msg=None):
         """Cleanup function for when we are all done"""
+        if msg:
+            self.log.info(msg)
+            print msg
+        self.log.info("Simulator %s Finished" % self.name)
         sys.exit(code)
         
