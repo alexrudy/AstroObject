@@ -40,7 +40,7 @@ class Configuration(dict):
         """Loads a configuration from a yaml file, and merges it into the master"""
         loaded = False
         try:
-            with open(filename,'r') as stream:
+            with open(filename,"r") as stream:
                 new = yaml.load(stream)
         except IOError:
             if silent:
