@@ -486,6 +486,8 @@ class Simulator(object):
     def exit(self,code=0,msg=None):
         """Cleanup function for when we are all done"""
         if msg:
+            self.log.info(msg)
             print msg
+        self.log.info("Simulator %s Finished" % self.name)
         sys.exit(code)
         
