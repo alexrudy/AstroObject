@@ -244,7 +244,7 @@ class Simulator(object):
         if include:
             self.stages["all"].deps += [name]
         
-    def registerFunction(self,argument,function,**kwargs):
+    def registerFunction(self,argument,function,post=True,**kwargs):
         """Register a function to run using a flag"""
         if self.running or self.starting:
             raise ConfigureError("Cannot add macro after simulator has started!")
@@ -254,6 +254,10 @@ class Simulator(object):
         else:
             help = kwargs["help"]
             del kwargs["help"]
+        if post:
+            dest='postfunc'
+        else:
+            dest='prefunc'
         
         self.parser.add_argument(argument,action='append_const',dest='postfunc',const=function,help=help,**kwargs)
         
@@ -326,6 +330,10 @@ class Simulator(object):
                 if isinstance(preconfig,str):
                     preconfig = json.loads(unicode(preconfig))
                 self.config.merge(preconfig)
+        if "prefunc" in self.options and self.options["prefunc"] != None:
+            for f in self.options["prefunc"]:
+                f()
+        
             
     def postConfiguration(self):
         """Apply arguments after configuration. The arguments applied here flesh out macros, and copy data from the configuration system into the operations system."""
