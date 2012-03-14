@@ -318,7 +318,10 @@ class CacheManager(object):
                 cacheObject.generate(save=False)
                 gened = cacheObject()
                 cacheObject.reset()
-                result = saved == gened
+                try:
+                    result = saved == gened
+                except:
+                    result = False
                 cached &= result
                 if not result:
                     with open("Partials/CACHETEST.dat",'w') as stream:
