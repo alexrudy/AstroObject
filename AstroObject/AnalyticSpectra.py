@@ -65,25 +65,32 @@ class AnalyticSpectrum(AstroObjectBase.BaseFrame):
         """Implements spectrum subtraction"""
         return CompositeSpectra(self,other,'sub')
         
+    def __div__(self,other):
+        """Implements spectrum division"""
+        return CompositeSpectra(self,other,'div')
+    
     
     def __rsub__(self,other):
         """Reverse subtraction"""
         return CompositeSpectra(other,self,'sub')
         
+    def __rdiv__(self,other):
+        """Reverse division"""
+        return CompositeSpectra(other,self,'div')
     
-    def __rmul__(self):
+    def __rmul__(self,other):
         """Reverse Multiplication"""
-        return CompositeSpectra(self,other,'mul')
+        return CompositeSpectra(other,self,'mul')
         
     
-    def __radd__(self):
+    def __radd__(self,other):
         """Reverse Addition"""
-        return CompositeSpectra(self,other,'add')
+        return CompositeSpectra(other,self,'add')
 
 
 class CompositeSpectra(AnalyticSpectrum):
     """Binary composition of two functional spectra. This object should not be initialized by the user. Instead, this class is returned when you combine two spectra of different types, or combine a spectra with any other type. As such, do not initialze composite spectra idependently. See the :meth:`__call__` function for documentation of how to use this type of object."""
-    ops = {'sub':"-",'add':"+",'mul':"*"}
+    ops = {'sub':"-",'add':"+",'mul':"*",'div':"/"}
     def __init__(self, partA, partB, operation):
         label = "("
         label += partA.label if hasattr(partA,'label') else str(partA)
@@ -118,7 +125,8 @@ class CompositeSpectra(AnalyticSpectrum):
             Result = Avalue * Bvalue
         elif self.operation == 'sub':
             Result = Avalue - Bvalue
-        
+        elif self.operation == 'div':
+            Result = Avalue / Bvalue
         if Result != None:
             return np.vstack((wavelengths,Result))
         else:
@@ -151,7 +159,7 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
             method = self.method
         if isinstance(method,str):
             method = getattr(self,method)
-        return self.method(**kwargs)
+        return method(**kwargs)
         
     def interpolate(self,wavelengths=None,**kwargs):
         """Uses a 1d Interpolation to fill in missing spectrum values.
@@ -225,7 +233,7 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
             LOG.warning(msg % self + npArrayInfo(oldwl,"WL"))
         
         # Tolerance for interpolation is set here:
-        tolfrac = 8 # Maximum interpolation is 1/8th of a resolution element.
+        tolfrac = 2 # Maximum interpolation is 1/8th of a resolution element.
         mintol = (wavelengths[0] / resolution[0]) / tolfrac
         maxtol = (wavelengths[-1] / resolution[-1]) / tolfrac
         
@@ -237,7 +245,7 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
             LOG.critical(msg)
             LOG.debug("%s: %s" % (self,npArrayInfo(wavelengths,"New Wavelengths")))
             LOG.debug("%s: %s" % (self,npArrayInfo(oldwl,"Old Wavelengths")))
-            LOG.debug("%s: Tolerance Range for New Wavelengths: [%g,%g]" % (self,mintol,maxtol))
+            LOG.debug("%s: Tolerance Range for New Wavelengths: [%g,%g]" % (self,np.min(oldwl) - mintol,np.max(oldwl) + maxtol))
             raise ValueError(msg)
         
         # Resolution Sanity Check
@@ -282,6 +290,9 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         
         # Do the actual normalization
         flux = top  / base
+
+        
+        
         
         # This is our sanity check. Everything we calculated should be a number. If it comes out as nan, then we have done something wrong.
         # In that case, we raise an error after printing information about the whole calculation.
@@ -302,7 +313,7 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         
         # We do print fun information about the final calculation regardless.
         LOG.debug("%s: %s" % (self,npArrayInfo(flux,"New Flux")))
-        
+        LOG.debug("Resample Complete")
         # Finally, return the data in a way that makes sense for the just-in-time spectrum calculation objects
         return np.vstack((wavelengths,flux))
 
@@ -318,6 +329,9 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
             raise ValueError("Requires Wavelenths")
         if resolution == None:
             raise ValueError("Requires Resolution")
+        
+        LOG.debug("Integration Starting")
+        
         
         # Data sanity check
         oldwl,oldfl = self.data
@@ -347,23 +361,25 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         # Interpolation tolerance check
         # If this fails, it suggests that the requested wavelengths fall outside the data provided. This will result in
         # resampled values, but they are non-physical as the resampled values assume all non-existent data points to be zero
-        if np.min(oldwl) > np.min(wavelengths) or np.max(oldwl) < np.max(wavelengths):
+        if np.min(oldwl) - mintol > np.min(wavelengths) or np.max(oldwl) + maxtol < np.max(wavelengths):
             msg = "Cannot extrapolate during reampling process. Please provide new wavelengths that are within the range of old ones."
             LOG.critical(msg)
             LOG.debug("%s: %s" % (self,npArrayInfo(wavelengths,"New Wavelengths")))
             LOG.debug("%s: %s" % (self,npArrayInfo(oldwl,"Old Wavelengths")))
-            LOG.debug("%s: Tolerance Range for New Wavelengths: [%g,%g]" % (self,mintol,maxtol))
+            LOG.debug("%s: Tolerance Range for New Wavelengths: [%g,%g]" % (self,np.min(oldwl) - mintol,np.max(oldwl) + maxtol))
             raise ValueError(msg)
+        
         
         # Check for resolution registry to pixel size
         if (np.abs(wlStart[1:]-wlEnd[:-1]) > 1e-12).any():
             LOG.warning("Resolution doesn't seem to register to pixel positions")
-            LOG.debug("%s : %s" % (self,npArrayInfo(wlStart[1:]-wlEnd[:-1],"Difference in Bounds")))
+            LOG.debug("%s : %s" % (self,npArrayInfo(wlStart[1:]-wlEnd[:-1],"Bound Errors")))
             LOG.debug("%s : %s" % (self,npArrayInfo(wlStart[1:],"Lower Bounds")))
             LOG.debug("%s : %s" % (self,npArrayInfo(wlEnd[:-1],"Upper Bounds")))
             
         
         flux = np.array([ sp.integrate.quad(self.func,wlS,wlE,limit=self.intSteps,full_output=1)[0] for wlS,wlE in zip(wlStart,wlEnd) ])
+        
         
         # This is our sanity check. Everything we calculated should be a number. If it comes out as nan, then we have done something wrong.
         # In that case, we raise an error after printing information about the whole calculation.
@@ -381,7 +397,7 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         
         # We do print fun information about the final calculation regardless.
         LOG.debug("%s: %s" % (self,npArrayInfo(flux,"New Flux")))
-        
+        LOG.debug("Integration Complete")
         
         return np.vstack((wavelengths,flux))
     
@@ -424,15 +440,21 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
             
         # Do the actual integration, and save it to the object.
         dwl,dfl = self.resolver(wavelengths=dense_wavelengths,resolution=dense_resolution,**kwargs)
-        self.data = np.vstack((dwl,dfl))
+        self.resolved_data = np.vstack((dwl,dfl))
         self.resolved = True
-        return self.data
+        return self.resolved_data
         
                 
     def resolve_and_resample(self,wavelengths,resolution,upscaling=1e2,resolve_method='integrate',resample_method='resample',**kwargs):
         """Resolve a spectrum at very high resolution, then re-sample down the proper size.
         
         This method reduces the use of computationally intensive integrators in spectral calculation. The intensive integrator is used only on the first pass over the spectrum. The integrator is called at a higher resolution (normally 100x, controlled by the `upscaling` parameter). This higher resolution copy is saved in the object, and downsampled for each request for spectrum information."""
+        
+        if hasattr(self,'resolved'):
+            txt = "Resolved" if self.resolved else "Resolving"
+            LOG.debug("%s: %s" % (self,txt))
+        else:
+            LOG.debug("%s: %s" % (self,"Resolving first"))
         
         # Set up flag variables.
         self.resolved = False if not hasattr(self,'resolved') else self.resolved
@@ -443,7 +465,10 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
             self.resolve(wavelengths=wavelengths,resolution=resolution,upscaling=upscaling,resolve_method=resolve_method,**kwargs)
         
         self.resampler = getattr(self,resample_method)
-        return self.resampler(wavelengths=wavelengths,resolution=resolution,**kwargs)
+        self.data = self.resolved_data
+        resampled = self.resampler(wavelengths=wavelengths,resolution=resolution,**kwargs)
+        self.data = self.original_data
+        return resampled
         
     def pre_resolve(self,**kwargs):
         """Instead of resolving a spectrum at call time, the spectrum can be called to resolve at creation time. In this case, the resolving method uses the raw data values for wavelengths. This pre-computation serves a similar purpose to :meth:`resolve_and_resample` but can also be used to collapse large collections of spectra. In the case of collapsing large collections (usually the collections are all constructed, but unresolved :class:`CompositeSpectra`), the collapse occurs at construction time, removing computation time from other areas of the program."""        
