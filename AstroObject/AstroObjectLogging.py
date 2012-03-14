@@ -114,7 +114,7 @@ class LogManager(logging.getLoggerClass()):
                     },
                     'file' : {
                         'enable' : True,
-                        'format' : "%(asctime)s : %(levelname)-8s : %(module)-40s : %(funcName)-10s : %(message)s",
+                        'format' : "%(asctime)s : %(levelname)-8s : %(module)-15s : %(funcName)-10s : %(message)s",
                         'dateformat' : "%Y-%m-%d-%H:%M:%S",
                         'filename' : "AstroObject",
                         'level' : None,
