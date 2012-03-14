@@ -145,7 +145,7 @@ def npArrayInfo(array,name=None):
     
     if isinstance(array,np.ndarray):
         
-        MSG += "%(elements)d elements with shape %(shape)s. "
+        MSG += "len %(elements)d shaped %(shape)s. "
         
         fmtr["elements"] = array.size
         fmtr["shape"] = str(array.shape)
