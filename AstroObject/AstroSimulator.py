@@ -64,7 +64,7 @@ class Simulator(object):
             "Partials" : "Partials",
             "Images" : "Images",
         },
-        "Configs" : {
+        "Configurations" : {
             "Main" : "Simulator.yaml",
             "This" : "Simulator.yaml",
         },
@@ -133,10 +133,20 @@ class Simulator(object):
         
         """
         self.USAGE = "%(command)s %(basicOpts)s %(subcommand)s"
-        self.USAGEFMT = { 'command' : "%(prog)s", 'basicOpts': "[ configuartion options ]", 'subcommand' : "{macro}" }
+        self.USAGEFMT = { 'command' : "%(prog)s", 'basicOpts': "[ options ][ configuration ]", 'subcommand' : "{stages}" }
         
         
-        ShortHelp = "Command Line Interface for %(name)s" % { 'name': self.name }
+        ShortHelp = """
+        Command Line Interface for %(name)s.
+        The simulator is set up in stages, which are listed below. 
+        By default, the *all stage should run the important parts of the simulator.
+        
+        (*) Include      : To include a stage, use *stage. This will also run the dependents for that stage.
+        (-) Exclude      : To exclude a stage, use -stage. 
+        (+) Include-only : To include a stage, but not the dependents of that stage, use +stage.
+        
+        To run the simulater, use 
+        $ %(command)s *all""" % { 'command': "%(prog)s",'name': self.name }
         LongHelp = """The command line interface to %(name)s normally takes a stage or stages as arguments. Each stage is specified on the command line prefixed by the *,+, or - characters. The * will run the stage and all dependents. The + will run solely that stage. The - will specifically exclude that stage (and so skip it's dependents)."""
         
         self.parser = argparse.ArgumentParser(description=ShortHelp,
@@ -324,7 +334,7 @@ class Simulator(object):
     def preConfiguration(self):
         """Applies arguments before configuration. Only argument applied is the name of the configuration file, allowing the command line to change the configuration file name."""
         if "config" in self.options and self.options["config"] != None:
-            self.config["Configs"]["This"] = self.options["config"]
+            self.config["Configurations"]["This"] = self.options["config"]
         if "preconfig" in self.options and self.options["preconfig"] != None:
             for preconfig in self.options["preconfig"]:
                 if isinstance(preconfig,str):
@@ -365,7 +375,7 @@ class Simulator(object):
         
     def dump_config(self):
         """Dump the configuration to a file"""
-        with open(self.config["Configs"]["This"]+"-dump.yaml","w") as stream:
+        with open(self.config["Configurations"]["This"]+"-dump.yaml","w") as stream:
             stream.write("# Configuration from %s\n" % self.name)
             yaml.dump(self.config.extract(),stream,default_flow_style=False) 
         
@@ -376,7 +386,7 @@ class Simulator(object):
         self.starting = True
         self.parseArguments()
         self.preConfiguration()
-        self.configure(configFile=self.config["Configs"]["This"])
+        self.configure(configFile=self.config["Configurations"]["This"])
         if self.caching:
             self.Caches.load()
         self.postConfiguration()
@@ -495,7 +505,6 @@ class Simulator(object):
         """Cleanup function for when we are all done"""
         if msg:
             self.log.info(msg)
-            print msg
         self.log.info("Simulator %s Finished" % self.name)
         sys.exit(code)
         
