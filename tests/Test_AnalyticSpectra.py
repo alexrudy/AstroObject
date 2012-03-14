@@ -255,7 +255,7 @@ class test_FLambdaSpectra(API_AnalyticSpectra,API_Base_Frame):
         
         def SAME(first,second):
             """Return whether these two are the same"""
-            return SAMEDATA(first(method="integrate"),second(method="integrate"))
+            return SAMEDATA(first(method="integrate_quad"),second(method="integrate_quad"))
         
         self.SAME = SAME
         self.SAMEDATA = SAMEDATA
@@ -274,11 +274,11 @@ class test_FLambdaSpectra(API_AnalyticSpectra,API_Base_Frame):
         """__call__() yields data"""
         AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
-        data = AFrame(wavelengths=self.WAVELENGTHS[:-1],resolution=(self.WAVELENGTHS[:-1]/np.diff(self.WAVELENGTHS)),method='integrate')
+        data = AFrame(wavelengths=self.WAVELENGTHS[:-1],resolution=(self.WAVELENGTHS[:-1]/np.diff(self.WAVELENGTHS)),method="integrate_quad")
         
     def test_call_with_arbitrary_arguments(self):
         """__call__() accepts arbitrary keyword arguments"""
         AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
-        data = AFrame(wavelengths=self.WAVELENGTHS[:-1],resolution=np.diff(self.WAVELENGTHS),other=1,arbitrary="str",arguments="blah",method='integrate')
+        data = AFrame(wavelengths=self.WAVELENGTHS[:-1],resolution=np.diff(self.WAVELENGTHS),other=1,arbitrary="str",arguments="blah",method="integrate_quad")
     
