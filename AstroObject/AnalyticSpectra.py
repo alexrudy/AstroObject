@@ -589,18 +589,8 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
             upsample = False
             oldrsf = sp.interpolate.interp1d(oldwl[:-1],oldrs,bounds_error=False,fill_value=np.min(oldrs))
             oldrsd = oldrsf(newwl)
-            figure = plt.gcf()
-            plt.figure()
-            plt.title(self.label)
-            plt.plot(newwl,newrs,'.',linestyle="-",label="New Res")
-            plt.plot(oldwl[:-1],oldrs,'.',linestyle="-",label="Old Res")
             delrs = newrs > oldrsd
             newrs[delrs] = oldrsd[delrs]
-            plt.plot(newwl,newrs,'.',linestyle="-",label="Flattened Res")
-            plt.legend()
-            plt.savefig("Partials/ResCheck-%s.pdf" % os.path.basename(self.label))
-            plt.clf()
-            plt.figure(figure.number)
         else:
             upsample = True
             
