@@ -261,6 +261,7 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
                     arrays[u"Given interpolated R"] = oldrsd
                     arrays[u"Given Δλ"] = np.diff(oldwl)
                     arrays[u"Given λ"] = oldwl
+                    arrays[u"Difference in R"] = delrs
                     if upsample:
                         debug = True
                     else:
@@ -560,6 +561,7 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         wlEnd = wavelengths[1:]         
         
         flux = np.array([ sp.integrate.quad(self.func,wlS,wlE,limit=self.intSteps,full_output=1)[0] for wlS,wlE in zip(wlStart,wlEnd) ])
+        flux = np.hstack((flux,flux[-1]))
         
         # This is our sanity check. Everything we calculated should be a number. If it comes out as nan, then we have done something wrong.
         # In that case, we raise an error after printing information about the whole calculation.
@@ -570,45 +572,44 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         LOG.debug(u"%s: %s" % (self,npArrayInfo(flux,"New Flux")))
         LOG.debug(u"Integration Complete")
         
-        return np.vstack((wavelengths[:-1],flux))
+        return np.vstack((wavelengths,flux))
     
-    def resolve(self,wavelengths,resolution,resolve_method='resample',upscaling=1,**kwargs):
+    def resolve(self,wavelengths,resolution,resolve_method='resample',upscaling=False,**kwargs):
         """Oversample underlying spectra.
         
         Using the `resolve_method` method (by default :meth:`integrate`), this function gets a high resolution copy of the underlying data. The high resolution data can later be downsampled using the :meth:`resample` method. This is a faster way to access integrated spectra many times. The speed advantages come over the integrator. By default the system gets 100x the requested resolution. This can be tuned with the `upscaling` keyword to optimize between speed and resolution coverage."""
         self.resolver = getattr(self,resolve_method)
         
-        upsample = True
+        newwl = np.copy(wavelengths)
+        newrs = np.copy(resolution)
+        oldwl,oldfl = self.data
+        oldrs =  oldwl[:-1] / np.diff(oldwl)
+        
+        if not upscaling:        
+            upsample = False
+            oldrsf = sp.interpolate.interp1d(oldwl[:-1],oldrs,bounds_error=False,fill_value=np.min(oldrs))
+            oldrsd = oldrsf(newwl)
+            figure = plt.gcf()
+            plt.figure()
+            plt.title(self.label)
+            plt.plot(newwl,newrs,'.',linestyle="-",label="New Res")
+            plt.plot(oldwl[:-1],oldrs,'.',linestyle="-",label="Old Res")
+            delrs = newrs > oldrsd
+            newrs[delrs] = oldrsd[delrs]
+            plt.plot(newwl,newrs,'.',linestyle="-",label="Flattened Res")
+            plt.legend()
+            plt.savefig("Partials/ResCheck-%s.pdf" % os.path.basename(self.label))
+            plt.clf()
+            plt.figure(figure.number)
+        else:
+            upsample = True
+            
         
         # Save the original data
         self.original_data = self.data
-                
-        oldwl,oldfl = self.data
-        oldrs = oldwl[:-1] / np.diff(oldwl)
-        self._presanity(oldwl,oldfl,wavelengths,resolution,upsample=True)
-
-        # Make a much more detailed spectrum
-        # Build the sample request by upscaling the resolution requested
-            
-        min_wl = np.min(wavelengths)
-        # drf = sp.interpolate.interp1d(wavelengths,resolution*upscaling)
-        drf = lambda wl : np.ones(wl.shape)*np.mean(resolution*upscaling)
-        dwl = [min_wl]
-        new_wl = min_wl
-        for wl in wavelengths:
-            while new_wl <= wl:
-                R = drf(new_wl)
-                new_wl += (new_wl / R)
-                dwl += [new_wl]
-            
-        dense_wavelengths = np.array(dwl)
-        dense_resolution = drf(dense_wavelengths[:-1])
-        dense_wavelengths = dense_wavelengths[:-1]    
-        
-        LOG.debug(u"%s: %s" % (self,npArrayInfo(dense_resolution,"Requested Dense R")))
         
         # Do the actual integration, and save it to the object.
-        dwl,dfl = self.resolver(wavelengths=dense_wavelengths,resolution=dense_resolution,upsample=upsample,**kwargs)
+        dwl,dfl = self.resolver(wavelengths=newwl,resolution=newrs,upsample=upsample,**kwargs)
         self.resolved_data = np.vstack((dwl,dfl))
         self.resolved = True
         return self.resolved_data
