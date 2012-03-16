@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # 
 #  AstroSimulator.py
 #  AstroObject
@@ -434,7 +435,7 @@ class Simulator(object):
             return False
             
         if stage not in self.stages:
-            self.log.critical("Stage %s does not exist.")
+            self.log.critical("Stage %s does not exist." % stage)
             self.exit(1)
         use = True
         if stage in self.options["exclude"]:
@@ -484,20 +485,20 @@ class Simulator(object):
         except s.exceptions as e:
             if self.config["Debug"]:
                 self.log.useConsole(True)
-            self.log.error("Error %(name)s in stage %(stage)s:%(desc)s. Stage indicated that this error was not critical" % {'name': e.__class__.__name__, 'desc': s.description,'stage':s.name})
-            self.log.error("Error: %(msg)s" % {'msg':e})
+            self.log.error(u"Error %(name)s in stage %(stage)s:%(desc)s. Stage indicated that this error was not critical" % {'name': e.__class__.__name__, 'desc': s.description,'stage':s.name})
+            self.log.error(u"Error: %(msg)s" % {'msg':e})
             if self.config["Debug"]:
                 raise
         except Exception as e:
             self.log.useConsole(True)
-            self.log.critical("Error %(name)s in stage %(stage)s:%(desc)s!" % {'name': e.__class__.__name__, 'desc': s.description,'stage':s.name})
-            self.log.critical("Error: %(msg)s" % {'msg':e})
+            self.log.critical(u"Error %(name)s in stage %(stage)s:%(desc)s!" % {'name': e.__class__.__name__, 'desc': s.description,'stage':s.name})
+            self.log.critical(u"Error: %(msg)s" % {'msg':e})
             raise
         else:
-            self.log.debug("Completed \'%s\'" % s.name)
+            self.log.debug(u"Completed \'%s\'" % s.name)
             self.complete += [stage] + s.reps
         finally:
-            self.log.debug("Finished \'%s\'" % s.name)
+            self.log.debug(u"Finished \'%s\'" % s.name)
         
         return use
         
