@@ -142,38 +142,46 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
     Passing the name of any member function in this class to the `method` parameter will change the interpolation/method used for this spectrum.
     
     """
-    def __init__(self, data=None, label=None, wavelengths=None,resolution=None, intSteps=150, method=u"interpolate",integrator='integrate_hist', **kwargs):
+    def __init__(self, data=None, label=None, wavelengths=None,resolution=None, method=u"interpolate",integrator='integrate_hist', **kwargs):
         self.data = data
         self.size = data.size # The size of this image
         self.shape = data.shape # The shape of this image
         super(InterpolatedSpectrum, self).__init__(data=data,label=label,**kwargs)
         self.wavelengths = wavelengths
         self.resolution = resolution
-        self.intSteps = intSteps
         self.method = getattr(self,method)
         self.default_integrator = integrator
         
         
     
     def __call__(self,method=None,**kwargs):
-        """Calls this interpolated spectrum over certain wavelengths. The method parameter will default to the one set for the object, and controls the method used to interpret this spectrum."""
+        """Calls this interpolated spectrum over certain wavelengths. The `method` parameter will default to the one set for the object, and controls the method used to interpret this spectrum. Available methods include all members of :class:`InterpolatedSpectrum` which provide return values (all those documented below)."""
         if method == None:
             method = self.method
         if isinstance(method,str):
             method = getattr(self,method)
         return method(**kwargs)
         
-    def _presanity(self,oldwl,oldfl,newwl,newrs=None,extrapolate=False,debug=False,warning=False,error=False,message=False,upsample=False,**kwargs):
-        """Sanity checks performed before any specturm operation.
+    def _presanity(self,oldwl,oldfl,newwl,newrs=None,extrapolate=False,upsample=False,debug=False,warning=False,error=False,message=False,**kwargs):
+        """Sanity checks performed before any specturm operation. `oldwl` and `oldfl` are the given wavelengths and flux for the spectrum. `newwl` and `newrs` are the requested wavelengths and resolution (respectively) for the spectrum. `extrapolate` allows the new wavelengths to extraopolate from the old ones. If not, only operations that appear to interpolate will be allowed. `upsample` allows the operation to get more resolution information than is already present in the spectrum. `warning` and `debug` flip those flags prematurely, to force warning or debug output. `error` should be an error class to be raised by the sanity checks. These keywords allow custom sanity checks to be performed before calling this function. The benefit of this system, is that sanity checks are all run on every operation, allowing the user to examine all of the potenital problems simultaneously, rather than one at a time, as each successive check is run. The arbitrary keywords at the end allow the user to feed a dictionary of array names and arrays to be included in the sanity check output in the case of failure.
         
-        Controls:
-        ------------|--------------------------------
-        debug       | show debugging info
-        message     | pass a message in
-        upsample    | allow the system to upsample
-        extrapolate | allow the system to extrapolate
-        error       | an error class to raise
-        warning     | if true, show a warning
+        Checks include:
+        
+        - Wavelength Units (between 1e-12 and 1e-3)
+        
+        - Wavelengths must be montonically increasing
+        
+        - Given flux should be greater than 0 (Warning)
+        
+        - Requested Wavelength and Resolution should shape match.
+        
+        - Given flux and wavelength should shape match.
+        
+        - Requested resolution should be positive
+        
+        - If `extrapolate` then the reuqested wavelengths should be within some tolerance of the given wavelengths. If `extrapolate` is false, then the given wavelengths should fit within the bounds of the given wavelengths.
+        
+        - If `newrs` (Requested resolution) is given, it must not reuqest more information than is already present in the data. The `upsample` keyword disables this effect.
         """
         # Unit sanity check
         msg = []
@@ -186,6 +194,7 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         arrays = kwargs
         newrb = True if newrs != None else False
         
+        # Check that the units of this spectrum look like SI units, inbound and outbound.
         if np.min(oldwl) < 1e-12 or np.max(oldwl) > 1e-3:
             msg += [u"%s: Given λ units appear wrong!"]
             arrays[u"Given λ"] = oldwl
@@ -194,6 +203,7 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
             msg += [u"%s: Requested λ units appear wrong!"]
             arrays[u"Requested λ"] = newwl
         
+        # Check that the units of the spectrum are monotonically increasing (inbound and outbound)
         if (np.diff(oldwl) < 0).any():
             msg += [u"Given λ must be monotonically increasing."]
             arrays[u"Given λ"] = oldwl
@@ -204,6 +214,7 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
             arrays[u"Requested λ"] = oldwl
             error = ValueError
         
+        # Check that we have non-zero, positive flux provided.
         if (oldfl <= 0).any():
             msg += [u"Given flux <= 0 at some point."]
             arrays[u"Given Flux"] = oldfl
@@ -220,6 +231,7 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
             msg += [u"Shape Mismatch between flux and λ"]
             error = AttributeError
         
+        # Check that resolution is nonzero positive.
         if newrb and (np.min(newrs) <= 0).any():
             msg += [u"Requested R is less than zero!"]
             arrays[u"Requested R"] = newrs
@@ -227,8 +239,6 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
             
         
         # Interpolation tolerance check
-        # If this fails, it suggests that the requested wavelengths fall outside the data provided. This will result in
-        # resampled values, but they are non-physical as the resampled values assume all non-existent data points to be zero
         if not extrapolate:
             mintol = np.min(oldwl)
             maxtol = np.max(oldwl)
@@ -311,8 +321,20 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
             raise error(msg[0])
         
             
-    def _postsanity(self,oldwl,oldfl,newwl,newfl,newrs=None,debug=False,warning=False,extrapolate=False,error=False,message=None,**kwargs):
-        """Post operation sanity checks."""
+    def _postsanity(self,oldwl,oldfl,newwl,newfl,newrs=None,extrapolate=False,debug=False,warning=False,error=False,message=None,**kwargs):
+        """Sanity checks performed before any specturm operation. `oldwl` and `oldfl` are the given wavelengths and flux for the spectrum. `newwl` and `newfl` are the found wavelengths and flux (respectively) for the spectrum. `newrs` is the requested resolution. `extrapolate` allows the new wavelengths to extraopolate from the old ones. If not, only operations that appear to interpolate will be allowed. `upsample` allows the operation to get more resolution information than is already present in the spectrum. `warning` and `debug` flip those flags prematurely, to force warning or debug output. `error` should be an error class to be raised by the sanity checks. These keywords allow custom sanity checks to be performed before calling this function. The benefit of this system, is that sanity checks are all run on every operation, allowing the user to examine all of the potenital problems simultaneously, rather than one at a time, as each successive check is run. The arbitrary keywords at the end allow the user to feed a dictionary of array names and arrays to be included in the sanity check output in the case of failure.
+        
+        Checks performed are:
+        
+        - ``NaN`` not allowed in found flux.
+        
+        - ``0`` not allowed in more than ``1%%`` of fluxes. (**Warning**)
+        
+        - If there were no ``0`` s in the old flux, then the new flux should have no ``0`` s (**Warning**)
+        
+        - Flux and wavelength should have the same shape.
+        
+        """
         msg = []
         dmsg = []
         if message:
@@ -366,24 +388,30 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
     def interpolate(self,wavelengths=None,extrapolate=False,fill_value=0,**kwargs):
         """Uses a 1d Interpolation to fill in missing spectrum values.
         
-        This interpolator uses the scipy.interpolate.interp1d method to interpolate between data points in the original spectrum. Normally, this method will not allow extrapolation. The keywords `extrapolate` and `fill_value` can be used to trigger extrapolation away from the interpolated values."""
+        This interpolator uses the scipy.interpolate.interp1d method to interpolate between data points in the original spectrum. Normally, this method will not allow extrapolation. The keywords `extrapolate` and `fill_value` can be used to trigger extrapolation away from the interpolated values.
+        
+        Input should be a set of wavelengths requested for the system (in the `wavelengths` keyword). These wavelengths should not exceed the bounds of the given wavelengths for this spectrum (doing so doesn't really make sense for interpolation. See :meth:`polyfit` for a case where this might make sense.). The output will be a data array of wavelengths and fluxes (should be the provided `wavelengths`, and an equivalently shaped array with fluxes.)
+        
+        .. Warning :: This method does not prevent you from interpolating your spectrum into a higher resolution state. As such, it is possible, when calling interpolate, to increase the resolution of the spectrum, and end up 'creating' information."""
         if wavelengths == None:
             wavelengths = self.wavelengths
         
         LOG.debug(u"Interpolate Starting")
         
-        
         oldwl,oldfl = self.data
         # Sanity Checks for Data
         self._presanity(oldwl,oldfl,wavelengths,extrapolate=extrapolate)
         
-        self.func = sp.interpolate.interp1d(oldwl,oldfl,bounds_error=False,fill_value=fill_value)
+        # Interpolation function (invented on the spot!)
+        func = sp.interpolate.interp1d(oldwl,oldfl,bounds_error=False,fill_value=fill_value)
         
-        flux = self.func(wavelengths)
+        # Actually calling the interpolation
+        flux = func(wavelengths)
         
         self._postsanity(oldwl,oldfl,wavelengths,flux)
         # We do print fun information about the final calculation regardless.
         LOG.debug(u"%s: %s" % (self,npArrayInfo(flux,"New Flux")))
+        LOG.debug(u"Interpolate Finished")
         
         # Finally, return the data in a way that makes sense for the just-in-time spectrum calculation objects
         return np.vstack((wavelengths,flux))
@@ -391,10 +419,11 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
     def polyfit(self,wavelengths=None,order=2,**kwargs):
         """Uses a 1d fit to find missing spectrum values.
         
-        This method will extrapolate away from the provided data. The function used is a np.poly1d() using an order 2 np.polyfit."""
+        This method will extrapolate away from the provided data. The function used is a np.poly1d() using an order 2 np.polyfit. By default, this method will allow extrapolation away from the provided wavelengths. The `order` keyword can be used to adjust the polynomial order for this funciton.
+        
+        Input should be a set of wavelengths requested for the system (in the `wavelengths` keyword). The output will be a data array of wavelengths and fluxes (should be the provided `wavelengths`, and an equivalently shaped array with fluxes.)"""
         if wavelengths == None:
             wavelengths = self.wavelengths
-        
         
         LOG.debug(u"Polyfit Starting")
         
@@ -402,9 +431,9 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         # Sanity Checks for Data
         self._presanity(oldwl,oldfl,wavelengths,extrapolate=True)
         
-        self.func = np.poly1d(np.polyfit(oldwl,oldfl,order))
+        func = np.poly1d(np.polyfit(oldwl,oldfl,order))
         
-        flux = self.func(wavelengths)
+        flux = func(wavelengths)
         
         self._postsanity(oldwl,oldfl,wavelengths,flux,extrapolate=True)
         # We do print fun information about the final calculation regardless.
@@ -414,10 +443,18 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         return np.vstack((wavelengths,flux))
     
         
-    def resample(self,wavelengths=None,resolution=None,z=0.0,upsample=False,**kwargs):
-        """Resample the given spectrum to a lower resolution. 
+    def resample(self,wavelengths=None,resolution=None,upsample=False,**kwargs):
+        """Resample the given spectrum to a different resolution.
         
-        This is a vector-based calculation, and so should be relatively fast. This function contains ZERO for loops, and uses entirely numpy-based vector mathematics. Sanity checks try to keep your input clean. It can also redshift a spectrum by a given z parameter, if that is necessary."""        
+        Normally, spectra are resolution limited in their sampling. If you want to sample a spectrum at a lower resolution, simply interpolating, or drawing nearest points to your desired wavelength may cause information loss. The resample method convolves the spectrum with a gaussian which has a width appropriate to your desired resolution. This re-distributes the information in the spectrum into neighboring points, preventing the loss of features due to interpolation and sampling errors.
+        
+        The resample spectrum normally does not allow you to up-sample a spectrum to a higher resolution, as this could lead to errors caused by 'information creation', i.e. your spectrum will appear to show more detail than is possible. Hoever, the system will allow upsampling (useful if you are confident that you will later downsample your spectrum) using the `upsample` keyword.
+        
+        Input should be a set of wavelengths requested for the system (in the `wavelengths` keyword) and an array of resolutions requested in the `resolutions` keyword. The output will be a data array of wavelengths and fluxes (should be the provided `wavelengths`, and an equivalently shaped array with fluxes.)
+        
+        .. Note :: If you request more detail than is given in the spectrum, or if you extrapolate on the spectrum, you may encounter parts of the new spectrum that have no data. As the fluxes are normalized, such data segments are set to zero. This will also produce a warning.
+        
+        This is a vector-based calculation, and so should be relatively fast. This function contains ZERO for loops, and uses entirely numpy-based vector mathematics."""        
         if wavelengths == None:
             wavelengths = self.wavelengths
         if resolution == None:
@@ -433,7 +470,6 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         
         # Redshifting
         oldwl,oldfl = self.data
-        oldwl = oldwl * (1.0 + z)
         # Sanity Checks for Data
         self._presanity(oldwl,oldfl,wavelengths,resolution,upsample=upsample)
         
@@ -461,7 +497,7 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         # Removing these data points should be okay, because they are data points which we calculated to
         # have zero total flux anyways, and so we can ignore them.
         zeros = base == np.zeros(base.shape)
-            
+        topzo = top == np.zeros(base.shape)    
         # We don't actually clip those zero data points, we just make them into dumb numbers so that we don't get divide-by-zero errors
         base[zeros] = np.ones(np.sum(zeros))
         top[zeros] = np.zeros(np.sum(zeros))
@@ -478,7 +514,9 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
             u"Exponent Evaluated" : np.exp(- 0.5 * (MWL - MCENT) ** 2.0 / (MSIGM ** 2.0)),
             u"Curve Evaluated" : curves,
         }
-        if np.sum(zeros) > 0:
+        if (topzo != zeros).any():
+            self._postsanity(oldwl,oldfl,wavelengths,flux,resolution,error=ValueError,message=u"Normalizing Zero error." % (np.sum(zeros)),**msgarray)
+        elif np.sum(zeros) > 0:
             self._postsanity(oldwl,oldfl,wavelengths,flux,resolution,warning=True,message=u"Removed %d zeros from re-weighting." % (np.sum(zeros)),**msgarray)
         else:
             self._postsanity(oldwl,oldfl,wavelengths,flux,resolution,**msgarray)
@@ -494,20 +532,29 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
     
     
     
-    def integrate_hist(self,wavelengths=None,**kwargs):
-        """Performs wavelength-integration for f-lambda spectra using a trapezoidal integrator.
+    def integrate_hist(self,wavelengths=None,upscale=150,**kwargs):
+        """Performs an integration along wavelengths using the trapezoidal approximation.
         
-        This converts f-lambda spectra into F-lambda spectra, which can then be converted into photon counts. Integration is done with the trapezoid method."""
+        The integrator uses a trapezoidal approximation, upscaled to include more data points in each trapezoidal section than the requested wavelengths. The integrator then uses the trapezoid approximation from http://en.wikipedia.org/wiki/Trapezoidal_rule to integrate the spectrum. This results in some integration error, but the integration error is presumably small when compared to the speedup gained over :meth:`integrate_quad`.
+        
+        Input should be a set of wavelengths requested for the system (in the `wavelengths` keyword). The output will be a data array of wavelengths and fluxes (should be the provided `wavelengths`, and an equivalently shaped array with fluxes.) The `upscale` keyword controls the degree of oversampling for this method.
+        
+        This calculation is based on the :meth:`interpolate` function and the :func:`np.histogram` function, both of which are not quite vector-fast, but are sufficiently fast for most purposes. This method has been tested to be much faster than :meth:`integrate_quad`
+        """
         if wavelengths == None:
             wavelengths = self.wavelengths
         if wavelengths == None:
             raise ValueError(u"Requires Wavelenths")
         
-        upscale = 10
-        startindexs = np.arange(0,wavelengths.size) * upscale
-        func = sp.interpolate.interp1d(startindexs,wavelengths)
-        findindexs = np.arange(0,np.max(startindexs))
-        bins = func(findindexs)
+        # Upsample the provided wavelengths
+        # This increases the accuracy of the trapezoidal algorithm, as this algorithm is very sensitive to sampling errors.
+        if upscale != 1.0:
+            startindexs = np.arange(0,wavelengths.size) * upscale
+            func = sp.interpolate.interp1d(startindexs,wavelengths)
+            findindexs = np.arange(0,np.max(startindexs))
+            bins = func(findindexs)
+        else:
+            bins = wavelengths
         
         # Data sanity check
         oldwl,oldfl = self.interpolate(wavelengths=bins,extrapolate=True,**kwargs)
@@ -525,7 +572,7 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         else:
             bincount,wavelengths = np.histogram(oldwl[:-1],wavelengths)
             if (bincount == 0).any():
-                msg = u"Requested λ is poorly represented in given λ"
+                msg = u"Given λ is undersampled in Requested λ (there is not at least 1 given λ per requested bin)"
                 arrays = {u"Histogram of λ" : bincount, u"Requested λ" : wavelengths , u"Given λ" : oldwl }
                 error = ValueError
             elif (bincount < 2).any():
@@ -558,10 +605,13 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         method = getattr(self,self.default_integrator)
         return method(**kwargs)
     
-    def integrate_quad(self,wavelengths=None,**kwargs):
-        """Performs wavelength-integration for flambda spectra. 
+    def integrate_quad(self,wavelengths=None,intSteps=150,**kwargs):
+        """Performs an integration along wavelengths using the scipy QUADpack implementation in :func:`scipy.integrate.quad`. 
         
-        This converts f-lambda spectra into F-lambda spectra, which can then be converted into photon counts. Integration is done with the quad-pack method."""
+        Input should be a set of wavelengths requested for the system (in the `wavelengths` keyword). The output will be a data array of wavelengths and fluxes (should be the provided `wavelengths`, and an equivalently shaped array with fluxes.)
+        
+        This integrator uses a generator based for-loop wraped around a call to :func:`scipy.integrate.quad`. On an operation with ~100 elements, this operation can consume close to 20s of computation time. Also, this method must stay strictly within the provided wavelength data. The `intSteps` keyword controls the maximum number of steps in each integration. Turning this value down speeds up the integrator.
+        """
         if wavelengths == None:
             wavelengths = self.wavelengths
         if wavelengths == None:
@@ -572,14 +622,14 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         
         # Data sanity check
         oldwl,oldfl = self.data
-        self._presanity(oldwl,oldfl,wavelengths,None)
+        self._presanity(oldwl,oldfl,wavelengths)
         
         self.func = sp.interpolate.interp1d(oldwl,oldfl,bounds_error=False,fill_value=0)
         
         wlStart = wavelengths[:-1]
         wlEnd = wavelengths[1:]         
         
-        flux = np.array([ sp.integrate.quad(self.func,wlS,wlE,limit=self.intSteps,full_output=1)[0] for wlS,wlE in zip(wlStart,wlEnd) ])
+        flux = np.array([ sp.integrate.quad(self.func,wlS,wlE,limit=intSteps,full_output=1)[0] for wlS,wlE in zip(wlStart,wlEnd) ])
         flux = np.hstack((flux,flux[-1]))
         
         # This is our sanity check. Everything we calculated should be a number. If it comes out as nan, then we have done something wrong.
@@ -594,9 +644,10 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         return np.vstack((wavelengths,flux))
     
     def resolve(self,wavelengths,resolution,resolve_method='resample',upscaling=False,**kwargs):
-        """Oversample underlying spectra.
+        """This method calls a spectrum method, saving and returning the result. The saved data is prepared for the :meth:`resolve_and_integrate` function before being returned. The method also prevents over-resolution sampling.
         
-        Using the `resolve_method` method (by default :meth:`integrate`), this function gets a high resolution copy of the underlying data. The high resolution data can later be downsampled using the :meth:`resample` method. This is a faster way to access integrated spectra many times. The speed advantages come over the integrator. By default the system gets 100x the requested resolution. This can be tuned with the `upscaling` keyword to optimize between speed and resolution coverage."""
+        The resolution provided (`resolution` keyword) are used to request a resampled resolution. However, to prevent information loss, by default (see the `upscaling` keyword) the method automatically prevents the new resolution from exceeding the inherent resolution of the provided data. This allows the system to request a high resolution spectrum, and instead receive the maximum amount of information available at every point.
+        """
         self.resolver = getattr(self,resolve_method)
         
         newwl = np.copy(wavelengths)
@@ -624,10 +675,15 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         return self.resolved_data
         
                 
-    def resolve_and_resample(self,wavelengths,resolution,resolve_method='resample',resample_method='integrate_hist',**kwargs):
-        """Resolve a spectrum at very high resolution, then re-sample down the proper size.
+    def resolve_and_integrate(self,wavelengths,resolution,resolve_method='resample',integration_method='integrate_hist',**kwargs):
+        """Resolve a spectrum at a given resolution once, and use that resolved resolution for integration in the future.
         
-        This method reduces the use of computationally intensive integrators in spectral calculation. The intensive integrator is used only on the first pass over the spectrum. The integrator is called at a higher resolution (normally 100x, controlled by the `upscaling` parameter). This higher resolution copy is saved in the object, and downsampled for each request for spectrum information."""
+        The spectrum is first resolved by the :meth:`resolve` function. This provides an appropriately resampled spectrum for use with the integrator. The integrator is then called, and used to get a result. The data from the :meth:`resolve` function is saved for future use.
+        
+        Input should be a set of wavelengths requested for the system (in the `wavelengths` keyword) and an array of resolutions requested in the `resolutions` keyword. The output will be a data array of wavelengths and fluxes (should be the provided `wavelengths`, and an equivalently shaped array with fluxes.)
+        
+        .. Note :: The speedup advantage of this method is only beneficial for large data arrays, where the :meth:`resample` function is slow. However, it also allows the use of resample and integrate simultaneously. As such, there is essentially no downside to using this method over a UnitarySpectrum call to insert another interpolation method.
+        """
         
         LOG.debug(u"Resolve and Resample Starting")
         if hasattr(self,'resolved'):
@@ -636,44 +692,46 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
             # Test resolution for current validity:
             bincount,bins = np.histogram(oldwl[:-1],wavelengths)
             if (bincount == 0).any():
-                txt = "Re-resolving"
+                txt = u"Re-resolving"
                 self.resolved = False            
             LOG.debug(u"%s: %s" % (self,txt))
         else:
+            self.resolved = False
             LOG.debug(u"%s: %s" % (self,"Resolving first"))
-        
-        # Set up flag variables.
-        self.resolved = False if not hasattr(self,'resolved') else self.resolved
         
         # First pass resolving the spectrum to a denser data set.
         # This pass uses the upscaling parameter to find a much denser resolution.
         if not self.resolved:
             self.resolve(wavelengths=wavelengths,resolution=resolution,resolve_method=resolve_method,**kwargs)
         
-        self.resampler = getattr(self,resample_method)
+        self.integrator = getattr(self,integration_method)
         self.data = self.resolved_data
-        resampled = self.resampler(wavelengths=wavelengths,resolution=resolution,**kwargs)
+        integrated = self.integrator(wavelengths=wavelengths,resolution=resolution,**kwargs)
         self.data = self.original_data
-        return resampled
+        return integrated
         
-    def pre_resolve(self,**kwargs):
-        """Instead of resolving a spectrum at call time, the spectrum can be called to resolve at creation time. In this case, the resolving method uses the raw data values for wavelengths. This pre-computation serves a similar purpose to :meth:`resolve_and_resample` but can also be used to collapse large collections of spectra. In the case of collapsing large collections (usually the collections are all constructed, but unresolved :class:`CompositeSpectra`), the collapse occurs at construction time, removing computation time from other areas of the program."""        
-        oldwl,oldfl = self.data
-        
-        res = oldwl[:-1] / np.diff(oldwl)
-        
-        return self.resolve(wavelengths = oldwl[:-1], resolution = res, **kwargs)
+
+class Resolver(InterpolatedSpectrum):
+    """This spectrum performs a unitary operation on any InterpolatedSpectrum-type-object. The operation (specified by the `method` keyword) is performed after the contained spectrum is called. The included spectrum is called immediately and then discarded. As such, wavelength and resolution keywords should be provided when appropriate to resolve the spectrum immediately. This operation does not save the old data state. All methods in :class:`InterpolatedSpectrum` are available."""
+    def __init__(self, spectrum, new_method='interpolate',**kwargs):
+        data = spectrum(**kwargs)
+        label =  u"R[" + spectrum.label + "]"
+        super(Resolver, self).__init__(data=data,label=label,method=new_method,**kwargs)
         
         
 class UnitarySpectrum(InterpolatedSpectrum):
-    """This spectrum calls all contained spectra and resolves them. The resolved spectra are high resolution (using :meth:`pre_resolve` and :meth:`resolve`) and stored for later use. When this spectrum is later called, it will (by default) use :meth:`resolve_and_resample`."""
-    def __init__(self, spectrum, resolution=10, method='pre_resolve',**kwargs):
-        label = u"R[" + spectrum.label + "]"
-        data = spectrum(method=method,upscaling=resolution,**kwargs)
-        super(UniarySpectrum, self).__init__(data=data, label=label,method='resolve_and_resample',**kwargs)
-        self.resolved = True
-        self.original_data = spectrum.original_data
+    """This spectrum performs a unitary operation on any InterpolatedSpectrum-type-object. The operation (specified by the `method` keyword) is performed after the contained spectrum is called. All methods in :class:`InterpolatedSpectrum` are available."""
+    def __init__(self, spectrum, method='interpolate',**kwargs):
+        label =  u"[" + spectrum.label + "]"
+        super(UnitarySpectrum, self).__init__(data=spectrum.data, label=label,**kwargs)
+        self.spectrum = spectrum
+        self.method = getattr(self,method)
         
+    def __call__(self,old_method=None,method=None,**kwargs):
+        """Calls this interpolated spectrum over certain wavelengths. The `method` parameter will default to the one set for the object, and controls the method used to interpret this spectrum. The `old_method` parameter will be used on the contained spectrum. Available methods include all members of :class:`InterpolatedSpectrum` which provide return values (all those documented below)."""
+        self.data = self.spectrum(method=old_method,**kwargs)
+        super(UnitarySpectrum, self).__call__(method=method,**kwargs)
+
                     
 
 import AnalyticSpectraObjects
