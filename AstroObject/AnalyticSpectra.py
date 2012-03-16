@@ -164,7 +164,17 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         return method(**kwargs)
         
     def _presanity(self,oldwl,oldfl,newwl,newrs=None,extrapolate=False,debug=False,warning=False,error=False,message=False,upsample=False,**kwargs):
-        """Sanity checks performed before any operation"""
+        """Sanity checks performed before any specturm operation.
+        
+        Controls:
+        ------------|--------------------------------
+        debug       | show debugging info
+        message     | pass a message in
+        upsample    | allow the system to upsample
+        extrapolate | allow the system to extrapolate
+        error       | an error class to raise
+        warning     | if true, show a warning
+        """
         # Unit sanity check
         msg = []
         if message:
@@ -356,7 +366,7 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
     def interpolate(self,wavelengths=None,extrapolate=False,fill_value=0,**kwargs):
         """Uses a 1d Interpolation to fill in missing spectrum values.
         
-        This interpolator uses the scipy.interpolate.interp1d method to interpolate between data points in the original spectrum. This method will not handle changes in resolution appropriately."""
+        This interpolator uses the scipy.interpolate.interp1d method to interpolate between data points in the original spectrum. Normally, this method will not allow extrapolation. The keywords `extrapolate` and `fill_value` can be used to trigger extrapolation away from the interpolated values."""
         if wavelengths == None:
             wavelengths = self.wavelengths
         
@@ -378,10 +388,10 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         # Finally, return the data in a way that makes sense for the just-in-time spectrum calculation objects
         return np.vstack((wavelengths,flux))
     
-    def polyfit(self,wavelengths=None,**kwargs):
-        """Uses a 1d Interpolation to fill in missing spectrum values.
+    def polyfit(self,wavelengths=None,order=2,**kwargs):
+        """Uses a 1d fit to find missing spectrum values.
         
-        This interpolator uses the scipy.interpolate.interp1d method to interpolate between data points in the original spectrum. This method will not handle changes in resolution appropriately."""
+        This method will extrapolate away from the provided data. The function used is a np.poly1d() using an order 2 np.polyfit."""
         if wavelengths == None:
             wavelengths = self.wavelengths
         
@@ -392,7 +402,7 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         # Sanity Checks for Data
         self._presanity(oldwl,oldfl,wavelengths,extrapolate=True)
         
-        self.func = np.poly1d(np.polyfit(oldwl,oldfl,2))
+        self.func = np.poly1d(np.polyfit(oldwl,oldfl,order))
         
         flux = self.func(wavelengths)
         
@@ -491,36 +501,45 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         if wavelengths == None:
             wavelengths = self.wavelengths
         if wavelengths == None:
-            raise ValueError(u"Requires Wavelenths")        
+            raise ValueError(u"Requires Wavelenths")
+        
+        upscale = 10
+        startindexs = np.arange(0,wavelengths.size) * upscale
+        func = sp.interpolate.interp1d(startindexs,wavelengths)
+        findindexs = np.arange(0,np.max(startindexs))
+        bins = func(findindexs)
         
         # Data sanity check
-        oldwl,oldfl = self.interpolate(wavelengths=wavelengths,extrapolate=True,**kwargs)
+        oldwl,oldfl = self.interpolate(wavelengths=bins,extrapolate=True,**kwargs)
         LOG.debug(u"Integration Starting")
         
         error = None
+        warning = False
         msg = None
         arrays = {}
-        
-        bins = wavelengths
-        
+                
         if (np.diff(bins) <= 0).any():
             msg = u"λ Bins must increase monotonically. [wl + %g]" % (wavelengths[-1]+np.diff(wavelengths)[-1])
             arrays = {u"λ Binsu" : bins, u"Requested λ" : wavelengths ,u"Requested Δλ": wavelengths, u"Bin Δλ" : np.diff(bins),u"λ Offset" : offset }
             error = ValueError
         else:
-            bincount,bins = np.histogram(oldwl[:-1],bins)
+            bincount,wavelengths = np.histogram(oldwl[:-1],wavelengths)
             if (bincount == 0).any():
                 msg = u"Requested λ is poorly represented in given λ"
                 arrays = {u"Histogram of λ" : bincount, u"Requested λ" : wavelengths , u"Given λ" : oldwl }
                 error = ValueError
-        self._presanity(oldwl,oldfl,wavelengths,error=error,message=msg,extrapolate=True,**arrays)
+            elif (bincount < 2).any():
+                msg = u"Bins appear undersampled by given λ"
+                arrays = {u"Histogram of λ" : bincount, u"Requested λ" : wavelengths , u"Given λ" : oldwl }
+                warning = True
+        self._presanity(oldwl,oldfl,wavelengths,error=error,message=msg,warning=warning,extrapolate=True,**arrays)
         
         wlStart = wavelengths[:-1]
         wlEnd = wavelengths[1:]         
         
         w = (oldwl[1:]-oldwl[:-1]) * (oldfl[1:]+oldfl[:-1]) / 2
         
-        flux, bins = np.histogram(oldwl[:-1],bins,weights=w)
+        flux, bins = np.histogram(oldwl[:-1],wavelengths,weights=w)
         flux = np.hstack((flux,flux[-1]))
         
         # This is our sanity check. Everything we calculated should be a number. If it comes out as nan, then we have done something wrong.

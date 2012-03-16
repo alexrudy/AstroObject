@@ -435,7 +435,7 @@ class Simulator(object):
             return False
             
         if stage not in self.stages:
-            self.log.critical("Stage %s does not exist.")
+            self.log.critical("Stage %s does not exist." % stage)
             self.exit(1)
         use = True
         if stage in self.options["exclude"]:
