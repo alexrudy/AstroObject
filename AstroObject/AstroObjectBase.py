@@ -71,7 +71,7 @@ class BaseFrame(object):
         msg = "Abstract Data Structure %s was called, but cannot return data!" % self
         raise AbstractError(msg)
     
-    def __str__(self):
+    def __repr__(self):
         """Returns String Representation of this frame object. Will display the class name and the label. This method does not need to be overwritten by subclasses."""
         return "<\'%s\' labeled \'%s\'>" % (self.__class__.__name__,self.label)
     
@@ -152,7 +152,7 @@ class FITSFrame(BaseFrame):
     
 
 
-class FITSObject(object):
+class FITSObject(dict):
     """This object tracks a number of data frames. The :attr:`Filename` is the default filename to use when reading and writing, and the :attr:`dataClass` argument accepts a list of new data classes to be used with this object. New data classes should conform to the data class standard.
     
     
@@ -172,13 +172,37 @@ class FITSObject(object):
         self.clobber = False
         self.name = False
         
-    def __str__(self):
+    def __repr__(self):
         """String representation of this object"""
         if self.name:
             return "<\'%s\' labeled \'%s\'>" % (self.__class__.__name__,self.name)
         else:
-            return super(FITSObject, self).__str__()
+            return super(FITSObject, self).__repr__()
     
+    def __getitem__(self,key):
+        """Dictionary access to frames in the Object"""
+        return self.frame(key)
+        
+    def __setitem__(self,key,value):
+        """Dictionary assignment of frames in the Object"""
+        self.save(value,key,clobber=True)
+        
+    def __delitem__(self,key):
+        """Dictionary deletion of frames in the Object"""
+        self.remove(key)
+        
+    def __iter__(self):
+        """Dictionary iterator call."""
+        return self.states.iterkeys()
+        
+    def __contains__(self,item):
+        """Dictionary contain testing"""
+        return item in self.states
+        
+    def keys(self):
+        """Dictionary keys"""
+        return self.states.keys()
+        
     ###############################
     # Basic Object Mode Functions #
     ###############################
