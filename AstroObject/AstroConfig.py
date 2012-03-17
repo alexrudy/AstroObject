@@ -8,7 +8,7 @@
 # 
 
 # Standard Python Modules
-import math, copy, sys, time, logging, os,collections
+import math, copy, sys, time, logging, os,collections, re
 import yaml
 
 # Submodules from this system
@@ -19,6 +19,13 @@ class Configuration(dict):
     def __init__(self, *args, **kwargs):
         super(Configuration, self).__init__(*args, **kwargs)
         self.log = logging.getLogger(__name__)
+    
+    def update(self,other,deep=True):
+        """Deep update by default"""
+        if deep:
+            self._merge(self,other)
+        else:
+            super(Configuration, self).update(other)
     
     def merge(self,other):
         """Merge another configuration into this (the master)"""
@@ -35,6 +42,16 @@ class Configuration(dict):
             else:
                 d[k] = u[k]
         return d
+    
+    def save(self,filename,silent=True):
+        """Save as a file."""
+        with open(filename,"w") as stream:
+            if re.search(r"\.yaml$",filename):
+                stream.write("# Configuration: %s\n" % filename)
+                yaml.dump(self.extract(),stream,default_flow_style=False)
+            elif re.search(r"\.dat$",filename):
+                stream.write("# Configuration: %s\n" % filename)
+                stream.write(str(self))
         
     def load(self,filename,silent=True):
         """Loads a configuration from a yaml file, and merges it into the master"""
@@ -44,7 +61,7 @@ class Configuration(dict):
                 new = yaml.load(stream)
         except IOError:
             if silent:
-                self.log.warning("Could not load configuration from file:")
+                self.log.warning("Could not load configuration from file: %s" % filename)
             else:
                 raise
         else:
@@ -55,14 +72,18 @@ class Configuration(dict):
     def extract(self):
         """Extract the dictionary from this object"""
         return dict(self)
-    
+        
+    def __repr__(self):
+        """Representation of this dictionary."""
+        return repr(dict(self))    
 
 class StructuredConfiguration(Configuration):
     """A structured configuration with some basic defaults for AstroObject-type classes"""
     def __init__(self,  *args, **kwargs):
+        if "Configurations" in kwargs:
+            if "This" not in kwargs["Configurations"]:
+                kwargs["Configurations"]["This"] = "AO.config.yaml"
         super(StructuredConfiguration, self).__init__(*args, **kwargs) 
-        self["Configurations"] = {}
-        self["Configurations"]["This"] = "AO.config.yaml"
         
     def setFile(self,name,filename=None):
         """Set configuration file"""
