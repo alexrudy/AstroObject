@@ -102,7 +102,7 @@ class Simulator(object):
         self.starting = False
         self.paused = False
         self.commandLine = commandLine
-        self.Caches = CacheManager(self.name)
+        self.Caches = CacheManager()
         self.options = None
         self.initOptions()
         
@@ -388,8 +388,6 @@ class Simulator(object):
         self.parseArguments()
         self.preConfiguration()
         self.configure(configFile=self.config["Configurations"]["This"])
-        if self.caching:
-            self.Caches.load()
         self.postConfiguration()
         self.starting = False
         

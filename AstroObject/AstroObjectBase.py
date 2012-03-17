@@ -55,7 +55,7 @@ class BaseFrame(object):
             self.header = {}
         try:
             self.__valid__()
-            assert isinstance(self.label,str), "Frame requires a label, got %s" % self.label
+            assert isinstance(self.label,(str,unicode)), "Frame requires a label, got %s" % self.label
         except AssertionError as e:
             raise AttributeError(str(e))
 

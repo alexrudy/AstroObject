@@ -46,12 +46,13 @@ class Configuration(dict):
     def save(self,filename,silent=True):
         """Save as a file."""
         with open(filename,"w") as stream:
+            stream.write("# Configuration: %s\n" % filename)
             if re.search(r"\.yaml$",filename):
-                stream.write("# Configuration: %s\n" % filename)
                 yaml.dump(self.extract(),stream,default_flow_style=False)
             elif re.search(r"\.dat$",filename):
-                stream.write("# Configuration: %s\n" % filename)
                 stream.write(str(self))
+            else:
+                raise ValueError("Filename Error, not (.dat,.yaml): %s" % filename)
         
     def load(self,filename,silent=True):
         """Loads a configuration from a yaml file, and merges it into the master"""
@@ -80,16 +81,32 @@ class Configuration(dict):
 class StructuredConfiguration(Configuration):
     """A structured configuration with some basic defaults for AstroObject-type classes"""
     def __init__(self,  *args, **kwargs):
-        if "Configurations" in kwargs:
-            if "This" not in kwargs["Configurations"]:
-                kwargs["Configurations"]["This"] = "AO.config.yaml"
         super(StructuredConfiguration, self).__init__(*args, **kwargs) 
+        if "Configurations" not in self:
+            self["Configurations"] = {}
+        if "This" not in self["Configurations"]:
+            self["Configurations"]["This"] = "AO.config.yaml"
         
-    def setFile(self,name,filename=None):
+    
+    def __repr__(self):
+        """Representation of this dictionary."""
+        return repr(dict(self))
+        
+    def setFile(self,filename,name=None):
         """Set configuration file"""
+        if not name:
+            name = os.path.basename(filename)
         if name not in self["Configurations"]:
             self["Configurations"][name] = filename
         self["Configurations"]["This"] = self["Configurations"][name]
+    
+    def save(self,filename=None):
+        """Load from a file"""
+        if filename == None:
+            filename = self["Configurations"]["This"]
+            print self.extract()
+        return super(StructuredConfiguration, self).save(filename)
+    
         
     def load(self,filename=None,silent=True):
         """Load from a file"""

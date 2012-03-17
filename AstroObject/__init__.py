@@ -15,9 +15,7 @@ __version__ = '0.3.0'
 
 __all__ = ['AnalyticSpectra','AstroImage','AstroObjectBase','AstroSpectra','AstroObjectLogging','Utilities']
 
-__config__ = "logging.yaml"
 
 LOG = logging.getLogger(__name__)
-LOG.configure(configFile = __config__ )
-LOG.start()
+
 
