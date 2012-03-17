@@ -80,9 +80,10 @@ class Configuration(dict):
 class StructuredConfiguration(Configuration):
     """A structured configuration with some basic defaults for AstroObject-type classes"""
     def __init__(self,  *args, **kwargs):
-        if "Configurations" in kwargs:
-            if "This" not in kwargs["Configurations"]:
-                kwargs["Configurations"]["This"] = "AO.config.yaml"
+        if "Configurations" not in kwargs:
+            kwargs["Configurations"] = {}
+        if "This" not in kwargs["Configurations"]:
+            kwargs["Configurations"]["This"] = "AO.config.yaml"
         super(StructuredConfiguration, self).__init__(*args, **kwargs) 
         
     def setFile(self,name,filename=None):
