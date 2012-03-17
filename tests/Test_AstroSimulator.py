@@ -9,6 +9,7 @@
 
 from tests.Test_AstroObjectAPI import *
 import AstroObject.AstroSimulator as AS
+from AstroObject.AstroCache import *
 from AstroObject.Utilities import AbstractError
 import nose.tools as nt
 from nose.plugins.skip import Skip,SkipTest
@@ -51,38 +52,32 @@ class test_SimulatorFunctional(object):
     
             def run(self):
                 print "Hello from %s Object" % self.name
-                img = self.sim.Caches.get("Random Image")
+                img = self.sim.Caches["Random Image"]
                 self.A = img[0,0]
         
             def other(self):
                 """Other Stage Function"""
                 print "Hello from %s Stage" % "other"
-                img = self.sim.Caches.get("Random NPY")
+                img = self.sim.Caches["Random NPY"]
                 self.B = img[1,1]
     
             def last(self):
                 """Last Stage Function"""
                 print "Last Stage"
-                img = self.sim.Caches.get("Random Image")
+                img = self.sim.Caches["Random Image"]
                 self.C = img[0,0]
     
-            def save(self,stream,data):
+            def save(self,data):
                 """Saves some cache data"""
-                np.save(stream,data)
-        
+                np.save("Caches/Test.npy",data)
     
             def cache(self):
                 """Cache this image"""
-                img = np.random.normal(10,2,(1000,1000))
-                return img
+                return np.random.normal(10,2,(1000,1000))
         
-            def load(self,stream):
+            def load(self):
                 """Load the image"""
-                try:
-                    img = np.load(stream)
-                except IOError:
-                    raise CacheIOError("Couldn't find Cache File")
-                return img
+                return np.load("Caches/Test.npy")
         
         stage = SimpleStage(SIM)
         log = logging.getLogger("Loggy")
@@ -92,8 +87,8 @@ class test_SimulatorFunctional(object):
         SIM.registerStage(stage.other,name="other",description="Other Stage")
         SIM.registerStage(stage.last,name="last",description="Last Stage")
         SIM.registerStage(None,"ex",dependencies=["examp","other"],help="example Macro")
-        SIM.Caches.register("Random Image",stage.cache,stage.load,stage.save)
-        SIM.Caches.registerNPY("Random NPY",stage.cache,directory="Caches/",filename="Random.npy")
+        SIM.Caches["Random Image"] = Cache(stage.cache,stage.load,stage.save)
+        SIM.Caches["Random NPY"] = NumpyCache(stage.cache,"Caches/Random.npy")
         SIM.Caches.clear()
         SIM.startup()
         SIM.do("all")
