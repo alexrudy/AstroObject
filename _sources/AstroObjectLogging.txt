@@ -1,11 +1,27 @@
-.. module:: AstroObjectLogging
+.. module:: AstroObject.AstroObjectLogging
 
-Logging API
-***********
+Easy Logging :mod:`AstroObjectLogging`
+**************************************
 
-The AstroObjectLogging module provides a customized logging class whcih can be automatically and easily configured for various functions. For full documentation of the Logging module, see <http://docs.python.org/library/logging.html>.
+This module provides basic access to logging functions. It elimiates much of the variablity in logging, replacing it with the simple logging configuration options that AstroObject is constantly using. It is, however, built on the normal logging module, and so shouldn't break any other logging schemes. <http://docs.python.org/library/logging.html>
+
+Other than a simpler set of possible configuration options, this object has the advantage that it allows for dynamic configurations which vary from run to run. As is common in complex programs, a lot happens before reading a configuration file. However, without the configuration file, the system can't start logging. This logger holds all the messages it recieves pre-configuration for use once the logger starts, preserving these messages for later debugging.
+
+To use the logging::
+	
+	LOG = logging.getLogger(__name__)
+	LOG.info("Buffered Message Saved for later output")
+	LOG.configure(configFile="some.yaml")
+	LOG.info("Buffered Message, saved for later output")
+	LOG.start()
+	LOG.info("Normal Message")
+	LOG.useConsole(False)
+	LOG.info("Not on the console")
+	LOG.useConsole(True)
+	LOG.info("Back to the console!")
+	
 
 .. autoclass::
-	AstroObject.AstroObjectLogging.LogManager
-	:members:
-	
+    AstroObject.AstroObjectLogging.LogManager
+    :members:
+

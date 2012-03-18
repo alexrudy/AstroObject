@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObject.AstroObjectLogging &mdash; AstroObject 0.3.0 documentation</title>
+    <title>AstroObject.AstroObjectLogging &mdash; AstroObject 0.3.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.0',
+        VERSION:     '0.3.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,8 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.0 documentation" href="../../index.html" />
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AstroObject 0.3.1 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +39,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.3.0 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.3.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -55,7 +56,7 @@
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2011-12-12.</span>
 <span class="c">#  Copyright 2011 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.3.0a2</span>
+<span class="c">#  Version 0.3.1</span>
 <span class="c">#</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
@@ -73,10 +74,61 @@
 <span class="k">for</span> <span class="n">name</span><span class="p">,</span><span class="n">lvl</span> <span class="ow">in</span> <span class="n">levels</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
     <span class="n">logging</span><span class="o">.</span><span class="n">addLevelName</span><span class="p">(</span><span class="n">lvl</span><span class="p">,</span><span class="n">name</span><span class="p">)</span>
 
+<span class="k">class</span> <span class="nc">GrowlHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Handler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Handler that emits growl notifications&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GrowlHandler</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;AstroObject&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">gntp.notifier</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gntp</span> <span class="o">=</span> <span class="n">gntp</span>
+        <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">disable</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">notifier</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">disable</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">notifier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gntp</span><span class="o">.</span><span class="n">notifier</span><span class="o">.</span><span class="n">GrowlNotifier</span><span class="p">(</span>
+                <span class="n">applicationName</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">notifications</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;Info Message&quot;</span><span class="p">,</span><span class="s">&quot;Warning Message&quot;</span><span class="p">,</span><span class="s">&quot;Critical Message&quot;</span><span class="p">,</span><span class="s">&quot;Error Message&quot;</span><span class="p">,</span><span class="s">&quot;Debug Message&quot;</span><span class="p">],</span>
+                <span class="n">defaultNotifications</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;Info Message&quot;</span><span class="p">,</span><span class="s">&quot;Warning Message&quot;</span><span class="p">,</span><span class="s">&quot;Critical Message&quot;</span><span class="p">,</span><span class="s">&quot;Error Message&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">notifier</span><span class="o">.</span><span class="n">register</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">titles</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">:</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> Debug&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">:</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> Info&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">:</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> Warning&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">:</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> Critical&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">:</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> Error&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">}</span>
+        
+    
+    <span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">:</span><span class="s">&quot;Debug Message&quot;</span><span class="p">,</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">:</span><span class="s">&quot;Info Message&quot;</span><span class="p">,</span><span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span><span class="p">:</span><span class="s">&quot;Warning Message&quot;</span><span class="p">,</span><span class="n">logging</span><span class="o">.</span><span class="n">CRITICAL</span><span class="p">:</span><span class="s">&quot;Critical Message&quot;</span><span class="p">,</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">:</span><span class="s">&quot;Error Message&quot;</span><span class="p">}</span>
 
+    
+    
+    <span class="k">def</span> <span class="nf">emit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">record</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Emits a growl notification&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">notifier</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span>
+                <span class="n">noteType</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">[</span><span class="n">record</span><span class="o">.</span><span class="n">levelno</span><span class="p">],</span>
+                <span class="n">title</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">titles</span><span class="p">[</span><span class="n">record</span><span class="o">.</span><span class="n">levelno</span><span class="p">],</span>
+                <span class="n">description</span> <span class="o">=</span> <span class="n">msg</span><span class="p">,</span>
+                <span class="n">sticky</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
+                <span class="n">priority</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">KeyboardInterrupt</span><span class="p">,</span> <span class="ne">SystemExit</span><span class="p">):</span>
+            <span class="k">raise</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">handleError</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
 
-<div class="viewcode-block" id="LogManager"><a class="viewcode-back" href="../../Logging.html#AstroObject.AstroObjectLogging.LogManager">[docs]</a><span class="k">class</span> <span class="nc">LogManager</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">getLoggerClass</span><span class="p">()):</span>
-    <span class="sd">&quot;&quot;&quot;The logging class which handles the log messages. It handles its own limited configuration, and buffers messages before it starts, so that early messages are still written to a file.&quot;&quot;&quot;</span>
+        
+
+<div class="viewcode-block" id="LogManager"><a class="viewcode-back" href="../../AstroObjectLogging.html#AstroObject.AstroObjectLogging.LogManager">[docs]</a><span class="k">class</span> <span class="nc">LogManager</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">getLoggerClass</span><span class="p">()):</span>
+    <span class="sd">&quot;&quot;&quot;A customized logging class. This class is automatically used whenever you are using an AstroObject module elsewhere in your program. It subsumes other logging classes, regardless of the situation. This logger provides many specialized functions useful for logging, but can be used just like a normal logger. By default, the logger starts in buffering mode, collecting messages until it is configured. The configuration then allows it to write messages to the console and to a log file.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">LogManager</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
@@ -86,10 +138,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">doConsole</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initialize</span><span class="p">()</span>
     
-<div class="viewcode-block" id="LogManager.initialize"><a class="viewcode-back" href="../../Logging.html#AstroObject.AstroObjectLogging.LogManager.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initializes this logger to buffer messages it receives before it is configured. This initialization is automatically handled when the :cls:`LogManager` is created.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initializes this logger to buffer messages it receives before it is configured. This initialization is automatically handled when the :class:`LogManager` is created.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handling</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ConfigurationError</span><span class="p">(</span><span class="s">&quot;Logger appears to be already handling messages&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
@@ -104,13 +156,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">null</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">NullHandler</span><span class="p">()</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="bp">True</span>
-    </div>
+    
     <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s">&#39;logging&#39;</span> <span class="p">:</span> <span class="p">{</span>
+                    <span class="s">&#39;growl&#39;</span> <span class="p">:</span> <span class="p">{</span>
+                        <span class="s">&#39;enable&#39;</span> <span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+                        <span class="s">&#39;level&#39;</span>  <span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+                        <span class="s">&#39;name&#39;</span> <span class="p">:</span> <span class="s">&quot;AstroObject&quot;</span><span class="p">,</span>
+                    <span class="p">},</span>
                     <span class="s">&#39;file&#39;</span> <span class="p">:</span> <span class="p">{</span>
                         <span class="s">&#39;enable&#39;</span> <span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
-                        <span class="s">&#39;format&#39;</span> <span class="p">:</span> <span class="s">&quot;</span><span class="si">%(asctime)s</span><span class="s"> : </span><span class="si">%(levelname)-8s</span><span class="s"> : </span><span class="si">%(module)-40s</span><span class="s"> : </span><span class="si">%(funcName)-10s</span><span class="s"> : </span><span class="si">%(message)s</span><span class="s">&quot;</span><span class="p">,</span>
-                        <span class="s">&#39;dateformat&#39;</span> <span class="p">:</span> <span class="s">&quot;%Y-%m-</span><span class="si">%d</span><span class="s">-%H:%M:%S&quot;</span><span class="p">,</span>
+                        <span class="s">&#39;format&#39;</span> <span class="p">:</span> <span class="s">&quot;</span><span class="si">%(asctime)s</span><span class="s"> : </span><span class="si">%(levelname)-8s</span><span class="s"> : </span><span class="si">%(module)-15s</span><span class="s"> : </span><span class="si">%(funcName)-10s</span><span class="s"> : </span><span class="si">%(message)s</span><span class="s">&quot;</span><span class="p">,</span>
+                        <span class="s">&#39;dateformat&#39;</span> <span class="p">:</span> <span class="s">&quot;%H:%M:%S&quot;</span><span class="p">,</span>
                         <span class="s">&#39;filename&#39;</span> <span class="p">:</span> <span class="s">&quot;AstroObject&quot;</span><span class="p">,</span>
                         <span class="s">&#39;level&#39;</span> <span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
                     <span class="p">},</span>
@@ -125,8 +182,8 @@
                     <span class="p">},</span>
             <span class="p">}</span>
     
-<div class="viewcode-block" id="LogManager.configure"><a class="viewcode-back" href="../../Logging.html#AstroObject.AstroObjectLogging.LogManager.configure">[docs]</a>    <span class="k">def</span> <span class="nf">configure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">configFile</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">configuration</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Configure this logging object. The configuration happens from a file (`configFile`) and then from an object `configuration`. As such, values in the object will override values from the file, and both will override the defaults. The default settings place messages in a file called AstroObject.log in the Logs/ folder.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="LogManager.configure"><a class="viewcode-back" href="../../AstroObjectLogging.html#AstroObject.AstroObjectLogging.LogManager.configure">[docs]</a>    <span class="k">def</span> <span class="nf">configure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">configFile</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">configuration</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Configure this logging object using a configuration dictionary. Configuration dictionaries can be provided by a YAML file or directly to the configuration argument. If both are provided, the YAML file will over-ride the explicit dictionary.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">configured</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ConfigurationError</span><span class="p">(</span><span class="s">&quot;Logger appears to be already configured&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handling</span><span class="p">:</span>
@@ -144,14 +201,15 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span><span class="n">loaded</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Couldn&#39;t load Configuration File </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">configFile</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">configured</span> <span class="o">|=</span> <span class="bp">False</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">configured</span> <span class="o">|=</span> <span class="bp">True</span>
         
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">configured</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="s">&quot;No configuration provided or accessed. Using defaults.&quot;</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="LogManager.start"><a class="viewcode-back" href="../../Logging.html#AstroObject.AstroObjectLogging.LogManager.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Starts this logger outputing, based on the configuration. It is recommended that you call :meth:`configure` first.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="LogManager.start"><a class="viewcode-back" href="../../AstroObjectLogging.html#AstroObject.AstroObjectLogging.LogManager.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Starts this logger running, using the configuration set using :meth:`configure`. The configuration can configure a file handler and a console handler. Arbitrary configurations are not possible at this point.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">handling</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ConfigurationError</span><span class="p">(</span><span class="s">&quot;Logger appears to be already handling messages&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
@@ -174,11 +232,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">handling</span> <span class="o">|=</span> <span class="bp">True</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">logfile</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">logfolder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Dirs&quot;</span><span class="p">][</span><span class="s">&quot;Logs&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logfolder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Dirs&quot;</span><span class="p">][</span><span class="s">&quot;Logs&quot;</span><span class="p">]</span><span class="o">+</span><span class="s">&quot;/&quot;</span>
         
         <span class="c"># Only set up the file log handler if we can actually access the folder</span>
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">access</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logfolder</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">F_OK</span><span class="p">):</span>
-            <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Dirs&quot;</span><span class="p">][</span><span class="s">&quot;Logs&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;logging&quot;</span><span class="p">][</span><span class="s">&quot;file&quot;</span><span class="p">][</span><span class="s">&quot;filename&quot;</span><span class="p">]</span><span class="o">+</span><span class="s">&quot;.log&quot;</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(dir)s</span><span class="s">/</span><span class="si">%(name)s</span><span class="s">.log&quot;</span> <span class="o">%</span> <span class="p">{</span><span class="s">&#39;dir&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Dirs&quot;</span><span class="p">][</span><span class="s">&quot;Logs&quot;</span><span class="p">],</span><span class="s">&#39;name&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;logging&quot;</span><span class="p">][</span><span class="s">&quot;file&quot;</span><span class="p">][</span><span class="s">&quot;filename&quot;</span><span class="p">]}</span>
             
             <span class="bp">self</span><span class="o">.</span><span class="n">logfile</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">handlers</span><span class="o">.</span><span class="n">TimedRotatingFileHandler</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span><span class="n">when</span><span class="o">=</span><span class="s">&#39;midnight&#39;</span><span class="p">)</span>
             <span class="n">fileformatter</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;logging&quot;</span><span class="p">][</span><span class="s">&quot;file&quot;</span><span class="p">][</span><span class="s">&quot;format&quot;</span><span class="p">],</span><span class="n">datefmt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;logging&quot;</span><span class="p">][</span><span class="s">&quot;file&quot;</span><span class="p">][</span><span class="s">&quot;dateformat&quot;</span><span class="p">])</span>
@@ -196,13 +254,26 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">setTarget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logfile</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">handling</span> <span class="o">|=</span> <span class="bp">True</span>
         
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;logging&quot;</span><span class="p">][</span><span class="s">&quot;growl&quot;</span><span class="p">][</span><span class="s">&quot;enable&quot;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">growlHandler</span> <span class="o">=</span> <span class="n">GrowlHandler</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;logging&quot;</span><span class="p">][</span><span class="s">&quot;growl&quot;</span><span class="p">][</span><span class="s">&quot;name&quot;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">growlHandler</span><span class="o">.</span><span class="n">disable</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;logging&quot;</span><span class="p">][</span><span class="s">&quot;growl&quot;</span><span class="p">][</span><span class="s">&quot;enable&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;logging&quot;</span><span class="p">][</span><span class="s">&quot;file&quot;</span><span class="p">][</span><span class="s">&quot;level&quot;</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">growlHandler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;logging&quot;</span><span class="p">][</span><span class="s">&quot;file&quot;</span><span class="p">][</span><span class="s">&quot;level&quot;</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">level</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">growlHandler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">growlHandler</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">handling</span> <span class="o">|=</span> <span class="bp">True</span>
+                
+        
         <span class="bp">self</span><span class="o">.</span><span class="n">removeHandler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">handling</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">null</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="s">&quot;Logger not actually handling anything!&quot;</span><span class="p">)</span>
             </div>
-<div class="viewcode-block" id="LogManager.useConsole"><a class="viewcode-back" href="../../Logging.html#AstroObject.AstroObjectLogging.LogManager.useConsole">[docs]</a>    <span class="k">def</span> <span class="nf">useConsole</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">use</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="LogManager.useConsole"><a class="viewcode-back" href="../../AstroObjectLogging.html#AstroObject.AstroObjectLogging.LogManager.useConsole">[docs]</a>    <span class="k">def</span> <span class="nf">useConsole</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">use</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Turn on or off the console logging. Specify the parameter `use` to force console logging into one state or the other. If the `use` parameter is not given, console logging will be toggled.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">use</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
             <span class="c"># THIS SHOULD BE BACKWARDS</span>
@@ -255,7 +326,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.3.0 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.3.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

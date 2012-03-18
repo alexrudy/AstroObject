@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>9. HDU Objects and Storage AstroFITS &mdash; AstroObject 0.3.0 documentation</title>
+    <title>9. HDU Objects and Storage AstroFITS &mdash; AstroObject 0.3.1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.0',
+        VERSION:     '0.3.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,8 +25,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.0 documentation" href="index.html" />
-    <link rel="next" title="10. Simulator and Complex Task Management AstroSimulator" href="Simulator.html" />
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AstroObject 0.3.1 documentation" href="index.html" />
+    <link rel="next" title="10. Simulator AstroSimulator" href="AstroSimulator.html" />
     <link rel="prev" title="8. Analytic Spectra and Interpolation AnalyticSpectra" href="AnalyticSpectra.html" /> 
   </head>
   <body>
@@ -40,12 +41,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Simulator.html" title="10. Simulator and Complex Task Management AstroSimulator"
+          <a href="AstroSimulator.html" title="10. Simulator AstroSimulator"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="AnalyticSpectra.html" title="8. Analytic Spectra and Interpolation AnalyticSpectra"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -123,6 +124,11 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
 </dd></dl>
 
 <dl class="method">
+<dt id="AstroObject.AstroFITS.HDUObject.copy">
+<tt class="descname">copy</tt><big>(</big><big>)</big> &rarr; a shallow copy of D<a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.copy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="AstroObject.AstroFITS.HDUObject.data">
 <tt class="descname">data</tt><big>(</big><em>statename=None</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the raw data for the current state. This is done through the <tt class="xref py py-meth docutils literal"><span class="pre">FITSFrame.__call__()</span></tt> method, which should return basic data in as raw a form as possible. The purpose of this call is to allow the user get at the most recent piece of data as easily as possible.</p>
@@ -154,6 +160,42 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
 </div>
 </dd></dl>
 
+<dl class="staticmethod">
+<dt id="AstroObject.AstroFITS.HDUObject.fromkeys">
+<em class="property">static </em><tt class="descname">fromkeys</tt><big>(</big><em>S</em><span class="optional">[</span>, <em>v</em><span class="optional">]</span><big>)</big> &rarr; New dict with keys from S and values equal to v.<a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.fromkeys" title="Permalink to this definition">¶</a></dt>
+<dd><p>v defaults to None.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroFITS.HDUObject.get">
+<tt class="descname">get</tt><big>(</big><em>k</em><span class="optional">[</span>, <em>d</em><span class="optional">]</span><big>)</big> &rarr; D[k] if k in D, else d.  d defaults to None.<a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroFITS.HDUObject.has_key">
+<tt class="descname">has_key</tt><big>(</big><em>k</em><big>)</big> &rarr; True if D has a key k, else False<a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.has_key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroFITS.HDUObject.items">
+<tt class="descname">items</tt><big>(</big><big>)</big> &rarr; list of D's (key, value) pairs, as 2-tuples<a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroFITS.HDUObject.iteritems">
+<tt class="descname">iteritems</tt><big>(</big><big>)</big> &rarr; an iterator over the (key, value) items of D<a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.iteritems" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroFITS.HDUObject.iterkeys">
+<tt class="descname">iterkeys</tt><big>(</big><big>)</big> &rarr; an iterator over the keys of D<a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.iterkeys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroFITS.HDUObject.itervalues">
+<tt class="descname">itervalues</tt><big>(</big><big>)</big> &rarr; an iterator over the values of D<a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.itervalues" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="AstroObject.AstroFITS.HDUObject.keep">
 <tt class="descname">keep</tt><big>(</big><em>*statenames</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.keep" title="Permalink to this definition">¶</a></dt>
@@ -161,9 +203,27 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
 </dd></dl>
 
 <dl class="method">
+<dt id="AstroObject.AstroFITS.HDUObject.keys">
+<tt class="descname">keys</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dictionary keys</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="AstroObject.AstroFITS.HDUObject.list">
 <tt class="descname">list</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provides a list of the available frames, by label.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroFITS.HDUObject.pop">
+<tt class="descname">pop</tt><big>(</big><em>k</em><span class="optional">[</span>, <em>d</em><span class="optional">]</span><big>)</big> &rarr; v, remove specified key and return the corresponding value.<a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>If key is not found, d is returned if given, otherwise KeyError is raised</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroFITS.HDUObject.popitem">
+<tt class="descname">popitem</tt><big>(</big><big>)</big> &rarr; (k, v), remove and return some (key, value) pair as a<a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.popitem" title="Permalink to this definition">¶</a></dt>
+<dd><p>2-tuple; but raise KeyError if D is empty.</p>
 </dd></dl>
 
 <dl class="method">
@@ -197,10 +257,43 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
 </dd></dl>
 
 <dl class="method">
+<dt id="AstroObject.AstroFITS.HDUObject.setdefault">
+<tt class="descname">setdefault</tt><big>(</big><em>k</em><span class="optional">[</span>, <em>d</em><span class="optional">]</span><big>)</big> &rarr; D.get(k,d), also set D[k]=d if k not in D<a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.setdefault" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="AstroObject.AstroFITS.HDUObject.show">
 <tt class="descname">show</tt><big>(</big><em>statename=None</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.show" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the (rendered) matplotlib plot for this object. This is a quick way to view your current data state without doing any serious plotting work. This aims for the sensible defaults philosophy, if you don&#8217;t like what you get, write a new method that uses the <a class="reference internal" href="#AstroObject.AstroFITS.HDUObject.data" title="AstroObject.AstroFITS.HDUObject.data"><tt class="xref py py-meth docutils literal"><span class="pre">data()</span></tt></a> call and plots that.</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroFITS.HDUObject.update">
+<tt class="descname">update</tt><big>(</big><em>E</em>, <em>**F</em><big>)</big> &rarr; None.  Update D from dict/iterable E and F.<a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>If E has a .keys() method, does:     for k in E: D[k] = E[k]
+If E lacks .keys() method, does:     for (k, v) in E: D[k] = v
+In either case, this is followed by: for k in F: D[k] = F[k]</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroFITS.HDUObject.values">
+<tt class="descname">values</tt><big>(</big><big>)</big> &rarr; list of D's values<a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroFITS.HDUObject.viewitems">
+<tt class="descname">viewitems</tt><big>(</big><big>)</big> &rarr; a set-like object providing a view on D's items<a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.viewitems" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroFITS.HDUObject.viewkeys">
+<tt class="descname">viewkeys</tt><big>(</big><big>)</big> &rarr; a set-like object providing a view on D's keys<a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.viewkeys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroFITS.HDUObject.viewvalues">
+<tt class="descname">viewvalues</tt><big>(</big><big>)</big> &rarr; an object providing a view on D's values<a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.viewvalues" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="AstroObject.AstroFITS.HDUObject.write">
@@ -222,8 +315,8 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
   <p class="topless"><a href="AnalyticSpectra.html"
                         title="previous chapter">8. Analytic Spectra and Interpolation <tt class="docutils literal docutils literal"><span class="pre">AnalyticSpectra</span></tt></a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="Simulator.html"
-                        title="next chapter">10. Simulator and Complex Task Management <tt class="docutils literal"><span class="pre">AstroSimulator</span></tt></a></p>
+  <p class="topless"><a href="AstroSimulator.html"
+                        title="next chapter">10. Simulator <tt class="docutils literal"><span class="pre">AstroSimulator</span></tt></a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/AstroFITS.txt"
@@ -256,12 +349,12 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="Simulator.html" title="10. Simulator and Complex Task Management AstroSimulator"
+          <a href="AstroSimulator.html" title="10. Simulator AstroSimulator"
              >next</a> |</li>
         <li class="right" >
           <a href="AnalyticSpectra.html" title="8. Analytic Spectra and Interpolation AnalyticSpectra"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObject.AstroSimulator &mdash; AstroObject 0.3.0 documentation</title>
+    <title>AstroObject.AstroSimulator &mdash; AstroObject 0.3.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.0',
+        VERSION:     '0.3.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,8 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.0 documentation" href="../../index.html" />
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AstroObject 0.3.1 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +39,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.3.0 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.3.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -49,65 +50,109 @@
           <div class="body">
             
   <h1>Source code for AstroObject.AstroSimulator</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
 <span class="c"># </span>
 <span class="c">#  AstroSimulator.py</span>
 <span class="c">#  AstroObject</span>
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2011-12-14.</span>
 <span class="c">#  Copyright 2011 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.3.0a1</span>
+<span class="c">#  Version 0.3.1</span>
 <span class="c"># </span>
 
-<span class="c"># Standard Scipy Toolkits</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pyfits</span> <span class="kn">as</span> <span class="nn">pf</span>
-<span class="kn">import</span> <span class="nn">scipy</span> <span class="kn">as</span> <span class="nn">sp</span>
-
-<span class="c"># Scipy Extras</span>
-<span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">ndimage</span>
-<span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="kn">import</span> <span class="n">cdist</span>
-<span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">norm</span>
-
 <span class="c"># Standard Python Modules</span>
-<span class="kn">import</span> <span class="nn">math</span><span class="o">,</span> <span class="nn">copy</span><span class="o">,</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">logging</span><span class="o">,</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">math</span><span class="o">,</span> <span class="nn">copy</span><span class="o">,</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">logging</span><span class="o">,</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">argparse</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
 
 <span class="c"># Submodules from this system</span>
 <span class="kn">from</span> <span class="nn">AstroCache</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">AstroConfig</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">Utilities</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;Simulator&quot;</span><span class="p">]</span>
 
 <span class="n">__version__</span> <span class="o">=</span> <span class="n">getVersion</span><span class="p">()</span>
 
-<span class="k">class</span> <span class="nc">Stage</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A stage object for maintaing data structure&quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">stage</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;a Stage&quot;</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="s">&quot;A description&quot;</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">exceptions</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Stage"><a class="viewcode-back" href="../../AstroSimulator.html#AstroObject.AstroSimulator.Stage">[docs]</a><span class="k">class</span> <span class="nc">Stage</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A stage object for maintaing data structure. This object is only created internally by the :class:`Simulator` class. The attributes of this class are directly called. The class does not provide accessor or setter methods, and should never be called externally.</span>
+<span class="sd">    </span>
+<span class="sd">    .. attribute:: Stage.do</span>
+<span class="sd">        </span>
+<span class="sd">        The stage function to be called during operation.</span>
+<span class="sd">    </span>
+<span class="sd">    .. attribute:: macro</span>
+<span class="sd">        </span>
+<span class="sd">        Boolean flag. Set to ``False`` if this stage has a callable ``do`` attribute.</span>
+<span class="sd">        </span>
+<span class="sd">    .. attribute:: exceptions</span>
+<span class="sd">        </span>
+<span class="sd">        A tuple of exceptions which should not cause this stage to fail.</span>
+<span class="sd">    </span>
+<span class="sd">    .. attribute:: name</span>
+<span class="sd">        </span>
+<span class="sd">        The calling, hashable name of this stage, stored here for return as a string value in messages.</span>
+<span class="sd">        </span>
+<span class="sd">    .. attribute:: description</span>
+<span class="sd">        </span>
+<span class="sd">        A human readable description of what this stage is doing, represeneted in the active voice and shown during operation.</span>
+<span class="sd">        </span>
+<span class="sd">    .. attribute:: deps</span>
+<span class="sd">    </span>
+<span class="sd">        List of all of the stages that this stage depends on.</span>
+<span class="sd">        </span>
+<span class="sd">    .. attribute:: reps</span>
+<span class="sd">        </span>
+<span class="sd">        List of all the stages that this stage could replace</span>
+<span class="sd">        </span>
+<span class="sd">    .. attribute:: optional</span>
+<span class="sd">        </span>
+<span class="sd">        A boolean flag. If it is set to true, the simulator will not raise a warning when this stage is skipped.</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">stage</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;a Stage&quot;</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="s">&quot;A description&quot;</span><span class="p">,</span><span class="n">exceptions</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">dependencies</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">replaces</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">optional</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Stage</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">do</span> <span class="o">=</span> <span class="n">stage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">macro</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">stage</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">do</span> <span class="o">=</span> <span class="n">stage</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">do</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="bp">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">macro</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="k">if</span> <span class="n">exceptions</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">exceptions</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">exceptions</span> <span class="o">=</span> <span class="n">exceptions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">description</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="n">order</span>
-
-<div class="viewcode-block" id="Simulator"><a class="viewcode-back" href="../../Simulator.html#AstroObject.AstroSimulator.Simulator">[docs]</a><span class="k">class</span> <span class="nc">Simulator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A Simulator, used for running large segements of code with detailed logging and progress checking&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">deps</span> <span class="o">=</span> <span class="n">dependencies</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reps</span> <span class="o">=</span> <span class="n">replaces</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optional</span> <span class="o">=</span> <span class="n">optional</span>
+</div>
+<div class="viewcode-block" id="Simulator"><a class="viewcode-back" href="../../AstroSimulator.html#AstroObject.AstroSimulator.Simulator">[docs]</a><span class="k">class</span> <span class="nc">Simulator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A Simulator, used for running large segements of code with detailed logging and progress checking. Simulators have a name, the `name` parameter can be left as is to use the name of the simulator&#39;s class (mostly useful if you subclassed it!). The `commandLine` parameter can be set to False to prevent the simulator collecting arguments from `sys.argv` for use. This allows you to programatically call the simulator with the :meth:`do` method.&quot;&quot;&quot;</span>
     
     <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;Simulator&quot;</span>
     
-    <span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;__class__.__name__&quot;</span><span class="p">,</span><span class="n">commandLine</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Simulator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stages</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">macros</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exclude</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">include</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attempt</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orders</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">complete</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">StructuredConfiguration</span><span class="p">({</span>
         <span class="s">&quot;Dirs&quot;</span> <span class="p">:</span> <span class="p">{</span>
             <span class="s">&quot;Caches&quot;</span> <span class="p">:</span> <span class="s">&quot;Caches&quot;</span><span class="p">,</span>
             <span class="s">&quot;Logs&quot;</span> <span class="p">:</span> <span class="s">&quot;Logs/&quot;</span><span class="p">,</span>
-            <span class="s">&quot;Partials&quot;</span> <span class="p">:</span> <span class="s">&quot;Partials&quot;</span><span class="p">,</span>
-            <span class="s">&quot;Images&quot;</span> <span class="p">:</span> <span class="s">&quot;Images&quot;</span><span class="p">,</span>
+            <span class="s">&quot;Partials&quot;</span><span class="p">:</span> <span class="s">&quot;Partials&quot;</span><span class="p">,</span>
         <span class="p">},</span>
-        <span class="s">&quot;Configs&quot;</span> <span class="p">:</span> <span class="p">{</span>
+        <span class="s">&quot;Configurations&quot;</span> <span class="p">:</span> <span class="p">{</span>
             <span class="s">&quot;Main&quot;</span> <span class="p">:</span> <span class="s">&quot;Simulator.yaml&quot;</span><span class="p">,</span>
+            <span class="s">&quot;This&quot;</span> <span class="p">:</span> <span class="s">&quot;Simulator.yaml&quot;</span><span class="p">,</span>
         <span class="p">},</span>
         <span class="s">&quot;logging&quot;</span> <span class="p">:</span> <span class="p">{</span>
           <span class="s">&quot;console&quot;</span> <span class="p">:</span> <span class="p">{</span>
@@ -122,18 +167,13 @@
                 <span class="s">&#39;filename&#39;</span> <span class="p">:</span> <span class="s">&quot;AstroObjectSim&quot;</span><span class="p">,</span>
                 <span class="s">&#39;level&#39;</span> <span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
           <span class="p">},</span>
+          <span class="s">&#39;growl&#39;</span> <span class="p">:</span> <span class="p">{</span>
+              <span class="s">&#39;enable&#39;</span> <span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+              <span class="s">&#39;level&#39;</span>  <span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+              <span class="s">&#39;name&#39;</span> <span class="p">:</span> <span class="s">&quot;AstroSimulator&quot;</span><span class="p">,</span>
+          <span class="p">}</span>
         <span class="p">},</span>
-    <span class="p">}</span>
-    
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;__class__.__name__&quot;</span><span class="p">,</span><span class="n">commandLine</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Simulator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stages</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">orders</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">macros</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mparse</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">exclude</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="bp">None</span>
+       <span class="p">})</span>
         <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s">&quot;__class__.__name__&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -147,272 +187,425 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">starting</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">paused</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">commandLine</span> <span class="o">=</span> <span class="n">commandLine</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Caches</span> <span class="o">=</span> <span class="n">CacheManager</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">initOptions</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Caches</span> <span class="o">=</span> <span class="n">CacheManager</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initOptions</span><span class="p">()</span>
         
-<div class="viewcode-block" id="Simulator.initOptions"><a class="viewcode-back" href="../../Simulator.html#AstroObject.AstroSimulator.Simulator.initOptions">[docs]</a>    <span class="k">def</span> <span class="nf">initOptions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initializes the command line options for this script.</span>
+<div class="viewcode-block" id="Simulator._initOptions"><a class="viewcode-back" href="../../AstroSimulator.html#AstroObject.AstroSimulator.Simulator._initOptions">[docs]</a>    <span class="k">def</span> <span class="nf">_initOptions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initializes the command line options for this script. This function is automatically called on construction, and provides the following default command options which are already supported by the simulator:</span>
 <span class="sd">        </span>
 <span class="sd">        Command line options are:</span>
 <span class="sd">        </span>
-<span class="sd">        ============ =====================</span>
-<span class="sd">        CLI Option   Description</span>
-<span class="sd">        ============ =====================</span>
-<span class="sd">        --version    Display version information about this module</span>
-<span class="sd">        --do-plot    </span>
+<span class="sd">        ================== =====================</span>
+<span class="sd">        CLI Option         Description</span>
+<span class="sd">        ================== =====================</span>
+<span class="sd">        ``--version``      Display version information about this module</span>
+<span class="sd">        ``--cf file.yaml`` Specify a configuration file</span>
+<span class="sd">        ``--dry-run``      Print the stages this command would have run.</span>
+<span class="sd">        ``--dump``         Write the current configuration to file</span>
+<span class="sd">        ``--stages``       Print the stages that the command will execute, do not do anything</span>
+<span class="sd">        ================== =====================</span>
+<span class="sd">        </span>
+<span class="sd">        Macros defined at this level are:</span>
+<span class="sd">        </span>
+<span class="sd">        ========= ==================================================</span>
+<span class="sd">        Macro     Result</span>
+<span class="sd">        ========= ==================================================</span>
+<span class="sd">        ``*all``   Includes every stage</span>
+<span class="sd">        ``*none``  Doesn&#39;t include any stages (technically redundant)</span>
+<span class="sd">        ========= ==================================================</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">USAGE</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(command)s</span><span class="s"> </span><span class="si">%(basicOpts)s</span><span class="s"> </span><span class="si">%(subcommand)s</span><span class="s">&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">USAGEFMT</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;command&#39;</span> <span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="s">&#39;basicOpts&#39;</span><span class="p">:</span> <span class="s">&quot;[ -E | -D | -T ]&quot;</span><span class="p">,</span> <span class="s">&#39;subcommand&#39;</span> <span class="p">:</span> <span class="s">&quot;{macro}&quot;</span> <span class="p">}</span>
-        <span class="n">ShortHelp</span> <span class="o">=</span> <span class="s">&quot;Command Line Interface for </span><span class="si">%(name)s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">{</span> <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">USAGEFMT</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;command&#39;</span> <span class="p">:</span> <span class="s">&quot;</span><span class="si">%(prog)s</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&#39;basicOpts&#39;</span><span class="p">:</span> <span class="s">&quot;[ options ][ configuration ]&quot;</span><span class="p">,</span> <span class="s">&#39;subcommand&#39;</span> <span class="p">:</span> <span class="s">&quot;{stages}&quot;</span> <span class="p">}</span>
+        
+        
+        <span class="n">ShortHelp</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">        Command Line Interface for </span><span class="si">%(name)s</span><span class="s">.</span>
+<span class="s">        The simulator is set up in stages, which are listed below. </span>
+<span class="s">        By default, the *all stage should run the important parts of the simulator.</span>
+<span class="s">        </span>
+<span class="s">        (*) Include      : To include a stage, use *stage. This will also run the dependents for that stage.</span>
+<span class="s">        (-) Exclude      : To exclude a stage, use -stage. </span>
+<span class="s">        (+) Include-only : To include a stage, but not the dependents of that stage, use +stage.</span>
+<span class="s">        </span>
+<span class="s">        To run the simulater, use </span>
+<span class="s">        $ </span><span class="si">%(command)s</span><span class="s"> *all&quot;&quot;&quot;</span> <span class="o">%</span> <span class="p">{</span> <span class="s">&#39;command&#39;</span><span class="p">:</span> <span class="s">&quot;</span><span class="si">%(prog)s</span><span class="s">&quot;</span><span class="p">,</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="p">}</span>
+        <span class="n">LongHelp</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;The command line interface to </span><span class="si">%(name)s</span><span class="s"> normally takes a stage or stages as arguments. Each stage is specified on the command line prefixed by the *,+, or - characters. The * will run the stage and all dependents. The + will run solely that stage. The - will specifically exclude that stage (and so skip it&#39;s dependents).&quot;&quot;&quot;</span>
+        
         <span class="bp">self</span><span class="o">.</span><span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="n">ShortHelp</span><span class="p">,</span>
             <span class="n">formatter_class</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">RawDescriptionHelpFormatter</span><span class="p">,</span><span class="n">usage</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">USAGE</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">USAGEFMT</span><span class="p">,</span><span class="n">prefix_chars</span><span class="o">=</span><span class="s">&quot;-+*&quot;</span><span class="p">)</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-f&#39;</span><span class="p">,</span><span class="n">metavar</span><span class="o">=</span><span class="s">&#39;filename&#39;</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;filename&#39;</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s">&quot;filename for output image (without .fits)&quot;</span><span class="p">)</span>
+        <span class="c"># Parsers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&quot;Configuration&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pos_stage_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&#39;Single Use Stages&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">neg_stage_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&#39;Remove Stages&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inc_stage_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&#39;Stages&#39;</span><span class="p">)</span>
+        
         <span class="c"># Add the basic controls for the script</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--version&#39;</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;version&#39;</span><span class="p">,</span><span class="n">version</span><span class="o">=</span><span class="n">__version__</span><span class="p">)</span>
         
         <span class="c"># Operational Controls</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--do-plot&#39;</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;plot&#39;</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s">&quot;Enable debugging plots&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--no-cache&#39;</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;store_false&#39;</span><span class="p">,</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;cache&#39;</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s">&quot;ignore cached data from the simulator&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;-d&#39;</span><span class="p">,</span><span class="s">&#39;--debug&#39;</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;debug&#39;</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s">&quot;enable debugging messages and plots&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">registerConfigOpts</span><span class="p">(</span><span class="s">&#39;d&#39;</span><span class="p">,{</span><span class="s">&#39;Debug&#39;</span><span class="p">:</span><span class="bp">True</span><span class="p">},</span><span class="n">help</span><span class="o">=</span><span class="s">&quot;enable debugging messages and plots&quot;</span><span class="p">)</span>
         
         <span class="c"># Config Commands</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--config&#39;</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;store&#39;</span><span class="p">,</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;config&#39;</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s">&quot;use the specified configuration file&quot;</span><span class="p">,</span><span class="n">metavar</span><span class="o">=</span><span class="s">&quot;file.yaml&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--dump-config&#39;</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;dump&#39;</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--print-stages&#39;</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;print_stages&#39;</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s">&quot;Print the stages that the simulator intends to run&quot;</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">macro_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&#39;Macros&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">macro_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;*all&quot;</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;append_const&#39;</span><span class="p">,</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;macros&#39;</span><span class="p">,</span><span class="n">const</span><span class="o">=</span><span class="s">&quot;all&quot;</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s">&quot;All Stages&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">macro_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;*none&quot;</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;append_const&#39;</span><span class="p">,</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;macros&#39;</span><span class="p">,</span><span class="n">const</span><span class="o">=</span><span class="s">&#39;none&#39;</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pos_stage_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&#39;Stages&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">neg_stage_parser</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span><span class="s">&#39;Remove Stages&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--pre-configure&#39;</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;append&#39;</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span><span class="p">,</span><span class="n">metavar</span><span class="o">=</span><span class="s">&quot;{&#39;config&#39;:&#39;value&#39;}&quot;</span><span class="p">,</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;preconfigure&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--configure&#39;</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;append&#39;</span><span class="p">,</span><span class="n">metavar</span><span class="o">=</span><span class="s">&quot;{&#39;config&#39;:&#39;value&#39;}&quot;</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s">&quot;Add configuration items in the form of python dictionaries&quot;</span><span class="p">,</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;postconfig&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--cf&#39;</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;store&#39;</span><span class="p">,</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;config&#39;</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s">&quot;use the specified configuration file&quot;</span><span class="p">,</span><span class="n">metavar</span><span class="o">=</span><span class="s">&quot;file.yaml&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--dry-run&#39;</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;dry_run&#39;</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s">&quot;Print the stages that the simulator wishes to run, without executing.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">registerFunction</span><span class="p">(</span><span class="s">&#39;--dump&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_dump_config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">registerFunction</span><span class="p">(</span><span class="s">&#39;--stages&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_list_stages</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s">&quot;List all of the stages initialized&quot;</span><span class="p">)</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">macros</span><span class="p">[</span><span class="s">&quot;all&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">macros</span><span class="p">[</span><span class="s">&quot;none&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        
+        <span class="c"># Default Macro</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">registerStage</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span><span class="s">&quot;all&quot;</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="s">&quot;Run all stages&quot;</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s">&quot;Run all stages&quot;</span><span class="p">,</span><span class="n">include</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">registerStage</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span><span class="s">&quot;none&quot;</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="s">&quot;Run no stages&quot;</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s">&quot;Run no stages&quot;</span><span class="p">,</span><span class="n">include</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
         
         </div>
-<div class="viewcode-block" id="Simulator.registerStage"><a class="viewcode-back" href="../../Simulator.html#AstroObject.AstroSimulator.Simulator.registerStage">[docs]</a>    <span class="k">def</span> <span class="nf">registerStage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">stage</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">position</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">exceptions</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">include</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Adds a stage object to this simulator&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Simulator._default_macros"><a class="viewcode-back" href="../../AstroSimulator.html#AstroObject.AstroSimulator.Simulator._default_macros">[docs]</a>    <span class="k">def</span> <span class="nf">_default_macros</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets up the ``*all`` macro for this system, specifically, triggers the ``*all`` macro to run last.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orders</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s">&quot;all&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orders</span> <span class="o">+=</span> <span class="p">[</span><span class="s">&quot;all&quot;</span><span class="p">]</span>
+
+        
+        
+        </div>
+<div class="viewcode-block" id="Simulator.registerStage"><a class="viewcode-back" href="../../AstroSimulator.html#AstroObject.AstroSimulator.Simulator.registerStage">[docs]</a>    <span class="k">def</span> <span class="nf">registerStage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">stage</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">exceptions</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">include</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">dependencies</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">replaces</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">optional</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Register a stage for operation with the simulator. The stage will then be available as a command line option, and will be operated with the simulator. Stages should be registered early in the operation of the simulator (preferably in the initialization, after the simulator class itself has initialized) so that the program is aware of the stages for running. </span>
+<span class="sd">        </span>
+<span class="sd">    	Stages are called with either a ``*``, ``+`` or ``-`` character at the beginning. Their resepctive actions are shown below.</span>
+<span class="sd">	</span>
+<span class="sd">    	========= ============ ================================</span>
+<span class="sd">    	Character  Action      Description</span>
+<span class="sd">    	========= ============ ================================</span>
+<span class="sd">    	``*``     Include      To include a stage, use ``*stage``. This will also run the dependents for that stage.</span>
+<span class="sd">    	``-``     Exclude      To exclude a stage, use ``-stage``. This stage (and it&#39;s dependents) will be skipped.</span>
+<span class="sd">    	``+``     Include-only To include a stage, but not the dependents of that stage, use ``+stage``.</span>
+<span class="sd">    	========= ============ ================================</span>
+<span class="sd">        </span>
+<span class="sd">        To use a registered stage, and call all of its dependents, call ::</span>
+<span class="sd">            </span>
+<span class="sd">            $ Simulator *stage</span>
+<span class="sd">            </span>
+<span class="sd">        Registered stages can be explicity run from the command line by including::</span>
+<span class="sd">            </span>
+<span class="sd">            $ Simulator +stage</span>
+<span class="sd">            </span>
+<span class="sd">        And can be explicity excluded from the command line::</span>
+<span class="sd">            </span>
+<span class="sd">            $ Simulator -stage</span>
+<span class="sd">            </span>
+<span class="sd">        Where `+stage` will override `-stage` so::</span>
+<span class="sd">            </span>
+<span class="sd">            $ Simulator +test -test</span>
+<span class="sd">            $ Simulator -test +test</span>
+<span class="sd">            </span>
+<span class="sd">        will both run the `test` stage.</span>
+<span class="sd">        </span>
+<span class="sd">        =================== ==============</span>
+<span class="sd">        keyword             Description</span>
+<span class="sd">        =================== ==============</span>
+<span class="sd">        stage               The function to run for this stage. Should not take any arguments</span>
+<span class="sd">        name                The command-line name of this stage (no spaces, `+`, `-`, or `*`)</span>
+<span class="sd">        description         A short description, which will be used by the logger when displaying information about the stage</span>
+<span class="sd">        exceptions          A tuple of exceptions which are acceptable results for this stage. These exceptions will be caught and logged, but will allow the simulator to continue. These exceptions will still raise errors in Debug mode.</span>
+<span class="sd">        include             A boolean, Whether to include this stage in the `*all` macro or not.</span>
+<span class="sd">        help                Help text for the command line argument. A value of False excludes the help, None includes generic help.</span>
+<span class="sd">        dependencies        An ordered list of the stages which must run before this stage can run. Dependencies will be deep-searched.</span>
+<span class="sd">        replaces            A list of stages which can be replaced by this stage. This stage will now satisfy those dependencies.</span>
+<span class="sd">        optional            A boolean about wheather this stage can be skipped. If so, warnings will not be raised when this stage is explicitly skipped (like ``-stage`` would do)</span>
+<span class="sd">        =================== ==============</span>
+<span class="sd">        </span>
+<span class="sd">        Stages cannot be added dynamically. Once the simulator starts running (i.e. processing stages) the order and settings are fixed. Attempting to adjsut the stages at this point will raise an error.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">starting</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ConfigurationError</span><span class="p">(</span><span class="s">&quot;Cannot add a new stage to the simulator, the simulation has already started!&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">position</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">position</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Stage must have a name&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">position</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">orders</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Cannot dupilcate position ordering&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Cannot have duplicate stage named </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">description</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">description</span> <span class="o">=</span> <span class="n">name</span>
         <span class="k">if</span> <span class="n">exceptions</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">exceptions</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">dependencies</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">dependencies</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dependencies</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Invalid type for dependencies: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">dependencies</span><span class="p">))</span>
+            
+        <span class="k">if</span> <span class="n">replaces</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">replaces</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">replaces</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Invalid type for dependencies: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">replaces</span><span class="p">))</span>
+            
         <span class="k">if</span> <span class="n">help</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
             <span class="n">help</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span>
         <span class="k">elif</span> <span class="n">help</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">help</span> <span class="o">=</span> <span class="s">&quot;stage </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">name</span>
+
+            
         
-        <span class="n">stageObject</span> <span class="o">=</span> <span class="n">Stage</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="n">position</span><span class="p">,</span><span class="n">exceptions</span><span class="o">=</span><span class="n">exceptions</span><span class="p">)</span>
+        <span class="n">stageObject</span> <span class="o">=</span> <span class="n">Stage</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span><span class="n">exceptions</span><span class="o">=</span><span class="n">exceptions</span><span class="p">,</span><span class="n">dependencies</span><span class="o">=</span><span class="n">dependencies</span><span class="p">,</span><span class="n">replaces</span><span class="o">=</span><span class="n">replaces</span><span class="p">,</span><span class="n">optional</span><span class="o">=</span><span class="n">optional</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">stageObject</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">orders</span><span class="p">[</span><span class="n">position</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pos_stage_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;+&quot;</span><span class="o">+</span><span class="n">name</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;append_const&#39;</span><span class="p">,</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;include&#39;</span><span class="p">,</span><span class="n">const</span><span class="o">=</span><span class="n">name</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s">&quot;Include &quot;</span><span class="o">+</span><span class="n">help</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">neg_stage_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;-&quot;</span><span class="o">+</span><span class="n">name</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;append_const&#39;</span><span class="p">,</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;exclude&#39;</span><span class="p">,</span><span class="n">const</span><span class="o">=</span><span class="n">name</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="s">&quot;Exclude &quot;</span><span class="o">+</span><span class="n">help</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orders</span> <span class="o">+=</span> <span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pos_stage_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;+&quot;</span><span class="o">+</span><span class="n">name</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;append_const&#39;</span><span class="p">,</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;include&#39;</span><span class="p">,</span><span class="n">const</span><span class="o">=</span><span class="n">name</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">neg_stage_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;-&quot;</span><span class="o">+</span><span class="n">name</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;append_const&#39;</span><span class="p">,</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;exclude&#39;</span><span class="p">,</span><span class="n">const</span><span class="o">=</span><span class="n">name</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inc_stage_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;*&quot;</span><span class="o">+</span><span class="n">name</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;append_const&#39;</span><span class="p">,</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;macro&#39;</span><span class="p">,</span><span class="n">const</span><span class="o">=</span><span class="n">name</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="n">help</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">include</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">macros</span><span class="p">[</span><span class="s">&quot;all&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="s">&quot;all&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">deps</span> <span class="o">+=</span> <span class="p">[</span><span class="n">name</span><span class="p">]</span>
         </div>
-<div class="viewcode-block" id="Simulator.registerMacro"><a class="viewcode-back" href="../../Simulator.html#AstroObject.AstroSimulator.Simulator.registerMacro">[docs]</a>    <span class="k">def</span> <span class="nf">registerMacro</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="o">*</span><span class="n">stages</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Adds a new macro to the simulation&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Simulator.registerFunction"><a class="viewcode-back" href="../../AstroSimulator.html#AstroObject.AstroSimulator.Simulator.registerFunction">[docs]</a>    <span class="k">def</span> <span class="nf">registerFunction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">argument</span><span class="p">,</span><span class="n">function</span><span class="p">,</span><span class="n">post</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Register a function to run using a flag&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">starting</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ConfigureError</span><span class="p">(</span><span class="s">&quot;Cannot add macro after simulator has started!&quot;</span><span class="p">)</span>
-            
+        
         <span class="k">if</span> <span class="s">&quot;help&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
             <span class="n">help</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">help</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&quot;help&quot;</span><span class="p">]</span>
             <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&quot;help&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mparse</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">macro_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;*&quot;</span><span class="o">+</span><span class="n">name</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;append_const&#39;</span><span class="p">,</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;macros&#39;</span><span class="p">,</span><span class="n">const</span><span class="o">=</span><span class="n">name</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="n">help</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">macros</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">stages</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">post</span><span class="p">:</span>
+            <span class="n">dest</span><span class="o">=</span><span class="s">&#39;postfunc&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dest</span><span class="o">=</span><span class="s">&#39;prefunc&#39;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">argument</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;append_const&#39;</span><span class="p">,</span><span class="n">dest</span><span class="o">=</span><span class="s">&#39;postfunc&#39;</span><span class="p">,</span><span class="n">const</span><span class="o">=</span><span class="n">function</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="n">help</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        
         </div>
-<div class="viewcode-block" id="Simulator.configure"><a class="viewcode-back" href="../../Simulator.html#AstroObject.AstroSimulator.Simulator.configure">[docs]</a>    <span class="k">def</span> <span class="nf">configure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">configFile</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">configuration</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Configure this logging object&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Simulator.registerConfigOpts"><a class="viewcode-back" href="../../AstroSimulator.html#AstroObject.AstroSimulator.Simulator.registerConfigOpts">[docs]</a>    <span class="k">def</span> <span class="nf">registerConfigOpts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">argument</span><span class="p">,</span><span class="n">configuration</span><span class="p">,</span><span class="n">preconfig</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Registers a bulk configuration option which will be provided with the USAGE statement. This configuration option can easily override normal configuration settings. Configuration provided here will override programmatically specified configuration options. It will not override configuration provided by the configuration file. These configuration options are meant to provide alterantive *defaults*, not alternative configurations.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">starting</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ConfigureError</span><span class="p">(</span><span class="s">&quot;Cannot add macro after simulator has started!&quot;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="s">&quot;help&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">help</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">help</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&quot;help&quot;</span><span class="p">]</span>
+            <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&quot;help&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">preconfig</span><span class="p">:</span>
+            <span class="n">dest</span> <span class="o">=</span> <span class="s">&#39;preconfig&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dest</span> <span class="o">=</span> <span class="s">&#39;postconifg&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;-&quot;</span><span class="o">+</span><span class="n">argument</span><span class="p">,</span><span class="n">action</span><span class="o">=</span><span class="s">&#39;append_const&#39;</span><span class="p">,</span><span class="n">dest</span><span class="o">=</span><span class="n">dest</span><span class="p">,</span><span class="n">const</span><span class="o">=</span><span class="n">configuration</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="n">help</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        
+        </div>
+<div class="viewcode-block" id="Simulator._configure"><a class="viewcode-back" href="../../AstroSimulator.html#AstroObject.AstroSimulator.Simulator._configure">[docs]</a>    <span class="k">def</span> <span class="nf">_configure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">configFile</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">configuration</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Configure this object. Configuration happens first from passed dictionaries (`configuration` variable) and then from files. The result is that configuration will use the values from files in place of values from passed in dictionaries. Running this function twice requires re-setting the `self.configured`.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">ConfigurationError</span><span class="p">(</span><span class="s">&quot;Cannot configure the simulator, the simulation has already started!&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">configured</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ConfigurationError</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s"> appears to be already configured&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
         <span class="c"># Configure from Variable</span>
         <span class="k">if</span> <span class="n">configuration</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span><span class="n">configuration</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">configuration</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Updated Configuration from variable&quot;</span><span class="p">)</span>            
             <span class="bp">self</span><span class="o">.</span><span class="n">configured</span> <span class="o">|=</span> <span class="bp">True</span>
         <span class="c"># Configure from File</span>
         <span class="k">if</span> <span class="n">configFile</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">configFile</span><span class="p">,</span><span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
-                    <span class="n">loaded</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span><span class="n">loaded</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Couldn&#39;t load Configuration File </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">configFile</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">configured</span> <span class="o">|=</span> <span class="bp">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">configured</span> <span class="o">|=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">configFile</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">configured</span> <span class="o">|=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
         
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">configured</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="s">&quot;No configuration provided or accessed. Using defaults.&quot;</span><span class="p">)</span>
+        
+        <span class="c"># Start Logging</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">configuration</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Dirs&quot;</span><span class="p">][</span><span class="s">&quot;Partials&quot;</span><span class="p">]</span><span class="o">+</span><span class="s">&quot;/config-</span><span class="si">%s</span><span class="s">.yaml&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">),</span><span class="s">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
-            <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;# Configuration from </span><span class="si">%s</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span><span class="n">stream</span><span class="p">,</span><span class="n">default_flow_style</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span> 
         
-        
-    </div>
-<div class="viewcode-block" id="Simulator.parseArguments"><a class="viewcode-back" href="../../Simulator.html#AstroObject.AstroSimulator.Simulator.parseArguments">[docs]</a>    <span class="k">def</span> <span class="nf">parseArguments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Parse arguments, and pre-apply appropriate values to configuration&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">args</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">commandLine</span><span class="p">:</span>
-            <span class="n">Namespace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">commandLine</span><span class="p">:</span>
+        <span class="c"># Write Configuration to Partials Directory</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Dirs&quot;</span><span class="p">][</span><span class="s">&quot;Partials&quot;</span><span class="p">]):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">/config-</span><span class="si">%s</span><span class="s">.yaml&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Dirs&quot;</span><span class="p">][</span><span class="s">&quot;Partials&quot;</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">),</span><span class="s">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+                <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;# Configuration from </span><span class="si">%s</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span><span class="n">stream</span><span class="p">,</span><span class="n">default_flow_style</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span> 
+        </div>
+<div class="viewcode-block" id="Simulator._parseArguments"><a class="viewcode-back" href="../../AstroSimulator.html#AstroObject.AstroSimulator.Simulator._parseArguments">[docs]</a>    <span class="k">def</span> <span class="nf">_parseArguments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parse arguments. Argumetns can be passed into this function like they would be passed to the command line. These arguments will only be parsed when the system is not in `commandLine` mode.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">commandLine</span><span class="p">:</span>
             <span class="n">Namespace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">Namespace</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Parsed command line arguments&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">Namespace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">Namespace</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Parsed default line arguments&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Skipping argument parsing&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">Namespace</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="Simulator.pre_applyArguments"><a class="viewcode-back" href="../../Simulator.html#AstroObject.AstroSimulator.Simulator.pre_applyArguments">[docs]</a>    <span class="k">def</span> <span class="nf">pre_applyArguments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Apply arguments before configure&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Simulator._preConfiguration"><a class="viewcode-back" href="../../AstroSimulator.html#AstroObject.AstroSimulator.Simulator._preConfiguration">[docs]</a>    <span class="k">def</span> <span class="nf">_preConfiguration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Applies arguments before configuration. Only argument applied is the name of the configuration file, allowing the command line to change the configuration file name.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="s">&quot;config&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;config&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Configs&quot;</span><span class="p">][</span><span class="s">&quot;This&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;config&quot;</span><span class="p">]</span>
-
+            <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Configurations&quot;</span><span class="p">][</span><span class="s">&quot;This&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;config&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s">&quot;preconfig&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;preconfig&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">preconfig</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;preconfig&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">preconfig</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+                    <span class="n">preconfig</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="nb">unicode</span><span class="p">(</span><span class="n">preconfig</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">preconfig</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s">&quot;prefunc&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;prefunc&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;prefunc&quot;</span><span class="p">]:</span>
+                <span class="n">f</span><span class="p">()</span>
         
-    
-    </div>
-<div class="viewcode-block" id="Simulator.post_applyArguments"><a class="viewcode-back" href="../../Simulator.html#AstroObject.AstroSimulator.Simulator.post_applyArguments">[docs]</a>    <span class="k">def</span> <span class="nf">post_applyArguments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Apply post-arguments&quot;&quot;&quot;</span>
+            </div>
+<div class="viewcode-block" id="Simulator._postConfiguration"><a class="viewcode-back" href="../../AstroSimulator.html#AstroObject.AstroSimulator.Simulator._postConfiguration">[docs]</a>    <span class="k">def</span> <span class="nf">_postConfiguration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Apply arguments after configuration. The arguments applied here flesh out macros, and copy data from the configuration system into the operations system.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="s">&quot;exclude&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;exclude&quot;</span><span class="p">],</span><span class="nb">list</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;exclude&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="s">&quot;include&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;include&quot;</span><span class="p">],</span><span class="nb">list</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;include&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">macro</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">if</span> <span class="s">&quot;macros&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;macros&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;macros&quot;</span><span class="p">]:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">macro</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">macros</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">macro</span> <span class="o">==</span> <span class="p">[]</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;include&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="p">[]:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;No stages specified for operation&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Macro Stages </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="p">))</span>
-    </div>
-<div class="viewcode-block" id="Simulator.expandMacros"><a class="viewcode-back" href="../../Simulator.html#AstroObject.AstroSimulator.Simulator.expandMacros">[docs]</a>    <span class="k">def</span> <span class="nf">expandMacros</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Expand the macros to expand internal macros&quot;&quot;&quot;</span>
-        <span class="n">expanded</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">macro</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">macros</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">expanded</span><span class="p">[</span><span class="n">macro</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expandMacros</span><span class="p">(</span><span class="n">macro</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">macros</span> <span class="o">=</span> <span class="n">expanded</span>
-</div>
-    <span class="k">def</span> <span class="nf">_expandMacros</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">macro</span><span class="p">,</span><span class="o">*</span><span class="n">expanded</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Expand Macros on a certain macro&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">macro</span> <span class="ow">in</span> <span class="n">expanded</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">ConfigurationError</span><span class="p">(</span><span class="s">&quot;I seem to be in a recursive macro&quot;</span><span class="p">)</span>
-        <span class="n">newMacro</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">stage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">macros</span><span class="p">[</span><span class="n">macro</span><span class="p">]:</span>
-            <span class="k">if</span> <span class="n">stage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">macros</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">newMacro</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expandMacros</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span><span class="n">macro</span><span class="p">,</span><span class="o">*</span><span class="n">expanded</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">newMacro</span> <span class="o">+=</span> <span class="p">[</span><span class="n">stage</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">newMacro</span>
+        <span class="k">if</span> <span class="s">&quot;macro&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;macro&quot;</span><span class="p">],</span><span class="nb">list</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;macro&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="s">&quot;postconfig&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;postconfig&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">preconfig</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;postconfig&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">preconfig</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+                    <span class="n">preconfig</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="nb">unicode</span><span class="p">(</span><span class="n">preconfig</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">preconfig</span><span class="p">)</span>
         
-    
-<div class="viewcode-block" id="Simulator.startup"><a class="viewcode-back" href="../../Simulator.html#AstroObject.AstroSimulator.Simulator.startup">[docs]</a>    <span class="k">def</span> <span class="nf">startup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Basic actions for simulator startup&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s">&quot;postfunc&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;postfunc&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;postfunc&quot;</span><span class="p">]:</span>
+                <span class="n">f</span><span class="p">()</span>
+        
+        </div>
+    <span class="k">def</span> <span class="nf">_list_stages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;List stages and exit&quot;&quot;&quot;</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s">&quot;Stages:</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="k">for</span> <span class="n">stage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">orders</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span>
+            <span class="n">text</span> <span class="o">+=</span> <span class="s">&quot;</span><span class="si">%(command)-20s</span><span class="s"> : </span><span class="si">%(desc)s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">{</span><span class="s">&#39;command&#39;</span><span class="p">:</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="s">&#39;desc&#39;</span><span class="p">:</span><span class="n">s</span><span class="o">.</span><span class="n">description</span><span class="p">}</span>
+            <span class="n">text</span> <span class="o">+=</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">_dump_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Dump the configuration to a file&quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Configurations&quot;</span><span class="p">][</span><span class="s">&quot;This&quot;</span><span class="p">]</span><span class="o">+</span><span class="s">&quot;-dump.yaml&quot;</span><span class="p">,</span><span class="s">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+            <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;# Configuration from </span><span class="si">%s</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">extract</span><span class="p">(),</span><span class="n">stream</span><span class="p">,</span><span class="n">default_flow_style</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span> 
+        
+                
+<div class="viewcode-block" id="Simulator.startup"><a class="viewcode-back" href="../../AstroSimulator.html#AstroObject.AstroSimulator.Simulator.startup">[docs]</a>    <span class="k">def</span> <span class="nf">startup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Start up the simulation. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_macros</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">starting</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">expandMacros</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parseArguments</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pre_applyArguments</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">configFile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Configs&quot;</span><span class="p">][</span><span class="s">&quot;This&quot;</span><span class="p">])</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">caching</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">Caches</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parseArguments</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_preConfiguration</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_configure</span><span class="p">(</span><span class="n">configFile</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Configurations&quot;</span><span class="p">][</span><span class="s">&quot;This&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_postConfiguration</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">starting</span> <span class="o">=</span> <span class="bp">False</span>
-        </div>
-<div class="viewcode-block" id="Simulator.next"><a class="viewcode-back" href="../../Simulator.html#AstroObject.AstroSimulator.Simulator.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the name of the next stage&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">starting</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">ConfigurationError</span><span class="p">(</span><span class="s">&quot;Simulator hasn&#39;t finished starting&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orders</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">orders</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">]</span>
-        <span class="nb">next</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span>
-        <span class="k">while</span> <span class="nb">next</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orders</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
-            <span class="nb">next</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="k">if</span> <span class="nb">next</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">orders</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="nb">next</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">orders</span><span class="p">[</span><span class="nb">next</span><span class="p">]</span>
-        <span class="k">return</span> <span class="bp">False</span>
         
         
         </div>
-<div class="viewcode-block" id="Simulator.run"><a class="viewcode-back" href="../../Simulator.html#AstroObject.AstroSimulator.Simulator.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Run the actual simulator&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Simulator.run"><a class="viewcode-back" href="../../AstroSimulator.html#AstroObject.AstroSimulator.Simulator.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run the actual simulator. This command handles simulators which can be run from the command line. Calling :meth:`run` will run all of the stages specified on the command line. If you do not want this effect, use :meth:`startup` to prepare the simulator, and :meth:`do` to run the actual simulator. Calling :meth:`exit` at the end will allow the simulator to close out and perform any output tasks, but will also end the current python session.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">startup</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">do</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
     </div>
-<div class="viewcode-block" id="Simulator.do"><a class="viewcode-back" href="../../Simulator.html#AstroObject.AstroSimulator.Simulator.do">[docs]</a>    <span class="k">def</span> <span class="nf">do</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Pass a series of modules etc. to this command, to run the system.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Simulator.do"><a class="viewcode-back" href="../../AstroSimulator.html#AstroObject.AstroSimulator.Simulator.do">[docs]</a>    <span class="k">def</span> <span class="nf">do</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">stages</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run the simulator. Macro runs stages passed in.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">ConfigurationError</span><span class="p">(</span><span class="s">&quot;Simulator is already running!&quot;</span><span class="p">)</span>
-        
-        <span class="bp">self</span><span class="o">.</span><span class="n">parseArguments</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">post_applyArguments</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">inorder</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="n">completed</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;macro&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">list</span><span class="p">(</span><span class="n">stages</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;macro&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;No stages triggered to run!&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">attempt</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inorder</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">complete</span> <span class="o">=</span> <span class="p">[]</span>
         
         <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">paused</span><span class="p">:</span>
-            <span class="n">stage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">stage</span><span class="p">:</span>
-                <span class="n">use</span> <span class="o">=</span> <span class="bp">False</span>
-                <span class="k">if</span> <span class="n">stage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">macro</span><span class="p">:</span>
-                    <span class="n">use</span> <span class="o">=</span> <span class="bp">True</span>
-                <span class="k">if</span> <span class="n">stage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;exclude&quot;</span><span class="p">]:</span>
-                    <span class="n">use</span> <span class="o">=</span> <span class="bp">False</span>
-                <span class="k">if</span> <span class="n">stage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;include&quot;</span><span class="p">]:</span>
-                    <span class="n">use</span> <span class="o">=</span> <span class="bp">True</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&#39;print_stages&#39;</span><span class="p">]:</span>
-                    <span class="k">if</span> <span class="n">use</span><span class="p">:</span>
-                        <span class="n">completed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>    
-                <span class="k">elif</span> <span class="ow">not</span> <span class="n">use</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Skipping stage </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">stage</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">inorder</span> <span class="o">=</span> <span class="bp">False</span>
-                <span class="k">elif</span> <span class="n">use</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">inorder</span><span class="p">:</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Stages have run out of order... mileage may vary.&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">stage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">orders</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">stage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;macro&quot;</span><span class="p">]:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
-                    <span class="n">completed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="bp">False</span>
+                <span class="k">elif</span> <span class="n">stage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;include&quot;</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span><span class="n">deps</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">running</span> <span class="o">=</span> <span class="bp">False</span>
         
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&#39;print_stages&#39;</span><span class="p">]:</span>
-            <span class="k">print</span> <span class="n">completed</span>
-        <span class="k">return</span> <span class="n">completed</span>
-    </div>
-<div class="viewcode-block" id="Simulator.execute"><a class="viewcode-back" href="../../Simulator.html#AstroObject.AstroSimulator.Simulator.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">stage</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&#39;dry_run&#39;</span><span class="p">]:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="s">&quot;Stages completed:</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="k">for</span> <span class="n">stage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">complete</span><span class="p">:</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span>
+                <span class="n">text</span> <span class="o">+=</span> <span class="s">&quot;</span><span class="si">%(command)-20s</span><span class="s"> : </span><span class="si">%(desc)s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">{</span><span class="s">&#39;command&#39;</span><span class="p">:</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="s">&#39;desc&#39;</span><span class="p">:</span><span class="n">s</span><span class="o">.</span><span class="n">description</span><span class="p">}</span>
+                <span class="n">text</span> <span class="o">+=</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+            </div>
+<div class="viewcode-block" id="Simulator.execute"><a class="viewcode-back" href="../../AstroSimulator.html#AstroObject.AstroSimulator.Simulator.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">stage</span><span class="p">,</span><span class="n">deps</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Actually exectue a particular stage&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">paused</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+            
+        <span class="k">if</span> <span class="n">stage</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s">&quot;Stage </span><span class="si">%s</span><span class="s"> does not exist.&quot;</span> <span class="o">%</span> <span class="n">stage</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">use</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">if</span> <span class="n">stage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;exclude&quot;</span><span class="p">]:</span>
+            <span class="n">use</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="n">stage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;include&quot;</span><span class="p">]:</span>
+            <span class="n">use</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">if</span> <span class="n">stage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attempt</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">use</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">use</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">use</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">attempt</span> <span class="o">+=</span> <span class="p">[</span><span class="n">stage</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">reps</span>
+         
+        <span class="k">if</span> <span class="n">deps</span><span class="p">:</span>
+            
+            <span class="k">for</span> <span class="n">dependent</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">deps</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">dependent</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attempt</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">dependent</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">dependent</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">complete</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">dependent</span><span class="p">]</span><span class="o">.</span><span class="n">optional</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Stage </span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s"> requested by </span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s"> but skipped&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dependent</span><span class="p">,</span><span class="n">stage</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Stage </span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s"> required by </span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s"> but failed to complete.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dependent</span><span class="p">,</span><span class="n">stage</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Explicity skipping dependents&quot;</span><span class="p">)</span>
+        
         <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Starting </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">macro</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">complete</span> <span class="o">+=</span> <span class="p">[</span><span class="n">stage</span><span class="p">]</span> <span class="o">+</span> <span class="n">s</span><span class="o">.</span><span class="n">reps</span>
+            <span class="k">return</span> <span class="n">use</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">[</span><span class="s">&quot;dry_run&quot;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">complete</span> <span class="o">+=</span> <span class="p">[</span><span class="n">stage</span><span class="p">]</span> <span class="o">+</span> <span class="n">s</span><span class="o">.</span><span class="n">reps</span>
+            <span class="k">return</span> <span class="n">use</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Starting </span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">s</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+        
         <span class="k">try</span><span class="p">:</span>
             <span class="n">s</span><span class="o">.</span><span class="n">do</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">useConsole</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s">&quot;Keyboard Interrupt... ending simulator.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s">&quot;Last completed stage: </span><span class="si">%(stage)s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">{</span><span class="s">&#39;stage&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">complete</span><span class="o">.</span><span class="n">pop</span><span class="p">()})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Stages completed: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">complete</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">s</span><span class="o">.</span><span class="n">exceptions</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;Error </span><span class="si">%(name)s</span><span class="s"> in stage </span><span class="si">%(desc)s</span><span class="s">. Stage indicated that this error was not critical&quot;</span> <span class="o">%</span> <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">e</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="s">&#39;desc&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">description</span><span class="p">})</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;Error: </span><span class="si">%(msg)s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">{</span><span class="s">&#39;msg&#39;</span><span class="p">:</span><span class="n">e</span><span class="p">})</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Debug&quot;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">useConsole</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">u&quot;Error </span><span class="si">%(name)s</span><span class="s"> in stage </span><span class="si">%(stage)s</span><span class="s">:</span><span class="si">%(desc)s</span><span class="s">. Stage indicated that this error was not critical&quot;</span> <span class="o">%</span> <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">e</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="s">&#39;desc&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">description</span><span class="p">,</span><span class="s">&#39;stage&#39;</span><span class="p">:</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">u&quot;Error: </span><span class="si">%(msg)s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">{</span><span class="s">&#39;msg&#39;</span><span class="p">:</span><span class="n">e</span><span class="p">})</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Debug&quot;</span><span class="p">]:</span>
+                <span class="k">raise</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s">&quot;Error </span><span class="si">%(name)s</span><span class="s"> in stage </span><span class="si">%(desc)s</span><span class="s">!&quot;</span> <span class="o">%</span> <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">e</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="s">&#39;desc&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">description</span><span class="p">})</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s">&quot;Error: </span><span class="si">%(msg)s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">{</span><span class="s">&#39;msg&#39;</span><span class="p">:</span><span class="n">e</span><span class="p">})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">useConsole</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s">u&quot;Error </span><span class="si">%(name)s</span><span class="s"> in stage </span><span class="si">%(stage)s</span><span class="s">:</span><span class="si">%(desc)s</span><span class="s">!&quot;</span> <span class="o">%</span> <span class="p">{</span><span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">e</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="s">&#39;desc&#39;</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">description</span><span class="p">,</span><span class="s">&#39;stage&#39;</span><span class="p">:</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s">u&quot;Error: </span><span class="si">%(msg)s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">{</span><span class="s">&#39;msg&#39;</span><span class="p">:</span><span class="n">e</span><span class="p">})</span>
             <span class="k">raise</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Successfully completed stage </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">u&quot;Completed </span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">complete</span> <span class="o">+=</span> <span class="p">[</span><span class="n">stage</span><span class="p">]</span> <span class="o">+</span> <span class="n">s</span><span class="o">.</span><span class="n">reps</span>
         <span class="k">finally</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Finished </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">u&quot;Finished </span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">use</span>
         </div>
-<div class="viewcode-block" id="Simulator.exit"><a class="viewcode-back" href="../../Simulator.html#AstroObject.AstroSimulator.Simulator.exit">[docs]</a>    <span class="k">def</span> <span class="nf">exit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Simulator.exit"><a class="viewcode-back" href="../../AstroSimulator.html#AstroObject.AstroSimulator.Simulator.exit">[docs]</a>    <span class="k">def</span> <span class="nf">exit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">code</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">msg</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Cleanup function for when we are all done&quot;&quot;&quot;</span>
-        <span class="k">pass</span>
+        <span class="k">if</span> <span class="n">msg</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Simulator </span><span class="si">%s</span><span class="s"> Finished&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
         </div></div>
 </pre></div>
 
@@ -447,7 +640,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.3.0 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.3.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

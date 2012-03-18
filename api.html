@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3. AstroObject API &mdash; AstroObject 0.3.0 documentation</title>
+    <title>3. AstroObject API &mdash; AstroObject 0.3.1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.0',
+        VERSION:     '0.3.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,8 +25,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.0 documentation" href="index.html" />
-    <link rel="next" title="4. API for Objects: FITSObject" href="AstroObject.html" />
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AstroObject 0.3.1 documentation" href="index.html" />
+    <link rel="next" title="4. Custom Object Basics: FITSObject" href="AstroObject.html" />
     <link rel="prev" title="2. Development of AstroObject" href="development.html" /> 
   </head>
   <body>
@@ -40,12 +41,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="AstroObject.html" title="4. API for Objects: FITSObject"
+          <a href="AstroObject.html" title="4. Custom Object Basics: FITSObject"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="development.html" title="2. Development of AstroObject"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -69,66 +70,36 @@
 </div>
 <p>This object will then have all of the functions provided by <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.FITSObject</span></tt>, but will only accept and handle data of type <tt class="xref py py-class docutils literal"><span class="pre">FooFrame</span></tt>. <tt class="xref py py-class docutils literal"><span class="pre">FooFrame</span></tt> should then implement all of the functions described in the API below.</p>
 <p>To use this API, it is recommended that you sub-class <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.FITSFrame</span></tt>. This template class will implement all of the required functions, and will raise abstract errors on functions that must be overwritten by your subclass.</p>
-<hr class="docutils" />
+<div class="section" id="base-frame-baseframe">
+<h2>3.1. Base Frame <tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt><a class="headerlink" href="#base-frame-baseframe" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="AstroFrameAPI">
-<em class="property">class </em><tt class="descname">AstroFrameAPI</tt><a class="headerlink" href="#AstroFrameAPI" title="Permalink to this definition">¶</a></dt>
-<dd><p>This is the API for frame objects, that is, objects which represnet a single state of data. See <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.FITSFrame</span></tt>. This API is generally not called by the end user, but rather is called by the parent <em>Object</em> function. For an example of a parent object, see <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.FITSObject</span></tt></p>
+<dt id="AstroObject.AstroObjectBase.BaseFrame">
+<em class="property">class </em><tt class="descclassname">AstroObject.AstroObjectBase.</tt><tt class="descname">BaseFrame</tt><big>(</big><em>data=None</em>, <em>label=None</em>, <em>header=None</em>, <em>metadata=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the API for frame objects, that is, objects which represnet a single state of data. See <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.FITSFrame</span></tt>. This API is generally not called by the end user, but rather is called by the parent <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.FITSObject" title="AstroObject.AstroObjectBase.FITSObject"><tt class="xref py py-class docutils literal"><span class="pre">AstroObject.AstroObjectBase.FITSObject</span></tt></a>&#8216;s function. For an example of a parent object, see <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.FITSObject</span></tt>.</p>
 <dl class="method">
-<dt id="AstroFrameAPI.__call__">
-<tt class="descname">__call__</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroFrameAPI.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method will return data for the object. It should normally return a <tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt>.</p>
+<dt id="AstroObject.AstroObjectBase.BaseFrame.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Should return the data within this frame, usually as a <em>numpy</em> array.</p>
+<p><tt class="xref py py-class docutils literal"><span class="pre">AstroImage.ImageFrame</span></tt> implements this method as:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroFrameAPI.__hdu__">
-<tt class="descname">__hdu__</tt><big>(</big><em>primary=False</em><big>)</big><a class="headerlink" href="#AstroFrameAPI.__hdu__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.AstroObjectBase.BaseFrame.__hdu__">
+<tt class="descname">__hdu__</tt><big>(</big><em>primary=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.__hdu__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__hdu__" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method returns an HDU which represents the object. The HDU should respect the object&#8217;s <tt class="xref py py-attr docutils literal"><span class="pre">header</span></tt> attribute, and use that dictionary to populate the headers of the HDU. If the <tt class="docutils literal"><span class="pre">primary</span></tt> keyword is set, the function should return a <tt class="xref py py-class docutils literal"><span class="pre">pyFITS.PrimaryHDU</span></tt> object. If the frame cannot reasonable generate a <tt class="xref py py-class docutils literal"><span class="pre">pyFITS.PrimaryHDU</span></tt>, then it should raise an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> in that case.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="AstroFrameAPI.__show__">
-<tt class="descname">__show__</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroFrameAPI.__show__" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method should create a simple view of the provided frame. Often this is done using <tt class="xref py py-mod docutils literal"><span class="pre">Matplotlib.pyplot</span></tt> to create a simple plot. The plot should have the minimum amount of work done to make a passable plot view, but still be basic enough that the end user can customize the plot object after calling <a class="reference internal" href="#AstroFrameAPI.__show__" title="AstroFrameAPI.__show__"><tt class="xref py py-meth docutils literal"><span class="pre">__show__()</span></tt></a>.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="AstroFrameAPI.__str__">
-<tt class="descname">__str__</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroFrameAPI.__str__" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method returns a string representation of the provided object. The base API (which you should use as the superclass of any new Frame classes that you develop) provides a basic <tt class="xref py py-meth docutils literal"><span class="pre">AstroObjectBase.FITSFrame.__str__()</span></tt> method, which just inserts the label to identify a particular frame. In other cases, you may wish to overwrite this method to also include other data, such as the target name.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="AstroFrameAPI.__valid__">
-<tt class="descname">__valid__</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroFrameAPI.__valid__" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method is an internal method for checking data validity. It is automatically called once at the end of the superclass initialization if you use <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.FITSFrame</span></tt> as your parent class. If you do use this method as your parent class, you should be sure to perform your own object&#8217;s initialization before you call your super class initializer. Failing to do this will cause <a class="reference internal" href="#AstroFrameAPI.__valid__" title="AstroFrameAPI.__valid__"><tt class="xref py py-meth docutils literal"><span class="pre">__valid__()</span></tt></a> to run before any data has been established in the object.</p>
-</dd></dl>
-
 <dl class="classmethod">
-<dt id="AstroFrameAPI.__save__">
-<em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>data</em>, <em>label</em><big>)</big><a class="headerlink" href="#AstroFrameAPI.__save__" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method should retun an instance of the parent class if the given data can be turned into an object of that class. If the data cannot be correctly cast, this method should throw an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt>.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p>Because the <a class="reference internal" href="#AstroFrameAPI.__valid__" title="AstroFrameAPI.__valid__"><tt class="xref py py-meth docutils literal"><span class="pre">__valid__()</span></tt></a> is called when an object is initialized, it is possible to check some aspects of the provided data in this initialization function. However, this would raise an <tt class="xref py py-exc docutils literal"><span class="pre">AssertionError</span></tt> not an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt>. To avoid this problem, it is suggested that you wrap your initialization in a try...except block like:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">try</span><span class="p">:</span>
-    <span class="n">Object</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">HDU</span><span class="o">.</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
-<span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">AE</span><span class="p">:</span>
-    <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> data did not validate: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="n">AE</span><span class="p">)</span>
-    <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</pre></div>
-</div>
-<p class="last">This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like <tt class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></tt>) which are diffult to track and diagnose without the code in <a class="reference internal" href="#AstroFrameAPI.__save__" title="AstroFrameAPI.__save__"><tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt></a>. See <tt class="xref py py-meth docutils literal"><span class="pre">AstroImage.__save__()</span></tt> for an example <tt class="docutils literal"><span class="pre">__save__</span></tt> function which uses this trick, but also includes some basic data validation.</p>
-</div>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="AstroFrameAPI.__read__">
-<em class="property">classmethod </em><tt class="descname">__read__</tt><big>(</big><em>HDU</em>, <em>label</em><big>)</big><a class="headerlink" href="#AstroFrameAPI.__read__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.AstroObjectBase.BaseFrame.__read__">
+<em class="property">classmethod </em><tt class="descname">__read__</tt><big>(</big><em>HDU</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.__read__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__read__" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method should return an instance of the parent class if the given <tt class="docutils literal"><span class="pre">HDU</span></tt> can be turned into an object of that class. If this is not possible (i.e. a Table HDU is provided to an Image Frame), this method should raise an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> with a message that describes the resaon the data could not be cast into this type of frame.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p>Because the <a class="reference internal" href="#AstroFrameAPI.__valid__" title="AstroFrameAPI.__valid__"><tt class="xref py py-meth docutils literal"><span class="pre">__valid__()</span></tt></a> is called when an object is initialized, it is possible to check some aspects of the provided data in this initialization function. However, this would raise an <tt class="xref py py-exc docutils literal"><span class="pre">AssertionError</span></tt> not an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt>. To avoid this problem, it is suggested that you wrap your initialization in a try...except block like:</p>
+<p>Because the <tt class="xref py py-meth docutils literal"><span class="pre">__valid__()</span></tt> is called when an object is initialized, it is possible to check some aspects of the provided data in this initialization function. However, this would raise an <tt class="xref py py-exc docutils literal"><span class="pre">AssertionError</span></tt> not an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt>. To avoid this problem, it is suggested that you wrap your initialization in a try...except block like:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">try</span><span class="p">:</span>
     <span class="n">Object</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">HDU</span><span class="o">.</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">AE</span><span class="p">:</span>
@@ -136,16 +107,59 @@
     <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </pre></div>
 </div>
-<p class="last">This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like <tt class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></tt>) which are diffult to track and diagnose without the code in <a class="reference internal" href="#AstroFrameAPI.__read__" title="AstroFrameAPI.__read__"><tt class="xref py py-meth docutils literal"><span class="pre">__read__()</span></tt></a>. See <tt class="xref py py-meth docutils literal"><span class="pre">AstroImage.__read__()</span></tt> for an example <tt class="docutils literal"><span class="pre">__read__</span></tt> function which uses this trick, but also includes some basic data validation.</p>
+<p class="last">This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like <tt class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></tt>) which are diffult to track and diagnose without the code in <tt class="xref py py-meth docutils literal"><span class="pre">__read__()</span></tt>. See <tt class="xref py py-meth docutils literal"><span class="pre">AstroImage.__read__()</span></tt> for an example <tt class="docutils literal"><span class="pre">__read__</span></tt> function which uses this trick, but also includes some basic data validation.</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">It is acceptable to call the class <a class="reference internal" href="#AstroFrameAPI.__save__" title="AstroFrameAPI.__save__"><tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt></a> function here. However, the <a class="reference internal" href="#AstroFrameAPI.__read__" title="AstroFrameAPI.__read__"><tt class="xref py py-meth docutils literal"><span class="pre">__read__()</span></tt></a> function should also correctly handle header data.</p>
+<p class="last">It is acceptable to call the class <tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt> function here. However, the <tt class="xref py py-meth docutils literal"><span class="pre">__read__()</span></tt> function should also correctly handle header data.</p>
 </div>
 </dd></dl>
 
+<dl class="method">
+<dt id="AstroObject.AstroObjectBase.BaseFrame.__repr__">
+<tt class="descname">__repr__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.__repr__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns String Representation of this frame object. Will display the class name and the label. This method does not need to be overwritten by subclasses.</p>
 </dd></dl>
 
+<dl class="classmethod">
+<dt id="AstroObject.AstroObjectBase.BaseFrame.__save__">
+<em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>data</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.__save__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__save__" title="Permalink to this definition">¶</a></dt>
+<dd><p>his method should retun an instance of the parent class if the given data can be turned into an object of that class. If the data cannot be correctly cast, this method should throw an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Because the <tt class="xref py py-meth docutils literal"><span class="pre">__valid__()</span></tt> is called when an object is initialized, it is possible to check some aspects of the provided data in this initialization function. However, this would raise an <tt class="xref py py-exc docutils literal"><span class="pre">AssertionError</span></tt> not an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt>. To avoid this problem, it is suggested that you wrap your initialization in a try...except block like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">try</span><span class="p">:</span>
+    <span class="n">Object</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">HDU</span><span class="o">.</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">AE</span><span class="p">:</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> data did not validate: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="n">AE</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="last">This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like <tt class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></tt>) which are diffult to track and diagnose without the code in <tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt>. See <tt class="xref py py-meth docutils literal"><span class="pre">AstroImage.__save__()</span></tt> for an example <tt class="docutils literal"><span class="pre">__save__</span></tt> function which uses this trick, but also includes some basic data validation.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroObjectBase.BaseFrame.__show__">
+<tt class="descname">__show__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.__show__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__show__" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method should create a simple view of the provided frame. Often this is done using <tt class="xref py py-mod docutils literal"><span class="pre">Matplotlib.pyplot</span></tt> to create a simple plot. The plot should have the minimum amount of work done to make a passable plot view, but still be basic enough that the end user can customize the plot object after calling <tt class="xref py py-meth docutils literal"><span class="pre">__show__()</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroObjectBase.BaseFrame.__valid__">
+<tt class="descname">__valid__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.__valid__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__valid__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs a series of assertions which ensure that the data for this frame is valid</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.AstroObjectBase.BaseFrame.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -154,12 +168,20 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">3. AstroObject API</a><ul>
+<li><a class="reference internal" href="#base-frame-baseframe">3.1. Base Frame <tt class="docutils literal"><span class="pre">BaseFrame</span></tt></a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="development.html"
                         title="previous chapter">2. Development of <tt class="docutils literal"><span class="pre">AstroObject</span></tt></a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="AstroObject.html"
-                        title="next chapter">4. API for Objects: <tt class="docutils literal docutils literal docutils literal"><span class="pre">FITSObject</span></tt></a></p>
+                        title="next chapter">4. Custom Object Basics: <tt class="docutils literal docutils literal docutils literal"><span class="pre">FITSObject</span></tt></a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/api.txt"
@@ -192,12 +214,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="AstroObject.html" title="4. API for Objects: FITSObject"
+          <a href="AstroObject.html" title="4. Custom Object Basics: FITSObject"
              >next</a> |</li>
         <li class="right" >
           <a href="development.html" title="2. Development of AstroObject"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

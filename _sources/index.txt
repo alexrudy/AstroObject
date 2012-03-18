@@ -27,14 +27,17 @@ About AstroObject:
     AstroSpectra
     AnalyticSpectra
     AstroFITS
-    Simulator
-    Logging
+    AstroSimulator
+    AstroObjectLogging
     Utilities
     
     future
     rnotes
 
-
+.. toctree::
+    :hidden:
+    
+    SimulatorExample
 
 Indices and tables
 ==================

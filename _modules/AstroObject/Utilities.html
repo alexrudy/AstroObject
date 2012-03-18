@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObject.Utilities &mdash; AstroObject 0.3.0 documentation</title>
+    <title>AstroObject.Utilities &mdash; AstroObject 0.3.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.0',
+        VERSION:     '0.3.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,8 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.0 documentation" href="../../index.html" />
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AstroObject 0.3.1 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +39,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.3.0 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.3.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -55,21 +56,19 @@
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2011-10-07.</span>
 <span class="c">#  Copyright 2011 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.3.0a1</span>
+<span class="c">#  Version 0.3.1</span>
 <span class="c">#</span>
 
-<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="kn">as</span> <span class="nn">mpl</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">scipy</span> <span class="kn">as</span> <span class="nn">sp</span>
 <span class="kn">import</span> <span class="nn">scipy.constants</span> <span class="kn">as</span> <span class="nn">spconst</span>
-<span class="kn">import</span> <span class="nn">pyfits</span>
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">logging</span><span class="o">,</span><span class="nn">time</span><span class="o">,</span><span class="nn">sys</span><span class="o">,</span><span class="nn">collections</span><span class="o">,</span><span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">resource_string</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;getVersion&quot;</span><span class="p">,</span><span class="s">&quot;expandLim&quot;</span><span class="p">,</span><span class="s">&quot;BlackBody&quot;</span><span class="p">,</span><span class="s">&quot;Gaussian&quot;</span><span class="p">,</span><span class="s">&quot;validate_filename&quot;</span><span class="p">,</span><span class="s">&quot;update&quot;</span><span class="p">,</span><span class="s">&quot;npArrayInfo&quot;</span><span class="p">,</span><span class="s">&quot;AbstractError&quot;</span><span class="p">,</span><span class="s">&quot;HDUFrameTypeError&quot;</span><span class="p">,</span><span class="s">&quot;ConfigurationError&quot;</span><span class="p">,</span><span class="s">&quot;resource_string&quot;</span><span class="p">]</span>
+<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">LogFormatter</span>
 
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;LogFormatterTeXExponent&quot;</span><span class="p">,</span><span class="s">&quot;getVersion&quot;</span><span class="p">,</span><span class="s">&quot;expandLim&quot;</span><span class="p">,</span><span class="s">&quot;BlackBody&quot;</span><span class="p">,</span><span class="s">&quot;Gaussian&quot;</span><span class="p">,</span><span class="s">&quot;validate_filename&quot;</span><span class="p">,</span><span class="s">&quot;update&quot;</span><span class="p">,</span><span class="s">&quot;npArrayInfo&quot;</span><span class="p">,</span><span class="s">&quot;AbstractError&quot;</span><span class="p">,</span><span class="s">&quot;HDUFrameTypeError&quot;</span><span class="p">,</span><span class="s">&quot;ConfigurationError&quot;</span><span class="p">,</span><span class="s">&quot;resource_string&quot;</span><span class="p">]</span>
 
 <span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
@@ -121,6 +120,19 @@
     <span class="n">axis</span> <span class="o">=</span> <span class="p">(</span><span class="n">xmin</span><span class="p">,</span><span class="n">xmax</span><span class="p">,</span><span class="n">ymin</span><span class="p">,</span><span class="n">ymax</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">axis</span>
 </div>
+<span class="k">def</span> <span class="nf">bin</span><span class="p">(</span><span class="n">array</span><span class="p">,</span><span class="n">factor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Bins an array by the given factor&quot;&quot;&quot;</span>
+    
+    <span class="n">finalShape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">/</span> <span class="n">factor</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">))</span>
+    <span class="n">Aout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">finalShape</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">factor</span><span class="p">):</span>
+        <span class="n">Ai</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">::</span><span class="n">factor</span><span class="p">,</span><span class="n">i</span><span class="p">::</span><span class="n">factor</span><span class="p">]</span>
+        <span class="n">Aout</span> <span class="o">+=</span> <span class="n">Ai</span>
+    
+    <span class="k">return</span> <span class="n">Aout</span>
+
+
 <div class="viewcode-block" id="BlackBody"><a class="viewcode-back" href="../../Utilities.html#AstroObject.Utilities.BlackBody">[docs]</a><span class="k">def</span> <span class="nf">BlackBody</span><span class="p">(</span><span class="n">wl</span><span class="p">,</span><span class="n">T</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return black-body flux as a function of wavelength. Usese constants from Scipy Constants, and expects SI units&quot;&quot;&quot;</span>
     <span class="n">h</span> <span class="o">=</span> <span class="n">spconst</span><span class="o">.</span><span class="n">h</span>
@@ -160,14 +172,18 @@
             <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">d</span>    
 
-<div class="viewcode-block" id="npArrayInfo"><a class="viewcode-back" href="../../Utilities.html#AstroObject.Utilities.npArrayInfo">[docs]</a><span class="k">def</span> <span class="nf">npArrayInfo</span><span class="p">(</span><span class="n">array</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="npArrayInfo"><a class="viewcode-back" href="../../Utilities.html#AstroObject.Utilities.npArrayInfo">[docs]</a><span class="k">def</span> <span class="nf">npArrayInfo</span><span class="p">(</span><span class="n">array</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Message describing this array in excruciating detail. Used in debugging arrays where we don&#39;t know what they contain. Returns a message string.</span>
 <span class="sd">    </span>
 <span class="sd">    ::</span>
 <span class="sd">        </span>
-<span class="sd">        &gt;&gt;&gt;arr = np.array([1,2,3,4,5,np.nan])</span>
-<span class="sd">        &gt;&gt;&gt;print npArrayInfo(arr,&quot;Some Array&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; arr = np.array([0,1,2,3,4,5,np.nan])</span>
+<span class="sd">        &gt;&gt;&gt; print npArrayInfo(arr,&quot;Some Array&quot;)</span>
+<span class="sd">        Some Array has 7 elements with shape (7,). Range [  nan,  nan] Zeros 1 ( 14%). NaNs 1 ( 14%). </span>
+<span class="sd">        &gt;&gt;&gt; print npArrayInfo(arr[1:-1],&quot;Some Array&quot;)</span>
+<span class="sd">        Some Array has 5 elements with shape (5,). Range [    1,    5]</span>
 <span class="sd">        </span>
+<span class="sd">      </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">fmtr</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">MSG</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
@@ -180,7 +196,7 @@
     
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
         
-        <span class="n">MSG</span> <span class="o">+=</span> <span class="s">&quot;</span><span class="si">%(elements)d</span><span class="s"> elements with shape </span><span class="si">%(shape)s</span><span class="s">. &quot;</span>
+        <span class="n">MSG</span> <span class="o">+=</span> <span class="s">&quot;len </span><span class="si">%(elements)d</span><span class="s"> shaped </span><span class="si">%(shape)s</span><span class="s">. &quot;</span>
         
         <span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;elements&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">size</span>
         <span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;shape&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
@@ -241,6 +257,27 @@
 <span class="k">class</span> <span class="nc">ConfigurationError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Denotes an error caused by a bad configuration&quot;&quot;&quot;</span>
     <span class="k">pass</span>    
+
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="k">class</span> <span class="nc">LogFormatterTeXExponent</span><span class="p">(</span><span class="n">LogFormatter</span><span class="p">,</span> <span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Extends pylab.LogFormatter to use</span>
+<span class="sd">    tex notation for tick labels.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">LogFormatterTeXExponent</span><span class="p">,</span>
+              <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Wrap call to parent class with</span>
+<span class="sd">        change to tex notation.&quot;&quot;&quot;</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">LogFormatterTeXExponent</span><span class="p">,</span>
+                      <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">r&#39;e(\S)0?(\d+)&#39;</span><span class="p">,</span>
+                       <span class="s">r&#39;</span><span class="se">\\</span><span class="s">times 10^{\1\2}&#39;</span><span class="p">,</span>
+                       <span class="nb">str</span><span class="p">(</span><span class="n">label</span><span class="p">))</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s">&quot;$&quot;</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s">&quot;$&quot;</span>
+        <span class="k">return</span> <span class="n">label</span>
         
 <span class="n">__version__</span> <span class="o">=</span> <span class="n">getVersion</span><span class="p">()</span>
 </pre></div>
@@ -276,7 +313,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.3.0 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.3.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

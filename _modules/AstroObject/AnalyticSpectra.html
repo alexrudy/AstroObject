@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObject.AnalyticSpectra &mdash; AstroObject 0.3.0 documentation</title>
+    <title>AstroObject.AnalyticSpectra &mdash; AstroObject 0.3.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.0',
+        VERSION:     '0.3.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,8 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.0 documentation" href="../../index.html" />
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AstroObject 0.3.1 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +39,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.3.0 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.3.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -49,13 +50,14 @@
           <div class="body">
             
   <h1>Source code for AstroObject.AnalyticSpectra</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
 <span class="c"># </span>
 <span class="c">#  AnalyticSpectra.py</span>
 <span class="c">#  ObjectModel</span>
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2011-10-12.</span>
 <span class="c">#  Copyright 2011 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.3.0a1</span>
+<span class="c">#  Version 0.3.1</span>
 <span class="c"># </span>
 
 <span class="c"># Parent Modules</span>
@@ -79,6 +81,7 @@
 <span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="kn">import</span> <span class="n">cdist</span>
 <span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">norm</span>
 <span class="kn">import</span> <span class="nn">scipy.interpolate</span>
+<span class="kn">import</span> <span class="nn">scipy.integrate</span>
 
 <span class="c"># Standard Python Modules</span>
 <span class="kn">import</span> <span class="nn">math</span><span class="o">,</span> <span class="nn">copy</span><span class="o">,</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">logging</span><span class="o">,</span> <span class="nn">os</span>
@@ -87,12 +90,14 @@
 <span class="c"># Submodules from this system</span>
 <span class="kn">from</span> <span class="nn">Utilities</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;AnalyticSpectrum&quot;</span><span class="p">,</span><span class="s">&quot;CompositeSpectra&quot;</span><span class="p">,</span><span class="s">&quot;InterpolatedSpectrum&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;AnalyticSpectrum&quot;</span><span class="p">,</span><span class="s">&quot;CompositeSpectra&quot;</span><span class="p">,</span><span class="s">&quot;InterpolatedSpectrum&quot;</span><span class="p">,</span><span class="s">&quot;InterpolatedSpectrumBase&quot;</span><span class="p">]</span>
 
 <span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
-<div class="viewcode-block" id="AnalyticSpectrum"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.AnalyticSpectrum">[docs]</a><span class="k">class</span> <span class="nc">AnalyticSpectrum</span><span class="p">(</span><span class="n">AstroObjectBase</span><span class="o">.</span><span class="n">FITSFrame</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A functional spectrum object for spectrum generation. The default implementation is a flat spectrum.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="AnalyticSpectrum"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.AnalyticSpectrum">[docs]</a><span class="k">class</span> <span class="nc">AnalyticSpectrum</span><span class="p">(</span><span class="n">AstroObjectBase</span><span class="o">.</span><span class="n">BaseFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A functional spectrum object for spe ctrum generation. The default implementation is a flat spectrum.</span>
+<span class="sd">    </span>
+<span class="sd">    The Analytic spectrum can be provided with a set of wavelengths upon intialization. The `wavelengths` keyword will be stored and used when this spectrum is later called by the system. The `units` keyword is currently unused.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">units</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">AnalyticSpectrum</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span> <span class="o">=</span> <span class="n">wavelengths</span>
@@ -112,57 +117,39 @@
 <div class="viewcode-block" id="AnalyticSpectrum.__sub__"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.AnalyticSpectrum.__sub__">[docs]</a>    <span class="k">def</span> <span class="nf">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Implements spectrum subtraction&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">CompositeSpectra</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">,</span><span class="s">&#39;sub&#39;</span><span class="p">)</span>
-        
+        </div>
+<div class="viewcode-block" id="AnalyticSpectrum.__div__"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.AnalyticSpectrum.__div__">[docs]</a>    <span class="k">def</span> <span class="nf">__div__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Implements spectrum division&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">CompositeSpectra</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">,</span><span class="s">&#39;div&#39;</span><span class="p">)</span>
+    
     </div>
 <div class="viewcode-block" id="AnalyticSpectrum.__rsub__"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.AnalyticSpectrum.__rsub__">[docs]</a>    <span class="k">def</span> <span class="nf">__rsub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reverse subtraction&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">CompositeSpectra</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="bp">self</span><span class="p">,</span><span class="s">&#39;sub&#39;</span><span class="p">)</span>
-        
+        </div>
+<div class="viewcode-block" id="AnalyticSpectrum.__rdiv__"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.AnalyticSpectrum.__rdiv__">[docs]</a>    <span class="k">def</span> <span class="nf">__rdiv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reverse division&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">CompositeSpectra</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="bp">self</span><span class="p">,</span><span class="s">&#39;div&#39;</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="AnalyticSpectrum.__rmul__"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.AnalyticSpectrum.__rmul__">[docs]</a>    <span class="k">def</span> <span class="nf">__rmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalyticSpectrum.__rmul__"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.AnalyticSpectrum.__rmul__">[docs]</a>    <span class="k">def</span> <span class="nf">__rmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reverse Multiplication&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">CompositeSpectra</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">,</span><span class="s">&#39;mul&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">CompositeSpectra</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="bp">self</span><span class="p">,</span><span class="s">&#39;mul&#39;</span><span class="p">)</span>
         
     </div>
-<div class="viewcode-block" id="AnalyticSpectrum.__radd__"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.AnalyticSpectrum.__radd__">[docs]</a>    <span class="k">def</span> <span class="nf">__radd__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AnalyticSpectrum.__radd__"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.AnalyticSpectrum.__radd__">[docs]</a>    <span class="k">def</span> <span class="nf">__radd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reverse Addition&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">CompositeSpectra</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">,</span><span class="s">&#39;add&#39;</span><span class="p">)</span>
-        
-    </div>
-<div class="viewcode-block" id="AnalyticSpectrum.__call__"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.AnalyticSpectrum.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the Flux data for this spectrum&quot;&quot;&quot;</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: Cannot Call: Abstract Spectra not instantiated with any properies.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    </div>
-<div class="viewcode-block" id="AnalyticSpectrum.__hdu__"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.AnalyticSpectrum.__hdu__">[docs]</a>    <span class="k">def</span> <span class="nf">__hdu__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">primary</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns a pyfits HDU representing this object&quot;&quot;&quot;</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: Cannot make HDU: Abstract Spectra not instantiated with any properies.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    
-    </div>
-    <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="AnalyticSpectrum.__save__"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.AnalyticSpectrum.__save__">[docs]</a>    <span class="k">def</span> <span class="nf">__save__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;A generic class method for saving to this object with data directly&quot;&quot;&quot;</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: Abstract Analytic Structure cannot be the target of a save operation!&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cls</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    
-    </div>
-    <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="AnalyticSpectrum.__read__"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.AnalyticSpectrum.__read__">[docs]</a>    <span class="k">def</span> <span class="nf">__read__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="n">HDU</span><span class="p">,</span><span class="n">label</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;An abstract method for reading empty data HDU Frames&quot;&quot;&quot;</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Attempting to read data&quot;</span> <span class="o">%</span> <span class="n">cls</span><span class="p">)</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: Cannot save HDU as Analytic Spectra&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cls</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    
+        <span class="k">return</span> <span class="n">CompositeSpectra</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="bp">self</span><span class="p">,</span><span class="s">&#39;add&#39;</span><span class="p">)</span>
 
 </div></div>
 <div class="viewcode-block" id="CompositeSpectra"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.CompositeSpectra">[docs]</a><span class="k">class</span> <span class="nc">CompositeSpectra</span><span class="p">(</span><span class="n">AnalyticSpectrum</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Binary composition of two functional spectra. This object should not be initialized by the user. Instead, this class is returned when you combine two spectra of different types, or combine a spectra with any other type. As such, do not initialze composite spectra idependently. See the :meth:`__call__` function for documentation of how to use this type of object.&quot;&quot;&quot;</span>
+    <span class="n">ops</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;sub&#39;</span><span class="p">:</span><span class="s">&quot;-&quot;</span><span class="p">,</span><span class="s">&#39;add&#39;</span><span class="p">:</span><span class="s">&quot;+&quot;</span><span class="p">,</span><span class="s">&#39;mul&#39;</span><span class="p">:</span><span class="s">&quot;*&quot;</span><span class="p">,</span><span class="s">&#39;div&#39;</span><span class="p">:</span><span class="s">&quot;/&quot;</span><span class="p">}</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">partA</span><span class="p">,</span> <span class="n">partB</span><span class="p">,</span> <span class="n">operation</span><span class="p">):</span>
-        <span class="n">label</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s">&quot;(&quot;</span>
         <span class="n">label</span> <span class="o">+=</span> <span class="n">partA</span><span class="o">.</span><span class="n">label</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">partA</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">partA</span><span class="p">)</span>
-        <span class="n">label</span> <span class="o">+=</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="n">operation</span> <span class="o">+</span> <span class="s">&quot; &quot;</span>
+        <span class="n">label</span> <span class="o">+=</span> <span class="s">&quot;) &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ops</span><span class="p">[</span><span class="n">operation</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot; (&quot;</span>
         <span class="n">label</span> <span class="o">+=</span> <span class="n">partB</span><span class="o">.</span><span class="n">label</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">partB</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">partB</span><span class="p">)</span>
+        <span class="n">label</span> <span class="o">+=</span> <span class="s">&quot;)&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">CompositeSpectra</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="n">partA</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">=</span> <span class="n">partB</span>
@@ -170,11 +157,11 @@
         
     
 <div class="viewcode-block" id="CompositeSpectra.__call__"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.CompositeSpectra.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Calls the composite function components. The keyword arguments are passed on to calls to spectra contained within this composite spectra. All spectra varieties should accept arbitrary keywords, so this argument is used to pass keywords to spectra which require specific alternatives.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Calls the composite function components. The keyword arguments are passed on to calls to spectra contained within this composite spectra. All spectra varieties should accept arbitrary keywords, so this argument is used to pass keywords to spectra which require specific alternatives. Pass in `wavelengths` to use the given wavelengths. If none are passed in, it will look for object-level saved wavelengths, which you can specify simply by setting the `self.wavelengths` parameter on the object.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">wavelengths</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">wavelengths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span>
         <span class="k">if</span> <span class="n">wavelengths</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;No wavelengths specified in </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">u&quot;No wavelengths specified in </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">))</span>
             
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">,</span><span class="n">AnalyticSpectrum</span><span class="p">):</span>
             <span class="n">Awavelengths</span><span class="p">,</span><span class="n">Avalue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">(</span><span class="n">wavelengths</span><span class="o">=</span><span class="n">wavelengths</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -191,122 +178,622 @@
             <span class="n">Result</span> <span class="o">=</span> <span class="n">Avalue</span> <span class="o">*</span> <span class="n">Bvalue</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span> <span class="o">==</span> <span class="s">&#39;sub&#39;</span><span class="p">:</span>
             <span class="n">Result</span> <span class="o">=</span> <span class="n">Avalue</span> <span class="o">-</span> <span class="n">Bvalue</span>
-        
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span> <span class="o">==</span> <span class="s">&#39;div&#39;</span><span class="p">:</span>
+            <span class="n">Result</span> <span class="o">=</span> <span class="n">Avalue</span> <span class="o">/</span> <span class="n">Bvalue</span>
         <span class="k">if</span> <span class="n">Result</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">Result</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Composition did not produce a value result!&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">u&quot;Composition did not produce a value result!&quot;</span><span class="p">)</span>
         
     
 
 </div></div>
-<div class="viewcode-block" id="InterpolatedSpectrum"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.InterpolatedSpectrum">[docs]</a><span class="k">class</span> <span class="nc">InterpolatedSpectrum</span><span class="p">(</span><span class="n">AnalyticSpectrum</span><span class="p">,</span><span class="n">AstroSpectra</span><span class="o">.</span><span class="n">SpectraFrame</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;An analytic representation of a generic, specified spectrum&quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span> <span class="c"># The size of this image</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span> <span class="c"># The shape of this image</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">InterpolatedSpectrum</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span> <span class="o">=</span> <span class="n">wavelengths</span>
-    
-<div class="viewcode-block" id="InterpolatedSpectrum.__call__"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.InterpolatedSpectrum.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Calls this interpolated spectrum over certain wavelengths&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">wavelengths</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">wavelengths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wavelengths</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">)))</span>
-        </div></div>
-<div class="viewcode-block" id="ResampledSpectrum"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.ResampledSpectrum">[docs]</a><span class="k">class</span> <span class="nc">ResampledSpectrum</span><span class="p">(</span><span class="n">InterpolatedSpectrum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A spectrum that must be called with resampling information&quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">resolution</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">ResampledSpectrum</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">InterpolatedSpectrumBase</span><span class="p">(</span><span class="n">AnalyticSpectrum</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">resolution</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">u&quot;interpolate&quot;</span><span class="p">,</span><span class="n">integrator</span><span class="o">=</span><span class="s">&#39;integrate_hist&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">InterpolatedSpectrumBase</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span> <span class="o">=</span> <span class="n">wavelengths</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span> <span class="o">=</span> <span class="n">resolution</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">method</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_integrator</span> <span class="o">=</span> <span class="n">integrator</span>
         
-<div class="viewcode-block" id="ResampledSpectrum.__call__"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.ResampledSpectrum.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">resolution</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Calls this resampled spectrum over certain wavelengths&quot;&quot;&quot;</span>
+        
+    
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">method</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calls this interpolated spectrum over certain wavelengths. The `method` parameter will default to the one set for the object, and controls the method used to interpret this spectrum. Available methods include all members of :class:`InterpolatedSpectrum` which provide return values (all those documented below).&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+            <span class="n">method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">method</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">method</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">_presanity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span><span class="p">,</span><span class="n">newwl</span><span class="p">,</span><span class="n">newrs</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">extrapolate</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">upsample</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">debug</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">warning</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">error</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">message</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sanity checks performed before any specturm operation. `oldwl` and `oldfl` are the given wavelengths and flux for the spectrum. `newwl` and `newrs` are the requested wavelengths and resolution (respectively) for the spectrum. `extrapolate` allows the new wavelengths to extraopolate from the old ones. If not, only operations that appear to interpolate will be allowed. `upsample` allows the operation to get more resolution information than is already present in the spectrum. `warning` and `debug` flip those flags prematurely, to force warning or debug output. `error` should be an error class to be raised by the sanity checks. These keywords allow custom sanity checks to be performed before calling this function. The benefit of this system, is that sanity checks are all run on every operation, allowing the user to examine all of the potenital problems simultaneously, rather than one at a time, as each successive check is run. The arbitrary keywords at the end allow the user to feed a dictionary of array names and arrays to be included in the sanity check output in the case of failure.</span>
+<span class="sd">        </span>
+<span class="sd">        Checks include:</span>
+<span class="sd">        </span>
+<span class="sd">        - Wavelength Units (between 1e-12 and 1e-3)</span>
+<span class="sd">        </span>
+<span class="sd">        - Wavelengths must be montonically increasing</span>
+<span class="sd">        </span>
+<span class="sd">        - Given flux should be greater than 0 (Warning)</span>
+<span class="sd">        </span>
+<span class="sd">        - Requested Wavelength and Resolution should shape match.</span>
+<span class="sd">        </span>
+<span class="sd">        - Given flux and wavelength should shape match.</span>
+<span class="sd">        </span>
+<span class="sd">        - Requested resolution should be positive</span>
+<span class="sd">        </span>
+<span class="sd">        - If `extrapolate` then the reuqested wavelengths should be within some tolerance of the given wavelengths. If `extrapolate` is false, then the given wavelengths should fit within the bounds of the given wavelengths.</span>
+<span class="sd">        </span>
+<span class="sd">        - If `newrs` (Requested resolution) is given, it must not reuqest more information than is already present in the data. The `upsample` keyword disables this effect.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Unit sanity check</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">message</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="n">message</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">error</span> <span class="ow">or</span> <span class="n">warning</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;Unkown alert triggered.&quot;</span><span class="p">]</span>
+            <span class="n">debug</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">dmsg</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">arrays</span> <span class="o">=</span> <span class="n">kwargs</span>
+        <span class="n">newrb</span> <span class="o">=</span> <span class="bp">True</span> <span class="k">if</span> <span class="n">newrs</span> <span class="o">!=</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">False</span>
+        
+        <span class="c"># Check that the units of this spectrum look like SI units, inbound and outbound.</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">oldwl</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-12</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">oldwl</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-3</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;</span><span class="si">%s</span><span class="s">: Given λ units appear wrong!&quot;</span><span class="p">]</span>
+            <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Given λ&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldwl</span>
+        
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">newwl</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-12</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">newwl</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-3</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;</span><span class="si">%s</span><span class="s">: Requested λ units appear wrong!&quot;</span><span class="p">]</span>
+            <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Requested λ&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">newwl</span>
+        
+        <span class="c"># Check that the units of the spectrum are monotonically increasing (inbound and outbound)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">oldwl</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;Given λ must be monotonically increasing.&quot;</span><span class="p">]</span>
+            <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Given λ&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldwl</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="ne">ValueError</span>
+            
+        <span class="k">if</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">newwl</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;Requested λ must be monotonically increasing.&quot;</span><span class="p">]</span>
+            <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Requested λ&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldwl</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="ne">ValueError</span>
+        
+        <span class="c"># Check that we have non-zero, positive flux provided.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">oldfl</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;Given flux &lt;= 0 at some point.&quot;</span><span class="p">]</span>
+            <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Given Flux&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldfl</span>
+            <span class="n">warning</span> <span class="o">=</span> <span class="bp">True</span>
+        
+        <span class="c"># Data shape sanity check</span>
+        <span class="k">if</span> <span class="n">newrb</span> <span class="ow">and</span> <span class="n">newrs</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">newwl</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+            <span class="n">dmsg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;</span><span class="si">%s</span><span class="s">: λ shape: </span><span class="si">%s</span><span class="s">, R shape: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">newwl</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span><span class="n">newrs</span><span class="o">.</span><span class="n">shape</span><span class="p">)]</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;Shape Mismatch between R and λ&quot;</span><span class="p">]</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="ne">AttributeError</span>
+            
+        <span class="k">if</span> <span class="n">oldwl</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">oldfl</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+            <span class="n">dmsg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;</span><span class="si">%s</span><span class="s">: λ shape: </span><span class="si">%s</span><span class="s">, flux shape: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">oldwl</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span><span class="n">oldrs</span><span class="o">.</span><span class="n">shape</span><span class="p">)]</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;Shape Mismatch between flux and λ&quot;</span><span class="p">]</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="ne">AttributeError</span>
+        
+        <span class="c"># Check that resolution is nonzero positive.</span>
+        <span class="k">if</span> <span class="n">newrb</span> <span class="ow">and</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">newrs</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;Requested R is less than zero!&quot;</span><span class="p">]</span>
+            <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Requested R&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">newrs</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="ne">AttributeError</span>
+            
+        
+        <span class="c"># Interpolation tolerance check</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">extrapolate</span><span class="p">:</span>
+            <span class="n">mintol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">oldwl</span><span class="p">)</span>
+            <span class="n">maxtol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">oldwl</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">newrs</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c"># Tolerance for interpolation is set here:</span>
+            <span class="n">tolfrac</span> <span class="o">=</span> <span class="mi">2</span> <span class="c"># Maximum interpolation is 1/8th of a resolution element.</span>
+            <span class="n">mintol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">oldwl</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">oldwl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">oldwl</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">tolfrac</span>
+            <span class="n">maxtol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">oldwl</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">oldwl</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">oldwl</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="n">tolfrac</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tolfrac</span> <span class="o">=</span> <span class="mf">1.001</span>
+            <span class="n">mintol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">oldwl</span><span class="p">)</span> <span class="o">/</span> <span class="n">tolfrac</span>
+            <span class="n">maxtol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">oldwl</span><span class="p">)</span> <span class="o">*</span> <span class="n">tolfrac</span>
+        
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">newwl</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">mintol</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">newwl</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">maxtol</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">extrapolate</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;Should not extrapolate during reampling process. Please provide new λ that are within the range of old ones.&quot;</span><span class="p">]</span>
+                <span class="n">warning</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;Can not extrapolate during reampling process. Please provide new λ that are within the range of old ones.&quot;</span><span class="p">]</span>
+                <span class="n">error</span> <span class="o">=</span> <span class="ne">ValueError</span>
+            <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Requested λ&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">newwl</span>
+            <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Given λ&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldwl</span>
+            <span class="n">dmsg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;</span><span class="si">%s</span><span class="s">: Allowed range for Requested λ: [</span><span class="si">%g</span><span class="s">,</span><span class="si">%g</span><span class="s">]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">mintol</span><span class="p">,</span><span class="n">maxtol</span><span class="p">)]</span>
+        
+        <span class="n">oldrs</span> <span class="o">=</span>  <span class="n">oldwl</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">oldwl</span><span class="p">)</span>
+        
+        <span class="c"># Resolution Sanity Check</span>
+        <span class="c"># The system cannot generate more information than was already there. As such, the new resolution should be worse than the original.</span>
+        <span class="k">if</span> <span class="n">newrb</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">newrs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">oldrs</span><span class="p">):</span>
+                <span class="n">oldrsf</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">oldwl</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">oldrs</span><span class="p">,</span><span class="n">bounds_error</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">oldrs</span><span class="p">))</span>
+                <span class="n">oldrsd</span> <span class="o">=</span> <span class="n">oldrsf</span><span class="p">(</span><span class="n">newwl</span><span class="p">)</span>
+                <span class="n">delrs</span> <span class="o">=</span> <span class="n">newrs</span> <span class="o">-</span> <span class="n">oldrsd</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">delrs</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                    <span class="n">rswi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">delrs</span><span class="p">)</span>
+                    <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;Requested R is more detailed than given R. </span><span class="si">%g</span><span class="s"> -&gt; </span><span class="si">%g</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">newrs</span><span class="p">[</span><span class="n">rswi</span><span class="p">],</span><span class="n">oldrsd</span><span class="p">[</span><span class="n">rswi</span><span class="p">])]</span>
+                    <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Requested R&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">newrs</span>
+                    <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Given R&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldrs</span>
+                    <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Given interpolated R&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldrsd</span>
+                    <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Given Δλ&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">oldwl</span><span class="p">)</span>
+                    <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Given λ&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldwl</span>
+                    <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Difference in R&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">delrs</span>
+                    <span class="k">if</span> <span class="n">upsample</span><span class="p">:</span>
+                        <span class="n">debug</span> <span class="o">=</span> <span class="bp">True</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">error</span> <span class="o">=</span> <span class="ne">ValueError</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;Requested R may be close to same detail as given R. Fidelity might not be preserved.&quot;</span><span class="p">]</span>
+                    <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Requested R&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">newrs</span>
+                    <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Given R&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldrs</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">upsample</span><span class="p">:</span>
+                        <span class="n">warning</span> <span class="o">=</span> <span class="bp">True</span>
+                    
+        <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+            <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Requested λ&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">newwl</span>
+            <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Given λ&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldwl</span>
+            <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Given Flux&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldfl</span>
+            <span class="k">if</span> <span class="n">newrb</span><span class="p">:</span>
+                <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Requested R&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">newrs</span>
+                      
+        <span class="k">if</span> <span class="n">error</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">:</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">warning</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">:</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">debug</span><span class="p">:</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">u&quot;Pre Sanity-Check Debugging Information:&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">:</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+            
+        <span class="k">if</span> <span class="n">error</span> <span class="ow">or</span> <span class="n">warning</span> <span class="ow">or</span> <span class="n">debug</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">dm</span> <span class="ow">in</span> <span class="n">dmsg</span><span class="p">:</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">dm</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span><span class="n">array</span> <span class="ow">in</span> <span class="n">arrays</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">u&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">npArrayInfo</span><span class="p">(</span><span class="n">array</span><span class="p">,</span><span class="n">name</span><span class="p">)))</span>
+                
+        <span class="k">if</span> <span class="n">error</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        
+            
+    <span class="k">def</span> <span class="nf">_postsanity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span><span class="p">,</span><span class="n">newwl</span><span class="p">,</span><span class="n">newfl</span><span class="p">,</span><span class="n">newrs</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">extrapolate</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">debug</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">warning</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">error</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sanity checks performed before any specturm operation. `oldwl` and `oldfl` are the given wavelengths and flux for the spectrum. `newwl` and `newfl` are the found wavelengths and flux (respectively) for the spectrum. `newrs` is the requested resolution. `extrapolate` allows the new wavelengths to extraopolate from the old ones. If not, only operations that appear to interpolate will be allowed. `upsample` allows the operation to get more resolution information than is already present in the spectrum. `warning` and `debug` flip those flags prematurely, to force warning or debug output. `error` should be an error class to be raised by the sanity checks. These keywords allow custom sanity checks to be performed before calling this function. The benefit of this system, is that sanity checks are all run on every operation, allowing the user to examine all of the potenital problems simultaneously, rather than one at a time, as each successive check is run. The arbitrary keywords at the end allow the user to feed a dictionary of array names and arrays to be included in the sanity check output in the case of failure.</span>
+<span class="sd">        </span>
+<span class="sd">        Checks performed are:</span>
+<span class="sd">        </span>
+<span class="sd">        - ``NaN`` not allowed in found flux.</span>
+<span class="sd">        </span>
+<span class="sd">        - ``0`` not allowed in more than ``1%%`` of fluxes. (**Warning**)</span>
+<span class="sd">        </span>
+<span class="sd">        - If there were no ``0`` s in the old flux, then the new flux should have no ``0`` s (**Warning**)</span>
+<span class="sd">        </span>
+<span class="sd">        - Flux and wavelength should have the same shape.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">dmsg</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">message</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="n">message</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">error</span> <span class="ow">or</span> <span class="n">warning</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;Unkown alert triggered.&quot;</span><span class="p">]</span>
+            <span class="n">debug</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">arrays</span> <span class="o">=</span> <span class="n">kwargs</span>
+        <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Requested λ&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">newwl</span>
+        <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Given λ&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldwl</span>
+        <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;New Flux&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">newfl</span>
+        <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Given Flux&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldfl</span>
+        <span class="n">newrb</span> <span class="o">=</span> <span class="bp">True</span> <span class="k">if</span> <span class="n">newrs</span> <span class="o">!=</span> <span class="bp">None</span> <span class="k">else</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="n">newrb</span><span class="p">:</span>
+            <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Requested R&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">newrs</span>
+                
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">newfl</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;Detected NaN in Flux!&quot;</span><span class="p">]</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="ne">ValueError</span>
+                
+        <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">newfl</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">))</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">newfl</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mf">0.01</span> <span class="ow">and</span> <span class="p">(</span><span class="n">oldfl</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">extrapolate</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;New Flux &lt;= 0 for more than 1</span><span class="si">% o</span><span class="s">f points&quot;</span><span class="p">]</span>
+            <span class="n">warning</span> <span class="o">=</span> <span class="bp">True</span>
+            
+        <span class="k">if</span> <span class="n">newfl</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">newwl</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;λ lengths have changed: </span><span class="si">%s</span><span class="s"> -&gt; </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">newfl</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span><span class="n">newwl</span><span class="o">.</span><span class="n">shape</span><span class="p">)]</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="ne">ValueError</span>
+        
+        <span class="k">if</span> <span class="p">(</span><span class="n">newfl</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">and</span> <span class="p">(</span><span class="n">oldfl</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;New Flux &lt;= 0 some point!&quot;</span><span class="p">]</span>
+            <span class="n">warning</span> <span class="o">=</span> <span class="bp">True</span>
+        
+        <span class="k">if</span> <span class="n">error</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">:</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">warning</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">:</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">debug</span><span class="p">:</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">u&quot;Pre Sanity-Check Debugging Information:&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">error</span> <span class="ow">or</span> <span class="n">warning</span> <span class="ow">or</span> <span class="n">debug</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">dm</span> <span class="ow">in</span> <span class="n">dmsg</span><span class="p">:</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">dm</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span><span class="n">array</span> <span class="ow">in</span> <span class="n">arrays</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">u&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">npArrayInfo</span><span class="p">(</span><span class="n">array</span><span class="p">,</span><span class="n">name</span><span class="p">)))</span>                
+        <span class="k">if</span> <span class="n">error</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        
+        
+    <span class="k">def</span> <span class="nf">interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">extrapolate</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Uses a 1d Interpolation to fill in missing spectrum values.</span>
+<span class="sd">        </span>
+<span class="sd">        This interpolator uses the scipy.interpolate.interp1d method to interpolate between data points in the original spectrum. Normally, this method will not allow extrapolation. The keywords `extrapolate` and `fill_value` can be used to trigger extrapolation away from the interpolated values.</span>
+<span class="sd">        </span>
+<span class="sd">        Input should be a set of wavelengths requested for the system (in the `wavelengths` keyword). These wavelengths should not exceed the bounds of the given wavelengths for this spectrum (doing so doesn&#39;t really make sense for interpolation. See :meth:`polyfit` for a case where this might make sense.). The output will be a data array of wavelengths and fluxes (should be the provided `wavelengths`, and an equivalently shaped array with fluxes.)</span>
+<span class="sd">        </span>
+<span class="sd">        .. Warning :: This method does not prevent you from interpolating your spectrum into a higher resolution state. As such, it is possible, when calling interpolate, to increase the resolution of the spectrum, and end up &#39;creating&#39; information.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">wavelengths</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">wavelengths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span>
+        
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">u&quot;Interpolate Starting&quot;</span><span class="p">)</span>
+        
+        <span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="c"># Sanity Checks for Data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_presanity</span><span class="p">(</span><span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span><span class="p">,</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">extrapolate</span><span class="o">=</span><span class="n">extrapolate</span><span class="p">)</span>
+        
+        <span class="c"># Interpolation function (invented on the spot!)</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span><span class="p">,</span><span class="n">bounds_error</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">fill_value</span><span class="o">=</span><span class="n">fill_value</span><span class="p">)</span>
+        
+        <span class="c"># Actually calling the interpolation</span>
+        <span class="n">flux</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_postsanity</span><span class="p">(</span><span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span><span class="p">,</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">flux</span><span class="p">)</span>
+        <span class="c"># We do print fun information about the final calculation regardless.</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">u&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">npArrayInfo</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span><span class="s">&quot;New Flux&quot;</span><span class="p">)))</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">u&quot;Interpolate Finished&quot;</span><span class="p">)</span>
+        
+        <span class="c"># Finally, return the data in a way that makes sense for the just-in-time spectrum calculation objects</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">flux</span><span class="p">))</span>
+    
+    <span class="k">def</span> <span class="nf">polyfit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Uses a 1d fit to find missing spectrum values.</span>
+<span class="sd">        </span>
+<span class="sd">        This method will extrapolate away from the provided data. The function used is a np.poly1d() using an order 2 np.polyfit. By default, this method will allow extrapolation away from the provided wavelengths. The `order` keyword can be used to adjust the polynomial order for this funciton.</span>
+<span class="sd">        </span>
+<span class="sd">        Input should be a set of wavelengths requested for the system (in the `wavelengths` keyword). The output will be a data array of wavelengths and fluxes (should be the provided `wavelengths`, and an equivalently shaped array with fluxes.)&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">wavelengths</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">wavelengths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span>
+        
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">u&quot;Polyfit Starting&quot;</span><span class="p">)</span>
+        
+        <span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="c"># Sanity Checks for Data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_presanity</span><span class="p">(</span><span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span><span class="p">,</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">extrapolate</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        
+        <span class="n">func</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">poly1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span><span class="p">,</span><span class="n">order</span><span class="p">))</span>
+        
+        <span class="n">flux</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_postsanity</span><span class="p">(</span><span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span><span class="p">,</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">flux</span><span class="p">,</span><span class="n">extrapolate</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="c"># We do print fun information about the final calculation regardless.</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">u&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">npArrayInfo</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span><span class="s">&quot;New Flux&quot;</span><span class="p">)))</span>
+        
+        <span class="c"># Finally, return the data in a way that makes sense for the just-in-time spectrum calculation objects</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">flux</span><span class="p">))</span>
+    
+        
+    <span class="k">def</span> <span class="nf">resample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">resolution</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">upsample</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Resample the given spectrum to a different resolution.</span>
+<span class="sd">        </span>
+<span class="sd">        Normally, spectra are resolution limited in their sampling. If you want to sample a spectrum at a lower resolution, simply interpolating, or drawing nearest points to your desired wavelength may cause information loss. The resample method convolves the spectrum with a gaussian which has a width appropriate to your desired resolution. This re-distributes the information in the spectrum into neighboring points, preventing the loss of features due to interpolation and sampling errors.</span>
+<span class="sd">        </span>
+<span class="sd">        The resample spectrum normally does not allow you to up-sample a spectrum to a higher resolution, as this could lead to errors caused by &#39;information creation&#39;, i.e. your spectrum will appear to show more detail than is possible. Hoever, the system will allow upsampling (useful if you are confident that you will later downsample your spectrum) using the `upsample` keyword.</span>
+<span class="sd">        </span>
+<span class="sd">        Input should be a set of wavelengths requested for the system (in the `wavelengths` keyword) and an array of resolutions requested in the `resolutions` keyword. The output will be a data array of wavelengths and fluxes (should be the provided `wavelengths`, and an equivalently shaped array with fluxes.)</span>
+<span class="sd">        </span>
+<span class="sd">        .. Note :: If you request more detail than is given in the spectrum, or if you extrapolate on the spectrum, you may encounter parts of the new spectrum that have no data. As the fluxes are normalized, such data segments are set to zero. This will also produce a warning.</span>
+<span class="sd">        </span>
+<span class="sd">        This is a vector-based calculation, and so should be relatively fast. This function contains ZERO for loops, and uses entirely numpy-based vector mathematics.&quot;&quot;&quot;</span>        
         <span class="k">if</span> <span class="n">wavelengths</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">wavelengths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span>
         <span class="k">if</span> <span class="n">resolution</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">resolution</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolution</span>
         <span class="k">if</span> <span class="n">wavelengths</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Requires Wavelenths&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">u&quot;Requires Wavelenths&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">resolution</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Requires Resolution&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">resolution</span><span class="p">)</span>
-        </div>
-<div class="viewcode-block" id="ResampledSpectrum.resample"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.ResampledSpectrum.resample">[docs]</a>    <span class="k">def</span> <span class="nf">resample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">resolution</span><span class="p">,</span><span class="n">z</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Resample the given spectrum to a lower resolution&quot;&quot;&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">u&quot;Requires Resolution&quot;</span><span class="p">)</span>
         
-        <span class="k">if</span> <span class="n">resolution</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">wavelengths</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Wavelength Size: </span><span class="si">%d</span><span class="s">, Resolution Size </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">.</span><span class="n">size</span><span class="p">,</span><span class="n">resolution</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;You must provide resolution appropriate for resampling. Size mismatch!&quot;</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">u&quot;Resample Starting&quot;</span><span class="p">)</span>
         
+        
+        
+        <span class="c"># Redshifting</span>
         <span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
-        <span class="n">oldwl</span> <span class="o">=</span> <span class="n">oldwl</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span>
+        <span class="c"># Sanity Checks for Data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_presanity</span><span class="p">(</span><span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span><span class="p">,</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">resolution</span><span class="p">,</span><span class="n">upsample</span><span class="o">=</span><span class="n">upsample</span><span class="p">)</span>
         
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">oldwl</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-12</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">oldwl</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-3</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: It looks like your defining wavelength units are wrong: &quot;</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="bp">self</span> <span class="o">+</span> <span class="n">npArrayInfo</span><span class="p">(</span><span class="n">oldwl</span><span class="p">,</span><span class="s">&quot;WL&quot;</span><span class="p">))</span>
-        
-        <span class="n">mintol</span> <span class="o">=</span> <span class="n">wavelengths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">resolution</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">8</span>
-        <span class="n">maxtol</span> <span class="o">=</span> <span class="n">wavelengths</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">resolution</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">8</span>
-        
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">oldwl</span><span class="p">)</span> <span class="o">-</span> <span class="n">mintol</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">oldwl</span><span class="p">)</span> <span class="o">+</span> <span class="n">maxtol</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">):</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Cannot extrapolate during reampling process. Please provide new wavelengths that are within the range of old ones.&quot;</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">npArrayInfo</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">,</span><span class="s">&quot;New Wavelengths&quot;</span><span class="p">)))</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">npArrayInfo</span><span class="p">(</span><span class="n">oldwl</span><span class="p">,</span><span class="s">&quot;Old Wavelengths&quot;</span><span class="p">)))</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Tolerance Range for New Wavelengths: [</span><span class="si">%g</span><span class="s">,</span><span class="si">%g</span><span class="s">]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">mintol</span><span class="p">,</span><span class="n">maxtol</span><span class="p">))</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        
-        <span class="n">oldres</span> <span class="o">=</span> <span class="n">oldwl</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">oldwl</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">oldres</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">resolution</span><span class="p">):</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;The new resolution seems to expect more detail than the old one. </span><span class="si">%g</span><span class="s"> -&gt; </span><span class="si">%g</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">oldres</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">resolution</span><span class="p">)))</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">npArrayInfo</span><span class="p">(</span><span class="n">oldres</span><span class="p">,</span><span class="s">&quot;given resolution&quot;</span><span class="p">)))</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">npArrayInfo</span><span class="p">(</span><span class="n">resolution</span><span class="p">,</span><span class="s">&quot;requested resoluton&quot;</span><span class="p">)))</span>
-        
-        <span class="n">ones</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">oldwl</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="c"># The main resampling function.</span>
+        <span class="c"># A two dimensional grid is used (instead of two for-loops). The grid stretches across wavelength (data), wavelength (requested). The </span>
+        <span class="c"># standard deviation of the blurring gaussian corresponds point-for-point to the requested wavelengths. As such, we will have columns which</span>
+        <span class="c"># we can sum to make the new wavelengths, and rows which show the distribution of flux from each old wavelength into each new wavelength.</span>
         <span class="n">sigma</span> <span class="o">=</span> <span class="n">wavelengths</span> <span class="o">/</span> <span class="n">resolution</span> <span class="o">/</span> <span class="mf">2.35</span>
         <span class="n">curve</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">wl</span><span class="p">,</span><span class="n">center</span><span class="p">,</span><span class="n">sig</span> <span class="p">:</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">sig</span> <span class="o">**</span> <span class="mf">2.0</span> <span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">wl</span> <span class="o">-</span> <span class="n">center</span><span class="p">)</span> <span class="o">**</span> <span class="mf">2.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">sig</span> <span class="o">**</span> <span class="mf">2.0</span><span class="p">)</span> <span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
         
+        <span class="c"># This is the two dimensional grid for the resampling function.</span>
         <span class="n">MWL</span><span class="p">,</span><span class="n">MCENT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">oldwl</span><span class="p">,</span><span class="n">wavelengths</span><span class="p">)</span>
         <span class="n">MWL</span><span class="p">,</span><span class="n">MSIGM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">oldwl</span><span class="p">,</span><span class="n">sigma</span><span class="p">)</span>
         
+        <span class="c"># DO THE MATH!</span>
         <span class="n">curves</span> <span class="o">=</span> <span class="n">curve</span><span class="p">(</span><span class="n">MWL</span><span class="p">,</span><span class="n">MCENT</span><span class="p">,</span><span class="n">MSIGM</span><span class="p">)</span>
         
-        <span class="n">exps</span> <span class="o">=</span>  <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">MWL</span> <span class="o">-</span> <span class="n">MCENT</span><span class="p">)</span> <span class="o">**</span> <span class="mf">2.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">MSIGM</span> <span class="o">**</span> <span class="mf">2.0</span><span class="p">)</span>
-        
+        <span class="c"># We then must normalize the light spread across each aperture by the gaussian. This makes sure the blurring gaussian only distributes</span>
+        <span class="c"># the amont of flux under each wavelength.</span>
+        <span class="n">ones</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">oldwl</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
         <span class="n">base</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">curves</span> <span class="o">*</span> <span class="n">ones</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">top</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">curves</span> <span class="o">*</span> <span class="n">oldfl</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">top</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">curves</span> <span class="o">*</span> <span class="n">oldfl</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         
+        <span class="c"># If we try to normalize by dividing by zero, we are doing something wrong.</span>
+        <span class="c"># Removing these data points should be okay, because they are data points which we calculated to</span>
+        <span class="c"># have zero total flux anyways, and so we can ignore them.</span>
         <span class="n">zeros</span> <span class="o">=</span> <span class="n">base</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">zeros</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Removed </span><span class="si">%d</span><span class="s"> zeros from re-weighting.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">zeros</span><span class="p">)))</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">npArrayInfo</span><span class="p">(</span><span class="n">base</span><span class="p">,</span><span class="s">&quot;Normalization Denominator&quot;</span><span class="p">)))</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">npArrayInfo</span><span class="p">(</span><span class="n">base</span><span class="p">,</span><span class="s">&quot;Normalization Numerator&quot;</span><span class="p">)))</span>
-            
+        <span class="n">topzo</span> <span class="o">=</span> <span class="n">top</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>    
+        <span class="c"># We don&#39;t actually clip those zero data points, we just make them into dumb numbers so that we don&#39;t get divide-by-zero errors</span>
         <span class="n">base</span><span class="p">[</span><span class="n">zeros</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">zeros</span><span class="p">))</span>
         <span class="n">top</span><span class="p">[</span><span class="n">zeros</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">zeros</span><span class="p">))</span>
         
+        <span class="c"># Do the actual normalization</span>
         <span class="n">flux</span> <span class="o">=</span> <span class="n">top</span>  <span class="o">/</span> <span class="n">base</span>
         
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Detected NaN in result of Resampling!&quot;</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">msg</span><span class="p">))</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">npArrayInfo</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">,</span><span class="s">&quot;New Wavelengths&quot;</span><span class="p">)))</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">npArrayInfo</span><span class="p">(</span><span class="n">oldwl</span><span class="p">,</span><span class="s">&quot;Old Wavelengths&quot;</span><span class="p">)))</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">npArrayInfo</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span><span class="s">&quot;Resolution Sigmas&quot;</span><span class="p">)))</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">npArrayInfo</span><span class="p">(</span><span class="n">exps</span><span class="p">,</span><span class="s">&quot;Exponent Value&quot;</span><span class="p">)))</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">npArrayInfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">exps</span><span class="p">),</span><span class="s">&quot;Exponent Evaluated&quot;</span><span class="p">)))</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">npArrayInfo</span><span class="p">(</span><span class="n">curves</span><span class="p">,</span><span class="s">&quot;Curve Evaluated&quot;</span><span class="p">)))</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">npArrayInfo</span><span class="p">(</span><span class="n">base</span><span class="p">,</span><span class="s">&quot;Normalization Denominator&quot;</span><span class="p">)))</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">npArrayInfo</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span><span class="s">&quot;Resulting Flux&quot;</span><span class="p">)))</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">npArrayInfo</span><span class="p">(</span><span class="n">oldfl</span><span class="p">,</span><span class="s">&quot;Original Flux&quot;</span><span class="p">)))</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">npArrayInfo</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span><span class="s">&quot;New Flux&quot;</span><span class="p">)))</span>
+
+        <span class="n">msgarray</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">u&quot;Normalization Denominator&quot;</span> <span class="p">:</span> <span class="n">base</span><span class="p">,</span>
+            <span class="s">u&quot;Normalization Numerator&quot;</span> <span class="p">:</span> <span class="n">top</span><span class="p">,</span>
+            <span class="s">u&quot;Resolution σ&quot;</span> <span class="p">:</span> <span class="n">sigma</span><span class="p">,</span>
+            <span class="s">u&quot;Exponent Value&quot;</span> <span class="p">:</span> <span class="p">(</span><span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">MWL</span> <span class="o">-</span> <span class="n">MCENT</span><span class="p">)</span> <span class="o">**</span> <span class="mf">2.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">MSIGM</span> <span class="o">**</span> <span class="mf">2.0</span><span class="p">)),</span>
+            <span class="s">u&quot;Exponent Evaluated&quot;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">MWL</span> <span class="o">-</span> <span class="n">MCENT</span><span class="p">)</span> <span class="o">**</span> <span class="mf">2.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">MSIGM</span> <span class="o">**</span> <span class="mf">2.0</span><span class="p">)),</span>
+            <span class="s">u&quot;Curve Evaluated&quot;</span> <span class="p">:</span> <span class="n">curves</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">topzo</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">zeros</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">))</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_postsanity</span><span class="p">(</span><span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span><span class="p">,</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">flux</span><span class="p">,</span><span class="n">resolution</span><span class="p">,</span><span class="n">error</span><span class="o">=</span><span class="ne">ValueError</span><span class="p">,</span><span class="n">message</span><span class="o">=</span><span class="s">u&quot;Normalizing Zero error.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">zeros</span><span class="p">)),</span><span class="o">**</span><span class="n">msgarray</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">zeros</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_postsanity</span><span class="p">(</span><span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span><span class="p">,</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">flux</span><span class="p">,</span><span class="n">resolution</span><span class="p">,</span><span class="n">warning</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">message</span><span class="o">=</span><span class="s">u&quot;Removed </span><span class="si">%d</span><span class="s"> zeros from re-weighting.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">zeros</span><span class="p">)),</span><span class="o">**</span><span class="n">msgarray</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_postsanity</span><span class="p">(</span><span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span><span class="p">,</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">flux</span><span class="p">,</span><span class="n">resolution</span><span class="p">,</span><span class="o">**</span><span class="n">msgarray</span><span class="p">)</span>
+            
+        
+        
+        <span class="c"># We do print fun information about the final calculation regardless.</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">u&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">npArrayInfo</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span><span class="s">&quot;New Flux&quot;</span><span class="p">)))</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">u&quot;Resample Complete&quot;</span><span class="p">)</span>
+                
+        <span class="c"># Finally, return the data in a way that makes sense for the just-in-time spectrum calculation objects</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">flux</span><span class="p">))</span>
+    
+    
+    
+    <span class="k">def</span> <span class="nf">integrate_hist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">upscale</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Performs an integration along wavelengths using the trapezoidal approximation.</span>
+<span class="sd">        </span>
+<span class="sd">        The integrator uses a trapezoidal approximation, upscaled to include more data points in each trapezoidal section than the requested wavelengths. The integrator then uses the trapezoid approximation from http://en.wikipedia.org/wiki/Trapezoidal_rule to integrate the spectrum. This results in some integration error, but the integration error is presumably small when compared to the speedup gained over :meth:`integrate_quad`.</span>
+<span class="sd">        </span>
+<span class="sd">        Input should be a set of wavelengths requested for the system (in the `wavelengths` keyword). The output will be a data array of wavelengths and fluxes (should be the provided `wavelengths`, and an equivalently shaped array with fluxes.) The `upscale` keyword controls the degree of oversampling for this method.</span>
+<span class="sd">        </span>
+<span class="sd">        This calculation is based on the :meth:`interpolate` function and the :func:`np.histogram` function, both of which are not quite vector-fast, but are sufficiently fast for most purposes. This method has been tested to be much faster than :meth:`integrate_quad`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">wavelengths</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">wavelengths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span>
+        <span class="k">if</span> <span class="n">wavelengths</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">u&quot;Requires Wavelenths&quot;</span><span class="p">)</span>
+        
+        <span class="c"># Upsample the provided wavelengths</span>
+        <span class="c"># This increases the accuracy of the trapezoidal algorithm, as this algorithm is very sensitive to sampling errors.</span>
+        <span class="k">if</span> <span class="n">upscale</span> <span class="o">!=</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="n">startindexs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="o">*</span> <span class="n">upscale</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">startindexs</span><span class="p">,</span><span class="n">wavelengths</span><span class="p">)</span>
+            <span class="n">findindexs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">startindexs</span><span class="p">))</span>
+            <span class="n">bins</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">findindexs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bins</span> <span class="o">=</span> <span class="n">wavelengths</span>
+        
+        <span class="c"># Data sanity check</span>
+        <span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">wavelengths</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span><span class="n">extrapolate</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">u&quot;Integration Starting&quot;</span><span class="p">)</span>
+        
+        <span class="n">error</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">warning</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">arrays</span> <span class="o">=</span> <span class="p">{}</span>
+                
+        <span class="k">if</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">u&quot;λ Bins must increase monotonically. [wl + </span><span class="si">%g</span><span class="s">]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">wavelengths</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">arrays</span> <span class="o">=</span> <span class="p">{</span><span class="s">u&quot;λ Binsu&quot;</span> <span class="p">:</span> <span class="n">bins</span><span class="p">,</span> <span class="s">u&quot;Requested λ&quot;</span> <span class="p">:</span> <span class="n">wavelengths</span> <span class="p">,</span><span class="s">u&quot;Requested Δλ&quot;</span><span class="p">:</span> <span class="n">wavelengths</span><span class="p">,</span> <span class="s">u&quot;Bin Δλ&quot;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">bins</span><span class="p">),</span><span class="s">u&quot;λ Offset&quot;</span> <span class="p">:</span> <span class="n">offset</span> <span class="p">}</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="ne">ValueError</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bincount</span><span class="p">,</span><span class="n">wavelengths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">oldwl</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">wavelengths</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">bincount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">u&quot;Given λ is undersampled in Requested λ (there is not at least 1 given λ per requested bin)&quot;</span>
+                <span class="n">arrays</span> <span class="o">=</span> <span class="p">{</span><span class="s">u&quot;Histogram of λ&quot;</span> <span class="p">:</span> <span class="n">bincount</span><span class="p">,</span> <span class="s">u&quot;Requested λ&quot;</span> <span class="p">:</span> <span class="n">wavelengths</span> <span class="p">,</span> <span class="s">u&quot;Given λ&quot;</span> <span class="p">:</span> <span class="n">oldwl</span> <span class="p">}</span>
+                <span class="n">error</span> <span class="o">=</span> <span class="ne">ValueError</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="n">bincount</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">u&quot;Bins appear undersampled by given λ&quot;</span>
+                <span class="n">arrays</span> <span class="o">=</span> <span class="p">{</span><span class="s">u&quot;Histogram of λ&quot;</span> <span class="p">:</span> <span class="n">bincount</span><span class="p">,</span> <span class="s">u&quot;Requested λ&quot;</span> <span class="p">:</span> <span class="n">wavelengths</span> <span class="p">,</span> <span class="s">u&quot;Given λ&quot;</span> <span class="p">:</span> <span class="n">oldwl</span> <span class="p">}</span>
+                <span class="n">warning</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_presanity</span><span class="p">(</span><span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span><span class="p">,</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">error</span><span class="o">=</span><span class="n">error</span><span class="p">,</span><span class="n">message</span><span class="o">=</span><span class="n">msg</span><span class="p">,</span><span class="n">warning</span><span class="o">=</span><span class="n">warning</span><span class="p">,</span><span class="n">extrapolate</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="o">**</span><span class="n">arrays</span><span class="p">)</span>
+        
+        <span class="n">wlStart</span> <span class="o">=</span> <span class="n">wavelengths</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">wlEnd</span> <span class="o">=</span> <span class="n">wavelengths</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>         
+        
+        <span class="n">w</span> <span class="o">=</span> <span class="p">(</span><span class="n">oldwl</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">-</span><span class="n">oldwl</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">oldfl</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">+</span><span class="n">oldfl</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="mi">2</span>
+        
+        <span class="n">flux</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">oldwl</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">weights</span><span class="o">=</span><span class="n">w</span><span class="p">)</span>
+        <span class="n">flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">flux</span><span class="p">,</span><span class="n">flux</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+        
+        <span class="c"># This is our sanity check. Everything we calculated should be a number. If it comes out as nan, then we have done something wrong.</span>
+        <span class="c"># In that case, we raise an error after printing information about the whole calculation.</span>
+        <span class="n">arrays</span> <span class="o">=</span> <span class="p">{</span> <span class="s">u&quot;Requested lower bound λ&quot;</span> <span class="p">:</span> <span class="n">wlStart</span> <span class="p">,</span> <span class="s">u&quot;Requested upper bound λ&quot;</span> <span class="p">:</span> <span class="n">wlEnd</span> <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_postsanity</span><span class="p">(</span><span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span><span class="p">,</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">flux</span><span class="p">,</span><span class="n">extrapolate</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="o">**</span><span class="n">arrays</span><span class="p">)</span>
+        <span class="c"># We do print fun information about the final calculation regardless.</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">u&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">npArrayInfo</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span><span class="s">&quot;New Flux&quot;</span><span class="p">)))</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">u&quot;Integration Complete&quot;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">flux</span><span class="p">))</span>
+    
+    
+    <span class="k">def</span> <span class="nf">integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calls the default integrator.&quot;&quot;&quot;</span>
+        <span class="n">method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">default_integrator</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">method</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">integrate_quad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">intSteps</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Performs an integration along wavelengths using the scipy QUADpack implementation in :func:`scipy.integrate.quad`. </span>
+<span class="sd">        </span>
+<span class="sd">        Input should be a set of wavelengths requested for the system (in the `wavelengths` keyword). The output will be a data array of wavelengths and fluxes (should be the provided `wavelengths`, and an equivalently shaped array with fluxes.)</span>
+<span class="sd">        </span>
+<span class="sd">        This integrator uses a generator based for-loop wraped around a call to :func:`scipy.integrate.quad`. On an operation with ~100 elements, this operation can consume close to 20s of computation time. Also, this method must stay strictly within the provided wavelength data. The `intSteps` keyword controls the maximum number of steps in each integration. Turning this value down speeds up the integrator.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">wavelengths</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">wavelengths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span>
+        <span class="k">if</span> <span class="n">wavelengths</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">u&quot;Requires Wavelenths&quot;</span><span class="p">)</span>
+        
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">u&quot;Integration Starting&quot;</span><span class="p">)</span>
+        
+        
+        <span class="c"># Data sanity check</span>
+        <span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_presanity</span><span class="p">(</span><span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span><span class="p">,</span><span class="n">wavelengths</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span><span class="p">,</span><span class="n">bounds_error</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">fill_value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        
+        <span class="n">wlStart</span> <span class="o">=</span> <span class="n">wavelengths</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">wlEnd</span> <span class="o">=</span> <span class="n">wavelengths</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>         
+        
+        <span class="n">flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="n">sp</span><span class="o">.</span><span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span><span class="n">wlS</span><span class="p">,</span><span class="n">wlE</span><span class="p">,</span><span class="n">limit</span><span class="o">=</span><span class="n">intSteps</span><span class="p">,</span><span class="n">full_output</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">wlS</span><span class="p">,</span><span class="n">wlE</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">wlStart</span><span class="p">,</span><span class="n">wlEnd</span><span class="p">)</span> <span class="p">])</span>
+        <span class="n">flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">flux</span><span class="p">,</span><span class="n">flux</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+        
+        <span class="c"># This is our sanity check. Everything we calculated should be a number. If it comes out as nan, then we have done something wrong.</span>
+        <span class="c"># In that case, we raise an error after printing information about the whole calculation.</span>
+        <span class="n">arrays</span> <span class="o">=</span> <span class="p">{</span> <span class="s">u&quot;Requested lower bound λu&quot;</span> <span class="p">:</span> <span class="n">wlStart</span> <span class="p">,</span> <span class="s">u&quot;Requested upper bound λ&quot;</span> <span class="p">:</span> <span class="n">wlEnd</span> <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_postsanity</span><span class="p">(</span><span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span><span class="p">,</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">flux</span><span class="p">,</span><span class="o">**</span><span class="n">arrays</span><span class="p">)</span>
+
+        <span class="c"># We do print fun information about the final calculation regardless.</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">u&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">npArrayInfo</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span><span class="s">&quot;New Flux&quot;</span><span class="p">)))</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">u&quot;Integration Complete&quot;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">flux</span><span class="p">))</span>
+    
+    <span class="k">def</span> <span class="nf">resolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">resolution</span><span class="p">,</span><span class="n">resolve_method</span><span class="o">=</span><span class="s">&#39;resample&#39;</span><span class="p">,</span><span class="n">upscaling</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This method calls a spectrum method, saving and returning the result. The saved data is prepared for the :meth:`resolve_and_integrate` function before being returned. The method also prevents over-resolution sampling.</span>
+<span class="sd">        </span>
+<span class="sd">        The resolution provided (`resolution` keyword) are used to request a resampled resolution. However, to prevent information loss, by default (see the `upscaling` keyword) the method automatically prevents the new resolution from exceeding the inherent resolution of the provided data. This allows the system to request a high resolution spectrum, and instead receive the maximum amount of information available at every point.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resolver</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">resolve_method</span><span class="p">)</span>
+        
+        <span class="n">newwl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">)</span>
+        <span class="n">newrs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">resolution</span><span class="p">)</span>
+        <span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">oldrs</span> <span class="o">=</span>  <span class="n">oldwl</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">oldwl</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">upscaling</span><span class="p">:</span>        
+            <span class="n">upsample</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">oldrsf</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">oldwl</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">oldrs</span><span class="p">,</span><span class="n">bounds_error</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">fill_value</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">oldrs</span><span class="p">))</span>
+            <span class="n">oldrsd</span> <span class="o">=</span> <span class="n">oldrsf</span><span class="p">(</span><span class="n">newwl</span><span class="p">)</span>
+            <span class="n">delrs</span> <span class="o">=</span> <span class="n">newrs</span> <span class="o">&gt;</span> <span class="n">oldrsd</span>
+            <span class="n">newrs</span><span class="p">[</span><span class="n">delrs</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldrsd</span><span class="p">[</span><span class="n">delrs</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">upsample</span> <span class="o">=</span> <span class="bp">True</span>
+            
+        
+        <span class="c"># Save the original data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        
+        <span class="c"># Do the actual integration, and save it to the object.</span>
+        <span class="n">dwl</span><span class="p">,</span><span class="n">dfl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolver</span><span class="p">(</span><span class="n">wavelengths</span><span class="o">=</span><span class="n">newwl</span><span class="p">,</span><span class="n">resolution</span><span class="o">=</span><span class="n">newrs</span><span class="p">,</span><span class="n">upsample</span><span class="o">=</span><span class="n">upsample</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resolved_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">dwl</span><span class="p">,</span><span class="n">dfl</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resolved</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolved_data</span>
+        
+                
+    <span class="k">def</span> <span class="nf">resolve_and_integrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">resolution</span><span class="p">,</span><span class="n">resolve_method</span><span class="o">=</span><span class="s">&#39;resample&#39;</span><span class="p">,</span><span class="n">integration_method</span><span class="o">=</span><span class="s">&#39;integrate_hist&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Resolve a spectrum at a given resolution once, and use that resolved resolution for integration in the future.</span>
+<span class="sd">        </span>
+<span class="sd">        The spectrum is first resolved by the :meth:`resolve` function. This provides an appropriately resampled spectrum for use with the integrator. The integrator is then called, and used to get a result. The data from the :meth:`resolve` function is saved for future use.</span>
+<span class="sd">        </span>
+<span class="sd">        Input should be a set of wavelengths requested for the system (in the `wavelengths` keyword) and an array of resolutions requested in the `resolutions` keyword. The output will be a data array of wavelengths and fluxes (should be the provided `wavelengths`, and an equivalently shaped array with fluxes.)</span>
+<span class="sd">        </span>
+<span class="sd">        .. Note :: The speedup advantage of this method is only beneficial for large data arrays, where the :meth:`resample` function is slow. However, it also allows the use of resample and integrate simultaneously. As such, there is essentially no downside to using this method over a UnitarySpectrum call to insert another interpolation method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">u&quot;Resolve and Resample Starting&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s">&#39;resolved&#39;</span><span class="p">):</span>
+            <span class="n">txt</span> <span class="o">=</span> <span class="s">u&quot;Resolved&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolved</span> <span class="k">else</span> <span class="s">&quot;Resolving&quot;</span>
+            <span class="n">oldwl</span><span class="p">,</span><span class="n">oldfl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+            <span class="c"># Test resolution for current validity:</span>
+            <span class="n">bincount</span><span class="p">,</span><span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">oldwl</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">wavelengths</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">bincount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="n">txt</span> <span class="o">=</span> <span class="s">u&quot;Re-resolving&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">resolved</span> <span class="o">=</span> <span class="bp">False</span>            
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">u&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">txt</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resolved</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">u&quot;</span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s">&quot;Resolving first&quot;</span><span class="p">))</span>
+        
+        <span class="c"># First pass resolving the spectrum to a denser data set.</span>
+        <span class="c"># This pass uses the upscaling parameter to find a much denser resolution.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolved</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resolve</span><span class="p">(</span><span class="n">wavelengths</span><span class="o">=</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">resolution</span><span class="o">=</span><span class="n">resolution</span><span class="p">,</span><span class="n">resolve_method</span><span class="o">=</span><span class="n">resolve_method</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">integrator</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">integration_method</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resolved_data</span>
+        <span class="n">integrated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">integrator</span><span class="p">(</span><span class="n">wavelengths</span><span class="o">=</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">resolution</span><span class="o">=</span><span class="n">resolution</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_data</span>
+        <span class="k">return</span> <span class="n">integrated</span>
+        
+
+<div class="viewcode-block" id="InterpolatedSpectrum"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.InterpolatedSpectrum">[docs]</a><span class="k">class</span> <span class="nc">InterpolatedSpectrum</span><span class="p">(</span><span class="n">InterpolatedSpectrumBase</span><span class="p">,</span><span class="n">AstroSpectra</span><span class="o">.</span><span class="n">SpectraFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An analytic representation of a generic, specified spectrum. The spectrum provided will be used to create an infintiely dense interpolation function. This function can then be used to call the spectrum at any wavelength. The interpolation used by default is a simple 1d interpolation.</span>
+<span class="sd">    </span>
+<span class="sd">    Passing the name of any member function in this class to the `method` parameter will change the interpolation/method used for this spectrum.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>    
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span> <span class="c"># The size of this image</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span> <span class="c"># The shape of this image</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">InterpolatedSpectrum</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        
+</div>
+<div class="viewcode-block" id="Resolver"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.Resolver">[docs]</a><span class="k">class</span> <span class="nc">Resolver</span><span class="p">(</span><span class="n">InterpolatedSpectrum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This spectrum performs a unitary operation on any InterpolatedSpectrum-type-object. The operation (specified by the `method` keyword) is performed after the contained spectrum is called. The included spectrum is called immediately and then discarded. As such, wavelength and resolution keywords should be provided when appropriate to resolve the spectrum immediately. This operation does not save the old data state. All methods in :class:`InterpolatedSpectrum` are available.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectrum</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">new_method</span><span class="o">=</span><span class="s">&#39;interpolate&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">spectrum</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">label</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span>  <span class="s">u&quot;R[&quot;</span> <span class="o">+</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">label</span> <span class="o">+</span> <span class="s">&quot;]&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Resolver</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span><span class="n">method</span><span class="o">=</span><span class="n">new_method</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        
+        </div>
+<div class="viewcode-block" id="UnitarySpectrum"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.UnitarySpectrum">[docs]</a><span class="k">class</span> <span class="nc">UnitarySpectrum</span><span class="p">(</span><span class="n">InterpolatedSpectrumBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This spectrum performs a unitary operation on any InterpolatedSpectrum-type-object. The operation (specified by the `method` keyword) is performed after the contained spectrum is called. All methods in :class:`InterpolatedSpectrum` are available.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectrum</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;interpolate&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">label</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span>  <span class="s">u&quot;[&quot;</span> <span class="o">+</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">label</span> <span class="o">+</span> <span class="s">&quot;]&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">UnitarySpectrum</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span> <span class="o">=</span> <span class="n">spectrum</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">method</span><span class="p">)</span>
+        
+<div class="viewcode-block" id="UnitarySpectrum.__call__"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.UnitarySpectrum.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">old_method</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">method</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calls this interpolated spectrum over certain wavelengths. The `method` parameter will default to the one set for the object, and controls the method used to interpret this spectrum. The `old_method` parameter will be used on the contained spectrum. Available methods include all members of :class:`InterpolatedSpectrum` which provide return values (all those documented below).&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectrum</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">old_method</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">UnitarySpectrum</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__call__</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+                    
 </div></div>
 <span class="kn">import</span> <span class="nn">AnalyticSpectraObjects</span>
 <span class="kn">from</span> <span class="nn">AnalyticSpectraObjects</span> <span class="kn">import</span> <span class="o">*</span>
@@ -345,7 +832,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.3.0 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.3.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

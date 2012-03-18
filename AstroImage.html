@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>6. Image Objects and Storage AstroImage &mdash; AstroObject 0.3.0 documentation</title>
+    <title>6. Image Objects and Storage AstroImage &mdash; AstroObject 0.3.1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.0',
+        VERSION:     '0.3.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,9 +25,10 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.0 documentation" href="index.html" />
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="AstroObject 0.3.1 documentation" href="index.html" />
     <link rel="next" title="7. Raw Spectrum Management AstroSpectra" href="AstroSpectra.html" />
-    <link rel="prev" title="4. API for Objects: FITSObject" href="AstroObject.html" /> 
+    <link rel="prev" title="4. Custom Object Basics: FITSObject" href="AstroObject.html" /> 
   </head>
   <body>
     <div class="related">
@@ -43,9 +44,9 @@
           <a href="AstroSpectra.html" title="7. Raw Spectrum Management AstroSpectra"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="AstroObject.html" title="4. API for Objects: FITSObject"
+          <a href="AstroObject.html" title="4. Custom Object Basics: FITSObject"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -66,6 +67,11 @@
 <tt class="descname">clear</tt><big>(</big><em>delete=False</em><big>)</big><a class="headerlink" href="#AstroObject.AstroImage.ImageObject.clear" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clears all states from this object. Returns an empty list representing the currently known states.</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroImage.ImageObject.copy">
+<tt class="descname">copy</tt><big>(</big><big>)</big> &rarr; a shallow copy of D<a class="headerlink" href="#AstroObject.AstroImage.ImageObject.copy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="AstroObject.AstroImage.ImageObject.data">
@@ -99,10 +105,52 @@
 </div>
 </dd></dl>
 
+<dl class="staticmethod">
+<dt id="AstroObject.AstroImage.ImageObject.fromkeys">
+<em class="property">static </em><tt class="descname">fromkeys</tt><big>(</big><em>S</em><span class="optional">[</span>, <em>v</em><span class="optional">]</span><big>)</big> &rarr; New dict with keys from S and values equal to v.<a class="headerlink" href="#AstroObject.AstroImage.ImageObject.fromkeys" title="Permalink to this definition">¶</a></dt>
+<dd><p>v defaults to None.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroImage.ImageObject.get">
+<tt class="descname">get</tt><big>(</big><em>k</em><span class="optional">[</span>, <em>d</em><span class="optional">]</span><big>)</big> &rarr; D[k] if k in D, else d.  d defaults to None.<a class="headerlink" href="#AstroObject.AstroImage.ImageObject.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroImage.ImageObject.has_key">
+<tt class="descname">has_key</tt><big>(</big><em>k</em><big>)</big> &rarr; True if D has a key k, else False<a class="headerlink" href="#AstroObject.AstroImage.ImageObject.has_key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroImage.ImageObject.items">
+<tt class="descname">items</tt><big>(</big><big>)</big> &rarr; list of D's (key, value) pairs, as 2-tuples<a class="headerlink" href="#AstroObject.AstroImage.ImageObject.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroImage.ImageObject.iteritems">
+<tt class="descname">iteritems</tt><big>(</big><big>)</big> &rarr; an iterator over the (key, value) items of D<a class="headerlink" href="#AstroObject.AstroImage.ImageObject.iteritems" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroImage.ImageObject.iterkeys">
+<tt class="descname">iterkeys</tt><big>(</big><big>)</big> &rarr; an iterator over the keys of D<a class="headerlink" href="#AstroObject.AstroImage.ImageObject.iterkeys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroImage.ImageObject.itervalues">
+<tt class="descname">itervalues</tt><big>(</big><big>)</big> &rarr; an iterator over the values of D<a class="headerlink" href="#AstroObject.AstroImage.ImageObject.itervalues" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="AstroObject.AstroImage.ImageObject.keep">
 <tt class="descname">keep</tt><big>(</big><em>*statenames</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroImage.ImageObject.keep" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes all states except the specified frame(s) in the object</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroImage.ImageObject.keys">
+<tt class="descname">keys</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.AstroImage.ImageObject.keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dictionary keys</p>
 </dd></dl>
 
 <dl class="method">
@@ -116,6 +164,18 @@
 <tt class="descname">loadFromFile</tt><big>(</big><em>filename=None</em>, <em>statename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroImage.html#ImageObject.loadFromFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroImage.ImageObject.loadFromFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function can be used to load an image file (but not a FITS file) into this image frame. Image files should be formats accepatble to the Python Image Library, but that generally applies to most common image formats, such as .png and .jpg .
 This method takes a <em>filename</em> and a <em>statename</em> parameter. If either is not given, they will be generated using sensible defaults.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroImage.ImageObject.pop">
+<tt class="descname">pop</tt><big>(</big><em>k</em><span class="optional">[</span>, <em>d</em><span class="optional">]</span><big>)</big> &rarr; v, remove specified key and return the corresponding value.<a class="headerlink" href="#AstroObject.AstroImage.ImageObject.pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>If key is not found, d is returned if given, otherwise KeyError is raised</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroImage.ImageObject.popitem">
+<tt class="descname">popitem</tt><big>(</big><big>)</big> &rarr; (k, v), remove and return some (key, value) pair as a<a class="headerlink" href="#AstroObject.AstroImage.ImageObject.popitem" title="Permalink to this definition">¶</a></dt>
+<dd><p>2-tuple; but raise KeyError if D is empty.</p>
 </dd></dl>
 
 <dl class="method">
@@ -149,6 +209,11 @@ This method takes a <em>filename</em> and a <em>statename</em> parameter. If eit
 </dd></dl>
 
 <dl class="method">
+<dt id="AstroObject.AstroImage.ImageObject.setdefault">
+<tt class="descname">setdefault</tt><big>(</big><em>k</em><span class="optional">[</span>, <em>d</em><span class="optional">]</span><big>)</big> &rarr; D.get(k,d), also set D[k]=d if k not in D<a class="headerlink" href="#AstroObject.AstroImage.ImageObject.setdefault" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="AstroObject.AstroImage.ImageObject.show">
 <tt class="descname">show</tt><big>(</big><em>statename=None</em><big>)</big><a class="headerlink" href="#AstroObject.AstroImage.ImageObject.show" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the (rendered) matplotlib plot for this object. This is a quick way to view your current data state without doing any serious plotting work. This aims for the sensible defaults philosophy, if you don&#8217;t like what you get, write a new method that uses the <a class="reference internal" href="#AstroObject.AstroImage.ImageObject.data" title="AstroObject.AstroImage.ImageObject.data"><tt class="xref py py-meth docutils literal"><span class="pre">data()</span></tt></a> call and plots that.</p>
@@ -156,9 +221,37 @@ This method takes a <em>filename</em> and a <em>statename</em> parameter. If eit
 
 <dl class="method">
 <dt id="AstroObject.AstroImage.ImageObject.show3D">
-<tt class="descname">show3D</tt><big>(</big><em>statename=None</em><big>)</big><a class="headerlink" href="#AstroObject.AstroImage.ImageObject.show3D" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">show3D</tt><big>(</big><em>statename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroImage.html#ImageObject.show3D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroImage.ImageObject.show3D" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shows a 3D contour of the image</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroImage.ImageObject.update">
+<tt class="descname">update</tt><big>(</big><em>E</em>, <em>**F</em><big>)</big> &rarr; None.  Update D from dict/iterable E and F.<a class="headerlink" href="#AstroObject.AstroImage.ImageObject.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>If E has a .keys() method, does:     for k in E: D[k] = E[k]
+If E lacks .keys() method, does:     for (k, v) in E: D[k] = v
+In either case, this is followed by: for k in F: D[k] = F[k]</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroImage.ImageObject.values">
+<tt class="descname">values</tt><big>(</big><big>)</big> &rarr; list of D's values<a class="headerlink" href="#AstroObject.AstroImage.ImageObject.values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroImage.ImageObject.viewitems">
+<tt class="descname">viewitems</tt><big>(</big><big>)</big> &rarr; a set-like object providing a view on D's items<a class="headerlink" href="#AstroObject.AstroImage.ImageObject.viewitems" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroImage.ImageObject.viewkeys">
+<tt class="descname">viewkeys</tt><big>(</big><big>)</big> &rarr; a set-like object providing a view on D's keys<a class="headerlink" href="#AstroObject.AstroImage.ImageObject.viewkeys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroImage.ImageObject.viewvalues">
+<tt class="descname">viewvalues</tt><big>(</big><big>)</big> &rarr; an object providing a view on D's values<a class="headerlink" href="#AstroObject.AstroImage.ImageObject.viewvalues" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
 <dt id="AstroObject.AstroImage.ImageObject.write">
@@ -229,7 +322,7 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
   <p class="topless"><a href="AstroObject.html"
-                        title="previous chapter">4. API for Objects: <tt class="docutils literal"><span class="pre">FITSObject</span></tt></a></p>
+                        title="previous chapter">4. Custom Object Basics: <tt class="docutils literal"><span class="pre">FITSObject</span></tt></a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="AstroSpectra.html"
                         title="next chapter">7. Raw Spectrum Management <tt class="docutils literal docutils literal"><span class="pre">AstroSpectra</span></tt></a></p>
@@ -268,9 +361,9 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
           <a href="AstroSpectra.html" title="7. Raw Spectrum Management AstroSpectra"
              >next</a> |</li>
         <li class="right" >
-          <a href="AstroObject.html" title="4. API for Objects: FITSObject"
+          <a href="AstroObject.html" title="4. Custom Object Basics: FITSObject"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
