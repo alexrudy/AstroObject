@@ -137,7 +137,7 @@ class API_Abstract_Frame(API_Base):
 
 
     def test_string_representation(self):
-        """__str__() String representation correct for Frame"""
+        """__repr__() String representation correct for Frame"""
         AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
         assert str(AFrame) == self.FRAMESTR
@@ -231,17 +231,36 @@ class API_Base_Object(API_Base):
         """save() fails when passed None"""
         AObject = self.OBJECT()
         AObject.save(None)
+        
+    @nt.raises(TypeError)
+    def test_set_with_none(self):
+        """[] fails when passed None"""
+        AObject = self.OBJECT()
+        AObject["Label"] = None
+    
     
     def test_save_with_data(self):
         """save() works with valid data"""
         AObject = self.OBJECT()
         AObject.save(self.VALID,"Valid")
     
+    def test_set_with_data(self):
+        """[] works with valid data"""
+        AObject = self.OBJECT()
+        AObject["Valid"] = self.VALID
+    
+    
     @nt.raises(TypeError)
     def test_save_with_invalid_data(self):
         """save() fails with invalid data"""
         AObject = self.OBJECT()
         AObject.save(self.INVALID,"Invalid")
+    
+    @nt.raises(TypeError)
+    def test_set_with_invalid_data(self):
+        """save() fails with invalid data"""
+        AObject = self.OBJECT()
+        AObject["Invalid"] = self.INVALID
     
     
     def test_save_with_frame(self):
@@ -250,6 +269,15 @@ class API_Base_Object(API_Base):
         AObject.save(self.FRAMEINST)
         assert AObject.statename == self.FRAMELABEL
         assert isinstance(AObject.frame(),self.FRAME)
+    
+    def test_set_frame_with_label(self):
+        """Saving an object with an explicit label changes that object's label"""
+        NewLabel = "Other"
+        AObject = self.OBJECT()
+        AObject[NewLabel] = self.FRAMEINST
+        assert AObject.statename == NewLabel
+        assert AObject.frame().label == NewLabel
+    
     
     def test_save_frame_with_label(self):
         """Saving an object with an explicit label changes that object's label"""
@@ -355,9 +383,23 @@ class API_Base_Object(API_Base):
     
     @nt.raises(KeyError)
     def test_frame_empty(self):
-        """data() raises a key error when key is missing"""
+        """frame() raises a key error when key is missing"""
         AObject = self.OBJECT()
         AObject.frame()
+    
+    def test_frame(self):
+        """frame() returns data object"""
+        AObject = self.OBJECT()
+        AObject.save(self.FRAMEINST)
+        frame = AObject.frame()
+        assert self.SAME(frame,self.FRAMEINST)
+    
+    def test_get(self):
+        """[] returns data object"""
+        AObject = self.OBJECT()
+        AObject[self.FRAMEINST.label] = self.FRAMEINST
+        frame = AObject[self.FRAMEINST.label]
+        assert self.SAME(frame,self.FRAMEINST)
     
     
     @nt.raises(KeyError)

@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.0
+#  Version 0.3.1
 #
 
 import logging
@@ -114,8 +114,8 @@ class LogManager(logging.getLoggerClass()):
                     },
                     'file' : {
                         'enable' : True,
-                        'format' : "%(asctime)s : %(levelname)-8s : %(module)-40s : %(funcName)-10s : %(message)s",
-                        'dateformat' : "%Y-%m-%d-%H:%M:%S",
+                        'format' : "%(asctime)s : %(levelname)-8s : %(module)-15s : %(funcName)-10s : %(message)s",
+                        'dateformat' : "%H:%M:%S",
                         'filename' : "AstroObject",
                         'level' : None,
                     },

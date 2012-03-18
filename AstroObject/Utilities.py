@@ -4,18 +4,19 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.0
+#  Version 0.3.1
 #
 
 import numpy as np
 import scipy as sp
 import scipy.constants as spconst
-import pyfits
 import math
 import logging,time,sys,collections,os
 from pkg_resources import resource_string
 
-__all__ = ["getVersion","expandLim","BlackBody","Gaussian","validate_filename","update","npArrayInfo","AbstractError","HDUFrameTypeError","ConfigurationError","resource_string"]
+from matplotlib.ticker import LogFormatter
+
+__all__ = ["LogFormatterTeXExponent","getVersion","expandLim","BlackBody","Gaussian","validate_filename","update","npArrayInfo","AbstractError","HDUFrameTypeError","ConfigurationError","resource_string"]
 
 LOG = logging.getLogger(__name__)
 
@@ -143,7 +144,7 @@ def npArrayInfo(array,name=None):
     
     if isinstance(array,np.ndarray):
         
-        MSG += "%(elements)d elements with shape %(shape)s. "
+        MSG += "len %(elements)d shaped %(shape)s. "
         
         fmtr["elements"] = array.size
         fmtr["shape"] = str(array.shape)
@@ -204,5 +205,26 @@ class HDUFrameTypeError(Exception):
 class ConfigurationError(Exception):
     """Denotes an error caused by a bad configuration"""
     pass    
+
+import re
+
+class LogFormatterTeXExponent(LogFormatter, object):
+    """Extends pylab.LogFormatter to use
+    tex notation for tick labels."""
+
+    def __init__(self, *args, **kwargs):
+        super(LogFormatterTeXExponent,
+              self).__init__(*args, **kwargs)
+
+    def __call__(self, *args, **kwargs):
+        """Wrap call to parent class with
+        change to tex notation."""
+        label = super(LogFormatterTeXExponent,
+                      self).__call__(*args, **kwargs)
+        label = re.sub(r'e(\S)0?(\d+)',
+                       r'\\times 10^{\1\2}',
+                       str(label))
+        label = "$" + label + "$"
+        return label
         
 __version__ = getVersion()

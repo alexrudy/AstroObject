@@ -1,10 +1,11 @@
+# -*- coding: utf-8 -*-
 # 
 #  AnalyticSpectra.py
 #  ObjectModel
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.0
+#  Version 0.3.1
 # 
 
 # Parent Modules
@@ -37,7 +38,7 @@ import itertools
 # Submodules from this system
 from Utilities import *
 
-__all__ = ["AnalyticSpectrum","CompositeSpectra","InterpolatedSpectrum"]
+__all__ = ["AnalyticSpectrum","CompositeSpectra","InterpolatedSpectrum","InterpolatedSpectrumBase"]
 
 LOG = logging.getLogger(__name__)
 
@@ -65,25 +66,32 @@ class AnalyticSpectrum(AstroObjectBase.BaseFrame):
         """Implements spectrum subtraction"""
         return CompositeSpectra(self,other,'sub')
         
+    def __div__(self,other):
+        """Implements spectrum division"""
+        return CompositeSpectra(self,other,'div')
+    
     
     def __rsub__(self,other):
         """Reverse subtraction"""
         return CompositeSpectra(other,self,'sub')
         
+    def __rdiv__(self,other):
+        """Reverse division"""
+        return CompositeSpectra(other,self,'div')
     
-    def __rmul__(self):
+    def __rmul__(self,other):
         """Reverse Multiplication"""
-        return CompositeSpectra(self,other,'mul')
+        return CompositeSpectra(other,self,'mul')
         
     
-    def __radd__(self):
+    def __radd__(self,other):
         """Reverse Addition"""
-        return CompositeSpectra(self,other,'add')
+        return CompositeSpectra(other,self,'add')
 
 
 class CompositeSpectra(AnalyticSpectrum):
     """Binary composition of two functional spectra. This object should not be initialized by the user. Instead, this class is returned when you combine two spectra of different types, or combine a spectra with any other type. As such, do not initialze composite spectra idependently. See the :meth:`__call__` function for documentation of how to use this type of object."""
-    ops = {'sub':"-",'add':"+",'mul':"*"}
+    ops = {'sub':"-",'add':"+",'mul':"*",'div':"/"}
     def __init__(self, partA, partB, operation):
         label = "("
         label += partA.label if hasattr(partA,'label') else str(partA)
@@ -101,7 +109,7 @@ class CompositeSpectra(AnalyticSpectrum):
         if wavelengths == None:
             wavelengths = self.wavelengths
         if wavelengths == None:
-            raise ValueError("No wavelengths specified in %s" % (self))
+            raise ValueError(u"No wavelengths specified in %s" % (self))
             
         if isinstance(self.A,AnalyticSpectrum):
             Awavelengths,Avalue = self.A(wavelengths=wavelengths,**kwargs)
@@ -118,135 +126,345 @@ class CompositeSpectra(AnalyticSpectrum):
             Result = Avalue * Bvalue
         elif self.operation == 'sub':
             Result = Avalue - Bvalue
-        
+        elif self.operation == 'div':
+            Result = Avalue / Bvalue
         if Result != None:
             return np.vstack((wavelengths,Result))
         else:
-            raise ValueError("Composition did not produce a value result!")
+            raise ValueError(u"Composition did not produce a value result!")
         
     
 
 
-class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
-    """An analytic representation of a generic, specified spectrum. The spectrum provided will be used to create an infintiely dense interpolation function. This function can then be used to call the spectrum at any wavelength. The interpolation used by default is a simple 1d interpolation.
-    
-    Passing the name of any member function in this class to the `method` parameter will change the interpolation/method used for this spectrum.
-    
-    """
-    def __init__(self, data=None, label=None, wavelengths=None,resolution=None, intSteps=150, method="interpolate", **kwargs):
-        self.data = data
-        self.size = data.size # The size of this image
-        self.shape = data.shape # The shape of this image
-        super(InterpolatedSpectrum, self).__init__(data=data,label=label,**kwargs)
+class InterpolatedSpectrumBase(AnalyticSpectrum):
+
+    def __init__(self, data=None, label=None, wavelengths=None,resolution=None, method=u"interpolate",integrator='integrate_hist', **kwargs):
+        super(InterpolatedSpectrumBase, self).__init__(data=data,label=label,**kwargs)
         self.wavelengths = wavelengths
         self.resolution = resolution
-        self.intSteps = intSteps
         self.method = getattr(self,method)
+        self.default_integrator = integrator
         
         
     
     def __call__(self,method=None,**kwargs):
-        """Calls this interpolated spectrum over certain wavelengths. The method parameter will default to the one set for the object, and controls the method used to interpret this spectrum."""
+        """Calls this interpolated spectrum over certain wavelengths. The `method` parameter will default to the one set for the object, and controls the method used to interpret this spectrum. Available methods include all members of :class:`InterpolatedSpectrum` which provide return values (all those documented below)."""
         if method == None:
             method = self.method
         if isinstance(method,str):
             method = getattr(self,method)
-        return self.method(**kwargs)
+        return method(**kwargs)
         
-    def interpolate(self,wavelengths=None,**kwargs):
+    def _presanity(self,oldwl,oldfl,newwl,newrs=None,extrapolate=False,upsample=False,debug=False,warning=False,error=False,message=False,**kwargs):
+        """Sanity checks performed before any specturm operation. `oldwl` and `oldfl` are the given wavelengths and flux for the spectrum. `newwl` and `newrs` are the requested wavelengths and resolution (respectively) for the spectrum. `extrapolate` allows the new wavelengths to extraopolate from the old ones. If not, only operations that appear to interpolate will be allowed. `upsample` allows the operation to get more resolution information than is already present in the spectrum. `warning` and `debug` flip those flags prematurely, to force warning or debug output. `error` should be an error class to be raised by the sanity checks. These keywords allow custom sanity checks to be performed before calling this function. The benefit of this system, is that sanity checks are all run on every operation, allowing the user to examine all of the potenital problems simultaneously, rather than one at a time, as each successive check is run. The arbitrary keywords at the end allow the user to feed a dictionary of array names and arrays to be included in the sanity check output in the case of failure.
+        
+        Checks include:
+        
+        - Wavelength Units (between 1e-12 and 1e-3)
+        
+        - Wavelengths must be montonically increasing
+        
+        - Given flux should be greater than 0 (Warning)
+        
+        - Requested Wavelength and Resolution should shape match.
+        
+        - Given flux and wavelength should shape match.
+        
+        - Requested resolution should be positive
+        
+        - If `extrapolate` then the reuqested wavelengths should be within some tolerance of the given wavelengths. If `extrapolate` is false, then the given wavelengths should fit within the bounds of the given wavelengths.
+        
+        - If `newrs` (Requested resolution) is given, it must not reuqest more information than is already present in the data. The `upsample` keyword disables this effect.
+        """
+        # Unit sanity check
+        msg = []
+        if message:
+            msg += [message]
+        elif error or warning:
+            msg += [u"Unkown alert triggered."]
+            debug = True
+        dmsg = []
+        arrays = kwargs
+        newrb = True if newrs != None else False
+        
+        # Check that the units of this spectrum look like SI units, inbound and outbound.
+        if np.min(oldwl) < 1e-12 or np.max(oldwl) > 1e-3:
+            msg += [u"%s: Given λ units appear wrong!"]
+            arrays[u"Given λ"] = oldwl
+        
+        if np.min(newwl) < 1e-12 or np.max(newwl) > 1e-3:
+            msg += [u"%s: Requested λ units appear wrong!"]
+            arrays[u"Requested λ"] = newwl
+        
+        # Check that the units of the spectrum are monotonically increasing (inbound and outbound)
+        if (np.diff(oldwl) < 0).any():
+            msg += [u"Given λ must be monotonically increasing."]
+            arrays[u"Given λ"] = oldwl
+            error = ValueError
+            
+        if (np.diff(newwl) < 0).any():
+            msg += [u"Requested λ must be monotonically increasing."]
+            arrays[u"Requested λ"] = oldwl
+            error = ValueError
+        
+        # Check that we have non-zero, positive flux provided.
+        if (oldfl <= 0).any():
+            msg += [u"Given flux <= 0 at some point."]
+            arrays[u"Given Flux"] = oldfl
+            warning = True
+        
+        # Data shape sanity check
+        if newrb and newrs.shape != newwl.shape:
+            dmsg += [u"%s: λ shape: %s, R shape: %s" % (self,newwl.shape,newrs.shape)]
+            msg += [u"Shape Mismatch between R and λ"]
+            error = AttributeError
+            
+        if oldwl.shape != oldfl.shape:
+            dmsg += [u"%s: λ shape: %s, flux shape: %s" % (self,oldwl.shape,oldrs.shape)]
+            msg += [u"Shape Mismatch between flux and λ"]
+            error = AttributeError
+        
+        # Check that resolution is nonzero positive.
+        if newrb and (np.min(newrs) <= 0).any():
+            msg += [u"Requested R is less than zero!"]
+            arrays[u"Requested R"] = newrs
+            error = AttributeError
+            
+        
+        # Interpolation tolerance check
+        if not extrapolate:
+            mintol = np.min(oldwl)
+            maxtol = np.max(oldwl)
+        elif newrs != None:
+            # Tolerance for interpolation is set here:
+            tolfrac = 2 # Maximum interpolation is 1/8th of a resolution element.
+            mintol = np.min(oldwl) - (oldwl[0] / oldwl[0]) / tolfrac
+            maxtol = np.max(oldwl) + (oldwl[-1] / oldwl[-1]) / tolfrac
+        else:
+            tolfrac = 1.001
+            mintol = np.min(oldwl) / tolfrac
+            maxtol = np.max(oldwl) * tolfrac
+        
+
+        if np.min(newwl) < mintol or np.max(newwl) > maxtol:
+            if extrapolate:
+                msg += [u"Should not extrapolate during reampling process. Please provide new λ that are within the range of old ones."]
+                warning = True
+            else:
+                msg += [u"Can not extrapolate during reampling process. Please provide new λ that are within the range of old ones."]
+                error = ValueError
+            arrays[u"Requested λ"] = newwl
+            arrays[u"Given λ"] = oldwl
+            dmsg += [u"%s: Allowed range for Requested λ: [%g,%g]" % (self,mintol,maxtol)]
+        
+        oldrs =  oldwl[:-1] / np.diff(oldwl)
+        
+        # Resolution Sanity Check
+        # The system cannot generate more information than was already there. As such, the new resolution should be worse than the original.
+        if newrb:
+            if np.max(newrs) > np.min(oldrs):
+                oldrsf = sp.interpolate.interp1d(oldwl[:-1],oldrs,bounds_error=False,fill_value=np.min(oldrs))
+                oldrsd = oldrsf(newwl)
+                delrs = newrs - oldrsd
+                if (delrs > 0).any():
+                    rswi = np.argmax(delrs)
+                    msg += [u"Requested R is more detailed than given R. %g -> %g" % (newrs[rswi],oldrsd[rswi])]
+                    arrays[u"Requested R"] = newrs
+                    arrays[u"Given R"] = oldrs
+                    arrays[u"Given interpolated R"] = oldrsd
+                    arrays[u"Given Δλ"] = np.diff(oldwl)
+                    arrays[u"Given λ"] = oldwl
+                    arrays[u"Difference in R"] = delrs
+                    if upsample:
+                        debug = True
+                    else:
+                        error = ValueError
+                else:
+                    msg += [u"Requested R may be close to same detail as given R. Fidelity might not be preserved."]
+                    arrays[u"Requested R"] = newrs
+                    arrays[u"Given R"] = oldrs
+                    if not upsample:
+                        warning = True
+                    
+        if debug:
+            arrays[u"Requested λ"] = newwl
+            arrays[u"Given λ"] = oldwl
+            arrays[u"Given Flux"] = oldfl
+            if newrb:
+                arrays[u"Requested R"] = newrs
+                      
+        if error:
+            for m in msg:
+                LOG.critical(m)
+        elif warning:
+            for m in msg:
+                LOG.warning(m)
+        elif debug:
+            LOG.debug(u"Pre Sanity-Check Debugging Information:")
+            for m in msg:
+                LOG.debug(m)
+            
+        if error or warning or debug:
+            for dm in dmsg:
+                LOG.debug(dm)
+            for name,array in arrays.iteritems():
+                LOG.debug(u"%s: %s" % (self,npArrayInfo(array,name)))
+                
+        if error:
+            raise error(msg[0])
+        
+            
+    def _postsanity(self,oldwl,oldfl,newwl,newfl,newrs=None,extrapolate=False,debug=False,warning=False,error=False,message=None,**kwargs):
+        """Sanity checks performed before any specturm operation. `oldwl` and `oldfl` are the given wavelengths and flux for the spectrum. `newwl` and `newfl` are the found wavelengths and flux (respectively) for the spectrum. `newrs` is the requested resolution. `extrapolate` allows the new wavelengths to extraopolate from the old ones. If not, only operations that appear to interpolate will be allowed. `upsample` allows the operation to get more resolution information than is already present in the spectrum. `warning` and `debug` flip those flags prematurely, to force warning or debug output. `error` should be an error class to be raised by the sanity checks. These keywords allow custom sanity checks to be performed before calling this function. The benefit of this system, is that sanity checks are all run on every operation, allowing the user to examine all of the potenital problems simultaneously, rather than one at a time, as each successive check is run. The arbitrary keywords at the end allow the user to feed a dictionary of array names and arrays to be included in the sanity check output in the case of failure.
+        
+        Checks performed are:
+        
+        - ``NaN`` not allowed in found flux.
+        
+        - ``0`` not allowed in more than ``1%%`` of fluxes. (**Warning**)
+        
+        - If there were no ``0`` s in the old flux, then the new flux should have no ``0`` s (**Warning**)
+        
+        - Flux and wavelength should have the same shape.
+        
+        """
+        msg = []
+        dmsg = []
+        if message:
+            msg += [message]
+        elif error or warning:
+            msg += [u"Unkown alert triggered."]
+            debug = True
+        arrays = kwargs
+        arrays[u"Requested λ"] = newwl
+        arrays[u"Given λ"] = oldwl
+        arrays[u"New Flux"] = newfl
+        arrays[u"Given Flux"] = oldfl
+        newrb = True if newrs != None else False
+        if newrb:
+            arrays[u"Requested R"] = newrs
+                
+        if np.isnan(newfl).any():
+            msg += [u"Detected NaN in Flux!"]
+            error = ValueError
+                
+        if float(np.sum(newfl <= 0))/float(np.size(newfl)) > 0.01 and (oldfl > 0).all() and not extrapolate:
+            msg += [u"New Flux <= 0 for more than 1% of points"]
+            warning = True
+            
+        if newfl.shape != newwl.shape:
+            msg += [u"λ lengths have changed: %s -> %s" % (newfl.shape,newwl.shape)]
+            error = ValueError
+        
+        if (newfl <= 0).any() and (oldfl > 0).all():
+            msg += [u"New Flux <= 0 some point!"]
+            warning = True
+        
+        if error:
+            for m in msg:
+                LOG.critical(m)
+        elif warning:
+            for m in msg:
+                LOG.warning(m)
+        elif debug:
+            LOG.debug(u"Pre Sanity-Check Debugging Information:")
+        if error or warning or debug:
+            for dm in dmsg:
+                LOG.debug(dm)
+            for name,array in arrays.iteritems():
+                LOG.debug(u"%s: %s" % (self,npArrayInfo(array,name)))                
+        if error:
+            raise error(msg[0])
+
+        
+        
+    def interpolate(self,wavelengths=None,extrapolate=False,fill_value=0,**kwargs):
         """Uses a 1d Interpolation to fill in missing spectrum values.
         
-        This interpolator uses the scipy.interpolate.interp1d method to interpolate between data points in the original spectrum. This method will not handle changes in resolution appropriately."""
+        This interpolator uses the scipy.interpolate.interp1d method to interpolate between data points in the original spectrum. Normally, this method will not allow extrapolation. The keywords `extrapolate` and `fill_value` can be used to trigger extrapolation away from the interpolated values.
+        
+        Input should be a set of wavelengths requested for the system (in the `wavelengths` keyword). These wavelengths should not exceed the bounds of the given wavelengths for this spectrum (doing so doesn't really make sense for interpolation. See :meth:`polyfit` for a case where this might make sense.). The output will be a data array of wavelengths and fluxes (should be the provided `wavelengths`, and an equivalently shaped array with fluxes.)
+        
+        .. Warning :: This method does not prevent you from interpolating your spectrum into a higher resolution state. As such, it is possible, when calling interpolate, to increase the resolution of the spectrum, and end up 'creating' information."""
         if wavelengths == None:
             wavelengths = self.wavelengths
         
+        LOG.debug(u"Interpolate Starting")
+        
         oldwl,oldfl = self.data
-        self.func = sp.interpolate.interp1d(oldwl,oldfl,bounds_error=False,fill_value=0)
+        # Sanity Checks for Data
+        self._presanity(oldwl,oldfl,wavelengths,extrapolate=extrapolate)
         
-        # Unit sanity check
-        if np.min(oldwl) < 1e-12 or np.max(oldwl) > 1e-3:
-            msg = "%s: It looks like your defining wavelength units are wrong: "
-            LOG.warning(msg % self + npArrayInfo(oldwl,"WL"))
-    
+        # Interpolation function (invented on the spot!)
+        func = sp.interpolate.interp1d(oldwl,oldfl,bounds_error=False,fill_value=fill_value)
         
-        # Interpolation tolerance check
-        # If this fails, it suggests that the requested wavelengths fall outside the data provided. This will result in
-        # resampled values, but they are non-physical as the resampled values assume all non-existent data points to be zero
-        if np.min(oldwl) > np.min(wavelengths) or np.max(oldwl) < np.max(wavelengths):
-            msg = "Cannot extrapolate during reampling process. Please provide new wavelengths that are within the range of old ones."
-            LOG.warning(msg)
-            LOG.debug("%s: %s" % (self,npArrayInfo(wavelengths,"New Wavelengths")))
-            LOG.debug("%s: %s" % (self,npArrayInfo(oldwl,"Old Wavelengths")))
+        # Actually calling the interpolation
+        flux = func(wavelengths)
         
-        
-        flux = self.func(wavelengths)
-        
-        # This is our sanity check. Everything we calculated should be a number. If it comes out as nan, then we have done something wrong.
-        # In that case, we raise an error after printing information about the whole calculation.
-        if np.isnan(flux).any():
-            msg = "Detected NaN in result of Resampling!"
-            LOG.critical("%s: %s" % (self,msg))
-            LOG.debug("%s: %s" % (self,npArrayInfo(wavelengths,"New Wavelengths")))
-            LOG.debug("%s: %s" % (self,npArrayInfo(oldwl,"Old Wavelengths")))
-            LOG.debug("%s: %s" % (self,npArrayInfo(flux,"Resulting Flux")))
-            LOG.debug("%s: %s" % (self,npArrayInfo(oldfl,"Original Flux")))
-            raise ValueError(msg)
-            
+        self._postsanity(oldwl,oldfl,wavelengths,flux)
         # We do print fun information about the final calculation regardless.
-        LOG.debug("%s: %s" % (self,npArrayInfo(flux,"New Flux")))
+        LOG.debug(u"%s: %s" % (self,npArrayInfo(flux,"New Flux")))
+        LOG.debug(u"Interpolate Finished")
         
         # Finally, return the data in a way that makes sense for the just-in-time spectrum calculation objects
         return np.vstack((wavelengths,flux))
+    
+    def polyfit(self,wavelengths=None,order=2,**kwargs):
+        """Uses a 1d fit to find missing spectrum values.
         
-    def resample(self,wavelengths=None,resolution=None,z=0.0,**kwargs):
-        """Resample the given spectrum to a lower resolution. 
+        This method will extrapolate away from the provided data. The function used is a np.poly1d() using an order 2 np.polyfit. By default, this method will allow extrapolation away from the provided wavelengths. The `order` keyword can be used to adjust the polynomial order for this funciton.
         
-        This is a vector-based calculation, and so should be relatively fast. This function contains ZERO for loops, and uses entirely numpy-based vector mathematics. Sanity checks try to keep your input clean. It can also redshift a spectrum by a given z parameter, if that is necessary."""        
+        Input should be a set of wavelengths requested for the system (in the `wavelengths` keyword). The output will be a data array of wavelengths and fluxes (should be the provided `wavelengths`, and an equivalently shaped array with fluxes.)"""
+        if wavelengths == None:
+            wavelengths = self.wavelengths
+        
+        LOG.debug(u"Polyfit Starting")
+        
+        oldwl,oldfl = self.data
+        # Sanity Checks for Data
+        self._presanity(oldwl,oldfl,wavelengths,extrapolate=True)
+        
+        func = np.poly1d(np.polyfit(oldwl,oldfl,order))
+        
+        flux = func(wavelengths)
+        
+        self._postsanity(oldwl,oldfl,wavelengths,flux,extrapolate=True)
+        # We do print fun information about the final calculation regardless.
+        LOG.debug(u"%s: %s" % (self,npArrayInfo(flux,"New Flux")))
+        
+        # Finally, return the data in a way that makes sense for the just-in-time spectrum calculation objects
+        return np.vstack((wavelengths,flux))
+    
+        
+    def resample(self,wavelengths=None,resolution=None,upsample=False,**kwargs):
+        """Resample the given spectrum to a different resolution.
+        
+        Normally, spectra are resolution limited in their sampling. If you want to sample a spectrum at a lower resolution, simply interpolating, or drawing nearest points to your desired wavelength may cause information loss. The resample method convolves the spectrum with a gaussian which has a width appropriate to your desired resolution. This re-distributes the information in the spectrum into neighboring points, preventing the loss of features due to interpolation and sampling errors.
+        
+        The resample spectrum normally does not allow you to up-sample a spectrum to a higher resolution, as this could lead to errors caused by 'information creation', i.e. your spectrum will appear to show more detail than is possible. Hoever, the system will allow upsampling (useful if you are confident that you will later downsample your spectrum) using the `upsample` keyword.
+        
+        Input should be a set of wavelengths requested for the system (in the `wavelengths` keyword) and an array of resolutions requested in the `resolutions` keyword. The output will be a data array of wavelengths and fluxes (should be the provided `wavelengths`, and an equivalently shaped array with fluxes.)
+        
+        .. Note :: If you request more detail than is given in the spectrum, or if you extrapolate on the spectrum, you may encounter parts of the new spectrum that have no data. As the fluxes are normalized, such data segments are set to zero. This will also produce a warning.
+        
+        This is a vector-based calculation, and so should be relatively fast. This function contains ZERO for loops, and uses entirely numpy-based vector mathematics."""        
         if wavelengths == None:
             wavelengths = self.wavelengths
         if resolution == None:
             resolution = self.resolution
         if wavelengths == None:
-            raise ValueError("Requires Wavelenths")
+            raise ValueError(u"Requires Wavelenths")
         if resolution == None:
-            raise ValueError("Requires Resolution")
-        # Data sanity check
-        if resolution.shape != wavelengths.shape:
-            LOG.debug("%s: Wavelength Size: %d, Resolution Size %d" % (self,wavelengths.size,resolution.size))
-            raise AttributeError("You must provide resolution appropriate for resampling. Size mismatch!")
+            raise ValueError(u"Requires Resolution")
+        
+        LOG.debug(u"Resample Starting")
+        
+        
         
         # Redshifting
         oldwl,oldfl = self.data
-        oldwl = oldwl * (1.0 + z)
-        
-        # Unit sanity check
-        if np.min(oldwl) < 1e-12 or np.max(oldwl) > 1e-3:
-            msg = "%s: It looks like your defining wavelength units are wrong: "
-            LOG.warning(msg % self + npArrayInfo(oldwl,"WL"))
-        
-        # Tolerance for interpolation is set here:
-        tolfrac = 8 # Maximum interpolation is 1/8th of a resolution element.
-        mintol = (wavelengths[0] / resolution[0]) / tolfrac
-        maxtol = (wavelengths[-1] / resolution[-1]) / tolfrac
-        
-        # Interpolation tolerance check
-        # If this fails, it suggests that the requested wavelengths fall outside the data provided. This will result in
-        # resampled values, but they are non-physical as the resampled values assume all non-existent data points to be zero
-        if np.min(oldwl) - mintol > np.min(wavelengths) or np.max(oldwl) + maxtol < np.max(wavelengths):
-            msg = "Cannot extrapolate during reampling process. Please provide new wavelengths that are within the range of old ones."
-            LOG.critical(msg)
-            LOG.debug("%s: %s" % (self,npArrayInfo(wavelengths,"New Wavelengths")))
-            LOG.debug("%s: %s" % (self,npArrayInfo(oldwl,"Old Wavelengths")))
-            LOG.debug("%s: Tolerance Range for New Wavelengths: [%g,%g]" % (self,mintol,maxtol))
-            raise ValueError(msg)
-        
-        # Resolution Sanity Check
-        # The system cannot generate more information than was already there. As such, the new resolution should be worse than the original.
-        oldres = oldwl[:-1] / np.diff(oldwl)
-        if np.min(oldres) > np.min(resolution):
-            LOG.warning("The new resolution seems to expect more detail than the old one. %g -> %g" % (np.min(oldres),np.min(resolution)))
-            LOG.debug("%s: %s" % (self,npArrayInfo(oldres,"given resolution")))
-            LOG.debug("%s: %s" % (self,npArrayInfo(resolution,"requested resoluton")))
+        # Sanity Checks for Data
+        self._presanity(oldwl,oldfl,wavelengths,resolution,upsample=upsample)
         
         # The main resampling function.
         # A two dimensional grid is used (instead of two for-loops). The grid stretches across wavelength (data), wavelength (requested). The 
@@ -272,10 +490,7 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         # Removing these data points should be okay, because they are data points which we calculated to
         # have zero total flux anyways, and so we can ignore them.
         zeros = base == np.zeros(base.shape)
-        if np.sum(zeros) > 0:
-            LOG.warning("%s: Removed %d zeros from re-weighting." % (self,np.sum(zeros)))
-            LOG.debug("%s: %s" % (self,npArrayInfo(base,"Normalization Denominator")))
-            LOG.debug("%s: %s" % (self,npArrayInfo(base,"Normalization Numerator")))
+        topzo = top == np.zeros(base.shape)    
         # We don't actually clip those zero data points, we just make them into dumb numbers so that we don't get divide-by-zero errors
         base[zeros] = np.ones(np.sum(zeros))
         top[zeros] = np.zeros(np.sum(zeros))
@@ -283,188 +498,249 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         # Do the actual normalization
         flux = top  / base
         
-        # This is our sanity check. Everything we calculated should be a number. If it comes out as nan, then we have done something wrong.
-        # In that case, we raise an error after printing information about the whole calculation.
-        if np.isnan(flux).any():
-            msg = "Detected NaN in result of Resampling!"
-            exps =  - 0.5 * (MWL - MCENT) ** 2.0 / (MSIGM ** 2.0)
-            LOG.critical("%s: %s" % (self,msg))
-            LOG.debug("%s: %s" % (self,npArrayInfo(wavelengths,"New Wavelengths")))
-            LOG.debug("%s: %s" % (self,npArrayInfo(oldwl,"Old Wavelengths")))
-            LOG.debug("%s: %s" % (self,npArrayInfo(sigma,"Resolution Sigmas")))
-            LOG.debug("%s: %s" % (self,npArrayInfo(exps,"Exponent Value")))
-            LOG.debug("%s: %s" % (self,npArrayInfo(np.exp(exps),"Exponent Evaluated")))
-            LOG.debug("%s: %s" % (self,npArrayInfo(curves,"Curve Evaluated")))
-            LOG.debug("%s: %s" % (self,npArrayInfo(base,"Normalization Denominator")))
-            LOG.debug("%s: %s" % (self,npArrayInfo(flux,"Resulting Flux")))
-            LOG.debug("%s: %s" % (self,npArrayInfo(oldfl,"Original Flux")))
-            raise ValueError(msg)
-        
-        # We do print fun information about the final calculation regardless.
-        LOG.debug("%s: %s" % (self,npArrayInfo(flux,"New Flux")))
-        
-        # Finally, return the data in a way that makes sense for the just-in-time spectrum calculation objects
-        return np.vstack((wavelengths,flux))
 
-    def integrate(self,wavelengths=None,resolution=None,**kwargs):
-        """Performs wavelength-integration for flambda spectra. 
-        
-        This takes spectra which have theoretically infinite resolution, and performs an integration using the quadratic pack integrator on an interpolated F_Lambda function. The integration can be a little slow. Sanity checks confirm validity of input data."""
-        if wavelengths == None:
-            wavelengths = self.wavelengths
-        if resolution == None:
-            resolution = self.resolution
-        if wavelengths == None:
-            raise ValueError("Requires Wavelenths")
-        if resolution == None:
-            raise ValueError("Requires Resolution")
-        
-        # Data sanity check
-        oldwl,oldfl = self.data
-        
-        if resolution.shape != wavelengths.shape:
-            LOG.debug("%s: Wavelength Size: %d, Resolution Size %d" % (self,wavelengths.size,resolution.size))
-            raise AttributeError("You must provide resolution appropriate for resampling. Size mismatch!")
-        
-        # Unit sanity check
-        if np.min(oldwl) < 1e-12 or np.max(oldwl) > 1e-3:
-            msg = "%s: It looks like your defining wavelength units are wrong: "
-            LOG.warning(msg % self + npArrayInfo(oldwl,"WL"))
-        
-        self.func = sp.interpolate.interp1d(oldwl,oldfl,bounds_error=False,fill_value=0)
-        
-        wlStart = wavelengths
-        wlEnd = (wlStart / resolution) + wlStart
-
-        
-        LOG.debug("%s: %s" % (self,npArrayInfo(resolution,"Resolution")))   
-        
-        # Tolerance for interpolation is set here:
-        tolfrac = 8 # Maximum interpolation is 1/8th of a resolution element.
-        mintol = (wavelengths[0] / resolution[0]) / tolfrac
-        maxtol = (wavelengths[-1] / resolution[-1]) / tolfrac
-        
-        # Interpolation tolerance check
-        # If this fails, it suggests that the requested wavelengths fall outside the data provided. This will result in
-        # resampled values, but they are non-physical as the resampled values assume all non-existent data points to be zero
-        if np.min(oldwl) > np.min(wavelengths) or np.max(oldwl) < np.max(wavelengths):
-            msg = "Cannot extrapolate during reampling process. Please provide new wavelengths that are within the range of old ones."
-            LOG.critical(msg)
-            LOG.debug("%s: %s" % (self,npArrayInfo(wavelengths,"New Wavelengths")))
-            LOG.debug("%s: %s" % (self,npArrayInfo(oldwl,"Old Wavelengths")))
-            LOG.debug("%s: Tolerance Range for New Wavelengths: [%g,%g]" % (self,mintol,maxtol))
-            raise ValueError(msg)
-        
-        # Check for resolution registry to pixel size
-        if (np.abs(wlStart[1:]-wlEnd[:-1]) > 1e-12).any():
-            LOG.warning("Resolution doesn't seem to register to pixel positions")
-            LOG.debug("%s : %s" % (self,npArrayInfo(wlStart[1:]-wlEnd[:-1],"Difference in Bounds")))
-            LOG.debug("%s : %s" % (self,npArrayInfo(wlStart[1:],"Lower Bounds")))
-            LOG.debug("%s : %s" % (self,npArrayInfo(wlEnd[:-1],"Upper Bounds")))
+        msgarray = {
+            u"Normalization Denominator" : base,
+            u"Normalization Numerator" : top,
+            u"Resolution σ" : sigma,
+            u"Exponent Value" : (- 0.5 * (MWL - MCENT) ** 2.0 / (MSIGM ** 2.0)),
+            u"Exponent Evaluated" : np.exp(- 0.5 * (MWL - MCENT) ** 2.0 / (MSIGM ** 2.0)),
+            u"Curve Evaluated" : curves,
+        }
+        if (topzo.astype(int) < zeros.astype(int)).any():
+            self._postsanity(oldwl,oldfl,wavelengths,flux,resolution,error=ValueError,message=u"Normalizing Zero error." % (np.sum(zeros)),**msgarray)
+        elif np.sum(zeros) > 0:
+            self._postsanity(oldwl,oldfl,wavelengths,flux,resolution,warning=True,message=u"Removed %d zeros from re-weighting." % (np.sum(zeros)),**msgarray)
+        else:
+            self._postsanity(oldwl,oldfl,wavelengths,flux,resolution,**msgarray)
             
         
-        flux = np.array([ sp.integrate.quad(self.func,wlS,wlE,limit=self.intSteps,full_output=1)[0] for wlS,wlE in zip(wlStart,wlEnd) ])
+        
+        # We do print fun information about the final calculation regardless.
+        LOG.debug(u"%s: %s" % (self,npArrayInfo(flux,"New Flux")))
+        LOG.debug(u"Resample Complete")
+                
+        # Finally, return the data in a way that makes sense for the just-in-time spectrum calculation objects
+        return np.vstack((wavelengths,flux))
+    
+    
+    
+    def integrate_hist(self,wavelengths=None,upscale=150,**kwargs):
+        """Performs an integration along wavelengths using the trapezoidal approximation.
+        
+        The integrator uses a trapezoidal approximation, upscaled to include more data points in each trapezoidal section than the requested wavelengths. The integrator then uses the trapezoid approximation from http://en.wikipedia.org/wiki/Trapezoidal_rule to integrate the spectrum. This results in some integration error, but the integration error is presumably small when compared to the speedup gained over :meth:`integrate_quad`.
+        
+        Input should be a set of wavelengths requested for the system (in the `wavelengths` keyword). The output will be a data array of wavelengths and fluxes (should be the provided `wavelengths`, and an equivalently shaped array with fluxes.) The `upscale` keyword controls the degree of oversampling for this method.
+        
+        This calculation is based on the :meth:`interpolate` function and the :func:`np.histogram` function, both of which are not quite vector-fast, but are sufficiently fast for most purposes. This method has been tested to be much faster than :meth:`integrate_quad`
+        """
+        if wavelengths == None:
+            wavelengths = self.wavelengths
+        if wavelengths == None:
+            raise ValueError(u"Requires Wavelenths")
+        
+        # Upsample the provided wavelengths
+        # This increases the accuracy of the trapezoidal algorithm, as this algorithm is very sensitive to sampling errors.
+        if upscale != 1.0:
+            startindexs = np.arange(0,wavelengths.size) * upscale
+            func = sp.interpolate.interp1d(startindexs,wavelengths)
+            findindexs = np.arange(0,np.max(startindexs))
+            bins = func(findindexs)
+        else:
+            bins = wavelengths
+        
+        # Data sanity check
+        oldwl,oldfl = self.interpolate(wavelengths=bins,extrapolate=True,**kwargs)
+        LOG.debug(u"Integration Starting")
+        
+        error = None
+        warning = False
+        msg = None
+        arrays = {}
+                
+        if (np.diff(bins) <= 0).any():
+            msg = u"λ Bins must increase monotonically. [wl + %g]" % (wavelengths[-1]+np.diff(wavelengths)[-1])
+            arrays = {u"λ Binsu" : bins, u"Requested λ" : wavelengths ,u"Requested Δλ": wavelengths, u"Bin Δλ" : np.diff(bins),u"λ Offset" : offset }
+            error = ValueError
+        else:
+            bincount,wavelengths = np.histogram(oldwl[:-1],wavelengths)
+            if (bincount == 0).any():
+                msg = u"Given λ is undersampled in Requested λ (there is not at least 1 given λ per requested bin)"
+                arrays = {u"Histogram of λ" : bincount, u"Requested λ" : wavelengths , u"Given λ" : oldwl }
+                error = ValueError
+            elif (bincount < 2).any():
+                msg = u"Bins appear undersampled by given λ"
+                arrays = {u"Histogram of λ" : bincount, u"Requested λ" : wavelengths , u"Given λ" : oldwl }
+                warning = True
+        self._presanity(oldwl,oldfl,wavelengths,error=error,message=msg,warning=warning,extrapolate=True,**arrays)
+        
+        wlStart = wavelengths[:-1]
+        wlEnd = wavelengths[1:]         
+        
+        w = (oldwl[1:]-oldwl[:-1]) * (oldfl[1:]+oldfl[:-1]) / 2
+        
+        flux, bins = np.histogram(oldwl[:-1],wavelengths,weights=w)
+        flux = np.hstack((flux,flux[-1]))
         
         # This is our sanity check. Everything we calculated should be a number. If it comes out as nan, then we have done something wrong.
         # In that case, we raise an error after printing information about the whole calculation.
-        if np.isnan(flux).any():
-            msg = "Detected NaN in result of Resampling!"
-            LOG.critical("%s: %s" % (self,msg))
-            LOG.debug("%s: %s" % (self,npArrayInfo(wavelengths,"New Wavelengths")))
-            LOG.debug("%s: %s" % (self,npArrayInfo(oldwl,"Old Wavelengths")))
-            LOG.debug("%s: %s" % (self,npArrayInfo(resolution,"Resolutions")))
-            LOG.debug("%s: %s" % (self,npArrayInfo(wlStart,"Start Wavelengths")))
-            LOG.debug("%s: %s" % (self,npArrayInfo(wlEnd,"End Wavelengths")))
-            LOG.debug("%s: %s" % (self,npArrayInfo(flux,"Resulting Flux")))
-            LOG.debug("%s: %s" % (self,npArrayInfo(oldfl,"Original Flux")))
-            raise ValueError(msg)
-        
+        arrays = { u"Requested lower bound λ" : wlStart , u"Requested upper bound λ" : wlEnd }
+        self._postsanity(oldwl,oldfl,wavelengths,flux,extrapolate=True,**arrays)
         # We do print fun information about the final calculation regardless.
-        LOG.debug("%s: %s" % (self,npArrayInfo(flux,"New Flux")))
-        
+        LOG.debug(u"%s: %s" % (self,npArrayInfo(flux,"New Flux")))
+        LOG.debug(u"Integration Complete")
         
         return np.vstack((wavelengths,flux))
     
-    def resolve(self,wavelengths,resolution,upscaling=1e2,resolve_method='integrate',**kwargs):
-        """Oversample underlying spectra.
+    
+    def integrate(self,**kwargs):
+        """Calls the default integrator."""
+        method = getattr(self,self.default_integrator)
+        return method(**kwargs)
+    
+    def integrate_quad(self,wavelengths=None,intSteps=150,**kwargs):
+        """Performs an integration along wavelengths using the scipy QUADpack implementation in :func:`scipy.integrate.quad`. 
         
-        Using the `resolve_method` method (by default :meth:`integrate`), this function gets a high resolution copy of the underlying data. The high resolution data can later be downsampled using the :meth:`resample` method. This is a faster way to access integrated spectra many times. The speed advantages come over the integrator. By default the system gets 100x the requested resolution. This can be tuned with the `upscaling` keyword to optimize between speed and resolution coverage."""
+        Input should be a set of wavelengths requested for the system (in the `wavelengths` keyword). The output will be a data array of wavelengths and fluxes (should be the provided `wavelengths`, and an equivalently shaped array with fluxes.)
+        
+        This integrator uses a generator based for-loop wraped around a call to :func:`scipy.integrate.quad`. On an operation with ~100 elements, this operation can consume close to 20s of computation time. Also, this method must stay strictly within the provided wavelength data. The `intSteps` keyword controls the maximum number of steps in each integration. Turning this value down speeds up the integrator.
+        """
+        if wavelengths == None:
+            wavelengths = self.wavelengths
+        if wavelengths == None:
+            raise ValueError(u"Requires Wavelenths")
+        
+        LOG.debug(u"Integration Starting")
+        
+        
+        # Data sanity check
+        oldwl,oldfl = self.data
+        self._presanity(oldwl,oldfl,wavelengths)
+        
+        self.func = sp.interpolate.interp1d(oldwl,oldfl,bounds_error=False,fill_value=0)
+        
+        wlStart = wavelengths[:-1]
+        wlEnd = wavelengths[1:]         
+        
+        flux = np.array([ sp.integrate.quad(self.func,wlS,wlE,limit=intSteps,full_output=1)[0] for wlS,wlE in zip(wlStart,wlEnd) ])
+        flux = np.hstack((flux,flux[-1]))
+        
+        # This is our sanity check. Everything we calculated should be a number. If it comes out as nan, then we have done something wrong.
+        # In that case, we raise an error after printing information about the whole calculation.
+        arrays = { u"Requested lower bound λu" : wlStart , u"Requested upper bound λ" : wlEnd }
+        self._postsanity(oldwl,oldfl,wavelengths,flux,**arrays)
+
+        # We do print fun information about the final calculation regardless.
+        LOG.debug(u"%s: %s" % (self,npArrayInfo(flux,"New Flux")))
+        LOG.debug(u"Integration Complete")
+        
+        return np.vstack((wavelengths,flux))
+    
+    def resolve(self,wavelengths,resolution,resolve_method='resample',upscaling=False,**kwargs):
+        """This method calls a spectrum method, saving and returning the result. The saved data is prepared for the :meth:`resolve_and_integrate` function before being returned. The method also prevents over-resolution sampling.
+        
+        The resolution provided (`resolution` keyword) are used to request a resampled resolution. However, to prevent information loss, by default (see the `upscaling` keyword) the method automatically prevents the new resolution from exceeding the inherent resolution of the provided data. This allows the system to request a high resolution spectrum, and instead receive the maximum amount of information available at every point.
+        """
         self.resolver = getattr(self,resolve_method)
-                
+        
+        newwl = np.copy(wavelengths)
+        newrs = np.copy(resolution)
+        oldwl,oldfl = self.data
+        oldrs =  oldwl[:-1] / np.diff(oldwl)
+        
+        if not upscaling:        
+            upsample = False
+            oldrsf = sp.interpolate.interp1d(oldwl[:-1],oldrs,bounds_error=False,fill_value=np.min(oldrs))
+            oldrsd = oldrsf(newwl)
+            delrs = newrs > oldrsd
+            newrs[delrs] = oldrsd[delrs]
+        else:
+            upsample = True
+            
+        
         # Save the original data
         self.original_data = self.data
-            
-        # Make a much more detailed spectrum
-        # Build the sample request by upscaling the resolution requested
-        dense_resolution = resolution * upscaling
-            
-        min_wl = np.min(wavelengths)
-        dwl = [min_wl]
-        new_wl = min_wl
-        for R,wl in zip(dense_resolution,wavelengths):
-            while new_wl <= wl:
-                new_wl += (new_wl / R)
-                dwl += [new_wl]
-            
-        dense_wavelengths = np.array(dwl)
-        dense_resolution = dense_wavelengths[:-1] / np.diff(dense_wavelengths)
-        dense_wavelengths = dense_wavelengths[:-1]
-            
-        # Sanity checks about our newly generated wavelengths
-        if np.max(dense_wavelengths) > np.max(wavelengths):
-            msg = "Wavelength generation for dense spectrum exceeded requested bounds."
-            LOG.warning("%s: %s" % (self,msg))
-            LOG.debug("%s: %s" % (self,npArrayInfo(wavelengths,"Requested Wavelengths")))
-            LOG.debug("%s: %s" % (self,npArrayInfo(dense_wavelengths,"Dense Wavelengths")))
-        if np.max(dense_wavelengths) < np.max(wavelengths):
-            msg = "Wavelength generation for dense spectrum did not reach requested bounds."
-            LOG.warning("%s: %s" % (self,msg))
-            LOG.debug("%s: %s" % (self,npArrayInfo(wavelengths,"Requested Wavelengths")))
-            LOG.debug("%s: %s" % (self,npArrayInfo(dense_wavelengths,"Dense Wavelengths")))
-            
+        
         # Do the actual integration, and save it to the object.
-        dwl,dfl = self.resolver(wavelengths=dense_wavelengths,resolution=dense_resolution,**kwargs)
-        self.data = np.vstack((dwl,dfl))
+        dwl,dfl = self.resolver(wavelengths=newwl,resolution=newrs,upsample=upsample,**kwargs)
+        self.resolved_data = np.vstack((dwl,dfl))
         self.resolved = True
-        return self.data
+        return self.resolved_data
         
                 
-    def resolve_and_resample(self,wavelengths,resolution,upscaling=1e2,resolve_method='integrate',resample_method='resample',**kwargs):
-        """Resolve a spectrum at very high resolution, then re-sample down the proper size.
+    def resolve_and_integrate(self,wavelengths,resolution,resolve_method='resample',integration_method='integrate_hist',**kwargs):
+        """Resolve a spectrum at a given resolution once, and use that resolved resolution for integration in the future.
         
-        This method reduces the use of computationally intensive integrators in spectral calculation. The intensive integrator is used only on the first pass over the spectrum. The integrator is called at a higher resolution (normally 100x, controlled by the `upscaling` parameter). This higher resolution copy is saved in the object, and downsampled for each request for spectrum information."""
+        The spectrum is first resolved by the :meth:`resolve` function. This provides an appropriately resampled spectrum for use with the integrator. The integrator is then called, and used to get a result. The data from the :meth:`resolve` function is saved for future use.
         
-        # Set up flag variables.
-        self.resolved = False if not hasattr(self,'resolved') else self.resolved
+        Input should be a set of wavelengths requested for the system (in the `wavelengths` keyword) and an array of resolutions requested in the `resolutions` keyword. The output will be a data array of wavelengths and fluxes (should be the provided `wavelengths`, and an equivalently shaped array with fluxes.)
+        
+        .. Note :: The speedup advantage of this method is only beneficial for large data arrays, where the :meth:`resample` function is slow. However, it also allows the use of resample and integrate simultaneously. As such, there is essentially no downside to using this method over a UnitarySpectrum call to insert another interpolation method.
+        """
+        
+        LOG.debug(u"Resolve and Resample Starting")
+        if hasattr(self,'resolved'):
+            txt = u"Resolved" if self.resolved else "Resolving"
+            oldwl,oldfl = self.data
+            # Test resolution for current validity:
+            bincount,bins = np.histogram(oldwl[:-1],wavelengths)
+            if (bincount == 0).any():
+                txt = u"Re-resolving"
+                self.resolved = False            
+            LOG.debug(u"%s: %s" % (self,txt))
+        else:
+            self.resolved = False
+            LOG.debug(u"%s: %s" % (self,"Resolving first"))
         
         # First pass resolving the spectrum to a denser data set.
         # This pass uses the upscaling parameter to find a much denser resolution.
         if not self.resolved:
-            self.resolve(wavelengths=wavelengths,resolution=resolution,upscaling=upscaling,resolve_method=resolve_method,**kwargs)
+            self.resolve(wavelengths=wavelengths,resolution=resolution,resolve_method=resolve_method,**kwargs)
         
-        self.resampler = getattr(self,resample_method)
-        return self.resampler(wavelengths=wavelengths,resolution=resolution,**kwargs)
+        self.integrator = getattr(self,integration_method)
+        self.data = self.resolved_data
+        integrated = self.integrator(wavelengths=wavelengths,resolution=resolution,**kwargs)
+        self.data = self.original_data
+        return integrated
         
-    def pre_resolve(self,**kwargs):
-        """Instead of resolving a spectrum at call time, the spectrum can be called to resolve at creation time. In this case, the resolving method uses the raw data values for wavelengths. This pre-computation serves a similar purpose to :meth:`resolve_and_resample` but can also be used to collapse large collections of spectra. In the case of collapsing large collections (usually the collections are all constructed, but unresolved :class:`CompositeSpectra`), the collapse occurs at construction time, removing computation time from other areas of the program."""        
-        oldwl,oldfl = self.data
+
+class InterpolatedSpectrum(InterpolatedSpectrumBase,AstroSpectra.SpectraFrame):
+    """An analytic representation of a generic, specified spectrum. The spectrum provided will be used to create an infintiely dense interpolation function. This function can then be used to call the spectrum at any wavelength. The interpolation used by default is a simple 1d interpolation.
+    
+    Passing the name of any member function in this class to the `method` parameter will change the interpolation/method used for this spectrum.
+    
+    """
+    def __init__(self, data=None, label=None,**kwargs):    
+        self.data = data
+        self.size = data.size # The size of this image
+        self.shape = data.shape # The shape of this image
+        super(InterpolatedSpectrum, self).__init__(data=data,label=label,**kwargs)
+
         
-        res = oldwl[:-1] / np.diff(oldwl)
+
+class Resolver(InterpolatedSpectrum):
+    """This spectrum performs a unitary operation on any InterpolatedSpectrum-type-object. The operation (specified by the `method` keyword) is performed after the contained spectrum is called. The included spectrum is called immediately and then discarded. As such, wavelength and resolution keywords should be provided when appropriate to resolve the spectrum immediately. This operation does not save the old data state. All methods in :class:`InterpolatedSpectrum` are available."""
+    def __init__(self, spectrum, label=None, new_method='interpolate',**kwargs):
+        data = spectrum(**kwargs)
+        if not label:
+            label =  u"R[" + spectrum.label + "]"
+        super(Resolver, self).__init__(data=data,label=label,method=new_method,**kwargs)
         
-        return self.resolve(wavelengths = oldwl[:-1], resolution = res, **kwargs)
         
+class UnitarySpectrum(InterpolatedSpectrumBase):
+    """This spectrum performs a unitary operation on any InterpolatedSpectrum-type-object. The operation (specified by the `method` keyword) is performed after the contained spectrum is called. All methods in :class:`InterpolatedSpectrum` are available."""
+    def __init__(self, spectrum, method='interpolate', label=None,**kwargs):
+        if not label:
+            label =  u"[" + spectrum.label + "]"
+        super(UnitarySpectrum, self).__init__(data=None, label=label,**kwargs)
+        self.spectrum = spectrum
+        self.method = getattr(self,method)
         
-        
-        
-class UnitarySpectrum(InterpolatedSpectrum):
-    """This spectrum calls all contained spectra and resolves them. The resolved spectra are high resolution (using :meth:`pre_resolve` and :meth:`resolve`) and stored for later use. When this spectrum is later called, it will (by default) use :meth:`resolve_and_resample`."""
-    def __init__(self, spectrum, resolution=1e2, method='pre_resolve',**kwargs):
-        label = "R[" + spectrum.label + "]"
-        data = spectrum(method=method,upscaling=resolution,**kwargs)
-        super(UniarySpectrum, self).__init__(data=data, label=label,method='resolve_and_resample',**kwargs)
-        self.resolved = True
-        self.original_data = spectrum.original_data
-        
+    def __call__(self,old_method=None,method=None,**kwargs):
+        """Calls this interpolated spectrum over certain wavelengths. The `method` parameter will default to the one set for the object, and controls the method used to interpret this spectrum. The `old_method` parameter will be used on the contained spectrum. Available methods include all members of :class:`InterpolatedSpectrum` which provide return values (all those documented below)."""
+        self.data = self.spectrum(method=old_method,**kwargs)
+        return super(UnitarySpectrum, self).__call__(method=method,**kwargs)
+
                     
 
 import AnalyticSpectraObjects

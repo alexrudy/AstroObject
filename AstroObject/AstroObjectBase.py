@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.0
+#  Version 0.3.1
 # 
 
 
@@ -39,7 +39,7 @@ __version__ = getVersion()
 LOG = logging.getLogger(__name__)
 
 class BaseFrame(object):
-    """A base frame with abstract methods for proper inheritance"""
+    """This is the API for frame objects, that is, objects which represnet a single state of data. See :class:`AstroObjectBase.FITSFrame`. This API is generally not called by the end user, but rather is called by the parent :class:`AstroObject.AstroObjectBase.FITSObject`'s function. For an example of a parent object, see :class:`AstroObjectBase.FITSObject`."""
     def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
         super(BaseFrame, self).__init__(**kwargs)
         if data != None:
@@ -55,7 +55,7 @@ class BaseFrame(object):
             self.header = {}
         try:
             self.__valid__()
-            assert isinstance(self.label,str), "Frame requires a label, got %s" % self.label
+            assert isinstance(self.label,(str,unicode)), "Frame requires a label, got %s" % self.label
         except AssertionError as e:
             raise AttributeError(str(e))
 
@@ -71,7 +71,7 @@ class BaseFrame(object):
         msg = "Abstract Data Structure %s was called, but cannot return data!" % self
         raise AbstractError(msg)
     
-    def __str__(self):
+    def __repr__(self):
         """Returns String Representation of this frame object. Will display the class name and the label. This method does not need to be overwritten by subclasses."""
         return "<\'%s\' labeled \'%s\'>" % (self.__class__.__name__,self.label)
     
@@ -80,29 +80,48 @@ class BaseFrame(object):
         assert not hasattr(self,'data'), "Abstract Class cannot accept data!"
     
     def __hdu__(self,primary=False):
-        """Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.
-        Subclasses should provide a *primary* keyword argument, and if that keyword is set, the method should return a primaryHDU."""
+        """This method returns an HDU which represents the object. The HDU should respect the object's :attr:`header` attribute, and use that dictionary to populate the headers of the HDU. If the ``primary`` keyword is set, the function should return a :class:`pyFITS.PrimaryHDU` object. If the frame cannot reasonable generate a :class:`pyFITS.PrimaryHDU`, then it should raise an :exc:`AbstractError` in that case."""
         msg = "Abstract Data Structure %s cannot be used for HDU Generation!" % (self)
         raise AbstractError(msg)
 
     
     def __show__(self):
-        """Should return a plot object for the current frame, after setting up this plot in matplotlib. 
-        
-        In general, this method should display data nicely, but should not do too much work, so as to be flexible for use with other plotting commands. It is best to do the minimal amount of work to simply show the data. The intent is for the user to call Object.show() when they want a quick view of the data in a given frame."""
+        """This method should create a simple view of the provided frame. Often this is done using :mod:`Matplotlib.pyplot` to create a simple plot. The plot should have the minimum amount of work done to make a passable plot view, but still be basic enough that the end user can customize the plot object after calling :meth:`__show__`."""
         msg = "Abstract Data Structure %s cannot be used for plotting!" % (self)
         raise AbstractError(msg)
     
     @classmethod
     def __save__(cls,data,label):
-        """A class save method is called when the parent object is trying to save raw data. In this case, the save method will take raw data and attempt to cast it as an object of its own type, returning such an object. If it can't do that (because the data doesn't appear to fit, or for pretty much any other reason) it should raise an :exc:`AbstractError` which will be handled by the calling object."""
+        """his method should retun an instance of the parent class if the given data can be turned into an object of that class. If the data cannot be correctly cast, this method should throw an :exc:`AbstractError`.
+        
+        .. Note:: Because the :meth:`__valid__` is called when an object is initialized, it is possible to check some aspects of the provided data in this initialization function. However, this would raise an :exc:`AssertionError` not an :exc:`AbstractError`. To avoid this problem, it is suggested that you wrap your initialization in a try...except block like::
+                
+                try:
+                    Object = cls(HDU.data,label)
+                except AssertionError as AE:
+                    msg = "%s data did not validate: %s" % (cls.__name__,AE)
+                    raise AbstractError(msg)
+                
+            This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like :exc:`AttributeError`) which are diffult to track and diagnose without the code in :meth:`__save__`. See :meth:`AstroImage.__save__` for an example ``__save__`` function which uses this trick, but also includes some basic data validation."""
         msg = "Abstract Data Structure %s cannot be the target of a save operation!" % (cls)
         raise AbstractError(msg)
         
     
     @classmethod
     def __read__(cls,HDU,label):
-        """An abstract method for reading empty data HDU Frames"""
+        """This method should return an instance of the parent class if the given ``HDU`` can be turned into an object of that class. If this is not possible (i.e. a Table HDU is provided to an Image Frame), this method should raise an :exc:`AbstractError` with a message that describes the resaon the data could not be cast into this type of frame.
+        
+        .. Note:: Because the :meth:`__valid__` is called when an object is initialized, it is possible to check some aspects of the provided data in this initialization function. However, this would raise an :exc:`AssertionError` not an :exc:`AbstractError`. To avoid this problem, it is suggested that you wrap your initialization in a try...except block like::
+                
+                try:
+                    Object = cls(HDU.data,label)
+                except AssertionError as AE:
+                    msg = "%s data did not validate: %s" % (cls.__name__,AE)
+                    raise AbstractError(msg)
+                
+            This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like :exc:`AttributeError`) which are diffult to track and diagnose without the code in :meth:`__read__`. See :meth:`AstroImage.__read__` for an example ``__read__`` function which uses this trick, but also includes some basic data validation.
+            
+        .. Note:: It is acceptable to call the class :meth:`__save__` function here. However, the :meth:`__read__` function should also correctly handle header data."""
         msg = "Abstract Data Structure %s cannot be the target of a read operation!" % (cls)
         raise AbstractError(msg)
         
@@ -152,7 +171,7 @@ class FITSFrame(BaseFrame):
     
 
 
-class FITSObject(object):
+class FITSObject(dict):
     """This object tracks a number of data frames. The :attr:`Filename` is the default filename to use when reading and writing, and the :attr:`dataClass` argument accepts a list of new data classes to be used with this object. New data classes should conform to the data class standard.
     
     
@@ -172,13 +191,37 @@ class FITSObject(object):
         self.clobber = False
         self.name = False
         
-    def __str__(self):
+    def __repr__(self):
         """String representation of this object"""
         if self.name:
             return "<\'%s\' labeled \'%s\'>" % (self.__class__.__name__,self.name)
         else:
-            return super(FITSObject, self).__str__()
+            return super(FITSObject, self).__repr__()
     
+    def __getitem__(self,key):
+        """Dictionary access to frames in the Object"""
+        return self.frame(key)
+        
+    def __setitem__(self,key,value):
+        """Dictionary assignment of frames in the Object"""
+        self.save(value,key,clobber=True)
+        
+    def __delitem__(self,key):
+        """Dictionary deletion of frames in the Object"""
+        self.remove(key)
+        
+    def __iter__(self):
+        """Dictionary iterator call."""
+        return self.states.iterkeys()
+        
+    def __contains__(self,item):
+        """Dictionary contain testing"""
+        return item in self.states
+        
+    def keys(self):
+        """Dictionary keys"""
+        return self.states.keys()
+        
     ###############################
     # Basic Object Mode Functions #
     ###############################
@@ -310,12 +353,23 @@ class FITSObject(object):
     
     def remove(self,*statenames,**kwargs):
         """Removes the specified frame(s) from the object."""
+        if "clobber" in kwargs and kwargs["clobber"]:
+            clobber = True
+        else:
+            clobber = False
+        if "delete" in kwargs and kwargs["delete"]:
+            delete = True
+        else:
+            delete = False
         removed = []
         LOG.log(2,"%s: Requested remove %s" % (self,statenames))
         for statename in statenames:
             if statename not in self.states:
-                raise IndexError("%s: Object %s does not exist!" % (self,statename))
-            if "delete" in kwargs and kwargs["delete"]:
+                if clobber:
+                    LOG.info("%s: Not removing state %s as it does not exist" % (self,statename))
+                else:
+                    raise IndexError("%s: Object %s does not exist!" % (self,statename))
+            if delete:
                 del self.states[statename]
             else:
                 self.states.pop(statename)

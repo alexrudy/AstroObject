@@ -150,6 +150,13 @@ class test_FITSObject(API_Abstract_Object):
         AObject = self.OBJECT()
         AObject.save(self.VALID)
         
+    @nt.raises(TypeError)
+    def test_set_with_data(self):
+        """[] fails with valid data"""
+        AObject = self.OBJECT()
+        AObject["Valid"] = self.VALID
+        
+        
 
 
 
