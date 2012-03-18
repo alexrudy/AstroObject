@@ -93,3 +93,10 @@ Release Notes
     - Unified Analytic Spectrum interface when using interpolation.
     - Unitary spectrum to collapse interpolated spectra early. 
     - Ability to resolve and resample analytic spectra.
+* 0.3.1
+    - Dictionary methods for AstroObject (do things like AstroObject["Label"] = Frame)
+    - Unified InterpolatedSpectrum model with various methods.
+    - Simulator has better options controls (for configuration and arbitrary functions)
+    - Cache module has been re-written. Now has a dict-like interface.
+    - New configuration module
+    - Unicode text in Simulator and AnalyticSpectra
