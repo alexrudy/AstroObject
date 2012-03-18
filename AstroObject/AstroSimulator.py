@@ -7,6 +7,122 @@
 #  Copyright 2011 Alexander Rudy. All rights reserved.
 #  Version 0.3.1
 # 
+"""The Simulator is designed to provide a high level, command-line useful interface to large computational tasks. As the name suggests, Simulators often do a lot of programming work, and do so across many distinct "stages", whcih can be configured in any way the user desires. All of the abilities in this program are simply object abstraction techniques to provide a complex program with a command line interface and better control and reporting on the activities carreid out to successfully complete the program. It allows for the configuration of simple test cases and "macros" from within the program, eliminating the need to provide small wrapper scripts and test handlers.
+
+An example (simple) program using the simulator can be found in :ref:`SimulatorExample`
+
+.. _Simulator_CLI:
+
+:program:`Simulator` Command Line Interface
+-------------------------------------------
+
+The master simulator program is a command-line interface to the :meth:`AstroObject.AstroSimulator.Simulator.run` method. Below are the major command line components.
+
+Usage Statement ::
+	
+	Simulator [ options ][ configuration ] {stages}
+	
+The program is actually agnostic to the order of arguments. Any argument may come in any position. As such, all arguments must be unique.
+
+.. program:: Simulator
+
+.. option:: {stages}
+	
+	The stages option specifies individual stages for the program to run. You must specify at least one stage to run in the simulator. By default, two basic stages are provided, ``*all`` and ``*none``. The default simulation is performed by ``*all``. To test the simulator without running any stages (for example, to test :meth:`AstroObject.AstroSimulator.Simulator.registerFunction` functionality), use the ``*none`` stage to opertate without using any stages.
+	
+	Stages are called with either a ``*``, ``+`` or ``-`` character at the beginning. Their resepctive actions are shown below. All commands must include at least one macro. If you don't want any particular macro, use the ``*none`` macro.
+	
+	========= ============ ================================
+	Character  Action      Description
+	========= ============ ================================
+	``*``     Include      To include a stage, use ``*stage``. This will also run the dependents for that stage.
+	``-``     Exclude      To exclude a stage, use ``-stage``. This stage (and it's dependents) will be skipped.
+	``+``     Include-only To include a stage, but not the dependents of that stage, use ``+stage``.
+	========= ============ ================================
+	
+	.. Note ::
+		Including an argument and excluding it simultaneously will have the effect of including it overall. So the following three commands are equivalent::
+			
+			$ Simulator +stage -stage *none
+			$ Simulator -stage +stage *none
+			$ Simulator +stage *none
+			
+		Also, excluding a stage that is included as a macro will exclude that stage and not call it's dependents, so the following calls are equivalent ::
+			
+			$ Simulator -stage *stage
+			$ Simulator *none
+
+	
+	The commonly used stages in :program:`Simulator` are
+	
+	=====================  ========================================
+	  Stage                Description                             
+	=====================  ========================================
+	  ``*all``              Run all default stages                 
+	  ``*none``             Run no stages                          
+	=====================  ========================================
+	
+	Stages are registered by the :meth:`AstroObject.AstroSimulator.Simulator.registerStage` method.
+	
+.. option:: [configurations]
+	
+	Configuration options override defaults set up in :class:`AstroObject.AstroSimulator.Simulator`. As such, they are useful quick changes to a configuration.
+	
+	 ===================== ============================================
+	   Options               Description
+	 ===================== ============================================
+	   ``-d``                enable debugging messages and plots
+	 ===================== ============================================
+	
+	.. Note::
+		This means if you dump the configuration file (see :option:`--dump`) and use that directly as your new configuration file, these options will have no effect. Therefore, it is advisable that your configuration file contain the minimum amount of detail to override the default values set in the program. However, if you wish to use these options, but always disable debug, for example, you could disable debug in your configuration file. This will make none of these flags enable debugging.
+		
+	
+.. option:: -h, --help
+	
+	Get help about the :program:`Simulator` command. Help will list commonly used stages, optional arguments, and configuration items.
+	
+	.. Note ::
+		To get a full list of stages available, use :option:`--stages`
+		
+.. option:: --version
+	
+	Print the program version.
+	
+.. option:: --cf file.yaml
+	
+	Set the name of the configuration file to use. By default, the configuation file is called `SED.main.config.yaml`. This will be the filename used for dumping configurations with the :option:`--dump` command (Dump will append the extension ``-dump.yaml`` onto the filename to prevent overwriting exisitng configurations)
+	
+.. option:: --dry-run
+	
+	Traverse all of the stages to be run, printing them as the program goes, but do not run any stages.
+	
+.. option:: --stages
+	
+	Print all stages registered in the simulator. Any stage listed in the output of this function can be run.
+	
+.. option:: --dump
+	
+	Dump the configuration to a file. Filenames are the configuration file name with ``-dump.yaml`` appended.
+
+.. _Configuration:
+
+:program:`Simulator` Configuration Files
+----------------------------------------
+
+:program:`Simulator` configuration files are YAML files which contain a dictionary structure. All values in the YAML files are basic yaml, and contain no python-specific directives. To find out what the default or current configuration is, use the :option:`--dump` command. The file produced from this will contain a YAML structure for the configuration in use when the system started up. The various directives in the configuration file are described below.
+
+- ``Configurations``: contains a list of potential configuration files.
+    - ``Main``: The name of the primary configuration file. This default is produced by the program. Overriding it in the configuration file has essentially no effect.
+- ``Dirs``: Directories that this simulator will use for output.
+    - ``Caches``: Location of cache files.
+        .. Note:: This function has almost no effect, but can be used internally by the simulator. See :ref:`SimulatorExample`
+    - ``Logs``: Location of log files
+    - ``Partials``: Location of partial output, including a dump of the configuration.
+- ``Logging``: Configuration of the :mod:`AstroObject.AstroObjectLogging` module
+
+A simple configuration file can be found in the :ref:`SimulatorExample`."""
+
 
 # Standard Python Modules
 import math, copy, sys, time, logging, os, json
@@ -77,7 +193,12 @@ class Stage(object):
         self.optional = optional
 
 class Simulator(object):
-    """A Simulator, used for running large segements of code with detailed logging and progress checking. Simulators have a name, the `name` parameter can be left as is to use the name of the simulator's class (mostly useful if you subclassed it!). The `commandLine` parameter can be set to False to prevent the simulator collecting arguments from `sys.argv` for use. This allows you to programatically call the simulator with the :meth:`do` method."""
+    """A Simulator, used for running large segements of code with detailed logging and progress checking. Simulators have a name, the `name` parameter can be left as is to use the name of the simulator's class (mostly useful if you subclassed it!). The `commandLine` parameter can be set to False to prevent the simulator collecting arguments from `sys.argv` for use. This allows you to programatically call the simulator with the :meth:`do` method.
+    
+    :param string name: Simulator name
+    :param bool commandLine: Whether the simulator is run from the command line, or programatically.
+    
+    By default simulators are named for their class."""
     
     name = "Simulator"
     
@@ -222,6 +343,17 @@ class Simulator(object):
     def registerStage(self,stage,name,description=None,exceptions=None,include=True,help=False,dependencies=None,replaces=None,optional=False):
         """Register a stage for operation with the simulator. The stage will then be available as a command line option, and will be operated with the simulator. Stages should be registered early in the operation of the simulator (preferably in the initialization, after the simulator class itself has initialized) so that the program is aware of the stages for running. 
         
+        :keyword function stage: The function to run for this stage. Should not take any arguments
+        :keyword string name:  The command-line name of this stage (no spaces, `+`, `-`, or `*`)
+        :keyword string description: A short description, which will be used by the logger when displaying information about the stage
+        :keyword tuple exceptions: A tuple of exceptions which are acceptable results for this stage. These exceptions will be caught and logged, but will allow the simulator to continue. These exceptions will still raise errors in Debug mode.
+        :keyword bool include: A boolean, Whether to include this stage in the `*all` macro or not.
+        :keyword string help: Help text for the command line argument. A value of False excludes the help, None includes generic help.
+        :keyword list dependencies: An ordered list of the stages which must run before this stage can run. Dependencies will be deep-searched.
+        :keyword list replaces: A list of stages which can be replaced by this stage. This stage will now satisfy those dependencies.
+        :keyword bool optional: A boolean about wheather this stage can be skipped. If so, warnings will not be raised when this stage is explicitly skipped (like ``-stage`` would do)
+        
+        
     	Stages are called with either a ``*``, ``+`` or ``-`` character at the beginning. Their resepctive actions are shown below.
 	
     	========= ============ ================================
@@ -250,20 +382,6 @@ class Simulator(object):
             $ Simulator -test +test
             
         will both run the `test` stage.
-        
-        =================== ==============
-        keyword             Description
-        =================== ==============
-        stage               The function to run for this stage. Should not take any arguments
-        name                The command-line name of this stage (no spaces, `+`, `-`, or `*`)
-        description         A short description, which will be used by the logger when displaying information about the stage
-        exceptions          A tuple of exceptions which are acceptable results for this stage. These exceptions will be caught and logged, but will allow the simulator to continue. These exceptions will still raise errors in Debug mode.
-        include             A boolean, Whether to include this stage in the `*all` macro or not.
-        help                Help text for the command line argument. A value of False excludes the help, None includes generic help.
-        dependencies        An ordered list of the stages which must run before this stage can run. Dependencies will be deep-searched.
-        replaces            A list of stages which can be replaced by this stage. This stage will now satisfy those dependencies.
-        optional            A boolean about wheather this stage can be skipped. If so, warnings will not be raised when this stage is explicitly skipped (like ``-stage`` would do)
-        =================== ==============
         
         Stages cannot be added dynamically. Once the simulator starts running (i.e. processing stages) the order and settings are fixed. Attempting to adjsut the stages at this point will raise an error.
         """
@@ -304,7 +422,16 @@ class Simulator(object):
             self.stages["all"].deps += [name]
         
     def registerFunction(self,argument,function,post=True,**kwargs):
-        """Register a function to run using a flag"""
+        """Register a function to run using a flag.
+        
+        :param string argument: The calling argument, e.g. ``--hello-world``
+        :param function function: The function to be run.
+        :keyword bool post: Whether to run the function before or after configuration of the simulator.
+        
+        Functions registered with ``post=False`` will be run before the simulator is configured from a file. As such, changes they make can be easily re-adjusted by the user. Functions registered with ``post=True`` (the default) will run after configuration, but before any stages run. They can be used to inspect or adjust configuration variables or other globals.
+        
+        Other keyword arguments are passed to :meth:`ArgumentParser.add_argument`
+        """
         if self.running or self.starting:
             raise ConfigureError("Cannot add macro after simulator has started!")
         
@@ -322,7 +449,14 @@ class Simulator(object):
         
         
     def registerConfigOpts(self,argument,configuration,preconfig=True,**kwargs):
-        """Registers a bulk configuration option which will be provided with the USAGE statement. This configuration option can easily override normal configuration settings. Configuration provided here will override programmatically specified configuration options. It will not override configuration provided by the configuration file. These configuration options are meant to provide alterantive *defaults*, not alternative configurations."""
+        """Registers a bulk configuration option which will be provided with the USAGE statement. This configuration option can easily override normal configuration settings. Configuration provided here will override programmatically specified configuration options. It will not override configuration provided by the configuration file. These configuration options are meant to provide alterantive *defaults*, not alternative configurations.
+        
+        :param string argument: The command line argument (e.g. ``-D``)
+        :param dict configuration: The configuration dictionary to be merged with the master configuration.
+        :keyword bool preconfig: Applies these adjustments before loading the configuration file.
+        
+        Other keyword arguments are passed to :meth:`ArgumentParser.add_argument`
+        """
         if self.running or self.starting:
             raise ConfigureError("Cannot add macro after simulator has started!")
         
@@ -430,7 +564,7 @@ class Simulator(object):
         
                 
     def startup(self):
-        """Start up the simulation. """
+        """Start up the simulation. This function handles the configuration of the system, and prepares for any calls made to :meth:`do`."""
         self._default_macros()
         self.starting = True
         self._parseArguments()
@@ -448,16 +582,26 @@ class Simulator(object):
         self.exit()
     
     def do(self,*stages):
-        """Run the simulator. Macro runs stages passed in."""
-        if self.running:
+        """Run the simulator.
+        
+        :arguments stages: Stages to be run as macros.
+        
+        This command can be used to run specific stages and their dependents. The control is far less flow control than the command-line interface (there is currently no argument interface to inclusion and exclusion lists, ``+`` and ``-``.), but can be used to call single macros in simulators froms scripts. In these cases, it is often beneficial to set up your own macro (calling :func:`registerStage` with ``None`` as the stage action) to wrap the actions you want taken in each phase.
+        
+        It is possible to stop execution in the middle of this function. Simply set the simulator's ``paused`` variable to ``True`` and the simulator will remain in a state where you are free to call :meth:`do` again."""
+        if self.running and not self.paused:
             raise ConfigurationError("Simulator is already running!")
-        self.running = True
-        self.options["macro"] += list(stages)
-        if self.options["macro"] == []:
-            self.parser.error("No stages triggered to run!")
-        if self.attempt == []:
-            self.inorder = True
-            self.complete = []
+        elif self.paused:
+            self.pasued = False
+            self.options["macro"] += list(stages)
+        else:
+            self.running = True
+            self.options["macro"] += list(stages)
+            if self.options["macro"] == []:
+                self.parser.error("No stages triggered to run!")
+            if self.attempt == []:
+                self.inorder = True
+                self.complete = []
         
         while self.running and not self.paused:
             for stage in self.orders:
@@ -467,7 +611,7 @@ class Simulator(object):
                     self.execute(stage,deps=False)
             self.running = False
         
-        if self.options['dry_run']:
+        if self.options['dry_run'] and not self.running:
             text = "Stages completed:\n"
             for stage in self.complete:
                 s = self.stages[stage]
@@ -476,7 +620,13 @@ class Simulator(object):
             self.exit(msg=text)
             
     def execute(self,stage,deps=True):
-        """Actually exectue a particular stage"""
+        """Actually exectue a particular stage. This function can be called to execute individual stages, either with or without dependencies. As such, it gives finer granularity than :func:`do`.
+        
+        :param string stage: The stage name to be exectued.
+        :param bool deps: Whether to run all dependencies.
+        
+        This method handles exceptions from the called stages, including keyboard interrupts.
+        """
         if self.paused or not self.running:
             return False
             
@@ -509,11 +659,7 @@ class Simulator(object):
             self.log.warning("Explicity skipping dependents")
         
         s = self.stages[stage]
-        if s.macro:
-            self.complete += [stage] + s.reps
-            return use
-        
-        if self.options["dry_run"]:
+        if s.macro or self.options["dry_run"]:
             self.complete += [stage] + s.reps
             return use
         
@@ -524,7 +670,7 @@ class Simulator(object):
             s.do()
         except KeyboardInterrupt as e:
             self.log.useConsole(True)
-            self.log.critical("Keyboard Interrupt... ending simulator.")
+            self.log.critical("Keyboard Interrupt during %(stage)s... ending simulator." % {'stage':s.name})
             self.log.critical("Last completed stage: %(stage)s" % {'stage':self.complete.pop()})
             self.log.debug("Stages completed: %s" % self.complete)
             self.exit()
@@ -549,7 +695,10 @@ class Simulator(object):
         return use
         
     def exit(self,code=0,msg=None):
-        """Cleanup function for when we are all done"""
+        """This function exist the current python instance with the requested code. Before exiting, a message is printed.
+        
+        :param int code: exit code
+        :param string msg: exit message"""
         if msg:
             self.log.info(msg)
         self.log.info("Simulator %s Finished" % self.name)

@@ -70,7 +70,7 @@ class BaseFrame(object):
     def __call__(self,**kwargs):
         """Should return the data within this frame, usually as a ``numpy`` array.
         
-        :rtype: None
+        :returns: None
         
         :class:`AstroImage.ImageFrame` implements this method as::
             
@@ -84,7 +84,7 @@ class BaseFrame(object):
     def __repr__(self):
         """Returns String Representation of this frame object. Will display the class name and the label. This method does not need to be overwritten by subclasses.
         
-        :rtype: literal sting representation
+        :returns: literal sting representation
         """
         return "<\'%s\' labeled \'%s\'>" % (self.__class__.__name__,self.label)
     
@@ -92,7 +92,7 @@ class BaseFrame(object):
         """Runs a series of assertions which ensure that the data for this frame is valid
         
         :raises: :exc:`AssertionError` when frame is invalid
-        :rtype: ``None``"""
+        :returns: ``None``"""
         assert not hasattr(self,'data'), "Abstract Class cannot accept data!"
     
     def __hdu__(self,primary=False):
@@ -100,7 +100,7 @@ class BaseFrame(object):
         
         :param primary: boolean, produce a primary HDU or not
         :raises: :exc:`AbstractError` When the object cannot make a well-formed HDU
-        :rtype: pyfits.PrimaryHDU or pyfits.HDU
+        :returns: pyfits.PrimaryHDU or pyfits.HDU
         
         If the frame cannot reasonable generate a :class:`pyFITS.PrimaryHDU`, then it should raise an :exc:`AbstractError` in that case."""
         msg = "Abstract Data Structure %s cannot be used for HDU Generation!" % (self)
@@ -110,7 +110,7 @@ class BaseFrame(object):
     def __show__(self):
         """This method should create a simple view of the provided frame. Often this is done using :mod:`Matplotlib.pyplot` to create a simple plot. The plot should have the minimum amount of work done to make a passable plot view, but still be basic enough that the end user can customize the plot object after calling :meth:`__show__`.
         
-        :rtype: Matplotlib plot object"""
+        :returns: Matplotlib plot object"""
         msg = "Abstract Data Structure %s cannot be used for plotting!" % (self)
         raise AbstractError(msg)
     
@@ -121,7 +121,7 @@ class BaseFrame(object):
         :param data: Data to be saved, in raw form.
         :param label: Name for the newly created frame.
         :raises: :exc:`AbstractError` when this data can't be saved.
-        :rtype: :class:`BaseFrame`
+        :returns: :class:`BaseFrame`
         
         .. Note:: Because the :meth:`__valid__` is called when an object is initialized, it is possible to check some aspects of the provided data in this initialization function. However, this would raise an :exc:`AssertionError` not an :exc:`AbstractError`. To avoid this problem, it is suggested that you wrap your initialization in a try...except block like::
                 
@@ -143,7 +143,7 @@ class BaseFrame(object):
         :param data: HDU to be saved, as a ``pyfits.HDU``.
         :param label: Name for the newly created frame.
         :raises: :exc:`AbstractError` when this data can't be saved.
-        :rtype: :class:`BaseFrame`
+        :returns: :class:`BaseFrame`
         
         .. Note:: Because the :meth:`__valid__` is called when an object is initialized, it is possible to check some aspects of the provided data in this initialization function. However, this would raise an :exc:`AssertionError` not an :exc:`AbstractError`. To avoid this problem, it is suggested that you wrap your initialization in a try...except block like::
                 
@@ -184,7 +184,7 @@ class FITSFrame(BaseFrame):
         """Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.
         
         :param bool primary: Return a primary HDU
-        :rtype: pyfits.primaryHDU or pyfits.ImageHDU
+        :returns: pyfits.primaryHDU or pyfits.ImageHDU
         """
         if primary:
             HDU = pf.PrimaryHDU()
@@ -204,7 +204,7 @@ class FITSFrame(BaseFrame):
         :param data: HDU to be saved, as a ``pyfits.HDU``.
         :param label: Name for the newly created frame.
         :raises: :exc:`AbstractError` when this data can't be saved.
-        :rtype: :class:`FITSFrame`
+        :returns: :class:`FITSFrame`
         """
         if not isinstance(HDU,pf.PrimaryHDU):
             msg = "Must save a %s to a %s, found %s" % (pf.PrimaryHDU.__name__,cls.__name__,HDU.__class__.__name__)
@@ -243,7 +243,7 @@ class FITSObject(dict):
     def __repr__(self):
         """String representation of this object.
         
-        :rtype: string
+        :returns: string
         """
         if self.name:
             return "<\'%s\' labeled \'%s\'>" % (self.__class__.__name__,self.name)
@@ -273,7 +273,7 @@ class FITSObject(dict):
     def keys(self):
         """Dictionary keys.
         
-        :rtype: list"""
+        :returns: list"""
         return self.states.keys()
         
     ###############################
@@ -323,7 +323,7 @@ class FITSObject(dict):
         
         :param string statename: the name of the state to be retrieved.
         :param kwargs: arguments to be passed to the data call.
-        :rtype: np.array of called data
+        :returns: np.array of called data
         
         .. Warning::
             I have not finished examining some issues with referencing vs. copying data that comes out of this call. Be aware that manipulating some objects produced here may actually manipulate the version saved in the Object. The current implementation which protects this call relies on the numpy copy command, ``np.copy(state())``, which might fail when used with data objects that do not return numpy arrays.
@@ -340,7 +340,7 @@ class FITSObject(dict):
         """Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.
         
         :param string statename: the name of the state to be retrieved.
-        :rtype: dataClass instance for this object
+        :returns: dataClass instance for this object
         
         .. Warning::
             Unlike with the :meth:`FITSObject.data` call, the object returned here should be treated as roughly immutable. That is, it is not advisable to re-use the data frame here, as Python has returned a reference to all examples of this data frame in your code::
@@ -381,7 +381,7 @@ class FITSObject(dict):
     def list(self):
         """Provides a list of the available frames, by label.
         
-        :rtype: list
+        :returns: list
         
         """
         return self.states.keys()
@@ -390,7 +390,7 @@ class FITSObject(dict):
         """Returns the default state name. If the currently selected state exists, it's state name will return. If not, the system will search for the newest state.
         
         :param tuple states: Tuple of state names from which to select the default. If not given, will use all states.
-        :rtype: string statename
+        :returns: string statename
         
         """
         if states == None:
@@ -407,7 +407,7 @@ class FITSObject(dict):
         """Clears all states from this object. Returns an empty list representing the currently known states.
         
         :param bool delete: whether to explicitly delete states or just stop referencing dictionary.
-        :rtype: list of states remaining
+        :returns: list of states remaining
         
         """
         if delete:
@@ -425,7 +425,7 @@ class FITSObject(dict):
         
         :param statenames: the statenames to be kept.
         :param bool delete: whether to explicitly delete stages.
-        :rtype: list of states remaining.
+        :returns: list of states remaining.
         
         """
         oldStates = self.states
@@ -449,7 +449,7 @@ class FITSObject(dict):
         
         :param statenames: the statenames to be deleted.
         :param bool delete: whether to explicitly delete stages.
-        :rtype: list of states remaining.
+        :returns: list of states remaining.
         
         """
         if "clobber" in kwargs and kwargs["clobber"]:
