@@ -38,7 +38,7 @@ import itertools
 # Submodules from this system
 from Utilities import *
 
-__all__ = [u"AnalyticSpectrum","CompositeSpectra","InterpolatedSpectrum"]
+__all__ = ["AnalyticSpectrum","CompositeSpectra","InterpolatedSpectrum","InterpolatedSpectrumBase"]
 
 LOG = logging.getLogger(__name__)
 
@@ -136,17 +136,10 @@ class CompositeSpectra(AnalyticSpectrum):
     
 
 
-class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
-    """An analytic representation of a generic, specified spectrum. The spectrum provided will be used to create an infintiely dense interpolation function. This function can then be used to call the spectrum at any wavelength. The interpolation used by default is a simple 1d interpolation.
-    
-    Passing the name of any member function in this class to the `method` parameter will change the interpolation/method used for this spectrum.
-    
-    """
+class InterpolatedSpectrumBase(AnalyticSpectrum):
+
     def __init__(self, data=None, label=None, wavelengths=None,resolution=None, method=u"interpolate",integrator='integrate_hist', **kwargs):
-        self.data = data
-        self.size = data.size # The size of this image
-        self.shape = data.shape # The shape of this image
-        super(InterpolatedSpectrum, self).__init__(data=data,label=label,**kwargs)
+        super(InterpolatedSpectrumBase, self).__init__(data=data,label=label,**kwargs)
         self.wavelengths = wavelengths
         self.resolution = resolution
         self.method = getattr(self,method)
@@ -514,7 +507,7 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
             u"Exponent Evaluated" : np.exp(- 0.5 * (MWL - MCENT) ** 2.0 / (MSIGM ** 2.0)),
             u"Curve Evaluated" : curves,
         }
-        if (topzo != zeros).any():
+        if (topzo.astype(int) < zeros.astype(int)).any():
             self._postsanity(oldwl,oldfl,wavelengths,flux,resolution,error=ValueError,message=u"Normalizing Zero error." % (np.sum(zeros)),**msgarray)
         elif np.sum(zeros) > 0:
             self._postsanity(oldwl,oldfl,wavelengths,flux,resolution,warning=True,message=u"Removed %d zeros from re-weighting." % (np.sum(zeros)),**msgarray)
@@ -711,26 +704,42 @@ class InterpolatedSpectrum(AnalyticSpectrum,AstroSpectra.SpectraFrame):
         return integrated
         
 
+class InterpolatedSpectrum(InterpolatedSpectrumBase,AstroSpectra.SpectraFrame):
+    """An analytic representation of a generic, specified spectrum. The spectrum provided will be used to create an infintiely dense interpolation function. This function can then be used to call the spectrum at any wavelength. The interpolation used by default is a simple 1d interpolation.
+    
+    Passing the name of any member function in this class to the `method` parameter will change the interpolation/method used for this spectrum.
+    
+    """
+    def __init__(self, data=None, label=None,**kwargs):    
+        self.data = data
+        self.size = data.size # The size of this image
+        self.shape = data.shape # The shape of this image
+        super(InterpolatedSpectrum, self).__init__(data=data,label=label,**kwargs)
+
+        
+
 class Resolver(InterpolatedSpectrum):
     """This spectrum performs a unitary operation on any InterpolatedSpectrum-type-object. The operation (specified by the `method` keyword) is performed after the contained spectrum is called. The included spectrum is called immediately and then discarded. As such, wavelength and resolution keywords should be provided when appropriate to resolve the spectrum immediately. This operation does not save the old data state. All methods in :class:`InterpolatedSpectrum` are available."""
-    def __init__(self, spectrum, new_method='interpolate',**kwargs):
+    def __init__(self, spectrum, label=None, new_method='interpolate',**kwargs):
         data = spectrum(**kwargs)
-        label =  u"R[" + spectrum.label + "]"
+        if not label:
+            label =  u"R[" + spectrum.label + "]"
         super(Resolver, self).__init__(data=data,label=label,method=new_method,**kwargs)
         
         
-class UnitarySpectrum(InterpolatedSpectrum):
+class UnitarySpectrum(InterpolatedSpectrumBase):
     """This spectrum performs a unitary operation on any InterpolatedSpectrum-type-object. The operation (specified by the `method` keyword) is performed after the contained spectrum is called. All methods in :class:`InterpolatedSpectrum` are available."""
-    def __init__(self, spectrum, method='interpolate',**kwargs):
-        label =  u"[" + spectrum.label + "]"
-        super(UnitarySpectrum, self).__init__(data=spectrum.data, label=label,**kwargs)
+    def __init__(self, spectrum, method='interpolate', label=None,**kwargs):
+        if not label:
+            label =  u"[" + spectrum.label + "]"
+        super(UnitarySpectrum, self).__init__(data=None, label=label,**kwargs)
         self.spectrum = spectrum
         self.method = getattr(self,method)
         
     def __call__(self,old_method=None,method=None,**kwargs):
         """Calls this interpolated spectrum over certain wavelengths. The `method` parameter will default to the one set for the object, and controls the method used to interpret this spectrum. The `old_method` parameter will be used on the contained spectrum. Available methods include all members of :class:`InterpolatedSpectrum` which provide return values (all those documented below)."""
         self.data = self.spectrum(method=old_method,**kwargs)
-        super(UnitarySpectrum, self).__call__(method=method,**kwargs)
+        return super(UnitarySpectrum, self).__call__(method=method,**kwargs)
 
                     
 

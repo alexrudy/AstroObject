@@ -10,7 +10,6 @@
 import numpy as np
 import scipy as sp
 import scipy.constants as spconst
-import pyfits
 import math
 import logging,time,sys,collections,os
 from pkg_resources import resource_string

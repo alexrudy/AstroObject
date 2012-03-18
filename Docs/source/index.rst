@@ -34,7 +34,10 @@ About AstroObject:
     future
     rnotes
 
-
+.. toctree::
+    :hidden:
+    
+    SimulatorExample
 
 Indices and tables
 ==================

@@ -23,7 +23,41 @@ __all__ = ["Simulator"]
 __version__ = getVersion()
 
 class Stage(object):
-    """A stage object for maintaing data structure"""
+    """A stage object for maintaing data structure. This object is only created internally by the :class:`Simulator` class. The attributes of this class are directly called. The class does not provide accessor or setter methods, and should never be called externally.
+    
+    .. attribute:: Stage.do
+        
+        The stage function to be called during operation.
+    
+    .. attribute:: macro
+        
+        Boolean flag. Set to ``False`` if this stage has a callable ``do`` attribute.
+        
+    .. attribute:: exceptions
+        
+        A tuple of exceptions which should not cause this stage to fail.
+    
+    .. attribute:: name
+        
+        The calling, hashable name of this stage, stored here for return as a string value in messages.
+        
+    .. attribute:: description
+        
+        A human readable description of what this stage is doing, represeneted in the active voice and shown during operation.
+        
+    .. attribute:: deps
+    
+        List of all of the stages that this stage depends on.
+        
+    .. attribute:: reps
+        
+        List of all the stages that this stage could replace
+        
+    .. attribute:: optional
+        
+        A boolean flag. If it is set to true, the simulator will not raise a warning when this stage is skipped.
+        
+    """
     def __init__(self,stage,name="a Stage",description="A description",exceptions=None,dependencies=None,replaces=None,optional=False):
         super(Stage, self).__init__()
         self.macro = False
@@ -62,8 +96,7 @@ class Simulator(object):
         "Dirs" : {
             "Caches" : "Caches",
             "Logs" : "Logs/",
-            "Partials" : "Partials",
-            "Images" : "Images",
+            "Partials": "Partials",
         },
         "Configurations" : {
             "Main" : "Simulator.yaml",
@@ -102,35 +135,33 @@ class Simulator(object):
         self.starting = False
         self.paused = False
         self.commandLine = commandLine
-        self.Caches = CacheManager(self.name)
+        self.Caches = CacheManager()
         self.options = None
-        self.initOptions()
+        self._initOptions()
         
-    def initOptions(self):
+    def _initOptions(self):
         """Initializes the command line options for this script. This function is automatically called on construction, and provides the following default command options which are already supported by the simulator:
         
         Command line options are:
         
-        ================ =====================
-        CLI Option       Description
-        ================ =====================
-        `--version`      Display version information about this module
-        `--do-plot`      Show debugging plots which will be stored in the Partials directory
-        `--no-cache`     Disable all caching mechanisms
-        `--debug`,`-d`   Turn on debugging messages
-        `--config`       Specify a configuration file
-        `--dump-config`  Write the current configuration to file
-        `--print-stages` Print the stages that the command will execute, do not do anything
-        ================ =====================
+        ================== =====================
+        CLI Option         Description
+        ================== =====================
+        ``--version``      Display version information about this module
+        ``--cf file.yaml`` Specify a configuration file
+        ``--dry-run``      Print the stages this command would have run.
+        ``--dump``         Write the current configuration to file
+        ``--stages``       Print the stages that the command will execute, do not do anything
+        ================== =====================
         
         Macros defined at this level are:
         
-        ======== ==================================================
-        Macro    Result
-        ======== ==================================================
-        `*all`   Includes every stage
-        `*none`  Doesn't include any stages (technically redundant)
-        ======== ==================================================
+        ========= ==================================================
+        Macro     Result
+        ========= ==================================================
+        ``*all``   Includes every stage
+        ``*none``  Doesn't include any stages (technically redundant)
+        ========= ==================================================
         
         """
         self.USAGE = "%(command)s %(basicOpts)s %(subcommand)s"
@@ -170,8 +201,8 @@ class Simulator(object):
         self.parser.add_argument('--configure',action='append',metavar="{'config':'value'}",help="Add configuration items in the form of python dictionaries",dest='postconfig')
         self.parser.add_argument('--cf',action='store',dest='config',type=str,help="use the specified configuration file",metavar="file.yaml")
         self.parser.add_argument('--dry-run',action='store_true',dest='dry_run',help="Print the stages that the simulator wishes to run, without executing.")
-        self.registerFunction('--dump',self.dump_config)
-        self.registerFunction('--stages',self.list_stages,help="List all of the stages initialized")
+        self.registerFunction('--dump',self._dump_config)
+        self.registerFunction('--stages',self._list_stages,help="List all of the stages initialized")
         
 
         
@@ -180,17 +211,31 @@ class Simulator(object):
         self.registerStage(None,"none",description="Run no stages",help="Run no stages",include=False)
         
         
-    def defaultMacros(self):
-        """Establish default macros for the system."""
+    def _default_macros(self):
+        """Sets up the ``*all`` macro for this system, specifically, triggers the ``*all`` macro to run last."""
         self.orders.remove("all")
         self.orders += ["all"]
 
         
         
         
-    def registerStage(self,stage,name,description=None,position=None,exceptions=None,include=True,help=False,dependencies=None,replaces=None,optional=False):
-        """Register a stage for operation with the simulator. The stage will then be available as a command line option, and will be operated with the simulator. Stages should be registered early in the operation of the simulator (preferably in the initialization, after the simulator class itself has initialized) so that the program is aware of the stages for running. Stages cannot be added dynamically. Once the simulator starts running (i.e. processing stages) the order and settings are fixed. Attempting to adjsut the stages at this point will raise an error. Stages can be passed a tuple of exceptions for use in operation. These exceptions will be logged as ERRORs, but will not cause the program to crash. They will thus keep the simulator running even if the stage encounters a problem.
+    def registerStage(self,stage,name,description=None,exceptions=None,include=True,help=False,dependencies=None,replaces=None,optional=False):
+        """Register a stage for operation with the simulator. The stage will then be available as a command line option, and will be operated with the simulator. Stages should be registered early in the operation of the simulator (preferably in the initialization, after the simulator class itself has initialized) so that the program is aware of the stages for running. 
         
+    	Stages are called with either a ``*``, ``+`` or ``-`` character at the beginning. Their resepctive actions are shown below.
+	
+    	========= ============ ================================
+    	Character  Action      Description
+    	========= ============ ================================
+    	``*``     Include      To include a stage, use ``*stage``. This will also run the dependents for that stage.
+    	``-``     Exclude      To exclude a stage, use ``-stage``. This stage (and it's dependents) will be skipped.
+    	``+``     Include-only To include a stage, but not the dependents of that stage, use ``+stage``.
+    	========= ============ ================================
+        
+        To use a registered stage, and call all of its dependents, call ::
+            
+            $ Simulator *stage
+            
         Registered stages can be explicity run from the command line by including::
             
             $ Simulator +stage
@@ -212,11 +257,15 @@ class Simulator(object):
         stage               The function to run for this stage. Should not take any arguments
         name                The command-line name of this stage (no spaces, `+`, `-`, or `*`)
         description         A short description, which will be used by the logger when displaying information about the stage
-        position            A number, describing the position in the ordering for this stage. If None, stages are appended to the end of the stage list.
-        exceptions          A tuple of exceptions which are acceptable results for this stage. These exceptions will be caught and logged, but will allow the simulator to continue
+        exceptions          A tuple of exceptions which are acceptable results for this stage. These exceptions will be caught and logged, but will allow the simulator to continue. These exceptions will still raise errors in Debug mode.
         include             A boolean, Whether to include this stage in the `*all` macro or not.
         help                Help text for the command line argument. A value of False excludes the help, None includes generic help.
+        dependencies        An ordered list of the stages which must run before this stage can run. Dependencies will be deep-searched.
+        replaces            A list of stages which can be replaced by this stage. This stage will now satisfy those dependencies.
+        optional            A boolean about wheather this stage can be skipped. If so, warnings will not be raised when this stage is explicitly skipped (like ``-stage`` would do)
         =================== ==============
+        
+        Stages cannot be added dynamically. Once the simulator starts running (i.e. processing stages) the order and settings are fixed. Attempting to adjsut the stages at this point will raise an error.
         """
         if self.running or self.starting:
             raise ConfigurationError("Cannot add a new stage to the simulator, the simulation has already started!")
@@ -248,9 +297,8 @@ class Simulator(object):
         stageObject = Stage(stage,name=name,description=description,exceptions=exceptions,dependencies=dependencies,replaces=replaces,optional=optional)
         self.stages[name] = stageObject
         self.orders += [name]
-        if not stageObject.macro:
-            self.pos_stage_parser.add_argument("+"+name,action='append_const',dest='include',const=name,help=argparse.SUPPRESS)
-            self.neg_stage_parser.add_argument("-"+name,action='append_const',dest='exclude',const=name,help=argparse.SUPPRESS)
+        self.pos_stage_parser.add_argument("+"+name,action='append_const',dest='include',const=name,help=argparse.SUPPRESS)
+        self.neg_stage_parser.add_argument("-"+name,action='append_const',dest='exclude',const=name,help=argparse.SUPPRESS)
         self.inc_stage_parser.add_argument("*"+name,action='append_const',dest='macro',const=name,help=help)
         if include:
             self.stages["all"].deps += [name]
@@ -290,7 +338,7 @@ class Simulator(object):
         self.config_parser.add_argument("-"+argument,action='append_const',dest=dest,const=configuration,help=help,**kwargs)
         
         
-    def configure(self,configFile=None,configuration=None):
+    def _configure(self,configFile=None,configuration=None):
         """Configure this object. Configuration happens first from passed dictionaries (`configuration` variable) and then from files. The result is that configuration will use the values from files in place of values from passed in dictionaries. Running this function twice requires re-setting the `self.configured`."""
         if self.running:
             return ConfigurationError("Cannot configure the simulator, the simulation has already started!")
@@ -319,7 +367,7 @@ class Simulator(object):
                 stream.write("# Configuration from %s\n" % self.name)
                 yaml.dump(self.config,stream,default_flow_style=False) 
         
-    def parseArguments(self):
+    def _parseArguments(self):
         """Parse arguments. Argumetns can be passed into this function like they would be passed to the command line. These arguments will only be parsed when the system is not in `commandLine` mode."""
         if self.commandLine:
             Namespace = self.parser.parse_args()
@@ -332,7 +380,7 @@ class Simulator(object):
         else:
             self.log.debug("Skipping argument parsing")
     
-    def preConfiguration(self):
+    def _preConfiguration(self):
         """Applies arguments before configuration. Only argument applied is the name of the configuration file, allowing the command line to change the configuration file name."""
         if "config" in self.options and self.options["config"] != None:
             self.config["Configurations"]["This"] = self.options["config"]
@@ -346,7 +394,7 @@ class Simulator(object):
                 f()
         
             
-    def postConfiguration(self):
+    def _postConfiguration(self):
         """Apply arguments after configuration. The arguments applied here flesh out macros, and copy data from the configuration system into the operations system."""
         if "exclude" not in self.options or not isinstance(self.options["exclude"],list):
             self.options["exclude"] = []
@@ -365,7 +413,7 @@ class Simulator(object):
                 f()
         
         
-    def list_stages(self):
+    def _list_stages(self):
         """List stages and exit"""
         text = "Stages:\n"
         for stage in self.orders:
@@ -374,7 +422,7 @@ class Simulator(object):
             text += "\n"
         self.parser.exit(message=text)
         
-    def dump_config(self):
+    def _dump_config(self):
         """Dump the configuration to a file"""
         with open(self.config["Configurations"]["This"]+"-dump.yaml","w") as stream:
             stream.write("# Configuration from %s\n" % self.name)
@@ -383,14 +431,12 @@ class Simulator(object):
                 
     def startup(self):
         """Start up the simulation. """
-        self.defaultMacros()
+        self._default_macros()
         self.starting = True
-        self.parseArguments()
-        self.preConfiguration()
-        self.configure(configFile=self.config["Configurations"]["This"])
-        if self.caching:
-            self.Caches.load()
-        self.postConfiguration()
+        self._parseArguments()
+        self._preConfiguration()
+        self._configure(configFile=self.config["Configurations"]["This"])
+        self._postConfiguration()
         self.starting = False
         
         
