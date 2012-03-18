@@ -24,14 +24,14 @@ class SimpleStage(Simulator):
     """An example simulator designed to show the power of simulations and for use while testing."""
     def __init__(self,*args,**kwargs):
         super(SimpleStage, self).__init__(*args,**kwargs)
-        self.registerStage(self.run,name="examp",description="Example Stage")
+        self.registerStage(self.main,name="examp",description="Example Stage")
         self.registerStage(self.other,name="other",description="Other Stage")
         self.registerStage(self.last,name="last",description="Last Stage")
         self.registerStage(None,"ex",dependencies=["examp","other"],help="example Macro")
         self.Caches["Random Image"] = Cache(self.cache,self.load,self.save)
-        self.Caches["Random NPY"] = NumpyCache(self.cache,filename="Caches/Random.npy")
+        self.Caches["Random NPY"] = NumpyCache(self.cache,filename="%s/Random.npy" % self.config["Dirs"]["Caches"])
         
-    def run(self):
+    def main(self):
         print "Hello from %s Object" % self.name
         img = self.Caches["Random Image"]
         print img[0,0]
@@ -50,7 +50,7 @@ class SimpleStage(Simulator):
     
     def save(self,data):
         """Saves some cache data"""
-        np.save("Caches/Random.npy",data)
+        np.save("%s/Random.npy" % self.config["Dirs"]["Caches"],data)
         
     def cache(self):
         """Cache this image"""
@@ -58,7 +58,7 @@ class SimpleStage(Simulator):
         
     def load(self):
         """Load the image"""
-        return np.load("Caches/Random.npy")
+        return np.load("%s/Random.npy" % self.config["Dirs"]["Caches"])
         
 
 if __name__ == '__main__':

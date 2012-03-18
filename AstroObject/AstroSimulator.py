@@ -96,8 +96,7 @@ class Simulator(object):
         "Dirs" : {
             "Caches" : "Caches",
             "Logs" : "Logs/",
-            "Partials" : "Partials",
-            "Images" : "Images",
+            "Partials": "Partials",
         },
         "Configurations" : {
             "Main" : "Simulator.yaml",
@@ -138,9 +137,9 @@ class Simulator(object):
         self.commandLine = commandLine
         self.Caches = CacheManager()
         self.options = None
-        self.initOptions()
+        self._initOptions()
         
-    def initOptions(self):
+    def _initOptions(self):
         """Initializes the command line options for this script. This function is automatically called on construction, and provides the following default command options which are already supported by the simulator:
         
         Command line options are:
@@ -202,8 +201,8 @@ class Simulator(object):
         self.parser.add_argument('--configure',action='append',metavar="{'config':'value'}",help="Add configuration items in the form of python dictionaries",dest='postconfig')
         self.parser.add_argument('--cf',action='store',dest='config',type=str,help="use the specified configuration file",metavar="file.yaml")
         self.parser.add_argument('--dry-run',action='store_true',dest='dry_run',help="Print the stages that the simulator wishes to run, without executing.")
-        self.registerFunction('--dump',self.dump_config)
-        self.registerFunction('--stages',self.list_stages,help="List all of the stages initialized")
+        self.registerFunction('--dump',self._dump_config)
+        self.registerFunction('--stages',self._list_stages,help="List all of the stages initialized")
         
 
         
@@ -212,7 +211,7 @@ class Simulator(object):
         self.registerStage(None,"none",description="Run no stages",help="Run no stages",include=False)
         
         
-    def defaultMacros(self):
+    def _default_macros(self):
         """Sets up the ``*all`` macro for this system, specifically, triggers the ``*all`` macro to run last."""
         self.orders.remove("all")
         self.orders += ["all"]
@@ -339,7 +338,7 @@ class Simulator(object):
         self.config_parser.add_argument("-"+argument,action='append_const',dest=dest,const=configuration,help=help,**kwargs)
         
         
-    def configure(self,configFile=None,configuration=None):
+    def _configure(self,configFile=None,configuration=None):
         """Configure this object. Configuration happens first from passed dictionaries (`configuration` variable) and then from files. The result is that configuration will use the values from files in place of values from passed in dictionaries. Running this function twice requires re-setting the `self.configured`."""
         if self.running:
             return ConfigurationError("Cannot configure the simulator, the simulation has already started!")
@@ -368,7 +367,7 @@ class Simulator(object):
                 stream.write("# Configuration from %s\n" % self.name)
                 yaml.dump(self.config,stream,default_flow_style=False) 
         
-    def parseArguments(self):
+    def _parseArguments(self):
         """Parse arguments. Argumetns can be passed into this function like they would be passed to the command line. These arguments will only be parsed when the system is not in `commandLine` mode."""
         if self.commandLine:
             Namespace = self.parser.parse_args()
@@ -381,7 +380,7 @@ class Simulator(object):
         else:
             self.log.debug("Skipping argument parsing")
     
-    def preConfiguration(self):
+    def _preConfiguration(self):
         """Applies arguments before configuration. Only argument applied is the name of the configuration file, allowing the command line to change the configuration file name."""
         if "config" in self.options and self.options["config"] != None:
             self.config["Configurations"]["This"] = self.options["config"]
@@ -395,7 +394,7 @@ class Simulator(object):
                 f()
         
             
-    def postConfiguration(self):
+    def _postConfiguration(self):
         """Apply arguments after configuration. The arguments applied here flesh out macros, and copy data from the configuration system into the operations system."""
         if "exclude" not in self.options or not isinstance(self.options["exclude"],list):
             self.options["exclude"] = []
@@ -414,7 +413,7 @@ class Simulator(object):
                 f()
         
         
-    def list_stages(self):
+    def _list_stages(self):
         """List stages and exit"""
         text = "Stages:\n"
         for stage in self.orders:
@@ -423,7 +422,7 @@ class Simulator(object):
             text += "\n"
         self.parser.exit(message=text)
         
-    def dump_config(self):
+    def _dump_config(self):
         """Dump the configuration to a file"""
         with open(self.config["Configurations"]["This"]+"-dump.yaml","w") as stream:
             stream.write("# Configuration from %s\n" % self.name)
@@ -432,12 +431,12 @@ class Simulator(object):
                 
     def startup(self):
         """Start up the simulation. """
-        self.defaultMacros()
+        self._default_macros()
         self.starting = True
-        self.parseArguments()
-        self.preConfiguration()
-        self.configure(configFile=self.config["Configurations"]["This"])
-        self.postConfiguration()
+        self._parseArguments()
+        self._preConfiguration()
+        self._configure(configFile=self.config["Configurations"]["This"])
+        self._postConfiguration()
         self.starting = False
         
         

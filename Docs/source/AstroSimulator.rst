@@ -102,6 +102,22 @@ The master simulator program is a command-line interface to the :meth:`AstroObje
 
 :program:`Simulator` configuration files are YAML files which contain a dictionary structure. All values in the YAML files are basic yaml, and contain no python-specific directives. To find out what the default or current configuration is, use the :option:`--dump` command. The file produced from this will contain a YAML structure for the configuration in use when the system started up. The various directives in the configuration file are described below.
 
+- ``Configurations``: contains a list of potential configuration files.
+
+    - ``Main``: The name of the primary configuration file. This default is produced by the program. Overriding it in the configuration file has essentially no effect.
+
+- ``Dirs``: Directories that this simulator will use for output.
+
+    - ``Caches``: Location of cache files.
+        .. Note:: This function has almost no effect, but can be used internally by the simulator. See :ref:`SimulatorExample`
+
+    - ``Logs``: Location of log files
+    
+    - ``Partials``: Location of partial output, including a dump of the configuration.
+    
+- ``Logging``: Configuration of the :mod:`AstroObject.AstroObjectLogging` module
+
+A simple configuration file can be found in the :ref:`SimulatorExample`.
 
 .. _Simulator_API:
 
@@ -133,22 +149,22 @@ Private Methods and Classes
 These methods are used to implment the public-facing API. They are documented here to explain their use in development.
 
 .. automethod:: 
-    AstroObject.AstroSimulator.Simulator.initOptions
+    AstroObject.AstroSimulator.Simulator._initOptions
 
 .. automethod:: 
-    AstroObject.AstroSimulator.Simulator.defaultMacros
+    AstroObject.AstroSimulator.Simulator._default_macros
     
 .. automethod:: 
-    AstroObject.AstroSimulator.Simulator.parseArguments
+    AstroObject.AstroSimulator.Simulator._parseArguments
     
 .. automethod:: 
-    AstroObject.AstroSimulator.Simulator.preConfiguration
+    AstroObject.AstroSimulator.Simulator._preConfiguration
     
 .. automethod:: 
     AstroObject.AstroSimulator.Simulator._configure
     
 .. automethod:: 
-    AstroObject.AstroSimulator.Simulator.postConfiguration
+    AstroObject.AstroSimulator.Simulator._postConfiguration
 
 .. automethod:: 
     AstroObject.AstroSimulator.Simulator.execute
