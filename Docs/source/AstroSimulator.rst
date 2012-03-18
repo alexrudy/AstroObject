@@ -14,6 +14,12 @@ An example (simple) program using the simulator can be found in :ref:`SimulatorE
 
 The master simulator program is a command-line interface to the :meth:`AstroObject.AstroSimulator.Simulator.run` method. Below are the major command line components.
 
+Usage Statement ::
+	
+	Simulator [ options ][ configuration ] {stages}
+	
+The program is actually agnostic to the order of arguments. Any argument may come in any position. As such, all arguments must be unique.
+
 .. program:: Simulator
 
 .. option:: {stages}
