@@ -1,7 +1,7 @@
 .. module:: AstroObject.AstroSimulator
 
-Simulator and Complex Task Management :mod:`AstroSimulator`
-***********************************************************
+Simulator :mod:`AstroSimulator`
+*******************************
 
 The Simulator is designed to provide a high level, command-line useful interface to large computational tasks. As the name suggests, Simulators often do a lot of programming work, and do so across many distinct "stages", whcih can be configured in any way the user desires. All of the abilities in this program are simply object abstraction techniques to provide a complex program with a command line interface and better control and reporting on the activities carreid out to successfully complete the program. It allows for the configuration of simple test cases and "macros" from within the program, eliminating the need to provide small wrapper scripts and test handlers.
 
@@ -145,7 +145,7 @@ These methods are used to implment the public-facing API. They are documented he
     AstroObject.AstroSimulator.Simulator.preConfiguration
     
 .. automethod:: 
-    AstroObject.AstroSimulator.Simulator.configure
+    AstroObject.AstroSimulator.Simulator._configure
     
 .. automethod:: 
     AstroObject.AstroSimulator.Simulator.postConfiguration
