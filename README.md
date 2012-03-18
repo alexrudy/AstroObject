@@ -121,4 +121,6 @@ As well, the library is useful for building object-based representations of new 
     - Dictionary methods for AstroObject (do things like AstroObject["Label"] = Frame)
     - Unified InterpolatedSpectrum model with various methods.
     - Simulator has better options controls (for configuration and arbitrary functions)
+    - Cache module has been re-written. Now has a dict-like interface.
+    - New configuration module
     - Unicode text in Simulator and AnalyticSpectra
