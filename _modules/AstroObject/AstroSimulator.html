@@ -25,7 +25,6 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="AstroObject 0.3.1 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
@@ -129,7 +128,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">optional</span> <span class="o">=</span> <span class="n">optional</span>
 </div>
 <div class="viewcode-block" id="Simulator"><a class="viewcode-back" href="../../AstroSimulator.html#AstroObject.AstroSimulator.Simulator">[docs]</a><span class="k">class</span> <span class="nc">Simulator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A Simulator, used for running large segements of code with detailed logging and progress checking. Simulators have a name, the `name` parameter can be left as is to use the name of the simulator&#39;s class (mostly useful if you subclassed it!). The `commandLine` parameter can be set to False to prevent the simulator collecting arguments from `sys.argv` for use. This allows you to programatically call the simulator with the :meth:`do` method.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;A Simulator, used for running large segements of code with detailed logging and progress checking. Simulators have a name, the `name` parameter can be left as is to use the name of the simulator&#39;s class (mostly useful if you subclassed it!). The `commandLine` parameter can be set to False to prevent the simulator collecting arguments from `sys.argv` for use. This allows you to programatically call the simulator with the :meth:`do` method.</span>
+<span class="sd">    </span>
+<span class="sd">    :param string name: Simulator name</span>
+<span class="sd">    :param bool commandLine: Whether the simulator is run from the command line, or programatically.</span>
+<span class="sd">    </span>
+<span class="sd">    By default simulators are named for their class.&quot;&quot;&quot;</span>
     
     <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;Simulator&quot;</span>
     
@@ -274,6 +278,17 @@
 <div class="viewcode-block" id="Simulator.registerStage"><a class="viewcode-back" href="../../AstroSimulator.html#AstroObject.AstroSimulator.Simulator.registerStage">[docs]</a>    <span class="k">def</span> <span class="nf">registerStage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">stage</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">exceptions</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">include</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">help</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">dependencies</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">replaces</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">optional</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Register a stage for operation with the simulator. The stage will then be available as a command line option, and will be operated with the simulator. Stages should be registered early in the operation of the simulator (preferably in the initialization, after the simulator class itself has initialized) so that the program is aware of the stages for running. </span>
 <span class="sd">        </span>
+<span class="sd">        :keyword function stage: The function to run for this stage. Should not take any arguments</span>
+<span class="sd">        :keyword string name:  The command-line name of this stage (no spaces, `+`, `-`, or `*`)</span>
+<span class="sd">        :keyword string description: A short description, which will be used by the logger when displaying information about the stage</span>
+<span class="sd">        :keyword tuple exceptions: A tuple of exceptions which are acceptable results for this stage. These exceptions will be caught and logged, but will allow the simulator to continue. These exceptions will still raise errors in Debug mode.</span>
+<span class="sd">        :keyword bool include: A boolean, Whether to include this stage in the `*all` macro or not.</span>
+<span class="sd">        :keyword string help: Help text for the command line argument. A value of False excludes the help, None includes generic help.</span>
+<span class="sd">        :keyword list dependencies: An ordered list of the stages which must run before this stage can run. Dependencies will be deep-searched.</span>
+<span class="sd">        :keyword list replaces: A list of stages which can be replaced by this stage. This stage will now satisfy those dependencies.</span>
+<span class="sd">        :keyword bool optional: A boolean about wheather this stage can be skipped. If so, warnings will not be raised when this stage is explicitly skipped (like ``-stage`` would do)</span>
+<span class="sd">        </span>
+<span class="sd">        </span>
 <span class="sd">    	Stages are called with either a ``*``, ``+`` or ``-`` character at the beginning. Their resepctive actions are shown below.</span>
 <span class="sd">	</span>
 <span class="sd">    	========= ============ ================================</span>
@@ -302,20 +317,6 @@
 <span class="sd">            $ Simulator -test +test</span>
 <span class="sd">            </span>
 <span class="sd">        will both run the `test` stage.</span>
-<span class="sd">        </span>
-<span class="sd">        =================== ==============</span>
-<span class="sd">        keyword             Description</span>
-<span class="sd">        =================== ==============</span>
-<span class="sd">        stage               The function to run for this stage. Should not take any arguments</span>
-<span class="sd">        name                The command-line name of this stage (no spaces, `+`, `-`, or `*`)</span>
-<span class="sd">        description         A short description, which will be used by the logger when displaying information about the stage</span>
-<span class="sd">        exceptions          A tuple of exceptions which are acceptable results for this stage. These exceptions will be caught and logged, but will allow the simulator to continue. These exceptions will still raise errors in Debug mode.</span>
-<span class="sd">        include             A boolean, Whether to include this stage in the `*all` macro or not.</span>
-<span class="sd">        help                Help text for the command line argument. A value of False excludes the help, None includes generic help.</span>
-<span class="sd">        dependencies        An ordered list of the stages which must run before this stage can run. Dependencies will be deep-searched.</span>
-<span class="sd">        replaces            A list of stages which can be replaced by this stage. This stage will now satisfy those dependencies.</span>
-<span class="sd">        optional            A boolean about wheather this stage can be skipped. If so, warnings will not be raised when this stage is explicitly skipped (like ``-stage`` would do)</span>
-<span class="sd">        =================== ==============</span>
 <span class="sd">        </span>
 <span class="sd">        Stages cannot be added dynamically. Once the simulator starts running (i.e. processing stages) the order and settings are fixed. Attempting to adjsut the stages at this point will raise an error.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

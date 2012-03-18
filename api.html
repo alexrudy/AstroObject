@@ -25,7 +25,6 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="top" title="AstroObject 0.3.1 documentation" href="index.html" />
     <link rel="next" title="4. Custom Object Basics: FITSObject" href="AstroObject.html" />
     <link rel="prev" title="2. Development of AstroObject" href="development.html" /> 
@@ -76,10 +75,36 @@
 <dt id="AstroObject.AstroObjectBase.BaseFrame">
 <em class="property">class </em><tt class="descclassname">AstroObject.AstroObjectBase.</tt><tt class="descname">BaseFrame</tt><big>(</big><em>data=None</em>, <em>label=None</em>, <em>header=None</em>, <em>metadata=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is the API for frame objects, that is, objects which represnet a single state of data. See <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.FITSFrame</span></tt>. This API is generally not called by the end user, but rather is called by the parent <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.FITSObject" title="AstroObject.AstroObjectBase.FITSObject"><tt class="xref py py-class docutils literal"><span class="pre">AstroObject.AstroObjectBase.FITSObject</span></tt></a>&#8216;s function. For an example of a parent object, see <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.FITSObject</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> &#8211; Initalizing data</li>
+<li><strong>label</strong> &#8211; string label</li>
+<li><strong>header</strong> &#8211; dictionary of header items or pyfits.header</li>
+<li><strong>metadata</strong> &#8211; dictionary of arbitrary metadata</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Raises AttributeError:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first last">when the frame fails to validate. See <tt class="xref py py-meth docutils literal"><span class="pre">__valid__()</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="AstroObject.AstroObjectBase.BaseFrame.__call__">
 <tt class="descname">__call__</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Should return the data within this frame, usually as a <em>numpy</em> array.</p>
+<dd><p>Should return the data within this frame, usually as a <tt class="docutils literal"><span class="pre">numpy</span></tt> array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+</tr>
+</tbody>
+</table>
 <p><tt class="xref py py-class docutils literal"><span class="pre">AstroImage.ImageFrame</span></tt> implements this method as:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
@@ -90,13 +115,44 @@
 <dl class="method">
 <dt id="AstroObject.AstroObjectBase.BaseFrame.__hdu__">
 <tt class="descname">__hdu__</tt><big>(</big><em>primary=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.__hdu__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__hdu__" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method returns an HDU which represents the object. The HDU should respect the object&#8217;s <tt class="xref py py-attr docutils literal"><span class="pre">header</span></tt> attribute, and use that dictionary to populate the headers of the HDU. If the <tt class="docutils literal"><span class="pre">primary</span></tt> keyword is set, the function should return a <tt class="xref py py-class docutils literal"><span class="pre">pyFITS.PrimaryHDU</span></tt> object. If the frame cannot reasonable generate a <tt class="xref py py-class docutils literal"><span class="pre">pyFITS.PrimaryHDU</span></tt>, then it should raise an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> in that case.</p>
+<dd><p>This method returns an HDU which represents the object. The HDU should respect the object&#8217;s <tt class="xref py py-attr docutils literal"><span class="pre">header</span></tt> attribute, and use that dictionary to populate the headers of the HDU.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>primary</strong> &#8211; boolean, produce a primary HDU or not</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> When the object cannot make a well-formed HDU</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">pyfits.PrimaryHDU or pyfits.HDU</td>
+</tr>
+</tbody>
+</table>
+<p>If the frame cannot reasonable generate a <tt class="xref py py-class docutils literal"><span class="pre">pyFITS.PrimaryHDU</span></tt>, then it should raise an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> in that case.</p>
 </dd></dl>
 
 <dl class="classmethod">
 <dt id="AstroObject.AstroObjectBase.BaseFrame.__read__">
 <em class="property">classmethod </em><tt class="descname">__read__</tt><big>(</big><em>HDU</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.__read__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__read__" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method should return an instance of the parent class if the given <tt class="docutils literal"><span class="pre">HDU</span></tt> can be turned into an object of that class. If this is not possible (i.e. a Table HDU is provided to an Image Frame), this method should raise an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> with a message that describes the resaon the data could not be cast into this type of frame.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> &#8211; HDU to be saved, as a <tt class="docutils literal"><span class="pre">pyfits.HDU</span></tt>.</li>
+<li><strong>label</strong> &#8211; Name for the newly created frame.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><p class="first"><tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> when this data can&#8217;t be saved.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p>Because the <tt class="xref py py-meth docutils literal"><span class="pre">__valid__()</span></tt> is called when an object is initialized, it is possible to check some aspects of the provided data in this initialization function. However, this would raise an <tt class="xref py py-exc docutils literal"><span class="pre">AssertionError</span></tt> not an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt>. To avoid this problem, it is suggested that you wrap your initialization in a try...except block like:</p>
@@ -119,12 +175,38 @@
 <dt id="AstroObject.AstroObjectBase.BaseFrame.__repr__">
 <tt class="descname">__repr__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.__repr__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__repr__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns String Representation of this frame object. Will display the class name and the label. This method does not need to be overwritten by subclasses.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">literal sting representation</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="classmethod">
 <dt id="AstroObject.AstroObjectBase.BaseFrame.__save__">
 <em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>data</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.__save__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__save__" title="Permalink to this definition">¶</a></dt>
-<dd><p>his method should retun an instance of the parent class if the given data can be turned into an object of that class. If the data cannot be correctly cast, this method should throw an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt>.</p>
+<dd><p>This method should retun an instance of the parent class if the given data can be turned into an object of that class. If the data cannot be correctly cast, this method should throw an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data</strong> &#8211; Data to be saved, in raw form.</li>
+<li><strong>label</strong> &#8211; Name for the newly created frame.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><p class="first"><tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> when this data can&#8217;t be saved.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></p>
+</td>
+</tr>
+</tbody>
+</table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p>Because the <tt class="xref py py-meth docutils literal"><span class="pre">__valid__()</span></tt> is called when an object is initialized, it is possible to check some aspects of the provided data in this initialization function. However, this would raise an <tt class="xref py py-exc docutils literal"><span class="pre">AssertionError</span></tt> not an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt>. To avoid this problem, it is suggested that you wrap your initialization in a try...except block like:</p>
@@ -143,12 +225,30 @@
 <dt id="AstroObject.AstroObjectBase.BaseFrame.__show__">
 <tt class="descname">__show__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.__show__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__show__" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method should create a simple view of the provided frame. Often this is done using <tt class="xref py py-mod docutils literal"><span class="pre">Matplotlib.pyplot</span></tt> to create a simple plot. The plot should have the minimum amount of work done to make a passable plot view, but still be basic enough that the end user can customize the plot object after calling <tt class="xref py py-meth docutils literal"><span class="pre">__show__()</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Matplotlib plot object</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="AstroObject.AstroObjectBase.BaseFrame.__valid__">
 <tt class="descname">__valid__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.__valid__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__valid__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs a series of assertions which ensure that the data for this frame is valid</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">AssertionError</span></tt> when frame is invalid</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><tt class="docutils literal"><span class="pre">None</span></tt></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
