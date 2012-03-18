@@ -23,7 +23,41 @@ __all__ = ["Simulator"]
 __version__ = getVersion()
 
 class Stage(object):
-    """A stage object for maintaing data structure"""
+    """A stage object for maintaing data structure. This object is only created internally by the :class:`Simulator` class. The attributes of this class are directly called. The class does not provide accessor or setter methods, and should never be called externally.
+    
+    .. attribute:: Stage.do
+        
+        The stage function to be called during operation.
+    
+    .. attribute:: macro
+        
+        Boolean flag. Set to ``False`` if this stage has a callable ``do`` attribute.
+        
+    .. attribute:: exceptions
+        
+        A tuple of exceptions which should not cause this stage to fail.
+    
+    .. attribute:: name
+        
+        The calling, hashable name of this stage, stored here for return as a string value in messages.
+        
+    .. attribute:: description
+        
+        A human readable description of what this stage is doing, represeneted in the active voice and shown during operation.
+        
+    .. attribute:: deps
+    
+        List of all of the stages that this stage depends on.
+        
+    .. attribute:: reps
+        
+        List of all the stages that this stage could replace
+        
+    .. attribute:: optional
+        
+        A boolean flag. If it is set to true, the simulator will not raise a warning when this stage is skipped.
+        
+    """
     def __init__(self,stage,name="a Stage",description="A description",exceptions=None,dependencies=None,replaces=None,optional=False):
         super(Stage, self).__init__()
         self.macro = False
@@ -111,26 +145,24 @@ class Simulator(object):
         
         Command line options are:
         
-        ================ =====================
-        CLI Option       Description
-        ================ =====================
-        `--version`      Display version information about this module
-        `--do-plot`      Show debugging plots which will be stored in the Partials directory
-        `--no-cache`     Disable all caching mechanisms
-        `--debug`,`-d`   Turn on debugging messages
-        `--config`       Specify a configuration file
-        `--dump-config`  Write the current configuration to file
-        `--print-stages` Print the stages that the command will execute, do not do anything
-        ================ =====================
+        ================== =====================
+        CLI Option         Description
+        ================== =====================
+        ``--version``      Display version information about this module
+        ``--cf file.yaml`` Specify a configuration file
+        ``--dry-run``      Print the stages this command would have run.
+        ``--dump``         Write the current configuration to file
+        ``--stages``       Print the stages that the command will execute, do not do anything
+        ================== =====================
         
         Macros defined at this level are:
         
-        ======== ==================================================
-        Macro    Result
-        ======== ==================================================
-        `*all`   Includes every stage
-        `*none`  Doesn't include any stages (technically redundant)
-        ======== ==================================================
+        ========= ==================================================
+        Macro     Result
+        ========= ==================================================
+        ``*all``   Includes every stage
+        ``*none``  Doesn't include any stages (technically redundant)
+        ========= ==================================================
         
         """
         self.USAGE = "%(command)s %(basicOpts)s %(subcommand)s"
@@ -181,16 +213,30 @@ class Simulator(object):
         
         
     def defaultMacros(self):
-        """Establish default macros for the system."""
+        """Sets up the ``*all`` macro for this system, specifically, triggers the ``*all`` macro to run last."""
         self.orders.remove("all")
         self.orders += ["all"]
 
         
         
         
-    def registerStage(self,stage,name,description=None,position=None,exceptions=None,include=True,help=False,dependencies=None,replaces=None,optional=False):
-        """Register a stage for operation with the simulator. The stage will then be available as a command line option, and will be operated with the simulator. Stages should be registered early in the operation of the simulator (preferably in the initialization, after the simulator class itself has initialized) so that the program is aware of the stages for running. Stages cannot be added dynamically. Once the simulator starts running (i.e. processing stages) the order and settings are fixed. Attempting to adjsut the stages at this point will raise an error. Stages can be passed a tuple of exceptions for use in operation. These exceptions will be logged as ERRORs, but will not cause the program to crash. They will thus keep the simulator running even if the stage encounters a problem.
+    def registerStage(self,stage,name,description=None,exceptions=None,include=True,help=False,dependencies=None,replaces=None,optional=False):
+        """Register a stage for operation with the simulator. The stage will then be available as a command line option, and will be operated with the simulator. Stages should be registered early in the operation of the simulator (preferably in the initialization, after the simulator class itself has initialized) so that the program is aware of the stages for running. 
         
+    	Stages are called with either a ``*``, ``+`` or ``-`` character at the beginning. Their resepctive actions are shown below.
+	
+    	========= ============ ================================
+    	Character  Action      Description
+    	========= ============ ================================
+    	``*``     Include      To include a stage, use ``*stage``. This will also run the dependents for that stage.
+    	``-``     Exclude      To exclude a stage, use ``-stage``. This stage (and it's dependents) will be skipped.
+    	``+``     Include-only To include a stage, but not the dependents of that stage, use ``+stage``.
+    	========= ============ ================================
+        
+        To use a registered stage, and call all of its dependents, call ::
+            
+            $ Simulator *stage
+            
         Registered stages can be explicity run from the command line by including::
             
             $ Simulator +stage
@@ -212,11 +258,15 @@ class Simulator(object):
         stage               The function to run for this stage. Should not take any arguments
         name                The command-line name of this stage (no spaces, `+`, `-`, or `*`)
         description         A short description, which will be used by the logger when displaying information about the stage
-        position            A number, describing the position in the ordering for this stage. If None, stages are appended to the end of the stage list.
-        exceptions          A tuple of exceptions which are acceptable results for this stage. These exceptions will be caught and logged, but will allow the simulator to continue
+        exceptions          A tuple of exceptions which are acceptable results for this stage. These exceptions will be caught and logged, but will allow the simulator to continue. These exceptions will still raise errors in Debug mode.
         include             A boolean, Whether to include this stage in the `*all` macro or not.
         help                Help text for the command line argument. A value of False excludes the help, None includes generic help.
+        dependencies        An ordered list of the stages which must run before this stage can run. Dependencies will be deep-searched.
+        replaces            A list of stages which can be replaced by this stage. This stage will now satisfy those dependencies.
+        optional            A boolean about wheather this stage can be skipped. If so, warnings will not be raised when this stage is explicitly skipped (like ``-stage`` would do)
         =================== ==============
+        
+        Stages cannot be added dynamically. Once the simulator starts running (i.e. processing stages) the order and settings are fixed. Attempting to adjsut the stages at this point will raise an error.
         """
         if self.running or self.starting:
             raise ConfigurationError("Cannot add a new stage to the simulator, the simulation has already started!")
@@ -248,9 +298,8 @@ class Simulator(object):
         stageObject = Stage(stage,name=name,description=description,exceptions=exceptions,dependencies=dependencies,replaces=replaces,optional=optional)
         self.stages[name] = stageObject
         self.orders += [name]
-        if not stageObject.macro:
-            self.pos_stage_parser.add_argument("+"+name,action='append_const',dest='include',const=name,help=argparse.SUPPRESS)
-            self.neg_stage_parser.add_argument("-"+name,action='append_const',dest='exclude',const=name,help=argparse.SUPPRESS)
+        self.pos_stage_parser.add_argument("+"+name,action='append_const',dest='include',const=name,help=argparse.SUPPRESS)
+        self.neg_stage_parser.add_argument("-"+name,action='append_const',dest='exclude',const=name,help=argparse.SUPPRESS)
         self.inc_stage_parser.add_argument("*"+name,action='append_const',dest='macro',const=name,help=help)
         if include:
             self.stages["all"].deps += [name]
