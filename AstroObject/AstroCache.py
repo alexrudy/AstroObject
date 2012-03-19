@@ -127,9 +127,11 @@ class CacheManager(dict):
         """Dictionary keys"""
         return self.caches.keys()
     
-    def flag(self,flag,value):
+    def flag(self,flag,value,*caches):
         """Flag all caches"""
-        for cache in self:
+        if caches == None:
+            caches = self.list()
+        for cache in caches:
             setattr(self.caches[cache],flag,value)
     
     def reset(self):
