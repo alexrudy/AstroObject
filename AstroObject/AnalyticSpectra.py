@@ -211,7 +211,6 @@ class InterpolatedSpectrumBase(AnalyticSpectrum):
         if (oldfl <= 0).any():
             msg += [u"Given flux <= 0 at some point."]
             arrays[u"Given Flux"] = oldfl
-            warning = True
         
         # Data shape sanity check
         if newrb and newrs.shape != newwl.shape:
@@ -283,15 +282,16 @@ class InterpolatedSpectrumBase(AnalyticSpectrum):
                     msg += [u"Requested R may be close to same detail as given R. Fidelity might not be preserved."]
                     arrays[u"Requested R"] = newrs
                     arrays[u"Given R"] = oldrs
-                    if not upsample:
-                        warning = True
-                    
+                                        
         if debug:
             arrays[u"Requested λ"] = newwl
             arrays[u"Given λ"] = oldwl
             arrays[u"Given Flux"] = oldfl
             if newrb:
                 arrays[u"Requested R"] = newrs
+        
+        if len(msg) > 0 and not (error or warning):
+            debug = True
                       
         if error:
             for m in msg:
