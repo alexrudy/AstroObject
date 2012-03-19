@@ -486,7 +486,11 @@ class Simulator(object):
         # Configure from File
         if configFile != None:
             self.configured |= self.config.load(configFile)
-        self.configured |= self.config.load()
+            self.log.debug("Updated Configuration from file %s" % configFile)                        
+        else:
+            self.configured |= self.config.load()
+            self.log.debug("Updated Configuration from default file %s" % self.config["Configurations"]["This"])            
+        
         
         if not self.configured:
             self.log.log(8,"No configuration provided or accessed. Using defaults.")
