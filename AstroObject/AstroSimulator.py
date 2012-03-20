@@ -211,6 +211,7 @@ class Simulator(object):
         self.attempt = []
         self.orders = []
         self.complete = []
+        self.done = []
         self.name = name
         self.order = None
         self.config = StructuredConfiguration({
@@ -616,8 +617,8 @@ class Simulator(object):
             self.running = False
         
         if self.options['dry_run'] and not self.running:
-            text = "Stages completed:\n"
-            for stage in self.complete:
+            text = "Stages done:\n"
+            for stage in self.done:
                 s = self.stages[stage]
                 text += "%(command)-20s : %(desc)s" % {'command':s.name,'desc':s.description}
                 text += "\n"
@@ -665,6 +666,7 @@ class Simulator(object):
         s = self.stages[stage]
         if s.macro or self.options["dry_run"]:
             self.complete += [stage] + s.reps
+            self.done += [stage]
             return use
         
         self.log.debug("Starting \'%s\'" % s.name)
