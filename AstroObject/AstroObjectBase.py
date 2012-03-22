@@ -279,12 +279,13 @@ class FITSObject(dict):
     ###############################
     # Basic Object Mode Functions #
     ###############################
-    def save(self,data,statename=None,clobber=False):
+    def save(self,data,statename=None,clobber=False,select=True):
         """Saves the given data to this object. If the data is an instance of one of the acceptable :attr:`dataClasses` then this method will simply save the data. Otherwise, it will attempt to cast the data into one of the acceptable :attr:`dataClasses` using their :meth:`__save__` mehtod.
         
         :param data: Data, typed like one of the data classes, or data which could initialize one of those classes.
         :param string statename: The label name to use for this data.
         :param bool clobber: Whether to overwrite the destination label or raise an error.
+        :param bool select: Select this state as the default reading state.
         :raises: :exc:`TypeError` when the data cannot be cast as any dataClass
         :raises: :exc:`KeyError` when the data would overwrite an existing frame.
         
@@ -316,7 +317,9 @@ class FITSObject(dict):
         self.states[statename] = Object
         LOG.log(5,"Saved frame %s" % Object)
         # Activate the saved state as the current state
-        self.select(statename)
+        if select:
+            self.select(statename)
+        return statename
     
     def data(self,statename=None,**kwargs):
         """Returns the raw data for the current state. This is done through the :meth:`FITSFrame.__call__` method, which should return basic data in as raw a form as possible. The purpose of this call is to allow the user get at the most recent piece of data as easily as possible.
