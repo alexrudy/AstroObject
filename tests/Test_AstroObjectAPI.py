@@ -359,7 +359,7 @@ class API_Base_Object(API_Base):
         assert AObject.frame().label == self.FRAMELABEL
     
     
-    @nt.raises(IndexError)
+    @nt.raises(KeyError)
     def test_select_unknown_state(self):
         """select() cannont select non-existant states"""
         AObject = self.OBJECT()
