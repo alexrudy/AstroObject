@@ -652,14 +652,15 @@ class Simulator(object):
          
         if deps:
             
-            for dependent in self.stages[stage].deps:
-                if dependent not in self.attempt:
-                    self.execute(dependent)
-                if dependent not in self.complete:
-                    if self.stages[dependent].optional:
-                        self.log.debug("Stage \'%s\' requested by \'%s\' but skipped" % (dependent,stage))
-                    else:
-                        self.log.warning("Stage \'%s\' required by \'%s\' but failed to complete." % (dependent,stage))
+            for dependent in self.orders:
+                if dependent in self.stages[stage].deps:
+                    if dependent not in self.attempt:
+                        self.execute(dependent)
+                    if dependent not in self.complete:
+                        if self.stages[dependent].optional:
+                            self.log.debug("Stage \'%s\' requested by \'%s\' but skipped" % (dependent,stage))
+                        else:
+                            self.log.warning("Stage \'%s\' required by \'%s\' but failed to complete." % (dependent,stage))
         else:
             self.log.warning("Explicity skipping dependents")
         
