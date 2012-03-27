@@ -341,7 +341,7 @@ class Simulator(object):
         
         
         
-    def registerStage(self,stage,name,description=None,exceptions=None,include=True,help=False,dependencies=None,replaces=None,optional=False):
+    def registerStage(self,stage,name,description=None,exceptions=None,include=False,help=False,dependencies=None,replaces=None,optional=False):
         """Register a stage for operation with the simulator. The stage will then be available as a command line option, and will be operated with the simulator. Stages should be registered early in the operation of the simulator (preferably in the initialization, after the simulator class itself has initialized) so that the program is aware of the stages for running. 
         
         :keyword function stage: The function to run for this stage. Should not take any arguments

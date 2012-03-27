@@ -83,9 +83,9 @@ class test_SimulatorFunctional(object):
         log = logging.getLogger("Loggy")
         log.useConsole(False)
         
-        SIM.registerStage(stage.run,name="examp",description="Example Stage")
-        SIM.registerStage(stage.other,name="other",description="Other Stage")
-        SIM.registerStage(stage.last,name="last",description="Last Stage")
+        SIM.registerStage(stage.run,name="examp",description="Example Stage",include=True)
+        SIM.registerStage(stage.other,name="other",description="Other Stage",include=True)
+        SIM.registerStage(stage.last,name="last",description="Last Stage",include=True)
         SIM.registerStage(None,"ex",dependencies=["examp","other"],help="example Macro")
         SIM.Caches["Random Image"] = Cache(stage.cache,stage.load,stage.save)
         SIM.Caches["Random NPY"] = NumpyCache(stage.cache,"Caches/Random.npy")

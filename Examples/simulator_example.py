@@ -24,9 +24,9 @@ class SimpleStage(Simulator):
     """An example simulator designed to show the power of simulations and for use while testing."""
     def __init__(self,*args,**kwargs):
         super(SimpleStage, self).__init__(*args,**kwargs)
-        self.registerStage(self.main,name="examp",description="Example Stage")
-        self.registerStage(self.other,name="other",description="Other Stage")
-        self.registerStage(self.last,name="last",description="Last Stage")
+        self.registerStage(self.main,name="examp",description="Example Stage",include=True)
+        self.registerStage(self.other,name="other",description="Other Stage",include=True)
+        self.registerStage(self.last,name="last",description="Last Stage",include=True)
         self.registerStage(None,"ex",dependencies=["examp","other"],help="example Macro")
         self.Caches["Random Image"] = Cache(self.cache,self.load,self.save)
         self.Caches["Random NPY"] = NumpyCache(self.cache,filename="%s/Random.npy" % self.config["Dirs"]["Caches"])
