@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObject.AnalyticSpectra &mdash; AstroObject 0.3.1 documentation</title>
+    <title>AstroObject.AnalyticSpectra &mdash; AstroObject 0.3.2 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.1',
+        VERSION:     '0.3.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.1 documentation" href="../../index.html" />
+    <link rel="top" title="AstroObject 0.3.2 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.3.1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.3.2 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -56,9 +56,99 @@
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2011-10-12.</span>
 <span class="c">#  Copyright 2011 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.3.1</span>
+<span class="c">#  Version 0.3.2</span>
 <span class="c"># </span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Analytic Spectra and Interpolation :mod:`AnalyticSpectra`</span>
+<span class="sd">*********************************************************</span>
 
+<span class="sd">Objects for manipulating and managing spectra which are inherently analytic (i.e. you want interpolation, or your spectrum to be defined by a single function). The classes provided in this module are *FRAMES* not *OBJECTS*, i.e. they are individual representations of spectra etc.</span>
+
+<span class="sd">It is possible to create an AnalyticSpectraObject to hold many spectra. However, such an object might be of limited utility, as it could not be used to write or read data saved in FITS files, as the FITS format is not conducive to storing analytic items.</span>
+
+<span class="sd">.. Note::</span>
+<span class="sd">    This is a solvable problem. I could use FITS header information to store the required values for an analytic spectrum, and then simply store empty images. However, I don&#39;t need this capability now, so maybe in a future version.</span>
+
+<span class="sd">This module contains a few pre-defined analytic spectra which you can use as examples. See the :mod:`AnalyticSpectraObjects` module.</span>
+
+<span class="sd">This module provides basic analytic spectrum capabilites. There is a simple principle at work in this module: Do all calculations as late as possible. As such, most spectra will be defined as basic analytic spectra. However, the use of the :class:`CompositeSpectra` class allows spectra to be used in mathematics::</span>
+<span class="sd">    </span>
+<span class="sd">    A = AnalyticSpectrum()</span>
+<span class="sd">    B = AnaltyicSpectrum()</span>
+<span class="sd">    C = A + B * 20</span>
+<span class="sd">    </span>
+<span class="sd">.. Note::</span>
+<span class="sd">    I believe that STSCI Python has some spectrum capabilities, and I am researching combining this module to provide adaptors for the STSCI implementation.</span>
+
+<span class="sd">.. autoclass::</span>
+<span class="sd">    AstroObject.AnalyticSpectra.AnalyticSpectrum</span>
+<span class="sd">    :members:</span>
+<span class="sd">    :special-members:</span>
+
+<span class="sd">.. autoclass::</span>
+<span class="sd">    AstroObject.AnalyticSpectra.CompositeSpectra</span>
+<span class="sd">    :members:</span>
+<span class="sd">    :inherited-members:</span>
+<span class="sd">    </span>
+<span class="sd">    .. automethod:: __call__</span>
+
+<span class="sd">Expansion Objects</span>
+<span class="sd">-----------------</span>
+
+<span class="sd">These objects expand the concept of an analytic spectrum to be any spectrum which can respond to calls with arbitrary wavelength boundaries. The spectra in the :class:`InterpolatedSpectrum` class rely on a number of potential methods to calculate the desired wavelength values. The public methods for this class are generally the accepted potential resolution methods.</span>
+
+<span class="sd">.. autoclass::</span>
+<span class="sd">    AstroObject.AnalyticSpectra.InterpolatedSpectrum</span>
+<span class="sd">    :members:</span>
+<span class="sd">    :inherited-members:</span>
+<span class="sd">    </span>
+<span class="sd">    .. automethod:: __call__</span>
+<span class="sd">    </span>
+<span class="sd">    .. automethod:: _presanity</span>
+<span class="sd">    </span>
+<span class="sd">    .. automethod:: _postsanity</span>
+
+<span class="sd">.. autoclass::</span>
+<span class="sd">    AstroObject.AnalyticSpectra.Resolver</span>
+<span class="sd">        </span>
+<span class="sd">    .. automethod:: __call__</span>
+
+<span class="sd">    </span>
+<span class="sd">.. autoclass::</span>
+<span class="sd">    AstroObject.AnalyticSpectra.UnitarySpectrum</span>
+<span class="sd">        </span>
+<span class="sd">    .. automethod:: __call__</span>
+<span class="sd">    </span>
+
+<span class="sd">Analytic Spectrum Objects</span>
+<span class="sd">-------------------------</span>
+
+<span class="sd">These objects actually have spectral functions included.</span>
+
+<span class="sd">.. autoclass::</span>
+<span class="sd">    AstroObject.AnalyticSpectra.BlackBodySpectrum</span>
+<span class="sd">    :members:</span>
+<span class="sd">    :inherited-members:</span>
+<span class="sd">    </span>
+<span class="sd">    .. automethod:: __call__</span>
+<span class="sd">    </span>
+
+<span class="sd">.. autoclass::</span>
+<span class="sd">    AstroObject.AnalyticSpectra.GaussianSpectrum</span>
+<span class="sd">    :members:</span>
+<span class="sd">    :inherited-members:</span>
+<span class="sd">    </span>
+<span class="sd">    .. automethod:: __call__</span>
+<span class="sd">    </span>
+
+<span class="sd">.. autoclass::</span>
+<span class="sd">    AstroObject.AnalyticSpectra.FlatSpectrum</span>
+<span class="sd">    :members:</span>
+<span class="sd">    :inherited-members:</span>
+<span class="sd">    </span>
+<span class="sd">    .. automethod:: __call__</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="c"># Parent Modules</span>
 <span class="kn">import</span> <span class="nn">AstroObjectBase</span><span class="o">,</span><span class="nn">AstroImage</span><span class="o">,</span><span class="nn">AstroSpectra</span>
 
@@ -262,7 +352,6 @@
         <span class="k">if</span> <span class="p">(</span><span class="n">oldfl</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
             <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;Given flux &lt;= 0 at some point.&quot;</span><span class="p">]</span>
             <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Given Flux&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldfl</span>
-            <span class="n">warning</span> <span class="o">=</span> <span class="bp">True</span>
         
         <span class="c"># Data shape sanity check</span>
         <span class="k">if</span> <span class="n">newrb</span> <span class="ow">and</span> <span class="n">newrs</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">newwl</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
@@ -334,15 +423,16 @@
                     <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;Requested R may be close to same detail as given R. Fidelity might not be preserved.&quot;</span><span class="p">]</span>
                     <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Requested R&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">newrs</span>
                     <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Given R&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldrs</span>
-                    <span class="k">if</span> <span class="ow">not</span> <span class="n">upsample</span><span class="p">:</span>
-                        <span class="n">warning</span> <span class="o">=</span> <span class="bp">True</span>
-                    
+                                        
         <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
             <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Requested λ&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">newwl</span>
             <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Given λ&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldwl</span>
             <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Given Flux&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldfl</span>
             <span class="k">if</span> <span class="n">newrb</span><span class="p">:</span>
                 <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Requested R&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">newrs</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">error</span> <span class="ow">or</span> <span class="n">warning</span><span class="p">):</span>
+            <span class="n">debug</span> <span class="o">=</span> <span class="bp">True</span>
                       
         <span class="k">if</span> <span class="n">error</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">msg</span><span class="p">:</span>
@@ -831,13 +921,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.3.1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.3.2 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Alexander Rudy.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>

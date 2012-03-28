@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>9. HDU Objects and Storage AstroFITS &mdash; AstroObject 0.3.1 documentation</title>
+    <title>9. HDU Objects and Storage AstroFITS &mdash; AstroObject 0.3.2 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.1',
+        VERSION:     '0.3.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.1 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.3.2 documentation" href="index.html" />
     <link rel="next" title="10. Simulator AstroSimulator" href="AstroSimulator.html" />
     <link rel="prev" title="8. Analytic Spectra and Interpolation AnalyticSpectra" href="AnalyticSpectra.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="AnalyticSpectra.html" title="8. Analytic Spectra and Interpolation AnalyticSpectra"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -75,23 +75,15 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
 </dd></dl>
 
 <dl class="method">
+<dt id="AstroObject.AstroFITS.HDUFrame.__valid__">
+<tt class="descname">__valid__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroFITS.html#HDUFrame.__valid__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroFITS.HDUFrame.__valid__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs a series of assertions which ensure that the data for this frame is valid</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="AstroObject.AstroFITS.HDUFrame.__hdu__">
 <tt class="descname">__hdu__</tt><big>(</big><em>primary=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroFITS.html#HDUFrame.__hdu__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroFITS.HDUFrame.__hdu__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retruns an HDU which represents this frame. HDUs are either <tt class="docutils literal"><span class="pre">pyfits.PrimaryHDU</span></tt> or <tt class="docutils literal"><span class="pre">pyfits.ImageHDU</span></tt> depending on the <em>primary</em> keyword.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="AstroObject.AstroFITS.HDUFrame.__read__">
-<em class="property">classmethod </em><tt class="descname">__read__</tt><big>(</big><em>HDU</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroFITS.html#HDUFrame.__read__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroFITS.HDUFrame.__read__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attempts to convert a given HDU into an object of type <tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt>. This method is similar to the <a class="reference internal" href="#AstroObject.AstroFITS.HDUFrame.__save__" title="AstroObject.AstroFITS.HDUFrame.__save__"><tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt></a> method, but instead of taking data as input, it takes a full HDU. The use of a full HDU allows this method to check for the correct type of HDU, and to gather header information from the HDU. When reading data from a FITS file, this is the prefered method to initialize a new frame.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="AstroObject.AstroFITS.HDUFrame.__save__">
-<em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>data</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroFITS.html#HDUFrame.__save__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroFITS.HDUFrame.__save__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attempts to create a <tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt> object from the provided data. This requres some type checking to ensure that the provided data meets the general sense of such an image. If the data does not appear to be correct, this method will raise an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> with a message describing why the data did not validate. Generally, this error will be intercepted by the caller, and simply provides an indication that this is not the right class for a particular piece of data.</p>
-<p>If the data is saved successfully, this method will return an object of type <tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt></p>
-<p>The validation requires that the data be a type <tt class="docutils literal"><span class="pre">numpy.ndarray</span></tt> and that the data have 2 and only 2 dimensions.</p>
 </dd></dl>
 
 <dl class="method">
@@ -104,10 +96,18 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="AstroObject.AstroFITS.HDUFrame.__valid__">
-<tt class="descname">__valid__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroFITS.html#HDUFrame.__valid__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroFITS.HDUFrame.__valid__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Runs a series of assertions which ensure that the data for this frame is valid</p>
+<dl class="classmethod">
+<dt id="AstroObject.AstroFITS.HDUFrame.__save__">
+<em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>data</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroFITS.html#HDUFrame.__save__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroFITS.HDUFrame.__save__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempts to create a <tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt> object from the provided data. This requres some type checking to ensure that the provided data meets the general sense of such an image. If the data does not appear to be correct, this method will raise an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> with a message describing why the data did not validate. Generally, this error will be intercepted by the caller, and simply provides an indication that this is not the right class for a particular piece of data.</p>
+<p>If the data is saved successfully, this method will return an object of type <tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt></p>
+<p>The validation requires that the data be a type <tt class="docutils literal"><span class="pre">numpy.ndarray</span></tt> and that the data have 2 and only 2 dimensions.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="AstroObject.AstroFITS.HDUFrame.__read__">
+<em class="property">classmethod </em><tt class="descname">__read__</tt><big>(</big><em>HDU</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroFITS.html#HDUFrame.__read__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroFITS.HDUFrame.__read__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempts to convert a given HDU into an object of type <tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt>. This method is similar to the <a class="reference internal" href="#AstroObject.AstroFITS.HDUFrame.__save__" title="AstroObject.AstroFITS.HDUFrame.__save__"><tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt></a> method, but instead of taking data as input, it takes a full HDU. The use of a full HDU allows this method to check for the correct type of HDU, and to gather header information from the HDU. When reading data from a FITS file, this is the prefered method to initialize a new frame.</p>
 </dd></dl>
 
 </dd></dl>
@@ -326,7 +326,7 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
 
 <dl class="method">
 <dt id="AstroObject.AstroFITS.HDUObject.save">
-<tt class="descname">save</tt><big>(</big><em>data</em>, <em>statename=None</em>, <em>clobber=False</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.save" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">save</tt><big>(</big><em>data</em>, <em>statename=None</em>, <em>clobber=False</em>, <em>select=True</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.HDUObject.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves the given data to this object. If the data is an instance of one of the acceptable <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> then this method will simply save the data. Otherwise, it will attempt to cast the data into one of the acceptable <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> using their <tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt> mehtod.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -336,6 +336,7 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
 <li><strong>data</strong> &#8211; Data, typed like one of the data classes, or data which could initialize one of those classes.</li>
 <li><strong>statename</strong> (<em>string</em>) &#8211; The label name to use for this data.</li>
 <li><strong>clobber</strong> (<em>bool</em>) &#8211; Whether to overwrite the destination label or raise an error.</li>
+<li><strong>select</strong> (<em>bool</em>) &#8211; Select this state as the default reading state.</li>
 </ul>
 </td>
 </tr>
@@ -483,12 +484,12 @@ In either case, this is followed by: for k in F: D[k] = F[k]</p>
         <li class="right" >
           <a href="AnalyticSpectra.html" title="8. Analytic Spectra and Interpolation AnalyticSpectra"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Alexander Rudy.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>

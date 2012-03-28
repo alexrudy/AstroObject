@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>An Example Simulator &mdash; AstroObject 0.3.1 documentation</title>
+    <title>An Example Simulator &mdash; AstroObject 0.3.2 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.1',
+        VERSION:     '0.3.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.1 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.3.2 documentation" href="index.html" />
     <link rel="prev" title="14. Release Notes" href="rnotes.html" /> 
   </head>
   <body>
@@ -41,7 +41,7 @@
         <li class="right" >
           <a href="rnotes.html" title="14. Release Notes"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -79,9 +79,9 @@
     <span class="sd">&quot;&quot;&quot;An example simulator designed to show the power of simulations and for use while testing.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SimpleStage</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">registerStage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">main</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;examp&quot;</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="s">&quot;Example Stage&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">registerStage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">other</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;other&quot;</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="s">&quot;Other Stage&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">registerStage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;last&quot;</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="s">&quot;Last Stage&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">registerStage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">main</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;examp&quot;</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="s">&quot;Example Stage&quot;</span><span class="p">,</span><span class="n">include</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">registerStage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">other</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;other&quot;</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="s">&quot;Other Stage&quot;</span><span class="p">,</span><span class="n">include</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">registerStage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;last&quot;</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="s">&quot;Last Stage&quot;</span><span class="p">,</span><span class="n">include</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">registerStage</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span><span class="s">&quot;ex&quot;</span><span class="p">,</span><span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;examp&quot;</span><span class="p">,</span><span class="s">&quot;other&quot;</span><span class="p">],</span><span class="n">help</span><span class="o">=</span><span class="s">&quot;example Macro&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Caches</span><span class="p">[</span><span class="s">&quot;Random Image&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Caches</span><span class="p">[</span><span class="s">&quot;Random NPY&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">NumpyCache</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">/Random.npy&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Dirs&quot;</span><span class="p">][</span><span class="s">&quot;Caches&quot;</span><span class="p">])</span>
@@ -189,12 +189,12 @@ logging:
         <li class="right" >
           <a href="rnotes.html" title="14. Release Notes"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Alexander Rudy.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>

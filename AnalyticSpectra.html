@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>8. Analytic Spectra and Interpolation AnalyticSpectra &mdash; AstroObject 0.3.1 documentation</title>
+    <title>8. Analytic Spectra and Interpolation AnalyticSpectra &mdash; AstroObject 0.3.2 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.1',
+        VERSION:     '0.3.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.1 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.3.2 documentation" href="index.html" />
     <link rel="next" title="9. HDU Objects and Storage AstroFITS" href="AstroFITS.html" />
     <link rel="prev" title="7. Raw Spectrum Management AstroSpectra" href="AstroSpectra.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="AstroSpectra.html" title="7. Raw Spectrum Management AstroSpectra"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -85,21 +85,27 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__div__">
-<tt class="descname">__div__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__div__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__div__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Implements spectrum division</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__mul__">
 <tt class="descname">__mul__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__mul__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__mul__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Implements spectrum multiplication</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__radd__">
-<tt class="descname">__radd__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__radd__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__radd__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reverse Addition</p>
+<dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__sub__">
+<tt class="descname">__sub__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__sub__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__sub__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements spectrum subtraction</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__div__">
+<tt class="descname">__div__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__div__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__div__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implements spectrum division</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__rsub__">
+<tt class="descname">__rsub__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__rsub__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__rsub__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reverse subtraction</p>
 </dd></dl>
 
 <dl class="method">
@@ -115,15 +121,9 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__rsub__">
-<tt class="descname">__rsub__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__rsub__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__rsub__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reverse subtraction</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__sub__">
-<tt class="descname">__sub__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__sub__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__sub__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Implements spectrum subtraction</p>
+<dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__radd__">
+<tt class="descname">__radd__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__radd__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__radd__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reverse Addition</p>
 </dd></dl>
 
 </dd></dl>
@@ -387,12 +387,12 @@
         <li class="right" >
           <a href="AstroSpectra.html" title="7. Raw Spectrum Management AstroSpectra"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Alexander Rudy.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>

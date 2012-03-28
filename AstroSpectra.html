@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>7. Raw Spectrum Management AstroSpectra &mdash; AstroObject 0.3.1 documentation</title>
+    <title>7. Raw Spectrum Management AstroSpectra &mdash; AstroObject 0.3.2 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.1',
+        VERSION:     '0.3.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.1 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.3.2 documentation" href="index.html" />
     <link rel="next" title="8. Analytic Spectra and Interpolation AnalyticSpectra" href="AnalyticSpectra.html" />
     <link rel="prev" title="6. Image Objects and Storage AstroImage" href="AstroImage.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="AstroImage.html" title="6. Image Objects and Storage AstroImage"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -66,6 +66,12 @@
 <em class="property">class </em><tt class="descclassname">AstroObject.AstroSpectra.</tt><tt class="descname">SpectraFrame</tt><big>(</big><em>data=None</em>, <em>label=None</em>, <em>header=None</em>, <em>metadata=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSpectra.html#SpectraFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSpectra.SpectraFrame" title="Permalink to this definition">¶</a></dt>
 <dd><p>A single frame of a spectrum. This will save the spectrum as an image, with the first row having flux, and second row having the wavelength equivalent. Further rows can accomodate further spectral frames when stored to a FITS image. However, the frame only accepts a single spectrum.</p>
 <dl class="method">
+<dt id="AstroObject.AstroSpectra.SpectraFrame.__valid__">
+<tt class="descname">__valid__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSpectra.html#SpectraFrame.__valid__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSpectra.SpectraFrame.__valid__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates this spectrum frame to conform to the required data shape. This function is used to determine if a passed numpy data array appears to be a spectrum. It is essentially a helper function.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="AstroObject.AstroSpectra.SpectraFrame.__call__">
 <tt class="descname">__call__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSpectra.html#SpectraFrame.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSpectra.SpectraFrame.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the data for this frame, which should be a <tt class="docutils literal"><span class="pre">numpy.ndarray</span></tt>. The first row will be the spectral data, the second row the equivalent wavelength for this spectrum.</p>
@@ -75,20 +81,6 @@
 <dt id="AstroObject.AstroSpectra.SpectraFrame.__hdu__">
 <tt class="descname">__hdu__</tt><big>(</big><em>primary=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSpectra.html#SpectraFrame.__hdu__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSpectra.SpectraFrame.__hdu__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retruns an HDU which represents this frame. HDUs are either <tt class="docutils literal"><span class="pre">pyfits.PrimaryHDU</span></tt> or <tt class="docutils literal"><span class="pre">pyfits.ImageHDU</span></tt> depending on the <em>primary</em> keyword.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="AstroObject.AstroSpectra.SpectraFrame.__read__">
-<em class="property">classmethod </em><tt class="descname">__read__</tt><big>(</big><em>HDU</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSpectra.html#SpectraFrame.__read__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSpectra.SpectraFrame.__read__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attempts to convert a given HDU into an object of type <tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt>. This method is similar to the <a class="reference internal" href="#AstroObject.AstroSpectra.SpectraFrame.__save__" title="AstroObject.AstroSpectra.SpectraFrame.__save__"><tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt></a> method, but instead of taking data as input, it takes a full HDU. The use of a full HDU allows this method to check for the correct type of HDU, and to gather header information from the HDU. When reading data from a FITS file, this is the prefered method to initialize a new frame.</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="AstroObject.AstroSpectra.SpectraFrame.__save__">
-<em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>data</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSpectra.html#SpectraFrame.__save__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSpectra.SpectraFrame.__save__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attempts to create a <tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt> object from the provided data. This requres some type checking to ensure that the provided data meets the general sense of such an image. If the data does not appear to be correct, this method will raise an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> with a message describing why the data did not validate. Generally, this error will be intercepted by the caller, and simply provides an indication that this is not the right class for a particular piece of data.</p>
-<p>If the data is saved successfully, this method will return an object of type <tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt></p>
-<p>The validation requires that the data be a type <tt class="docutils literal"><span class="pre">numpy.ndarray</span></tt> and that the data have 2 and only 2 dimensions. As well, the data should pass the <tt class="xref py py-meth docutils literal"><span class="pre">validate()</span></tt> method.</p>
 </dd></dl>
 
 <dl class="method">
@@ -101,10 +93,18 @@
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="AstroObject.AstroSpectra.SpectraFrame.__valid__">
-<tt class="descname">__valid__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSpectra.html#SpectraFrame.__valid__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSpectra.SpectraFrame.__valid__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Validates this spectrum frame to conform to the required data shape. This function is used to determine if a passed numpy data array appears to be a spectrum. It is essentially a helper function.</p>
+<dl class="classmethod">
+<dt id="AstroObject.AstroSpectra.SpectraFrame.__save__">
+<em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>data</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSpectra.html#SpectraFrame.__save__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSpectra.SpectraFrame.__save__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempts to create a <tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt> object from the provided data. This requres some type checking to ensure that the provided data meets the general sense of such an image. If the data does not appear to be correct, this method will raise an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> with a message describing why the data did not validate. Generally, this error will be intercepted by the caller, and simply provides an indication that this is not the right class for a particular piece of data.</p>
+<p>If the data is saved successfully, this method will return an object of type <tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt></p>
+<p>The validation requires that the data be a type <tt class="docutils literal"><span class="pre">numpy.ndarray</span></tt> and that the data have 2 and only 2 dimensions. As well, the data should pass the <tt class="xref py py-meth docutils literal"><span class="pre">validate()</span></tt> method.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="AstroObject.AstroSpectra.SpectraFrame.__read__">
+<em class="property">classmethod </em><tt class="descname">__read__</tt><big>(</big><em>HDU</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSpectra.html#SpectraFrame.__read__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSpectra.SpectraFrame.__read__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempts to convert a given HDU into an object of type <tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt>. This method is similar to the <a class="reference internal" href="#AstroObject.AstroSpectra.SpectraFrame.__save__" title="AstroObject.AstroSpectra.SpectraFrame.__save__"><tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt></a> method, but instead of taking data as input, it takes a full HDU. The use of a full HDU allows this method to check for the correct type of HDU, and to gather header information from the HDU. When reading data from a FITS file, this is the prefered method to initialize a new frame.</p>
 </dd></dl>
 
 </dd></dl>
@@ -323,7 +323,7 @@
 
 <dl class="method">
 <dt id="AstroObject.AstroSpectra.SpectraObject.save">
-<tt class="descname">save</tt><big>(</big><em>data</em>, <em>statename=None</em>, <em>clobber=False</em><big>)</big><a class="headerlink" href="#AstroObject.AstroSpectra.SpectraObject.save" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">save</tt><big>(</big><em>data</em>, <em>statename=None</em>, <em>clobber=False</em>, <em>select=True</em><big>)</big><a class="headerlink" href="#AstroObject.AstroSpectra.SpectraObject.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves the given data to this object. If the data is an instance of one of the acceptable <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> then this method will simply save the data. Otherwise, it will attempt to cast the data into one of the acceptable <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> using their <tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt> mehtod.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -333,6 +333,7 @@
 <li><strong>data</strong> &#8211; Data, typed like one of the data classes, or data which could initialize one of those classes.</li>
 <li><strong>statename</strong> (<em>string</em>) &#8211; The label name to use for this data.</li>
 <li><strong>clobber</strong> (<em>bool</em>) &#8211; Whether to overwrite the destination label or raise an error.</li>
+<li><strong>select</strong> (<em>bool</em>) &#8211; Select this state as the default reading state.</li>
 </ul>
 </td>
 </tr>
@@ -480,12 +481,12 @@ In either case, this is followed by: for k in F: D[k] = F[k]</p>
         <li class="right" >
           <a href="AstroImage.html" title="6. Image Objects and Storage AstroImage"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Alexander Rudy.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObject.AstroObjectBase &mdash; AstroObject 0.3.1 documentation</title>
+    <title>AstroObject.AstroObjectBase &mdash; AstroObject 0.3.2 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.1',
+        VERSION:     '0.3.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.1 documentation" href="../../index.html" />
+    <link rel="top" title="AstroObject 0.3.2 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.3.1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.3.2 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -55,7 +55,7 @@
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2011-10-12.</span>
 <span class="c">#  Copyright 2011 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.3.1</span>
+<span class="c">#  Version 0.3.2</span>
 <span class="c"># </span>
 
 
@@ -301,6 +301,11 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">FITSObject</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__repr__</span><span class="p">()</span>
     
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;String label for this object.&quot;&quot;&quot;</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__repr__</span><span class="p">()</span>
+    
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">key</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Dictionary access to frames in the Object&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
@@ -330,12 +335,13 @@
     <span class="c">###############################</span>
     <span class="c"># Basic Object Mode Functions #</span>
     <span class="c">###############################</span></div>
-<div class="viewcode-block" id="FITSObject.save"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.FITSObject.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="FITSObject.save"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.FITSObject.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">select</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Saves the given data to this object. If the data is an instance of one of the acceptable :attr:`dataClasses` then this method will simply save the data. Otherwise, it will attempt to cast the data into one of the acceptable :attr:`dataClasses` using their :meth:`__save__` mehtod.</span>
 <span class="sd">        </span>
 <span class="sd">        :param data: Data, typed like one of the data classes, or data which could initialize one of those classes.</span>
 <span class="sd">        :param string statename: The label name to use for this data.</span>
 <span class="sd">        :param bool clobber: Whether to overwrite the destination label or raise an error.</span>
+<span class="sd">        :param bool select: Select this state as the default reading state.</span>
 <span class="sd">        :raises: :exc:`TypeError` when the data cannot be cast as any dataClass</span>
 <span class="sd">        :raises: :exc:`KeyError` when the data would overwrite an existing frame.</span>
 <span class="sd">        </span>
@@ -367,7 +373,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">statename</span><span class="p">]</span> <span class="o">=</span> <span class="n">Object</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="s">&quot;Saved frame </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">Object</span><span class="p">)</span>
         <span class="c"># Activate the saved state as the current state</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">statename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">select</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">statename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">statename</span>
     </div>
 <div class="viewcode-block" id="FITSObject.data"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.FITSObject.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the raw data for the current state. This is done through the :meth:`FITSFrame.__call__` method, which should return basic data in as raw a form as possible. The purpose of this call is to allow the user get at the most recent piece of data as easily as possible.</span>
@@ -385,7 +393,7 @@
         <span class="k">if</span> <span class="n">statename</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">statename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">statename</span><span class="p">](</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: State </span><span class="si">%s</span><span class="s"> does not exist&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_key_error</span><span class="p">(</span><span class="n">statename</span><span class="p">)</span>
     </div>
 <div class="viewcode-block" id="FITSObject.frame"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.FITSObject.frame">[docs]</a>    <span class="k">def</span> <span class="nf">frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.</span>
@@ -411,7 +419,7 @@
         <span class="k">if</span> <span class="n">statename</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">statename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">statename</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: State </span><span class="si">%s</span><span class="s"> does not exist&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_key_error</span><span class="p">(</span><span class="n">statename</span><span class="p">)</span>
     </div>
     <span class="k">def</span> <span class="nf">object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="s">&quot;Method </span><span class="se">\&quot;</span><span class="s">.object()</span><span class="se">\&quot;</span><span class="s"> on </span><span class="si">%s</span><span class="s"> has been depreciated. Please use </span><span class="se">\&quot;</span><span class="s">.frame()</span><span class="se">\&quot;</span><span class="s"> instead.&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="p">)</span>
@@ -424,7 +432,7 @@
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">statename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: State </span><span class="si">%s</span><span class="s"> does not exist&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_key_error</span><span class="p">(</span><span class="n">statename</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">statename</span> <span class="o">=</span> <span class="n">statename</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="s">&quot;Selected state </span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">statename</span><span class="p">)</span>
         <span class="k">return</span>
@@ -437,6 +445,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
     </div>
+    <span class="k">def</span> <span class="nf">_key_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Throw a keyError for the given statename.&quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: State </span><span class="si">%s</span><span class="s"> does not exist.</span><span class="se">\n</span><span class="s">States: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">())</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    
     <span class="k">def</span> <span class="nf">_default_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">states</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the default state name. If the currently selected state exists, it&#39;s state name will return. If not, the system will search for the newest state.</span>
 <span class="sd">        </span>
@@ -540,7 +553,7 @@
         <span class="k">if</span> <span class="n">statename</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">statename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">statename</span><span class="p">]</span><span class="o">.</span><span class="n">__show__</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&quot;State </span><span class="si">%s</span><span class="s"> does not exist&quot;</span> <span class="o">%</span> <span class="n">statename</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_key_error</span><span class="p">(</span><span class="n">statename</span><span class="p">)</span>
     </div>
 <div class="viewcode-block" id="FITSObject.write"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.FITSObject.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">states</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">primaryState</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify ``states`` then only those states will be used. ``primaryState`` should be the state of the front HDU. When not specified, the latest state will be used. It uses the :attr:`dataClasses` :meth:`FITSFrame.__hdu__` method to return a valid HDU object for each Frame.</span>
@@ -656,13 +669,13 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.3.1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.3.2 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Alexander Rudy.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>
