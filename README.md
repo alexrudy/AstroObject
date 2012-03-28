@@ -5,7 +5,7 @@
  Created by Alexander Rudy on 2011-10-07.
  Copyright 2011 Alexander Rudy. All rights reserved.
 
-  Version 0.3.1
+  Version 0.3.2
 
 ---
 
@@ -124,3 +124,11 @@ As well, the library is useful for building object-based representations of new 
     - Cache module has been re-written. Now has a dict-like interface.
     - New configuration module
     - Unicode text in Simulator and AnalyticSpectra
+* 0.3.2
+    - Documentation, Documentation, Documentation
+    - Added a `select` parameter to the save() function to allow the user to prevent automatic selection.
+    - Pass `**kwargs` through a `data()` call to `__call__()`.
+    - Uniform `KeyError` formatting support.
+    - Simulator differentiates between stages which have been satisfied (`complete`) and stages which have actually run (`done`).
+    - Simulator stage dependents will always run in simulator-registration order.
+    

@@ -7,6 +7,9 @@ SPHINXBUILD   = sphinx-build-2.7
 PAPER         =
 BUILDDIR      = build
 OTHERREPO     = ../../ObjectModelDoc
+COPYCMD       = rsync -rv --progress
+DESTINATION   = sedmachine:/var/www/SEDM/AstroObject
+
 
 # Internal variables.
 PAPEROPT_a4     = -D latex_paper_size=a4
@@ -15,7 +18,7 @@ ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) sou
 # the i18n builder cannot share the environment and doctrees with the others
 I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 
-.PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest gettext
+.PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest gettext coverage gh-pages
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
@@ -36,6 +39,7 @@ help:
 	@echo "  info       to make Texinfo files and run them through makeinfo"
 	@echo "  gettext    to make PO message catalogs"
 	@echo "  changes    to make an overview of all changed/added/deprecated items"
+	@echo "  coverage   to check documentation coverage"
 	@echo "  linkcheck  to check all external links for integrity"
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
 
@@ -152,6 +156,11 @@ changes:
 	@echo
 	@echo "The overview file is in $(BUILDDIR)/changes."
 
+coverage:
+	$(SPHINXBUILD) -b coverage $(ALLSPHINXOPTS) $(BUILDDIR)/coverage
+	@echo
+	@echo "The coverage file is in $(BUILDDIR)/changes."
+
 linkcheck:
 	$(SPHINXBUILD) -b linkcheck $(ALLSPHINXOPTS) $(BUILDDIR)/linkcheck
 	@echo
@@ -162,3 +171,7 @@ doctest:
 	$(SPHINXBUILD) -b doctest $(ALLSPHINXOPTS) $(BUILDDIR)/doctest
 	@echo "Testing of doctests in the sources finished, look at the " \
 	      "results in $(BUILDDIR)/doctest/output.txt."
+
+sedserve: html
+	$(COPYCMD) $(BUILDDIR)/html/ $(DESTINATION)
+	@echo "Updated SEDMachine documentation online"

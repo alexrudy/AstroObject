@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-22.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.1
+#  Version 0.3.2
 # 
 
 # Standard Scipy Toolkits
@@ -127,9 +127,11 @@ class CacheManager(dict):
         """Dictionary keys"""
         return self.caches.keys()
     
-    def flag(self,flag,value):
+    def flag(self,flag,value,*caches):
         """Flag all caches"""
-        for cache in self:
+        if caches == None:
+            caches = self.list()
+        for cache in caches:
             setattr(self.caches[cache],flag,value)
     
     def reset(self):

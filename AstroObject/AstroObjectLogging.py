@@ -4,13 +4,14 @@
 #  
 #  Created by Alexander Rudy on 2011-12-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.1
+#  Version 0.3.2
 #
 
 import logging
 import logging.handlers as handlers
 
 import math, copy, sys, time, os
+import yaml
 
 from Utilities import *
 
