@@ -224,6 +224,7 @@ class Simulator(object):
             "Main" : "Simulator.yaml",
             "This" : "Simulator.yaml",
         },
+        "Default" : None,
         "logging" : {
           "console" : {
               "enable" : True,
@@ -603,7 +604,10 @@ class Simulator(object):
             self.running = True
             self.options["macro"] += list(stages)
             if self.options["macro"] == []:
-                self.parser.error("No stages triggered to run!")
+                if self.config["Default"]:
+                    self.options["macro"] = self.config["Default"]
+                else:
+                    self.parser.error("No stages triggered to run!")
             if self.attempt == []:
                 self.inorder = True
                 self.complete = []
