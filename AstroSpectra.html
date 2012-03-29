@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>7. Raw Spectrum Management AstroSpectra &mdash; AstroObject 0.3.2 documentation</title>
+    <title>7. Raw Spectrum Management AstroSpectra &mdash; AstroObject 0.3.3 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.2',
+        VERSION:     '0.3.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.2 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.3.3 documentation" href="index.html" />
     <link rel="next" title="8. Analytic Spectra and Interpolation AnalyticSpectra" href="AnalyticSpectra.html" />
     <link rel="prev" title="6. Image Objects and Storage AstroImage" href="AstroImage.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="AstroImage.html" title="6. Image Objects and Storage AstroImage"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.3 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -113,6 +113,18 @@
 <dt id="AstroObject.AstroSpectra.SpectraObject">
 <em class="property">class </em><tt class="descclassname">AstroObject.AstroSpectra.</tt><tt class="descname">SpectraObject</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSpectra.html#SpectraObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSpectra.SpectraObject" title="Permalink to this definition">¶</a></dt>
 <dd><p>This object tracks a number of data frames. This class is a simple subclass of <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.FITSObject</span></tt> and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the <a class="reference internal" href="#AstroObject.AstroSpectra.SpectraFrame" title="AstroObject.AstroSpectra.SpectraFrame"><tt class="xref py py-class docutils literal"><span class="pre">SpectraFrame</span></tt></a> class for data. As well, it accepts an array in the initializer that will be saved immediately.</p>
+<dl class="method">
+<dt id="AstroObject.AstroSpectra.SpectraObject.load">
+<tt class="descname">load</tt><big>(</big><em>filename=None</em>, <em>statename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSpectra.html#SpectraObject.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSpectra.SpectraObject.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads spectral data from a data file which contains two columns, one for wavelenght, and one for flux.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroSpectra.SpectraObject.unload">
+<tt class="descname">unload</tt><big>(</big><em>filename=None</em>, <em>statename=None</em>, <em>clobber=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSpectra.html#SpectraObject.unload"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSpectra.SpectraObject.unload" title="Permalink to this definition">¶</a></dt>
+<dd><p>docstring for unload</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="AstroObject.AstroSpectra.SpectraObject.clear">
 <tt class="descname">clear</tt><big>(</big><em>delete=False</em><big>)</big><a class="headerlink" href="#AstroObject.AstroSpectra.SpectraObject.clear" title="Permalink to this definition">¶</a></dt>
@@ -481,7 +493,7 @@ In either case, this is followed by: for k in F: D[k] = F[k]</p>
         <li class="right" >
           <a href="AstroImage.html" title="6. Image Objects and Storage AstroImage"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.3 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
