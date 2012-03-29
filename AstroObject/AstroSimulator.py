@@ -174,14 +174,18 @@ class Stage(object):
         A boolean flag. If it is set to true, the simulator will not raise a warning when this stage is skipped.
         
     """
-    def __init__(self,stage,name="a Stage",description="A description",exceptions=None,dependencies=None,replaces=None,optional=False):
+    def __init__(self,stage,name="a Stage",description=None,exceptions=None,dependencies=None,replaces=None,optional=False):
         super(Stage, self).__init__()
         self.macro = False
         if callable(stage):
             self.do = stage
+            if description == None:
+                description = self.do.__doc__
         else:
             self.do = lambda: None
             self.macro = True
+            if description == None:
+                description = name
         if exceptions == None:
             self.exceptions = tuple()
         else:
@@ -393,8 +397,6 @@ class Simulator(object):
             raise ValueError("Stage must have a name")
         if name in self.stages:
             raise ValueError("Cannot have duplicate stage named %s" % name)
-        if description == None:
-            description = name
         if exceptions == None:
             exceptions = tuple()
         if dependencies == None:
