@@ -5,7 +5,7 @@
  Created by Alexander Rudy on 2011-10-07.
  Copyright 2011 Alexander Rudy. All rights reserved.
 
-  Version 0.3.2
+  Version 0.3.3
 
 ---
 
@@ -131,4 +131,6 @@ As well, the library is useful for building object-based representations of new 
     - Uniform `KeyError` formatting support.
     - Simulator differentiates between stages which have been satisfied (`complete`) and stages which have actually run (`done`).
     - Simulator stage dependents will always run in simulator-registration order.
-    
+* 0.3.3
+    - Stages provide description from function's docstring if no description is given.
+    - Default keyword is used to set default stage operation.

@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-14.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.2
+#  Version 0.3.3
 # 
 """The Simulator is designed to provide a high level, command-line useful interface to large computational tasks. As the name suggests, Simulators often do a lot of programming work, and do so across many distinct "stages", whcih can be configured in any way the user desires. All of the abilities in this program are simply object abstraction techniques to provide a complex program with a command line interface and better control and reporting on the activities carreid out to successfully complete the program. It allows for the configuration of simple test cases and "macros" from within the program, eliminating the need to provide small wrapper scripts and test handlers.
 
@@ -174,14 +174,18 @@ class Stage(object):
         A boolean flag. If it is set to true, the simulator will not raise a warning when this stage is skipped.
         
     """
-    def __init__(self,stage,name="a Stage",description="A description",exceptions=None,dependencies=None,replaces=None,optional=False):
+    def __init__(self,stage,name="a Stage",description=None,exceptions=None,dependencies=None,replaces=None,optional=False):
         super(Stage, self).__init__()
         self.macro = False
         if callable(stage):
             self.do = stage
+            if description == None:
+                description = self.do.__doc__
         else:
             self.do = lambda: None
             self.macro = True
+            if description == None:
+                description = name
         if exceptions == None:
             self.exceptions = tuple()
         else:
@@ -224,6 +228,7 @@ class Simulator(object):
             "Main" : "Simulator.yaml",
             "This" : "Simulator.yaml",
         },
+        "Default" : None,
         "logging" : {
           "console" : {
               "enable" : True,
@@ -392,8 +397,6 @@ class Simulator(object):
             raise ValueError("Stage must have a name")
         if name in self.stages:
             raise ValueError("Cannot have duplicate stage named %s" % name)
-        if description == None:
-            description = name
         if exceptions == None:
             exceptions = tuple()
         if dependencies == None:
@@ -603,7 +606,10 @@ class Simulator(object):
             self.running = True
             self.options["macro"] += list(stages)
             if self.options["macro"] == []:
-                self.parser.error("No stages triggered to run!")
+                if self.config["Default"]:
+                    self.options["macro"] = self.config["Default"]
+                else:
+                    self.parser.error("No stages triggered to run!")
             if self.attempt == []:
                 self.inorder = True
                 self.complete = []
