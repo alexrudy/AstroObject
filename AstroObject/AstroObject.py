@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-19.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.2
+#  Version 0.3.3
 # 
 
 # This file maintains compatability with the 0.2 API for base classes
