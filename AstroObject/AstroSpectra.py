@@ -144,7 +144,31 @@ class SpectraObject(AstroObjectBase.FITSObject):
         self.dataClasses += [SpectraFrame]
         self.dataClasses.remove(AstroObjectBase.FITSFrame)
 
+    def load(self,filename=None,statename=None):
+        """Loads spectral data from a data file which contains two columns, one for wavelenght, and one for flux."""
+        if not filename:
+            filename = self.filename
+        if statename == None:
+            statename = os.path.basename(filename)
+            LOG.log(2,"Set statename for image from filename: %s" % statename)
+        if filename.lower().endswith(".fits") or filename.lower().endswith(".fit"):
+            self.read(filename,statename)
+        else:
+            self.save(np.genfromtxt(filename,unpack=True,comments="#"),statename)
+            
+    def unload(self,filename=None,statename=None,clobber=False):
+        """docstring for unload"""
+        if not filename:
+            filename = self.filename
+        if statename == None:
+            statename = self.statename
         
+        if filename.lower().endswith(".fits") or filename.lower().endswith(".fit"):
+            self.write(filename,statename,clobber=clobber)
+        else:
+            np.savetxt(filename,self.frame(statename).data.T,header="State %s raw data" % statename,comments="#")
+        
+    
         
         
         
