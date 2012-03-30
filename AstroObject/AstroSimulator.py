@@ -129,6 +129,8 @@ import math, copy, sys, time, logging, os, json
 import argparse
 import yaml
 
+from pkg_resources import resource_filename
+
 # Submodules from this system
 from AstroCache import *
 from AstroConfig import *
@@ -218,37 +220,9 @@ class Simulator(object):
         self.done = []
         self.name = name
         self.order = None
-        self.config = StructuredConfiguration({
-        "Dirs" : {
-            "Caches" : "Caches",
-            "Logs" : "Logs/",
-            "Partials": "Partials",
-        },
-        "Configurations" : {
-            "Main" : "Simulator.yaml",
-            "This" : "Simulator.yaml",
-        },
-        "Default" : None,
-        "logging" : {
-          "console" : {
-              "enable" : True,
-              "message" : "...%(message)s",
-              "level" : None,
-          },
-          "file" : {
-                'enable' : True,
-                'format' : "%(asctime)s : %(levelname)-8s : %(module)-15s : %(funcName)-10s : %(message)s",
-                'dateformat' : "%Y-%m-%d-%H:%M:%S",
-                'filename' : "AstroObjectSim",
-                'level' : None,
-          },
-          'growl' : {
-              'enable' : True,
-              'level'  : None,
-              'name' : "AstroSimulator",
-          }
-        },
-       })
+        self.config = StructuredConfiguration({})
+        self.config.load(resource_filename(__name__,"Defaults.yaml"))
+        
         if name == "__class__.__name__":
             self.name = self.__class__.__name__
         self.log = logging.getLogger(self.name)
