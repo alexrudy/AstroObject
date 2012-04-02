@@ -197,6 +197,50 @@ class Stage(object):
         self.deps = dependencies
         self.reps = replaces
         self.optional = optional
+        self.startTime = None
+        self.endTime = None
+        self.ran = False
+        self.complete = False
+    
+    @staticmethod
+    def table_head():
+        """docstring for table_head"""
+        text  = "|         Stage         | Passed |    Time    |\n"
+        text += "|-----------------------|--------|------------|"
+        return text
+        
+    def table_row(self):
+        """Return a profiling string table row."""
+        assert self.ran, "Stage %s didn't run" % self.name
+        return "| %(stage)21s | %(result)6s | %(time) 6.2es |" % {
+            "stage": self.name,
+            "result": str(self.complete),
+            "time": self.endTime - self.startTime,
+        }
+    
+        
+    def profile(self):
+        """Return a string stage profile for this stage."""
+        assert self.ran, "Stage %s didn't run" % self.name
+        return "Stage %(stage)s %(result)s in %(time).2fe" % {
+            "stage": self.name,
+            "result": "completed" if self.complete else "failed",
+            "time": self.endTime - self.startTime,
+        }
+        
+    def run(self):
+        """Run the stage"""
+        self.startTime = time.clock()
+        try:
+            self.ran = True
+            self.do()
+        except:
+            raise
+        else:
+            self.complete = True
+        finally:
+            self.endTime = time.clock()
+        
 
 class Simulator(object):
     """A Simulator, used for running large segements of code with detailed logging and progress checking. Simulators have a name, the `name` parameter can be left as is to use the name of the simulator's class (mostly useful if you subclassed it!). The `commandLine` parameter can be set to False to prevent the simulator collecting arguments from `sys.argv` for use. This allows you to programatically call the simulator with the :meth:`do` method.
@@ -214,10 +258,12 @@ class Simulator(object):
         self.macros = {}
         self.exclude = []
         self.include = []
-        self.attempt = []
         self.orders = []
-        self.complete = []
-        self.done = []
+
+        self.attempt = [] # Stages and dependents which have been attempted.        
+        self.complete = [] # Stages and dependents which have been walked
+        self.done = [] # Stages and dependents which have been checked
+        self.ran = [] # Stages and dependents which have been executed
         self.name = name
         self.order = None
         self.config = StructuredConfiguration({})
@@ -298,6 +344,7 @@ class Simulator(object):
         self.registerConfigOpts('d',{'Debug':True},help="enable debugging messages and plots")
         
         # Config Commands
+        self.parser.add_argument('--p','--profile',action='store_true',dest='profile')
         self.parser.add_argument('--pre-configure',action='append',help=argparse.SUPPRESS,metavar="{'config':'value'}",dest='preconfigure')
         self.parser.add_argument('--configure',action='append',metavar="{'config':'value'}",help="Add configuration items in the form of python dictionaries",dest='postconfig')
         self.parser.add_argument('--cf',action='store',dest='config',type=str,help="use the specified configuration file",metavar="file.yaml")
@@ -320,7 +367,7 @@ class Simulator(object):
         
         
         
-    def registerStage(self,stage,name,description=None,exceptions=None,include=False,help=False,dependencies=None,replaces=None,optional=False):
+    def registerStage(self,stage,name=None,description=None,exceptions=None,include=False,help=False,dependencies=None,replaces=None,optional=False):
         """Register a stage for operation with the simulator. The stage will then be available as a command line option, and will be operated with the simulator. Stages should be registered early in the operation of the simulator (preferably in the initialization, after the simulator class itself has initialized) so that the program is aware of the stages for running. 
         
         :keyword function stage: The function to run for this stage. Should not take any arguments
@@ -368,7 +415,7 @@ class Simulator(object):
         if self.running or self.starting:
             raise ConfigurationError("Cannot add a new stage to the simulator, the simulation has already started!")
         if name == None:
-            raise ValueError("Stage must have a name")
+            name = stage.__name__
         if name in self.stages:
             raise ValueError("Cannot have duplicate stage named %s" % name)
         if exceptions == None:
@@ -479,9 +526,13 @@ class Simulator(object):
         
         # Write Configuration to Partials Directory
         if os.path.isdir(self.config["Dirs"]["Partials"]):
-            with open("%s/config-%s.yaml" % (self.config["Dirs"]["Partials"],self.name),"w") as stream:
+            with open(self._dir_filename("Partials","%s.config.yaml" % self.name),"w") as stream:
                 stream.write("# Configuration from %s\n" % self.name)
                 yaml.dump(self.config,stream,default_flow_style=False) 
+    
+    def _dir_filename(self,directory,filename):
+        """Return a directory filename."""
+        return "%(directory)s/%(filename)s" % { "directory" : self.config["Dirs"][directory] , "filename" : filename }
         
     def _parseArguments(self):
         """Parse arguments. Argumetns can be passed into this function like they would be passed to the command line. These arguments will only be parsed when the system is not in `commandLine` mode."""
@@ -540,7 +591,8 @@ class Simulator(object):
         
     def _dump_config(self):
         """Dump the configuration to a file"""
-        with open(self.config["Configurations"]["This"]+"-dump.yaml","w") as stream:
+        filename = self.config["Configurations"]["This"].rstrip(".yaml")+".dump.yaml"
+        with open(filename,"w") as stream:
             stream.write("# Configuration from %s\n" % self.name)
             yaml.dump(self.config.extract(),stream,default_flow_style=False) 
         
@@ -603,6 +655,20 @@ class Simulator(object):
                 text += "%(command)-20s : %(desc)s" % {'command':s.name,'desc':s.description}
                 text += "\n"
             self.exit(msg=text)
+        
+        if self.options['profile'] and not self.running:
+            self.show_profile()
+    
+    def show_profile(self):
+        """Show the profile of the simulation"""
+        
+        text = "Simulation profile:\n"
+        text += Stage.table_head() + "\n"
+        
+        for stage in self.ran:
+            text += self.stages[stage].table_row() + "\n"
+            
+        self.exit(msg=text)
             
     def execute(self,stage,deps=True):
         """Actually exectue a particular stage. This function can be called to execute individual stages, either with or without dependencies. As such, it gives finer granularity than :func:`do`.
@@ -654,7 +720,7 @@ class Simulator(object):
         self.log.info("%s" % s.description)
         
         try:
-            s.do()
+            s.run()
         except KeyboardInterrupt as e:
             self.log.useConsole(True)
             self.log.critical("Keyboard Interrupt during %(stage)s... ending simulator." % {'stage':s.name})
@@ -676,6 +742,7 @@ class Simulator(object):
         else:
             self.log.debug(u"Completed \'%s\'" % s.name)
             self.complete += [stage] + s.reps
+            self.ran += [stage]
         finally:
             self.log.debug(u"Finished \'%s\'" % s.name)
         
