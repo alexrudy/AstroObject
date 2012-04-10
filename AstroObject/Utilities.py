@@ -16,7 +16,7 @@ from pkg_resources import resource_string
 
 from matplotlib.ticker import LogFormatter
 
-__all__ = ["LogFormatterTeXExponent","getVersion","expandLim","BlackBody","Gaussian","validate_filename","update","npArrayInfo","AbstractError","HDUFrameTypeError","ConfigurationError","resource_string"]
+__all__ = ["LogFormatterTeXExponent","getVersion","expandLim","BlackBody","Gaussian","validate_filename","update","npArrayInfo","AbstractError","HDUFrameTypeError","ConfigurationError","resource_string","func_lineno"]
 
 LOG = logging.getLogger(__name__)
 
@@ -119,6 +119,19 @@ def update(d, u):
         else:
             d[k] = u[k]
     return d    
+
+def func_lineno(func):
+    """Get the line number of a function. First looks for
+    compat_co_firstlineno, then func_code.co_first_lineno.
+    """
+    try:
+        return func.compat_co_firstlineno
+    except AttributeError:
+        try:
+            return func.func_code.co_firstlineno
+        except AttributeError:
+            return -1
+
 
 def npArrayInfo(array,name=None):
     """Message describing this array in excruciating detail. Used in debugging arrays where we don't know what they contain. Returns a message string.

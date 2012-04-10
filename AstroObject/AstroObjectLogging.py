@@ -133,8 +133,6 @@ class LogManager(logging.getLoggerClass()):
     
     def configure(self,configFile=None,configuration=None):
         """Configure this logging object using a configuration dictionary. Configuration dictionaries can be provided by a YAML file or directly to the configuration argument. If both are provided, the YAML file will over-ride the explicit dictionary."""
-        if self.configured:
-            raise ConfigurationError("Logger appears to be already configured")
         if self.handling:
             raise ConfigurationError("Logger appears to be already handling")
         # Configure from Variable

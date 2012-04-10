@@ -126,6 +126,7 @@ A simple configuration file can be found in the :ref:`SimulatorExample`."""
 
 # Standard Python Modules
 import math, copy, sys, time, logging, os, json
+import re
 import argparse
 import yaml
 
@@ -757,4 +758,27 @@ class Simulator(object):
             self.log.info(msg)
         self.log.info("Simulator %s Finished" % self.name)
         sys.exit(code)
+        
+    def collect(self,matching=r'^(?!\_)',include=True,help=None,**kwargs):
+        """Collect class methods for inclusion as simulator stages. This method will collect all class methods of this object which are not included by default, and will register those functions as stages of this simulator. Stages will not be registered with any dependents. Stages are registered in alphabetical order (as returned by the `dir()` functon). This method does not do any logging. It should be called before the :meth:`run` method for the simulator is called.
+        
+        Private methods are not included using the default matching string ``r'^(?!\_)'``. This string excludes any method beginning with an underscore. Alternative method name matching strings can be provided by the user.
+        
+        :param string matching: Regular expression used for matching method names.
+        :param bool include: Include parameter for the :meth:`registerStage` function.
+        :param help: Help parameter for the :meth:`registerStage` function.
+        :param kwargs: Keyword arguments passed to the :meth:`registerStage` function.
+        
+        """
+        genericList = dir(Simulator)
+        currentList = dir(self)
+        stageList = []
+        for method in currentList:
+            if method not in genericList and re.search(matching,method):
+                methodo = getattr(self,method)
+                if callable(methodo):
+                    stageList.append(methodo)
+                    
+        stageList.sort(key=func_lineno)
+        [ self.registerStage(stage,**kwargs) for stage in stageList]
         
