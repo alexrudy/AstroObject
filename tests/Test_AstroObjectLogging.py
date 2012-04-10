@@ -44,9 +44,8 @@ class test_Logger(object):
         assert log.configured
         assert not log.handling
         
-    @nt.raises(AOLogging.ConfigurationError)
-    def test_configure_failure(self):
-        """configure() failure"""
+    def test_configure_twice(self):
+        """configure() twice"""
         log = logging.getLogger(__name__+".configure+failure")
         log.configure()
         assert not log.configured
