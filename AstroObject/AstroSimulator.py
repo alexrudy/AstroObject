@@ -819,7 +819,7 @@ class Simulator(object):
         self.progress = 0
         
     def map_over_collection(self,function,idfun=str,collection=[],exceptions=True,color="green"):
-        """docstring for map_over_collection"""
+        """Map a function over a given collection."""
         if exceptions == True:
             exceptions = Exception
         
