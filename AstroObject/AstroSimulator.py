@@ -419,6 +419,8 @@ class Simulator(object):
             raise ConfigurationError("Cannot add a new stage to the simulator, the simulation has already started!")
         if name == None:
             name = stage.__name__
+        name = name.replace("_","-")
+            
         if name in self.stages:
             raise ValueError("Cannot have duplicate stage named %s" % name)
         
@@ -796,7 +798,7 @@ class Simulator(object):
         for methodname in currentList:
             if methodname not in genericList:
                 method = getattr(self,methodname)
-                if (re.search(matching,methodname) or getattr(method,'collect',False)) and (not getattr(method,'ignore',False)) and callable(method):
+                if callable(method) and ( re.search(matching,methodname) or getattr(method,'collect',False) ) and ( not getattr(method,'ignore',False) ):
                     stageList.append(method)
                     
         stageList.sort(key=func_lineno)
