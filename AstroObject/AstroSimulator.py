@@ -827,7 +827,7 @@ class Simulator(object):
         
         self.errors = []
         
-        if not self.progressbar:
+        if not self.progressbar and color:
             self._start_progress_bar(len(collection),color)
             showBar = True
         else:
