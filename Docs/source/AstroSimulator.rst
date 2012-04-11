@@ -31,6 +31,28 @@ The following methods handle the external-API for the simulator.
     
     .. automethod:: exit
     
+    .. automethod:: map_over_collection
+    
+Decorators
+----------
+The following decorators can be used (in conjuction with :meth:`AstroObject.AstroSimulator.Simulator.collect`) to register and configure simulator stages:
+
+.. autofunction:: collect
+
+.. autofunction:: ignore
+
+.. autofunction:: include
+
+.. autofunction:: help
+
+.. autofunction:: description
+
+.. autofunction:: depends
+
+.. autofunction:: replaces
+
+.. autofunction:: optional
+    
 Private Methods and Classes
 ---------------------------
     
