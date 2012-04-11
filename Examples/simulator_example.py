@@ -22,25 +22,46 @@ from AstroObject.AstroCache import *
     
 class SimpleStage(Simulator):
     """An example simulator designed to show the power of simulations and for use while testing."""
+    
+    LIST = range(1000000)
+    
     def __init__(self,*args,**kwargs):
         super(SimpleStage, self).__init__(*args,**kwargs)
         self.collect()
         self.registerStage(None,"ex",description="Example Macro",dependencies=["main","other"],help="example Macro")
         self.Caches["Random Image"] = Cache(self._cache,self._load,self._save)
         self.Caches["Random NPY"] = NumpyCache(self._cache,filename="%s/Random.npy" % self.config["Dirs"]["Caches"])
-        
+    
+    @include
+    @description("The Main Stage")
+    @help("Manage the main stage")
+    @depends("other","last")
     def main_stage(self):
-        """Main Stage"""
         print "Hello from %s Object" % self.name
         img = self.Caches["Random Image"]
         print img[0,0]
         
+    @include
+    @on_collection(LIST)
+    @help("Add one to each item in a list, but really do nothing")
+    def act(self,item):
+        item + 1
+    
+    @include()
+    @ignore
+    @excepts(Exception)
+    def raiser(self):
+        """A function which rasies others"""
+        raise Exception
+        
+    @include(False)
     def other(self):
         """Other Stage"""
         print "Hello from %s Stage" % "other"
         img = self.Caches["Random NPY"]
         print img[1,1]
     
+    @include(False)
     def last(self):
         """Last Stage"""
         print "Last Stage"

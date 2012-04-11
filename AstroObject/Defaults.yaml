@@ -3,6 +3,7 @@ Configurations:
   Main: Simulator.yaml
   This: Simulator.yaml
 Default: null
+Debug: false
 Dirs:
   Caches: Caches
   Logs: Logs/
