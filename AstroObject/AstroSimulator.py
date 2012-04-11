@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-14.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.3
+#  Version 0.3.4
 # 
 """The Simulator is designed to provide a high level, command-line useful interface to large computational tasks. As the name suggests, Simulators often do a lot of programming work, and do so across many distinct "stages", whcih can be configured in any way the user desires. All of the abilities in this program are simply object abstraction techniques to provide a complex program with a command line interface and better control and reporting on the activities carreid out to successfully complete the program. It allows for the configuration of simple test cases and "macros" from within the program, eliminating the need to provide small wrapper scripts and test handlers.
 
@@ -126,15 +126,21 @@ A simple configuration file can be found in the :ref:`SimulatorExample`."""
 
 # Standard Python Modules
 import math, copy, sys, time, logging, os, json
+import re
 import argparse
 import yaml
+
+from pkg_resources import resource_filename
+
+# Dependent Modules
+from progressbar import *
 
 # Submodules from this system
 from AstroCache import *
 from AstroConfig import *
 from Utilities import *
 
-__all__ = ["Simulator"]
+__all__ = ["Simulator","on_collection","help","replaces","excepts","depends","include","optional","description","collect","ignore"]
 
 __version__ = getVersion()
 
@@ -179,8 +185,6 @@ class Stage(object):
         self.macro = False
         if callable(stage):
             self.do = stage
-            if description == None:
-                description = self.do.__doc__
         else:
             self.do = lambda: None
             self.macro = True
@@ -195,6 +199,50 @@ class Stage(object):
         self.deps = dependencies
         self.reps = replaces
         self.optional = optional
+        self.startTime = None
+        self.endTime = None
+        self.ran = False
+        self.complete = False
+    
+    @staticmethod
+    def table_head():
+        """docstring for table_head"""
+        text  = "|         Stage         | Passed |    Time    |\n"
+        text += "|-----------------------|--------|------------|"
+        return text
+        
+    def table_row(self):
+        """Return a profiling string table row."""
+        assert self.ran, "Stage %s didn't run" % self.name
+        return "| %(stage)21s | %(result)6s | %(time) 6.2es |" % {
+            "stage": self.name,
+            "result": str(self.complete),
+            "time": self.endTime - self.startTime,
+        }
+    
+        
+    def profile(self):
+        """Return a string stage profile for this stage."""
+        assert self.ran, "Stage %s didn't run" % self.name
+        return "Stage %(stage)s %(result)s in %(time).2fe" % {
+            "stage": self.name,
+            "result": "completed" if self.complete else "failed",
+            "time": self.endTime - self.startTime,
+        }
+        
+    def run(self):
+        """Run the stage"""
+        self.startTime = time.clock()
+        try:
+            self.ran = True
+            self.do()
+        except:
+            raise
+        else:
+            self.complete = True
+        finally:
+            self.endTime = time.clock()
+        
 
 class Simulator(object):
     """A Simulator, used for running large segements of code with detailed logging and progress checking. Simulators have a name, the `name` parameter can be left as is to use the name of the simulator's class (mostly useful if you subclassed it!). The `commandLine` parameter can be set to False to prevent the simulator collecting arguments from `sys.argv` for use. This allows you to programatically call the simulator with the :meth:`do` method.
@@ -212,43 +260,17 @@ class Simulator(object):
         self.macros = {}
         self.exclude = []
         self.include = []
-        self.attempt = []
         self.orders = []
-        self.complete = []
-        self.done = []
+
+        self.attempt = [] # Stages and dependents which have been attempted.        
+        self.complete = [] # Stages and dependents which have been walked
+        self.done = [] # Stages and dependents which have been checked
+        self.ran = [] # Stages and dependents which have been executed
         self.name = name
         self.order = None
-        self.config = StructuredConfiguration({
-        "Dirs" : {
-            "Caches" : "Caches",
-            "Logs" : "Logs/",
-            "Partials": "Partials",
-        },
-        "Configurations" : {
-            "Main" : "Simulator.yaml",
-            "This" : "Simulator.yaml",
-        },
-        "Default" : None,
-        "logging" : {
-          "console" : {
-              "enable" : True,
-              "message" : "...%(message)s",
-              "level" : None,
-          },
-          "file" : {
-                'enable' : True,
-                'format' : "%(asctime)s : %(levelname)-8s : %(module)-15s : %(funcName)-10s : %(message)s",
-                'dateformat' : "%Y-%m-%d-%H:%M:%S",
-                'filename' : "AstroObjectSim",
-                'level' : None,
-          },
-          'growl' : {
-              'enable' : True,
-              'level'  : None,
-              'name' : "AstroSimulator",
-          }
-        },
-       })
+        self.config = StructuredConfiguration({})
+        self.config.load(resource_filename(__name__,"Defaults.yaml"))
+        
         if name == "__class__.__name__":
             self.name = self.__class__.__name__
         self.log = logging.getLogger(self.name)
@@ -261,6 +283,7 @@ class Simulator(object):
         self.caching = True
         self.starting = False
         self.paused = False
+        self.progressbar = False
         self.commandLine = commandLine
         self.Caches = CacheManager()
         self.options = None
@@ -324,6 +347,7 @@ class Simulator(object):
         self.registerConfigOpts('d',{'Debug':True},help="enable debugging messages and plots")
         
         # Config Commands
+        self.parser.add_argument('--p','--profile',action='store_true',dest='profile')
         self.parser.add_argument('--pre-configure',action='append',help=argparse.SUPPRESS,metavar="{'config':'value'}",dest='preconfigure')
         self.parser.add_argument('--configure',action='append',metavar="{'config':'value'}",help="Add configuration items in the form of python dictionaries",dest='postconfig')
         self.parser.add_argument('--cf',action='store',dest='config',type=str,help="use the specified configuration file",metavar="file.yaml")
@@ -346,7 +370,7 @@ class Simulator(object):
         
         
         
-    def registerStage(self,stage,name,description=None,exceptions=None,include=False,help=False,dependencies=None,replaces=None,optional=False):
+    def registerStage(self,stage,name=None,description=None,exceptions=None,include=None,help=False,dependencies=None,replaces=None,optional=False):
         """Register a stage for operation with the simulator. The stage will then be available as a command line option, and will be operated with the simulator. Stages should be registered early in the operation of the simulator (preferably in the initialization, after the simulator class itself has initialized) so that the program is aware of the stages for running. 
         
         :keyword function stage: The function to run for this stage. Should not take any arguments
@@ -394,27 +418,49 @@ class Simulator(object):
         if self.running or self.starting:
             raise ConfigurationError("Cannot add a new stage to the simulator, the simulation has already started!")
         if name == None:
-            raise ValueError("Stage must have a name")
+            name = stage.__name__
+        name = name.replace("_","-")
+            
         if name in self.stages:
             raise ValueError("Cannot have duplicate stage named %s" % name)
-        if exceptions == None:
+        
+        if exceptions == None and hasattr(stage,'exceptions'):
+            exceptions = stage.exceptions
+        elif exceptions == None:
             exceptions = tuple()
-        if dependencies == None:
+        
+        if dependencies == None and hasattr(stage,'dependencies'):
+            dependencies = stage.dependencies
+        elif dependencies == None:
             dependencies = []
         if not isinstance(dependencies,list):
             raise ValueError("Invalid type for dependencies: %s" % type(dependencies))
             
-        if replaces == None:
+        if replaces == None and hasattr(stage,'replaces'):
+            replaces = stage.replaces  
+        elif replaces == None:
             replaces = []
         if not isinstance(replaces,list):
             raise ValueError("Invalid type for dependencies: %s" % type(replaces))
-            
-        if help == False:
+        
+        if description == None and hasattr(stage,'description'):
+            description = stage.description
+        elif description == None and callable(stage):
+            description = stage.__doc__
+        elif not description:
+            description = "Running %s" % name
+
+        if (not help) and hasattr(stage,'help'):
+            help = stage.help
+        elif help == False:
             help = argparse.SUPPRESS
         elif help == None:
             help = "stage %s" % name
 
-            
+        if include == None and hasattr(stage,'include'):
+            include = stage.include
+        elif include == None:
+            include = False    
         
         stageObject = Stage(stage,name=name,description=description,exceptions=exceptions,dependencies=dependencies,replaces=replaces,optional=optional)
         self.stages[name] = stageObject
@@ -505,9 +551,13 @@ class Simulator(object):
         
         # Write Configuration to Partials Directory
         if os.path.isdir(self.config["Dirs"]["Partials"]):
-            with open("%s/config-%s.yaml" % (self.config["Dirs"]["Partials"],self.name),"w") as stream:
+            with open(self._dir_filename("Partials","%s.config.yaml" % self.name),"w") as stream:
                 stream.write("# Configuration from %s\n" % self.name)
                 yaml.dump(self.config,stream,default_flow_style=False) 
+    
+    def _dir_filename(self,directory,filename):
+        """Return a directory filename."""
+        return "%(directory)s/%(filename)s" % { "directory" : self.config["Dirs"][directory] , "filename" : filename }
         
     def _parseArguments(self):
         """Parse arguments. Argumetns can be passed into this function like they would be passed to the command line. These arguments will only be parsed when the system is not in `commandLine` mode."""
@@ -562,11 +612,12 @@ class Simulator(object):
             s = self.stages[stage]
             text += "%(command)-20s : %(desc)s" % {'command':s.name,'desc':s.description}
             text += "\n"
-        self.parser.exit(message=text)
+        self.exit(msg=text)
         
     def _dump_config(self):
         """Dump the configuration to a file"""
-        with open(self.config["Configurations"]["This"]+"-dump.yaml","w") as stream:
+        filename = self.config["Configurations"]["This"].rstrip(".yaml")+".dump.yaml"
+        with open(filename,"w") as stream:
             stream.write("# Configuration from %s\n" % self.name)
             yaml.dump(self.config.extract(),stream,default_flow_style=False) 
         
@@ -629,6 +680,20 @@ class Simulator(object):
                 text += "%(command)-20s : %(desc)s" % {'command':s.name,'desc':s.description}
                 text += "\n"
             self.exit(msg=text)
+        
+        if self.options['profile'] and not self.running:
+            self.show_profile()
+    
+    def show_profile(self):
+        """Show the profile of the simulation"""
+        
+        text = "Simulation profile:\n"
+        text += Stage.table_head() + "\n"
+        
+        for stage in self.ran:
+            text += self.stages[stage].table_row() + "\n"
+            
+        self.exit(msg=text)
             
     def execute(self,stage,deps=True):
         """Actually exectue a particular stage. This function can be called to execute individual stages, either with or without dependencies. As such, it gives finer granularity than :func:`do`.
@@ -680,7 +745,7 @@ class Simulator(object):
         self.log.info("%s" % s.description)
         
         try:
-            s.do()
+            s.run()
         except KeyboardInterrupt as e:
             self.log.useConsole(True)
             self.log.critical("Keyboard Interrupt during %(stage)s... ending simulator." % {'stage':s.name})
@@ -702,6 +767,7 @@ class Simulator(object):
         else:
             self.log.debug(u"Completed \'%s\'" % s.name)
             self.complete += [stage] + s.reps
+            self.ran += [stage]
         finally:
             self.log.debug(u"Finished \'%s\'" % s.name)
         
@@ -717,3 +783,176 @@ class Simulator(object):
         self.log.info("Simulator %s Finished" % self.name)
         sys.exit(code)
         
+    def collect(self,matching=r'^(?!\_)',**kwargs):
+        """Collect class methods for inclusion as simulator stages. This method will collect all class methods of this object which are not included by default, and will register those functions as stages of this simulator. Stages will not be registered with any dependents. Stages are registered in alphabetical order (as returned by the `dir()` functon). This method does not do any logging. It should be called before the :meth:`run` method for the simulator is called.
+        
+        Private methods are not included using the default matching string ``r'^(?!\_)'``. This string excludes any method beginning with an underscore. Alternative method name matching strings can be provided by the user.
+        
+        :param string matching: Regular expression used for matching method names.
+        :param kwargs: Keyword arguments passed to the :meth:`registerStage` function.
+        
+        """
+        genericList = dir(Simulator)
+        currentList = dir(self)
+        stageList = []
+        for methodname in currentList:
+            if methodname not in genericList:
+                method = getattr(self,methodname)
+                if callable(method) and ( re.search(matching,methodname) or getattr(method,'collect',False) ) and ( not getattr(method,'ignore',False) ):
+                    stageList.append(method)
+                    
+        stageList.sort(key=func_lineno)
+        [ self.registerStage(stage,**kwargs) for stage in stageList]
+    
+    
+    def _start_progress_bar(self,length,color):
+        """Return a progress bar object of a specified color in the standard format."""
+        widgets = [Percentage(),' ',ColorBar(color=color),' ',ETA()]
+        self.progressbar = ProgressBar(widgets=widgets,maxval=length).start()
+        self.progress = 0
+        self.log.useConsole(False)
+        return self.progressbar
+        
+    def _end_progress_bar(self):
+        """End the progressbar object's operation"""
+        self.progressbar.finish()
+        self.log.useConsole(True)
+        self.progressbar = False
+        self.progress = 0
+        
+    def map_over_collection(self,function,idfun=str,collection=[],exceptions=True,color="green"):
+        """Map a function over a given collection."""
+        if exceptions == True:
+            exceptions = Exception
+        
+        self.errors = []
+        
+        if not self.progressbar and color:
+            self._start_progress_bar(len(collection),color)
+            showBar = True
+        else:
+            showBar = False
+        
+        try:
+            map(lambda i:self._collection_map(i,function,exceptions,idfun,showBar),collection)
+        except:
+            raise
+        finally:       
+            if showBar:
+                self._end_progress_bar()
+            if len(self.errors) > 0:
+                self.log.warning("Trapped %d errors" % len(self.errors))
+                for error in self.errors:
+                    self.log.debug("Error %s caught" % error)
+            
+    def _collection_map(self,i,function,exceptions,idfun,showBar):
+        """Maps something over a bunch of lenslets"""
+        identity = idfun(i)
+        if showBar:
+            self.progressbar.update(self.progress)
+        try:
+            function(i)
+        except exceptions as e:
+            self.log.error(u"Caught %s in %r" % (e.__class__.__name__,identity))
+            self.log.error(u"%s" % e)
+            self.errors += [e]
+            if self.config["Debug"]:
+                raise
+        finally:
+            if showBar:
+                self.progress += 1.0
+                self.progressbar.update(self.progress)
+
+
+def optional(optional=True):
+    """Makes this object optional"""
+    if callable(optional) or optional:
+        func = optional
+        func.optional = True
+        return func
+    def decorate(func):
+        func.optional = optional
+        return func
+    return decorate
+    
+def description(description):
+    """Gives this object a description"""
+    def decorate(func):
+        func.description = description
+        return func
+    return decorate
+    
+
+def include(include=True):
+    """Commands this object to be included"""
+    if callable(include):
+        func = include
+        func.include = True
+        return func
+    def decorate(func):
+        func.include = include
+        return func
+    return decorate
+
+def replaces(*replaces):
+    """Registers replacements for this stage"""
+    def decorate(func):
+        func.replaces = list(replaces)
+        return func
+    return decorate
+
+def help(help):
+    """Registers a help string for this function"""
+    def decorate(func):
+        func.help = help
+        return func
+    return decorate
+
+def depends(*dependencies):
+    """Registers dependencies for this function"""
+    def decorate(func):
+        func.dependencies = list(dependencies)
+        return func
+    return decorate
+
+def excepts(*exceptions):
+    """Registers dependencies for this function"""
+    def decorate(func):
+        func.exceptions = tuple(exceptions)
+        return func
+    return decorate
+
+def collect(collect=True):
+    """Include stage explicitly in collection"""
+    if callable(collect):
+        func = collect
+        func.collect = True
+        return func
+    def decorate(func):
+        func.collect = collect
+        return func
+    return decorate
+    
+
+def ignore(ignore=True):
+    """Ignore stage explicitly in collection"""
+    if callable(ignore):
+        func = ignore
+        func.ignore = True
+        return func
+    def decorate(func):
+        func.ignore = ignore
+        return func
+    return decorate
+    
+
+def on_collection(collection,idfun=str,exceptions=True,color="green"):
+    """Decorator for acting a specific method over a collection"""
+    def decorate(func):
+        name = func.__name__
+        def newfunc(self):
+            self.map_over_collection(lambda i: func(self,i),idfun,collection,exceptions,color)
+        newfunc = make_decorator(func)(newfunc)
+        return newfunc
+    return decorate
+    

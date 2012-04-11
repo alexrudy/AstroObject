@@ -1,12 +1,14 @@
+# -*- coding: utf-8 -*-
 # 
 #  Utilities.py
 #  Astronomy ObjectModel
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.3
+#  Version 0.3.4
 #
 
+from __future__ import division
 import numpy as np
 import scipy as sp
 import scipy.constants as spconst
@@ -16,7 +18,9 @@ from pkg_resources import resource_string
 
 from matplotlib.ticker import LogFormatter
 
-__all__ = ["LogFormatterTeXExponent","getVersion","expandLim","BlackBody","Gaussian","validate_filename","update","npArrayInfo","AbstractError","HDUFrameTypeError","ConfigurationError","resource_string"]
+import terminal
+
+__all__ = ["LogFormatterTeXExponent","getVersion","expandLim","BlackBody","Gaussian","validate_filename","update","npArrayInfo","AbstractError","HDUFrameTypeError","ConfigurationError","resource_string","func_lineno","make_decorator","terminal","ProgressBar","ColorBar"]
 
 LOG = logging.getLogger(__name__)
 
@@ -120,6 +124,43 @@ def update(d, u):
             d[k] = u[k]
     return d    
 
+def func_lineno(func):
+    """Get the line number of a function. First looks for
+    compat_co_firstlineno, then func_code.co_first_lineno.
+    """
+    try:
+        return func.compat_co_firstlineno
+    except AttributeError:
+        try:
+            return func.func_code.co_firstlineno
+        except AttributeError:
+            return -1
+
+def make_decorator(func):
+    """
+    Wraps a test decorator so as to properly replicate metadata
+    of the decorated function, including nose's additional stuff
+    (namely, setup and teardown).
+    """
+    def decorate(newfunc):
+        if hasattr(func, 'compat_func_name'):
+            name = func.compat_func_name
+        else:
+            name = func.__name__
+        newfunc.__dict__ = func.__dict__
+        newfunc.__doc__ = func.__doc__
+        newfunc.__module__ = func.__module__
+        if not hasattr(newfunc, 'compat_co_firstlineno'):
+            newfunc.compat_co_firstlineno = func.func_code.co_firstlineno
+        try:
+            newfunc.__name__ = name
+        except TypeError:
+            # can't set func name in 2.3
+            newfunc.compat_func_name = name
+        return newfunc
+    return decorate
+
+
 def npArrayInfo(array,name=None):
     """Message describing this array in excruciating detail. Used in debugging arrays where we don't know what they contain. Returns a message string.
     
@@ -206,6 +247,85 @@ class ConfigurationError(Exception):
     """Denotes an error caused by a bad configuration"""
     pass    
 
+
+import progressbar
+import string
+
+class ProgressBar(progressbar.ProgressBar):
+    def update(self, value=None):
+        'Updates the ProgressBar to a new value. Monkey Patch edition'
+
+        if value is not None and value is not progressbar.UnknownLength:
+            if (self.maxval is not progressbar.UnknownLength
+                and not 0 <= value <= self.maxval):
+
+                raise ValueError('Value out of range')
+
+            self.currval = value
+
+
+        if not self._need_update(): return
+        if self.start_time is None:
+            raise RuntimeError('You must call "start" before calling "update"')
+
+        now = time.time()
+        self.seconds_elapsed = now - self.start_time
+        self.next_update = self.currval + self.update_interval
+        if getattr(self,'_lines',0) > 0:
+            self.fd.write(self._lines * (terminal.UP + terminal.BOL + terminal.CLEAR_EOL))
+        line = self._format_line() + "\n"
+        self.fd.write(line)
+        self.fd.flush()
+        setattr(self,'_lines',len(line.splitlines()))
+        self.last_update_time = now
+        
+    def finish(self):
+        """Puts the progress bar in a finished state"""
+        super(ProgressBar,self).finish()
+        self.fd.write(self._lines * (terminal.UP + terminal.BOL + terminal.CLEAR_EOL))
+        
+class ColorBar(progressbar.Bar):
+    'A progress bar which stretches to fill the line.'
+    
+    def __init__(self, marker=u'█', left='|', right='|', fill=' ',
+                 fill_left=True, color="green"):
+        '''Creates a customizable progress bar.
+
+        marker - string or updatable object to use as a marker
+        left - string or updatable object to use as a left border
+        right - string or updatable object to use as a right border
+        fill - character to use for the empty part of the progress bar
+        fill_left - whether to fill from the left or the right
+        '''
+        self.marker = marker
+        self.left = left
+        self.right = right
+        self.fill = fill
+        self.fill_left = fill_left
+        self.color = getattr(terminal,color.upper(),terminal.NORMAL)
+        self.nocolor = terminal.NORMAL
+
+
+    def update(self, pbar, width):
+        'Updates the progress bar and its subcomponents'
+
+        left, marked, right, color, nocolor = (progressbar.format_updatable(i, pbar) for i in
+                               (self.left, self.marker, self.right, self.color, self.nocolor))
+
+        width -= len(left) + len(right)
+        itemw = len(self.marker)
+        # Marked must *always* have length of 1
+        if pbar.maxval:
+          marked *= int(pbar.currval / pbar.maxval * width / itemw) 
+        else:
+          marked = ''
+         
+        if self.fill_left:            
+            return '%s%s%s%s%s' % (color,left, marked.ljust(width, self.fill), right, nocolor)
+        else:
+            return '%s%s%s%s%s' % (color,left, marked.rjust(width, self.fill), right, nocolor)
+
+
 import re
 
 class LogFormatterTeXExponent(LogFormatter, object):
@@ -226,5 +346,5 @@ class LogFormatterTeXExponent(LogFormatter, object):
                        str(label))
         label = "$" + label + "$"
         return label
-        
+                
 __version__ = getVersion()
