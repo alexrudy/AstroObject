@@ -5,7 +5,7 @@
  Created by Alexander Rudy on 2011-10-07.
  Copyright 2011 Alexander Rudy. All rights reserved.
 
-  Version 0.3.3
+  Version 0.3.4
 
 ---
 
@@ -134,3 +134,7 @@ As well, the library is useful for building object-based representations of new 
 * 0.3.3
     - Stages provide description from function's docstring if no description is given.
     - Default keyword is used to set default stage operation.
+* 0.3.4
+    - Simulator can collect stages automatically
+    - Simualtor can be setup using decorators on functions
+    - Simulator can produces stage timing profiles

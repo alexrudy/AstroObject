@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-14.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.3
+#  Version 0.3.4
 # 
 """The Simulator is designed to provide a high level, command-line useful interface to large computational tasks. As the name suggests, Simulators often do a lot of programming work, and do so across many distinct "stages", whcih can be configured in any way the user desires. All of the abilities in this program are simply object abstraction techniques to provide a complex program with a command line interface and better control and reporting on the activities carreid out to successfully complete the program. It allows for the configuration of simple test cases and "macros" from within the program, eliminating the need to provide small wrapper scripts and test handlers.
 
@@ -419,6 +419,8 @@ class Simulator(object):
             raise ConfigurationError("Cannot add a new stage to the simulator, the simulation has already started!")
         if name == None:
             name = stage.__name__
+        name = name.replace("_","-")
+            
         if name in self.stages:
             raise ValueError("Cannot have duplicate stage named %s" % name)
         
@@ -796,7 +798,7 @@ class Simulator(object):
         for methodname in currentList:
             if methodname not in genericList:
                 method = getattr(self,methodname)
-                if (re.search(matching,methodname) or getattr(method,'collect',False)) and (not getattr(method,'ignore',False)) and callable(method):
+                if callable(method) and ( re.search(matching,methodname) or getattr(method,'collect',False) ) and ( not getattr(method,'ignore',False) ):
                     stageList.append(method)
                     
         stageList.sort(key=func_lineno)
@@ -825,7 +827,7 @@ class Simulator(object):
         
         self.errors = []
         
-        if not self.progressbar:
+        if not self.progressbar and color:
             self._start_progress_bar(len(collection),color)
             showBar = True
         else:
