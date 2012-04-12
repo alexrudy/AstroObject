@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-19.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.6
+#  Version 0.3.6-p1
 # 
 """This file maintains module level compatibility with the 0.2 API for base classes. It has been depreciated."""
 # This file maintains compatability with the 0.2 API for base classes

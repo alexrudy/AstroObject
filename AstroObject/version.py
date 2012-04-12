@@ -21,7 +21,7 @@ from __future__ import division,with_statement
 major = 0
 minor = 3
 bugfix = 6
-patch = None
+patch = 1
 dev = True
 
 

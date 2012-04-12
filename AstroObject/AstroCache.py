@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-22.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.6
+#  Version 0.3.6-p1
 # 
 
 # Standard Scipy Toolkits
