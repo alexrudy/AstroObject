@@ -20,7 +20,7 @@ from __future__ import division,with_statement
 #these components can be changed for new versions
 major = 0
 minor = 3
-bugfix = 4
+bugfix = 5
 patch = None
 dev = True
 
@@ -199,6 +199,7 @@ def _get_git_devstr(sha=False):
         return  'dev-r%i'%nrev
     
 dev = _get_git_devstatus()
+release = not dev
 _get_devstr = _get_git_devstr
     
 version = str(major)+'.' +\

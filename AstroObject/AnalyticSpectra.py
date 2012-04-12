@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.4
+#  Version 0.3.5
 # 
 """
 Analytic Spectra and Interpolation :mod:`AnalyticSpectra`
