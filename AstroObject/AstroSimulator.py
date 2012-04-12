@@ -214,7 +214,7 @@ class Stage(object):
     @staticmethod 
     def table_foot(total):
         """docstring for taple_foot"""
-        text  = "|                       | Total Time: %-9s  |" % datetime.timedelta(seconds=int(total))
+        text  = "|-----------------------  Total Time: %-9s  |" % datetime.timedelta(seconds=int(total))
         return text
         
     def table_row(self,total=None):
@@ -230,7 +230,7 @@ class Stage(object):
         else:
             keys["per"] = ( self.durTime / total ) * 100.0
             string = u"| %(stage)21s | %(result)6s | %(time)9s %(per)2d%% |" % keys
-            string += u"█" * int(keys["per"] * 50 / 100)
+            string += u"█" * int(keys["per"] * (terminal.COLUMNS - 50) / 75)
         return string
         
     def profile(self):
