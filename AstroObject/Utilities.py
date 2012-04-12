@@ -22,7 +22,7 @@ import terminal as terminal
 from version import version as versionstr
 
 
-__all__ = ["abstractmethod","LogFormatterTeXExponent","getVersion","expandLim","BlackBody","Gaussian","validate_filename","update","npArrayInfo","HDUFrameTypeError","ConfigurationError","resource_string","func_lineno","make_decorator","terminal","ProgressBar","ColorBar"]
+__all__ = ["LogFormatterTeXExponent","getVersion","expandLim","BlackBody","Gaussian","validate_filename","update","npArrayInfo","HDUFrameTypeError","ConfigurationError","resource_string","func_lineno","make_decorator","terminal","ProgressBar","ColorBar"]
 
 LOG = logging.getLogger(__name__)
 
@@ -156,25 +156,6 @@ def make_decorator(func):
             # can't set func name in 2.3
             newfunc.compat_func_name = name
         return newfunc
-    return decorate
-
-def abstractmethod(message):
-    """Decorator for abstract methods"""
-    if callable(message):
-        func = message
-        message = "Call to abstract method %s"
-        default_message = True
-    
-    def decorate(func):
-        name = func.__name__
-        def newfunc(*args,**kwargs):
-            raise NotImplementedError(message % name)
-        newfunc = make_decorator(func)(newfunc)
-        return newfunc
-    
-    if default_message:
-        return decorate(func)
-    
     return decorate
 
 def npArrayInfo(array,name=None):
