@@ -125,7 +125,7 @@ A simple configuration file can be found in the :ref:`SimulatorExample`."""
 
 
 # Standard Python Modules
-import math, copy, sys, time, logging, os, json
+import math, copy, sys, time, logging, os, json, datetime
 import re
 import argparse
 import yaml
@@ -207,8 +207,8 @@ class Stage(object):
     @staticmethod
     def table_head():
         """docstring for table_head"""
-        text  = "|         Stage         | Passed |     Time     |\n"
-        text += "|-----------------------|--------|--------------|"
+        text  = "|         Stage         | Passed |        Time         |\n"
+        text += "|-----------------------|--------|---------------------|"
         return text
         
     def table_row(self,total=None):
@@ -217,13 +217,13 @@ class Stage(object):
         keys = {
                 "stage": self.name,
                 "result": str(self.complete),
-                "time": self.durTime,
+                "time": datetime.timedelta(seconds=self.durTime),
             }
         if total == None:            
-            string =  u"| %(stage)21s | %(result)6s | %(time) 11.2fs |" % keys
+            string =  u"| %(stage)21s | %(result)6s | %(time) 18s |" % keys
         else:
             keys["per"] = ( self.durTime / total ) * 100.0
-            string = u"| %(stage)21s | %(result)6s | %(time) 7.2fs %(per)2d%% |" % keys
+            string = u"| %(stage)21s | %(result)6s | %(time)15s %(per)2d%% |" % keys
             string += u"█" * int(keys["per"] * 50 / 100)
         return string
         
@@ -233,7 +233,7 @@ class Stage(object):
         return "Stage %(stage)s %(result)s in %(time).2fe" % {
             "stage": self.name,
             "result": "completed" if self.complete else "failed",
-            "time": self.durTime,
+            "time": datetime.timedelta(seconds=self.durTime),
         }
         
     def run(self):
