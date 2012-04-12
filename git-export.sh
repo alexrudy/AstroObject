@@ -26,8 +26,8 @@ fi
 
 DESTINATION=$1
 
-echo "Exporting branch $BRACNH to $DESTINATION"
-
+echo "Exporting branch $BRANCH to $DESTINATION"
+echo " $ git archive $BRANCH | tar x -C $DESTINATION"
 git archive $BRANCH | tar x -C $DESTINATION
 
 if [ -f $DESTINATION/$EXCLUDE ]; then

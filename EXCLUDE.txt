@@ -1,5 +1,6 @@
 EXCLUDE.txt
-git-export.txt
-.tm-properties
+git-export.sh
+.pylintrc
+.tm_properties
 .gitignore
 TODO/
