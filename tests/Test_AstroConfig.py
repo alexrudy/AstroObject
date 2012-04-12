@@ -28,6 +28,18 @@ class Test_Configuration(object):
         self.cfgC = {"Hi":{"A":3,"B":2,"C":4,},} #Should be a merge of A and B
         self.Class = Configuration
         
+    def tearDown(self):
+        """Remove junky files if they showed up"""
+        self.remove("Test.yaml")
+        self.remove("Test.dat")
+    
+    def remove(self,filename):
+        """docstring for remove"""
+        try:
+            os.remove(filename)
+        except:
+            pass
+    
     
     def test_init(self):
         """__init__"""
@@ -44,6 +56,7 @@ class Test_Configuration(object):
         """merge() deep updates"""
         cfg = self.Class(self.cfgA)
         cfg.merge(self.cfgB)
+        print self.cfgC
         assert cfg == self.cfgC
         
     def test_save(self):
@@ -52,10 +65,9 @@ class Test_Configuration(object):
         cfg.save("Test.yaml")
         loaded = self.Class()
         loaded.load("Test.yaml")
+        print self.cfgC, loaded
         assert self.cfgC == loaded.extract()
-        os.remove("Test.yaml")
         cfg.save("Test.dat")
-        os.remove("Test.dat")
         
         
     def test_read(self):
@@ -64,8 +76,9 @@ class Test_Configuration(object):
         cfg.save("Test.yaml")
         cfg = self.Class()
         cfg.load("Test.yaml")
+        print cfg, self.cfgC
         assert cfg == self.cfgC
-        os.remove("Test.yaml")
+
 
 class Test_StructuredConfiguration(Test_Configuration):
     """AstroObject.AstroConfig.StructuredConfiguration"""
@@ -90,10 +103,8 @@ class Test_StructuredConfiguration(Test_Configuration):
         loaded = self.Class()
         loaded.load("Test.yaml")
         assert self.cfgC == loaded.extract()
-        os.remove("Test.yaml")
         cfg.save("Test.dat")
         assert os.access("Test.dat",os.F_OK)
-        os.remove("Test.dat")
         
         
     def test_read(self):
@@ -103,6 +114,5 @@ class Test_StructuredConfiguration(Test_Configuration):
         cfg = self.Class()
         cfg.load("Test.yaml")
         assert cfg == self.cfgC
-        os.remove("Test.yaml")
     
                 

@@ -14,30 +14,73 @@ import yaml
 # Submodules from this system
 from Utilities import *
 
-class Configuration(dict):
+class Configuration(collections.MutableMapping):
     """Adds extra methods to dictionary for configuration"""
     def __init__(self, *args, **kwargs):
-        super(Configuration, self).__init__(*args, **kwargs)
+        super(Configuration, self).__init__()
         self.log = logging.getLogger(__name__)
+        self._store = dict(*args, **kwargs)
+        
+    def __repr__(self):
+        """String representation of this object"""
+        return repr(self._store)
+        
+    def __str__(self):
+        """String for this object"""
+        return "<Configuration %r >" % repr(self)
+        
+    def __getitem__(self,key):
+        """Dictionary getter"""
+        return self._store.__getitem__(key)
+        
+    def __setitem__(self,key,value):
+        """Dictonary setter"""
+        return self._store.__setitem__(key,value)
+        
+    def __delitem__(self,key):
+        """Dictionary delete"""
+        return self._store.__delitem__(key)
+        
+    def __iter__(self):
+        """Return an iterator for this dictionary"""
+        return self._store.__iter__()
+        
+    def __contains__(self,key):
+        """Return the contains boolean"""
+        return self._store.__contains__(key)
+        
+    def keys(self):
+        """Return a list of keys for this object"""
+        return self._store.keys()
+    
+    def __len__(self):
+        """Length"""
+        return self._store.__len__()
     
     def update(self,other,deep=True):
         """Deep update by default"""
         if deep:
-            self._merge(self,other)
+            print "DEEP UPDATE -> MERGE"
+            self.merge(other)
         else:
-            super(Configuration, self).update(other)
+            self._store.update(other)
     
     def merge(self,other):
         """Merge another configuration into this (the master)"""
+        print "CONFIGURATON MERGE"
+        print str(self) + " + " + str(other)
         self._merge(self,other)
-        
+        print "-> " + str(self)
+    
     def _merge(self,d,u):
         """Recursive merging function"""
+        print "Merging",d,"+",u
         if len(u)==0:
             return d
         for k, v in u.iteritems():
+            print " examining",k
             if isinstance(v, collections.Mapping):
-                r = update(d.get(k, {}), v)
+                r = self._merge(d.get(k, {}), v)
                 d[k] = r
             else:
                 d[k] = u[k]
@@ -72,11 +115,7 @@ class Configuration(dict):
         
     def extract(self):
         """Extract the dictionary from this object"""
-        return dict(self)
-        
-    def __repr__(self):
-        """Representation of this dictionary."""
-        return repr(dict(self))    
+        return self._store
 
 class StructuredConfiguration(Configuration):
     """A structured configuration with some basic defaults for AstroObject-type classes"""
@@ -86,11 +125,6 @@ class StructuredConfiguration(Configuration):
             self["Configurations"] = {}
         if "This" not in self["Configurations"]:
             self["Configurations"]["This"] = "AO.config.yaml"
-        
-    
-    def __repr__(self):
-        """Representation of this dictionary."""
-        return repr(dict(self))
         
     def setFile(self,filename,name=None):
         """Set configuration file"""
