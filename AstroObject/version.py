@@ -199,6 +199,7 @@ def _get_git_devstr(sha=False):
         return  'dev-r%i'%nrev
     
 dev = _get_git_devstatus()
+release = not dev
 _get_devstr = _get_git_devstr
     
 version = str(major)+'.' +\
