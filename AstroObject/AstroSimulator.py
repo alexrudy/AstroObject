@@ -207,8 +207,8 @@ class Stage(object):
     @staticmethod
     def table_head():
         """docstring for table_head"""
-        text  = "|         Stage         | Passed |        Time         |\n"
-        text += "|-----------------------|--------|---------------------|"
+        text  = "|         Stage         | Passed |     Time      |\n"
+        text += "|-----------------------|--------|---------------|"
         return text
         
     def table_row(self,total=None):
@@ -217,13 +217,13 @@ class Stage(object):
         keys = {
                 "stage": self.name,
                 "result": str(self.complete),
-                "time": datetime.timedelta(seconds=self.durTime),
+                "time": datetime.timedelta(seconds=int(self.durTime)),
             }
         if total == None:            
-            string =  u"| %(stage)21s | %(result)6s | %(time) 18s |" % keys
+            string =  u"| %(stage)21s | %(result)6s | %(time) 12s |" % keys
         else:
             keys["per"] = ( self.durTime / total ) * 100.0
-            string = u"| %(stage)21s | %(result)6s | %(time)15s %(per)2d%% |" % keys
+            string = u"| %(stage)21s | %(result)6s | %(time)9s %(per)2d%% |" % keys
             string += u"█" * int(keys["per"] * 50 / 100)
         return string
         
@@ -273,6 +273,7 @@ class Simulator(object):
         self.complete = [] # Stages and dependents which have been walked
         self.done = [] # Stages and dependents which have been checked
         self.ran = [] # Stages and dependents which have been executed
+        self.aran = []
         self.name = name
         self.order = None
         self.config = StructuredConfiguration({})
@@ -705,7 +706,7 @@ class Simulator(object):
         text = "Simulation profile:\n"
         text += Stage.table_head() + "\n"
         
-        for stage in self.ran:
+        for stage in self.aran:
             text += self.stages[stage].table_row(total) + "\n"
             
         self.exit(msg=text)
@@ -784,6 +785,7 @@ class Simulator(object):
             self.complete += [stage] + s.reps
             self.ran += [stage]
         finally:
+            self.aran += [stage]
             self.log.debug(u"Finished \'%s\'" % s.name)
         
         return use
