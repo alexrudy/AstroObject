@@ -207,8 +207,8 @@ class Stage(object):
     @staticmethod
     def table_head():
         """docstring for table_head"""
-        text  = "|         Stage         | Passed |    Time    |\n"
-        text += "|-----------------------|--------|------------|"
+        text  = "|         Stage         | Passed |     Time     |\n"
+        text += "|-----------------------|--------|--------------|"
         return text
         
     def table_row(self,total=None):
@@ -220,10 +220,11 @@ class Stage(object):
                 "time": self.durTime,
             }
         if total == None:            
-            string =  "| %(stage)21s | %(result)6s | %(time) 9.2fs |" % keys
+            string =  u"| %(stage)21s | %(result)6s | %(time) 11.2fs |" % keys
         else:
             keys["per"] = ( self.durTime / total ) * 100.0
-            string = "| %(stage)21s | %(result)6s | %(time) 4.2fs %(per)2d%% |" % keys
+            string = u"| %(stage)21s | %(result)6s | %(time) 7.2fs %(per)2d%% |" % keys
+            string += u"█" * int(keys["per"] * 50 / 100)
         return string
         
     def profile(self):
