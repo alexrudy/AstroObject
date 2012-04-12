@@ -210,6 +210,12 @@ class Stage(object):
         text  = "|         Stage         | Passed |     Time      |\n"
         text += "|-----------------------|--------|---------------|"
         return text
+      
+    @staticmethod 
+    def table_foot(total):
+        """docstring for taple_foot"""
+        text  = "|                       | Total Time: %-9s  |" % datetime.timedelta(seconds=int(total))
+        return text
         
     def table_row(self,total=None):
         """Return a profiling string table row."""
@@ -708,6 +714,8 @@ class Simulator(object):
         
         for stage in self.aran:
             text += self.stages[stage].table_row(total) + "\n"
+            
+        text += Stage.table_foot(total)
             
         self.exit(msg=text)
             
