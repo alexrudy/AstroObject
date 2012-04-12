@@ -140,7 +140,7 @@ from AstroCache import *
 from AstroConfig import *
 from Utilities import *
 
-__all__ = ["Simulator","on_collection","help","replaces","excepts","depends","include","optional","description","collect","ignore"]
+__all__ = ["Simulator","on_collection","help","replaces","excepts","depends","include","optional","description","collect","ignore","on_instance_collection"]
 
 __version__ = getVersion()
 
@@ -820,7 +820,7 @@ class Simulator(object):
         self.progressbar = False
         self.progress = 0
         
-    def map_over_collection(self,function,idfun=str,collection=[],exceptions=True,color="green"):
+    def map(self,function,collection=[],idfun=str,exceptions=True,color="green"):
         """Map a function over a given collection."""
         if exceptions == True:
             exceptions = Exception
@@ -844,7 +844,11 @@ class Simulator(object):
                 self.log.warning("Trapped %d errors" % len(self.errors))
                 for error in self.errors:
                     self.log.debug("Error %s caught" % error)
-            
+    
+    def map_over_collection(self,function,idfun=str,collection=[],exceptions=True,color="green"):
+        """docstring for map_over_collection"""
+        self.map(function,collection,idfun,exceptions,color)
+    
     def _collection_map(self,i,function,exceptions,idfun,showBar):
         """Maps something over a bunch of lenslets"""
         identity = idfun(i)
@@ -946,6 +950,16 @@ def ignore(ignore=True):
     return decorate
     
 
+def on_instance_collection(get_collection,idfun=str,exceptions=True,color="green"):
+    """Decorator for acting a specific method over a collection"""
+    def decorate(func):
+        name = func.__name__
+        def newfunc(self):
+            self.map_over_collection(lambda i: func(self,i),idfun,get_collection(self),exceptions,color)
+        newfunc = make_decorator(func)(newfunc)
+        return newfunc
+    return decorate
+    
 def on_collection(collection,idfun=str,exceptions=True,color="green"):
     """Decorator for acting a specific method over a collection"""
     def decorate(func):
