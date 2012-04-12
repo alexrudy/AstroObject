@@ -18,7 +18,9 @@ from pkg_resources import resource_string
 
 from matplotlib.ticker import LogFormatter
 
-import terminal
+import terminal as terminal
+from version import version as versionstr
+
 
 __all__ = ["abstractmethod","LogFormatterTeXExponent","getVersion","expandLim","BlackBody","Gaussian","validate_filename","update","npArrayInfo","HDUFrameTypeError","ConfigurationError","resource_string","func_lineno","make_decorator","terminal","ProgressBar","ColorBar"]
 
@@ -36,13 +38,7 @@ def enable_Console():
     
 def getVersion(rel=__name__,filename="VERSION",getTuple=False):
     """Returns the version number as either a string or tuple. The version number is retrieved from the "VERSION" file, which should contain just the text for the version and nothing else. When the version is returned as a tuple, each component (level) of the version number is a seperate, integer element of the tuple."""
-    string = resource_string(rel,filename)
-    if getTuple:
-        stuple = string.split(".")
-        stuple = [ int(val) for val in stuple ]
-        return tuple(stuple)
-    else:
-        return string
+    return versionstr
 
 def get_padding(*otherxy):
     """This function returns axis values to provide 5-percent padding around the given data."""

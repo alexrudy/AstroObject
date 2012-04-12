@@ -11,7 +11,9 @@ import time,sys,os
 
 from AstroObjectLogging import *
 
-__version__ = '0.3.4'
+from version import version as versionstr
+
+__version__ = versionstr
 
 __all__ = ['AnalyticSpectra','AstroImage','AstroObjectBase','AstroSpectra','AstroObjectLogging','Utilities']
 
