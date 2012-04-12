@@ -20,9 +20,11 @@ from matplotlib.ticker import LogFormatter
 
 import terminal
 
-__all__ = ["LogFormatterTeXExponent","getVersion","expandLim","BlackBody","Gaussian","validate_filename","update","npArrayInfo","AbstractError","HDUFrameTypeError","ConfigurationError","resource_string","func_lineno","make_decorator","terminal","ProgressBar","ColorBar"]
+__all__ = ["abstractmethod","LogFormatterTeXExponent","getVersion","expandLim","BlackBody","Gaussian","validate_filename","update","npArrayInfo","HDUFrameTypeError","ConfigurationError","resource_string","func_lineno","make_decorator","terminal","ProgressBar","ColorBar"]
 
 LOG = logging.getLogger(__name__)
+
+
 
 def disable_Console():
     """Disables console Logging"""
@@ -160,6 +162,24 @@ def make_decorator(func):
         return newfunc
     return decorate
 
+def abstractmethod(message):
+    """Decorator for abstract methods"""
+    if callable(message):
+        func = message
+        message = "Call to abstract method %s"
+        default_message = True
+    
+    def decorate(func):
+        name = func.__name__
+        def newfunc(*args,**kwargs):
+            raise NotImplementedError(message % name)
+        newfunc = make_decorator(func)(newfunc)
+        return newfunc
+    
+    if default_message:
+        return decorate(func)
+    
+    return decorate
 
 def npArrayInfo(array,name=None):
     """Message describing this array in excruciating detail. Used in debugging arrays where we don't know what they contain. Returns a message string.
@@ -235,9 +255,6 @@ def npArrayInfo(array,name=None):
         MSG = "%(name)s doesn't appear to be a Numpy Array! Type: %(type)s"
     return MSG % fmtr
 
-class AbstractError(Exception):
-    """An error which arose due to bad abstraction implemetnation"""
-    pass
 
 class HDUFrameTypeError(Exception):
     """An error caused because an HDUFrame is of the wrong type for interpretation."""

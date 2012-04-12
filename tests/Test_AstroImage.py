@@ -12,9 +12,6 @@ from tests.Test_AstroObjectAPI import *
 # Parent Object Imports
 import AstroObject.AstroImage as AI
 
-# Utility Imports
-from AstroObject.Utilities import AbstractError
-
 # Testing Imports
 import nose.tools as nt
 from nose.plugins.skip import Skip,SkipTest

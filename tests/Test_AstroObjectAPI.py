@@ -8,7 +8,6 @@
 
 # Parent Imports
 import AstroObject.AstroObjectBase as AOB
-from AstroObject.Utilities import AbstractError
 
 # Testing Imports
 import nose.tools as nt
@@ -79,55 +78,55 @@ class API_Abstract_Frame(API_Base):
         """__init__() fails with valid data but no label"""
         AFrame = self.FRAME(self.VALID,None)
     
-    @nt.raises(AbstractError)
+    @nt.raises(NotImplementedError)
     def test_save_data(self):
-        """__save__() to an abstract base class raises an AbstractError"""
+        """__save__() to an abstract base class raises an NotImplementedError"""
         # raise SkipTest("This is a bug, related to argument ordering on the frame.__init__() call.")
         # The following arguments are treated as label and header respectivley. The lack of abstract type cheking and/or a data argument means that this call doesn't fail when it should.
         self.FRAME.__save__(self.VALID,"None")
     
-    @nt.raises(AbstractError)
+    @nt.raises(NotImplementedError)
     def test_save_none(self):
-        """__save__() with none object raises an AbstractError"""
+        """__save__() with none object raises an NotImplementedError"""
         self.FRAME.__save__(None,"None")
-    @nt.raises(AbstractError)
+    @nt.raises(NotImplementedError)
     def test_read_SecondaryHDU(self):
         """__read__() secondary HDU type should get an abstract error"""
         self.FRAME.__read__(self.imHDU(self.INVALID),"Empty")
         
-    @nt.raises(AbstractError)
+    @nt.raises(NotImplementedError)
     def test_read_PrimaryHDU(self):
         """__read__() primary HDU type should get an abstract error"""
         BFrame = self.FRAME.__read__(self.pmHDU(self.INVALID),"Not Empty")
     
-    @nt.raises(AbstractError)
+    @nt.raises(NotImplementedError)
     def test_read_empty_HDU(self):
         """__read__() an empty primary HDU fails"""
         HDU = pf.PrimaryHDU()
         AFrame = self.FRAME.__read__(HDU,"Empty")
     
-    @nt.raises(AbstractError)
+    @nt.raises(NotImplementedError)
     def test_call(self):
-        """__call__() a base frame should raise an AbstractError"""
+        """__call__() a base frame should raise an NotImplementedError"""
         BFrame = self.FRAME(data=self.VALID,label="Empty")
         assert BFrame.label == "Empty"
         BFrame()
     
-    @nt.raises(AbstractError)
+    @nt.raises(NotImplementedError)
     def test_HDU(self):
-        """__hdu__() raises an AbstractError"""
+        """__hdu__() raises an NotImplementedError"""
         BFrame = self.FRAME(data=self.VALID,label="Empty")
         assert BFrame.label == "Empty"
         HDU = BFrame.__hdu__()
     
-    @nt.raises(AbstractError)
+    @nt.raises(NotImplementedError)
     def test_PrimaryHDU(self):
-        """__hdu__() primary raises an AbstractError"""
+        """__hdu__() primary raises an NotImplementedError"""
         BFrame = self.FRAME(data=self.VALID,label="Empty")
         assert BFrame.label == "Empty"
         HDU = BFrame.__hdu__(primary=True)
     
-    @nt.raises(AbstractError)
+    @nt.raises(NotImplementedError)
     def test_show(self):
         """__show__() a base frame should fail"""
         BFrame = self.FRAME(data=self.VALID,label="Empty")

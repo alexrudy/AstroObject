@@ -95,7 +95,7 @@ class HDUFrame(AstroObjectBase.FITSFrame,pf.ImageHDU):
     
     @classmethod
     def __save__(cls,data,label):
-        """Attempts to create a :class:`ImageFrame` object from the provided data. This requres some type checking to ensure that the provided data meets the general sense of such an image. If the data does not appear to be correct, this method will raise an :exc:`AbstractError` with a message describing why the data did not validate. Generally, this error will be intercepted by the caller, and simply provides an indication that this is not the right class for a particular piece of data.
+        """Attempts to create a :class:`ImageFrame` object from the provided data. This requres some type checking to ensure that the provided data meets the general sense of such an image. If the data does not appear to be correct, this method will raise an :exc:`NotImplementedError` with a message describing why the data did not validate. Generally, this error will be intercepted by the caller, and simply provides an indication that this is not the right class for a particular piece of data.
         
         If the data is saved successfully, this method will return an object of type :class:`ImageFrame`
         
@@ -104,12 +104,12 @@ class HDUFrame(AstroObjectBase.FITSFrame,pf.ImageHDU):
         LOG.debug("Attempting to save as %s" % cls)
         if not isinstance(data,np.ndarray):
             msg = "ImageFrame cannot handle objects of type %s, must be type %s" % (type(data),np.ndarray)
-            raise AbstractError(msg)
+            raise NotImplementedError(msg)
         try:
             Object = cls(data=data,label=label)
         except AssertionError as AE:
             msg = "%s data did not validate: %s" % (cls.__name__,AE)
-            raise AbstractError(msg)
+            raise NotImplementedError(msg)
         LOG.debug("Saved %s" % (Object))
         return Object
     
@@ -120,10 +120,10 @@ class HDUFrame(AstroObjectBase.FITSFrame,pf.ImageHDU):
         LOG.debug("Attempting to read as %s" % cls)
         if not isinstance(HDU,(pf.ImageHDU,pf.PrimaryHDU)):
             msg = "Must save a PrimaryHDU or ImageHDU to a %s, found %s" % (cls.__name__,type(HDU))
-            raise AbstractError(msg)
+            raise NotImplementedError(msg)
         if not (isinstance(HDU.data,np.ndarray) or HDU.data==None):
             msg = "HDU Data must be %s for %s, found data of %s" % (np.ndarray,cls.__name__,type(HDU.data))
-            raise AbstractError(msg)
+            raise NotImplementedError(msg)
         try:
             # Swizzle:
             HDU.__class__ = HDUFrame
@@ -132,7 +132,7 @@ class HDUFrame(AstroObjectBase.FITSFrame,pf.ImageHDU):
             # Object = cls(data=HDU.data,label=label,header=HDU.header)
         except AssertionError as AE:
             msg = "%s data did not validate: %s" % (cls.__name__,AE)
-            raise AbstractError(msg)
+            raise NotImplementedError(msg)
         LOG.debug("Created %s" % Object)
         return Object
     

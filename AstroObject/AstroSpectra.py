@@ -95,7 +95,7 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
     
     @classmethod
     def __save__(cls,data,label):
-        """Attempts to create a :class:`ImageFrame` object from the provided data. This requres some type checking to ensure that the provided data meets the general sense of such an image. If the data does not appear to be correct, this method will raise an :exc:`AbstractError` with a message describing why the data did not validate. Generally, this error will be intercepted by the caller, and simply provides an indication that this is not the right class for a particular piece of data.
+        """Attempts to create a :class:`ImageFrame` object from the provided data. This requres some type checking to ensure that the provided data meets the general sense of such an image. If the data does not appear to be correct, this method will raise an :exc:`NotImplementedError` with a message describing why the data did not validate. Generally, this error will be intercepted by the caller, and simply provides an indication that this is not the right class for a particular piece of data.
         
         If the data is saved successfully, this method will return an object of type :class:`ImageFrame`
         
@@ -104,14 +104,14 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
         dimensions = 2
         if not isinstance(data,np.ndarray):
             msg = "%s cannot handle objects of type %s, must be type %s" % (cls.__name__,type(data),np.ndarray)
-            raise AbstractError(msg)
+            raise NotImplementedError(msg)
         if data.ndim != dimensions:
             LOG.warning("The data appears to be %d dimensional. This object expects %d dimensional data." % (len(data.shape),dimensions))
         try:
             Object = cls(data,label)
         except AssertionError as AE:
             msg = "%s data did not validate: %s" % (cls.__name__,AE)
-            raise AbstractError(msg)
+            raise NotImplementedError(msg)
         LOG.log(2,"Saved %s with size %d" % (Object,Object.size))
         return Object
     
@@ -121,15 +121,15 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
         LOG.log(2,"Attempting to read as %s" % cls)
         if not isinstance(HDU,(pf.ImageHDU,pf.PrimaryHDU)):
             msg = "Must save a PrimaryHDU or ImageHDU to a %s, found %s" % (cls.__name__,type(HDU))
-            raise AbstractError(msg)
+            raise NotImplementedError(msg)
         if not isinstance(HDU.data,np.ndarray):
             msg = "HDU Data must be %s for %s, found data of %s" % (np.ndarray,cls.__name__,type(HDU.data))
-            raise AbstractError(msg)    
+            raise NotImplementedError(msg)    
         try:
             Object = cls(HDU.data,label)        
         except AssertionError as AE:
             msg = "%s data did not validate: %s" % (cls.__name__,AE)
-            raise AbstractError(msg)
+            raise NotImplementedError(msg)
         LOG.log(2,"Read %s with size %s" % (Object,Object.size))
         return Object
     

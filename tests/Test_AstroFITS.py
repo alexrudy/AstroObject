@@ -13,7 +13,7 @@ from tests.Test_AstroObjectAPI import *
 import AstroObject.AstroFITS as AF
 
 # Utility Imports
-from AstroObject.Utilities import AbstractError, npArrayInfo
+from AstroObject.Utilities import npArrayInfo
 
 # Testing Imports
 import nose.tools as nt

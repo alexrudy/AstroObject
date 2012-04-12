@@ -8,7 +8,6 @@
 
 from tests.Test_AstroObjectAPI import *
 import AstroObject.AstroObjectBase as AOB
-from AstroObject.Utilities import AbstractError
 import nose.tools as nt
 from nose.plugins.skip import Skip,SkipTest
 import numpy as np
@@ -29,7 +28,7 @@ class API_Abstract_Object(API_Base_Object):
         """data() should prevent data from referencing each other."""
         raise SkipTest("data() does not make sense with abstract base class")
     
-    @nt.raises(AbstractError)
+    @nt.raises(NotImplementedError)
     def test_data(self):
         """data() raises an abstract error for an abstract frame"""
         BObject = self.OBJECT()
@@ -37,7 +36,7 @@ class API_Abstract_Object(API_Base_Object):
         BObject.data()
         
     
-    @nt.raises(AbstractError)
+    @nt.raises(NotImplementedError)
     def test_show(self):
         """show() calls underlying show method, raising an abstract error"""
         BObject = self.OBJECT()
@@ -132,7 +131,7 @@ class test_FITSObject(API_Abstract_Object):
         
         def SAMEDATA(first,second):
             """Return whether these two are the same data"""
-            raise AbstractError("This doesn't make sense for an abstract frame...")
+            raise NotImplementedError("This doesn't make sense for an abstract frame...")
             
         
         def SAME(first,second):

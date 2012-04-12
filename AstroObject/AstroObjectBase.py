@@ -6,7 +6,62 @@
 #  Copyright 2011 Alexander Rudy. All rights reserved.
 #  Version 0.3.4
 # 
+"""
+Custom Object Basics: :class:`FITSObject` 
+-----------------------------------------
 
+The Base API was introduced in version 0.2.1 to facilitate the creation and use of basic template classes.
+
+The FITSObject container is useful for handling many data frames. It can be sub-classed easily to make a customized data container which can handle new types of data frames. To create a custom data container, ensure you have a class which conforms to the :ref:`AstroObjectAPI` (called a ``frame``), then simply subclass :class:`AstroObjectBase.FITSObject` and provide the ``frame`` to :attr:`FITSObject.dataclasses`. For example, if :class:`FooFrame` conforms to the :ref:`AstroObjectAPI`, then you could use::
+    
+    class FooObject(AstroObjectBase.FITSObject):
+        \"\"\"A container for tracking FooFrames\"\"\"
+        def __init__(self, array=None):
+            super(ImageObject, self).__init__()
+            self.dataClasses += [FooFrame]
+            self.dataClasses.remove(AstroObjectBase.FITSFrame)
+            if array != None:
+                self.save(array)        # Save the initializing data
+            
+        
+    
+This object will then have all of the functions provided by :class:`AstroObjectBase.FITSObject`, but will only accept and handle data of type :class:`FooFrame`. :class:`FooFrame` should then implement all of the functions described in the :ref:`AstroObjectAPI`.
+
+.. autoclass::
+    AstroObject.AstroObjectBase.FITSObject
+    :show-inheritance:
+    :members:
+    
+
+Custom Frame Basics :class:`FITSFrame`
+--------------------------------------
+
+AstroObjectBase provides template objects for the Object-Oriented Modules :mod:`AstroImage` and :mod:`AstroSpectra`. Template classes implement all of the required methods. However, calling a method defined by a template class will usually raise an :exc:`NotImplementedError` indicating that an Abstract method was called. If you intend to work with ``.fits`` files directly, then you should subclass :class:`FITSFrame`. If not, subclass :class:`BaseFrame`, which is purely abstract, and makes no assumptions about your data structure.
+
+.. Note::
+    You should still use Template Classes even though they really only raise abstract errors. This helps you to ensure that you have implemented all of the required methods. As well, if new methods are added to the APIs in the future, using the Abstract class will likely cause your program to fail quietly on these new API calls, allowing you to mix old and new code with out too much concern for what has changed.
+
+
+.. autoclass:: 
+    AstroObject.AstroObjectBase.FITSFrame
+    :members:
+    :inherited-members:
+    :show-inheritance:
+    
+    .. automethod:: __call__
+    
+    .. automethod:: __repr__    
+    
+    .. automethod:: __valid__
+    
+    .. automethod:: __hdu__
+    
+    .. automethod:: __show__
+    
+    .. automethod:: __save__
+    
+    .. automethod:: __read__
+"""
 
 # Standard Scipy Toolkits
 import numpy as np
@@ -17,17 +72,10 @@ import matplotlib.pyplot as plt
 
 # Matplolib Extras
 import matplotlib.image as mpimage
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
 
-# Scipy Extras
-from scipy import ndimage
-from scipy.spatial.distance import cdist
-from scipy.linalg import norm
-
 # Standard Python Modules
-import math, copy, sys, time, logging, os
+import math, logging, os, time
 
 # Submodules from this system
 from Utilities import *
@@ -66,7 +114,8 @@ class BaseFrame(object):
             assert isinstance(self.label,(str,unicode)), "Frame requires a label, got %s" % self.label
         except AssertionError as e:
             raise AttributeError(str(e))
-
+    
+    @abstractmethod
     def __call__(self,**kwargs):
         """Should return the data within this frame, usually as a ``numpy`` array.
         
@@ -79,7 +128,7 @@ class BaseFrame(object):
             
         """
         msg = "Abstract Data Structure %s was called, but cannot return data!" % self
-        raise AbstractError(msg)
+        raise NotImplementedError(msg)
     
     def __repr__(self):
         """Returns String Representation of this frame object. Will display the class name and the label. This method does not need to be overwritten by subclasses.
@@ -99,12 +148,12 @@ class BaseFrame(object):
         """This method returns an HDU which represents the object. The HDU should respect the object's :attr:`header` attribute, and use that dictionary to populate the headers of the HDU. 
         
         :param primary: boolean, produce a primary HDU or not
-        :raises: :exc:`AbstractError` When the object cannot make a well-formed HDU
+        :raises: :exc:`NotImplementedError` When the object cannot make a well-formed HDU
         :returns: pyfits.PrimaryHDU or pyfits.HDU
         
-        If the frame cannot reasonable generate a :class:`pyFITS.PrimaryHDU`, then it should raise an :exc:`AbstractError` in that case."""
+        If the frame cannot reasonable generate a :class:`pyFITS.PrimaryHDU`, then it should raise an :exc:`NotImplementedError` in that case."""
         msg = "Abstract Data Structure %s cannot be used for HDU Generation!" % (self)
-        raise AbstractError(msg)
+        raise NotImplementedError(msg)
 
     
     def __show__(self):
@@ -112,52 +161,52 @@ class BaseFrame(object):
         
         :returns: Matplotlib plot object"""
         msg = "Abstract Data Structure %s cannot be used for plotting!" % (self)
-        raise AbstractError(msg)
+        raise NotImplementedError(msg)
     
     @classmethod
     def __save__(cls,data,label):
-        """This method should retun an instance of the parent class if the given data can be turned into an object of that class. If the data cannot be correctly cast, this method should throw an :exc:`AbstractError`.
+        """This method should retun an instance of the parent class if the given data can be turned into an object of that class. If the data cannot be correctly cast, this method should throw an :exc:`NotImplementedError`.
         
         :param data: Data to be saved, in raw form.
         :param label: Name for the newly created frame.
-        :raises: :exc:`AbstractError` when this data can't be saved.
+        :raises: :exc:`NotImplementedError` when this data can't be saved.
         :returns: :class:`BaseFrame`
         
-        .. Note:: Because the :meth:`__valid__` is called when an object is initialized, it is possible to check some aspects of the provided data in this initialization function. However, this would raise an :exc:`AssertionError` not an :exc:`AbstractError`. To avoid this problem, it is suggested that you wrap your initialization in a try...except block like::
+        .. Note:: Because the :meth:`__valid__` is called when an object is initialized, it is possible to check some aspects of the provided data in this initialization function. However, this would raise an :exc:`AssertionError` not an :exc:`NotImplementedError`. To avoid this problem, it is suggested that you wrap your initialization in a try...except block like::
                 
                 try:
                     Object = cls(HDU.data,label)
                 except AssertionError as AE:
                     msg = "%s data did not validate: %s" % (cls.__name__,AE)
-                    raise AbstractError(msg)
+                    raise NotImplementedError(msg)
                 
             This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like :exc:`AttributeError`) which are diffult to track and diagnose without the code in :meth:`__save__`. See :meth:`AstroImage.__save__` for an example ``__save__`` function which uses this trick, but also includes some basic data validation."""
         msg = "Abstract Data Structure %s cannot be the target of a save operation!" % (cls)
-        raise AbstractError(msg)
+        raise NotImplementedError(msg)
         
     
     @classmethod
     def __read__(cls,HDU,label):
-        """This method should return an instance of the parent class if the given ``HDU`` can be turned into an object of that class. If this is not possible (i.e. a Table HDU is provided to an Image Frame), this method should raise an :exc:`AbstractError` with a message that describes the resaon the data could not be cast into this type of frame.
+        """This method should return an instance of the parent class if the given ``HDU`` can be turned into an object of that class. If this is not possible (i.e. a Table HDU is provided to an Image Frame), this method should raise an :exc:`NotImplementedError` with a message that describes the resaon the data could not be cast into this type of frame.
         
         :param data: HDU to be saved, as a ``pyfits.HDU``.
         :param label: Name for the newly created frame.
-        :raises: :exc:`AbstractError` when this data can't be saved.
+        :raises: :exc:`NotImplementedError` when this data can't be saved.
         :returns: :class:`BaseFrame`
         
-        .. Note:: Because the :meth:`__valid__` is called when an object is initialized, it is possible to check some aspects of the provided data in this initialization function. However, this would raise an :exc:`AssertionError` not an :exc:`AbstractError`. To avoid this problem, it is suggested that you wrap your initialization in a try...except block like::
+        .. Note:: Because the :meth:`__valid__` is called when an object is initialized, it is possible to check some aspects of the provided data in this initialization function. However, this would raise an :exc:`AssertionError` not an :exc:`NotImplementedError`. To avoid this problem, it is suggested that you wrap your initialization in a try...except block like::
                 
                 try:
                     Object = cls(HDU.data,label)
                 except AssertionError as AE:
                     msg = "%s data did not validate: %s" % (cls.__name__,AE)
-                    raise AbstractError(msg)
+                    raise NotImplementedError(msg)
                 
             This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like :exc:`AttributeError`) which are diffult to track and diagnose without the code in :meth:`__read__`. See :meth:`AstroImage.__read__` for an example ``__read__`` function which uses this trick, but also includes some basic data validation.
             
         .. Note:: It is acceptable to call the class :meth:`__save__` function here. However, the :meth:`__read__` function should also correctly handle header data."""
         msg = "Abstract Data Structure %s cannot be the target of a read operation!" % (cls)
-        raise AbstractError(msg)
+        raise NotImplementedError(msg)
         
 
     
@@ -166,7 +215,7 @@ class BaseFrame(object):
 class FITSFrame(BaseFrame):
     """A single frame of a FITS image.
     Frames are known as Header Data Units, or HDUs when written to a FITS file.
-    This frame is generic. It does not legitimately implement any functions. Rather, each function implemented is a placeholder, and will generate an :exc:`AbstractError` if called. Several objects inherit from this one to create HDUs which have some semantic meaning.
+    This frame is generic. It does not legitimately implement any functions. Rather, each function implemented is a placeholder, and will generate an :exc:`NotImplementedError` if called. Several objects inherit from this one to create HDUs which have some semantic meaning.
     
     :param None data: The data to be saved.
     :param string label: A string name for this frame
@@ -174,7 +223,7 @@ class FITSFrame(BaseFrame):
     :param metadata: dictionary of arbitrary metadata
     
     .. Warning::
-        This is an abstract object. Methods implemented here will *likely* raise an :exc:`AbstractError` indicating that you shouldn't be using these methods. This class is provided so that users can sub-class it for their own purposes. It also serves as the base class for other Frames in this package.
+        This is an abstract object. Methods implemented here will *likely* raise an :exc:`NotImplementedError` indicating that you shouldn't be using these methods. This class is provided so that users can sub-class it for their own purposes. It also serves as the base class for other Frames in this package.
     
     """
     def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
@@ -203,15 +252,15 @@ class FITSFrame(BaseFrame):
         
         :param data: HDU to be saved, as a ``pyfits.HDU``.
         :param label: Name for the newly created frame.
-        :raises: :exc:`AbstractError` when this data can't be saved.
+        :raises: :exc:`NotImplementedError` when this data can't be saved.
         :returns: :class:`FITSFrame`
         """
         if not isinstance(HDU,pf.PrimaryHDU):
             msg = "Must save a %s to a %s, found %s" % (pf.PrimaryHDU.__name__,cls.__name__,HDU.__class__.__name__)
-            raise AbstractError(msg)
+            raise NotImplementedError(msg)
         if not HDU.data == None:
             msg = "HDU Data must be type %s for %s, found data of type %s" % (None,cls,type(HDU.data).__name__)
-            raise AbstractError(msg)
+            raise NotImplementedError(msg)
         Object = cls(None,label)
         LOG.log(2,"%s: Created %s" % (cls,Object))
         return Object
@@ -301,7 +350,7 @@ class FITSObject(dict):
             for dataClass in self.dataClasses:
                 try:
                     Object = dataClass.__save__(data,statename)
-                except AbstractError as AE:
+                except NotImplementedError as AE:
                     LOG.log(2,"Cannot save as %s: %s" % (dataClass,AE))
                 else:
                     break
@@ -568,7 +617,7 @@ class FITSObject(dict):
                     label = statename
                 try:
                     Object = dataClass.__read__(HDU,label)
-                except AbstractError as AE:
+                except NotImplementedError as AE:
                     LOG.log(2,"Cannot read as %s: %s" % (dataClass,AE))
                 else:
                     break
