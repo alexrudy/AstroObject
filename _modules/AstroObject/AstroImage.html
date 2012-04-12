@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObject.AstroImage &mdash; AstroObject 0.3.6-dev-git-d7e8903dbb2c39fb62245190057a74b90d9e310f documentation</title>
+    <title>AstroObject.AstroImage &mdash; AstroObject 0.3.6-p1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.6-dev-git-d7e8903dbb2c39fb62245190057a74b90d9e310f',
+        VERSION:     '0.3.6-p1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.6-dev-git-d7e8903dbb2c39fb62245190057a74b90d9e310f documentation" href="../../index.html" />
+    <link rel="top" title="AstroObject 0.3.6-p1 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.3.6-dev-git-d7e8903dbb2c39fb62245190057a74b90d9e310f documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.3.6-p1 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -55,7 +55,7 @@
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2011-04-28.</span>
 <span class="c">#  Copyright 2011 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.3.3</span>
+<span class="c">#  Version 0.3.6-p1</span>
 <span class="c"># </span>
 
 <span class="c"># Parent Modules</span>
@@ -136,7 +136,7 @@
     </div>
     <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="ImageFrame.__save__"><a class="viewcode-back" href="../../AstroImage.html#AstroObject.AstroImage.ImageFrame.__save__">[docs]</a>    <span class="k">def</span> <span class="nf">__save__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Attempts to create a :class:`ImageFrame` object from the provided data. This requres some type checking to ensure that the provided data meets the general sense of such an image. If the data does not appear to be correct, this method will raise an :exc:`AbstractError` with a message describing why the data did not validate. Generally, this error will be intercepted by the caller, and simply provides an indication that this is not the right class for a particular piece of data.</span>
+        <span class="sd">&quot;&quot;&quot;Attempts to create a :class:`ImageFrame` object from the provided data. This requres some type checking to ensure that the provided data meets the general sense of such an image. If the data does not appear to be correct, this method will raise an :exc:`NotImplementedError` with a message describing why the data did not validate. Generally, this error will be intercepted by the caller, and simply provides an indication that this is not the right class for a particular piece of data.</span>
 <span class="sd">        </span>
 <span class="sd">        If the data is saved successfully, this method will return an object of type :class:`ImageFrame`</span>
 <span class="sd">        </span>
@@ -145,14 +145,14 @@
         <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Attempting to save as </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">cls</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;ImageFrame cannot handle objects of type </span><span class="si">%s</span><span class="s">, must be type </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
             <span class="n">LOG</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;The data appears to be </span><span class="si">%d</span><span class="s"> dimensional. This object expects 2 dimensional data.&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">Object</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">AE</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> data did not validate: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="n">AE</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Saved </span><span class="si">%s</span><span class="s"> with size </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">Object</span><span class="p">,</span><span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">Object</span>
     </div>
@@ -163,15 +163,15 @@
         <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Attempting to read as </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">cls</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">HDU</span><span class="p">,(</span><span class="n">pf</span><span class="o">.</span><span class="n">ImageHDU</span><span class="p">,</span><span class="n">pf</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">)):</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Must save a PrimaryHDU or ImageHDU to a </span><span class="si">%s</span><span class="s">, found </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">HDU</span><span class="p">))</span>
-            <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">HDU</span><span class="o">.</span><span class="n">data</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;HDU Data must be </span><span class="si">%s</span><span class="s"> for </span><span class="si">%s</span><span class="s">, found data of </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">HDU</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
-            <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">Object</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">HDU</span><span class="o">.</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="n">HDU</span><span class="o">.</span><span class="n">header</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">AE</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> data did not validate: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="n">AE</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Created </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">Object</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Object</span>
     
@@ -375,7 +375,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.3.6-dev-git-d7e8903dbb2c39fb62245190057a74b90d9e310f documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.3.6-p1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
