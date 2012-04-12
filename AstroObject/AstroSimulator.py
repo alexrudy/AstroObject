@@ -254,7 +254,7 @@ class Simulator(object):
     
     name = "Simulator"
     
-    def __init__(self,name="__class__.__name__",commandLine=True):
+    def __init__(self,name="__class__.__name__",commandLine=True,version=None):
         super(Simulator, self).__init__()
         self.stages = {}
         self.macros = {}
@@ -287,6 +287,12 @@ class Simulator(object):
         self.commandLine = commandLine
         self.Caches = CacheManager()
         self.options = None
+        
+        if version==None:
+            self.version = u"AstroObject: " + __version__
+        else:
+            self.version = u"AstroObject: " + __version__ + "\n"+self.name+": " + version
+        
         self._initOptions()
         
     def _initOptions(self):
@@ -341,7 +347,7 @@ class Simulator(object):
         self.inc_stage_parser = self.parser.add_argument_group('Stages')
         
         # Add the basic controls for the script
-        self.parser.add_argument('--version',action='version',version=__version__)
+        self.parser.add_argument('--version',action='version',version=self.version)
         
         # Operational Controls
         self.registerConfigOpts('d',{'Debug':True},help="enable debugging messages and plots")

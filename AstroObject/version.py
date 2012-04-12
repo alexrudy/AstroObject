@@ -119,6 +119,9 @@ def _get_git_devstatus():
     from subprocess import Popen,PIPE
     from warnings import warn
     
+    if release:
+        return False
+    
     currdir = path.abspath(path.split(__file__)[0])
     try:
         p = Popen(['git','symbolic-ref','HEAD'],cwd=currdir,
