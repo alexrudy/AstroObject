@@ -76,6 +76,9 @@ from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
 
 # Standard Python Modules
 import math, logging, os, time
+import collections
+
+from abc import ABCMeta, abstractmethod, abstractproperty
 
 # Submodules from this system
 from Utilities import *
@@ -96,6 +99,7 @@ class BaseFrame(object):
     :raises AttributeError: when the frame fails to validate. See :meth:`__valid__`
     
     """
+        
     def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
         super(BaseFrame, self).__init__(**kwargs)
         if data != None:
@@ -115,7 +119,6 @@ class BaseFrame(object):
         except AssertionError as e:
             raise AttributeError(str(e))
     
-    @abstractmethod
     def __call__(self,**kwargs):
         """Should return the data within this frame, usually as a ``numpy`` array.
         
@@ -129,7 +132,7 @@ class BaseFrame(object):
         """
         msg = "Abstract Data Structure %s was called, but cannot return data!" % self
         raise NotImplementedError(msg)
-    
+
     def __repr__(self):
         """Returns String Representation of this frame object. Will display the class name and the label. This method does not need to be overwritten by subclasses.
         
@@ -155,7 +158,6 @@ class BaseFrame(object):
         msg = "Abstract Data Structure %s cannot be used for HDU Generation!" % (self)
         raise NotImplementedError(msg)
 
-    
     def __show__(self):
         """This method should create a simple view of the provided frame. Often this is done using :mod:`Matplotlib.pyplot` to create a simple plot. The plot should have the minimum amount of work done to make a passable plot view, but still be basic enough that the end user can customize the plot object after calling :meth:`__show__`.
         
@@ -164,6 +166,7 @@ class BaseFrame(object):
         raise NotImplementedError(msg)
     
     @classmethod
+    @abstractmethod    
     def __save__(cls,data,label):
         """This method should retun an instance of the parent class if the given data can be turned into an object of that class. If the data cannot be correctly cast, this method should throw an :exc:`NotImplementedError`.
         
@@ -186,6 +189,7 @@ class BaseFrame(object):
         
     
     @classmethod
+    @abstractmethod
     def __read__(cls,HDU,label):
         """This method should return an instance of the parent class if the given ``HDU`` can be turned into an object of that class. If this is not possible (i.e. a Table HDU is provided to an Image Frame), this method should raise an :exc:`NotImplementedError` with a message that describes the resaon the data could not be cast into this type of frame.
         
@@ -267,7 +271,7 @@ class FITSFrame(BaseFrame):
     
 
 
-class FITSObject(dict):
+class FITSObject(collections.MutableMapping):
     """This object tracks a number of data frames. The :attr:`Filename` is the default filename to use when reading and writing, and the :attr:`dataClass` argument accepts a list of new data classes to be used with this object. New data classes should conform to the data class standard.
     
     :param filename: String name of default file for reading and writing with :meth:`read` and :meth:`write`.
@@ -329,6 +333,10 @@ class FITSObject(dict):
         
         :returns: list"""
         return self.states.keys()
+        
+    def __len__(self):
+        """docstring for __len__"""
+        return len(self.states.keys())
         
     ###############################
     # Basic Object Mode Functions #
