@@ -9,36 +9,59 @@
 
 
 EXE=$0
-USAGE="
-Usage for bump-version
-
-	$EXE x.x.x
-	
-	change the version number to x.x.x
-
-"
-
-if [ "$#" -ne 1 ]
-then
-	echo "$USAGE"
-	exit
-fi
-
 
 SELECTREGEX="[0-9a-zA-Z\.\+\-]+"
 SPLITREGEX="([0-9]+)\.([0-9]+)(\.([0-9]+))?(-p([0-9]+))?($SELECTREGEX)?"
 VERSIONFILE="AstroObject/version.py"
 
 VERSION=`python $VERSIONFILE`
-NEWVERSION=$1
 
-MAJOR=`echo $NEWVERSION | sed -Ee "s/$SPLITREGEX/\1/"`
-MINOR=`echo $NEWVERSION | sed -Ee "s/$SPLITREGEX/\2/"`
-BUGFIX=`echo $NEWVERSION | sed -Ee "s/$SPLITREGEX/\4/"`
-PATCH=`echo $NEWVERSION | sed -Ee "s/$SPLITREGEX/\6/"`
+USAGE="
+Usage for bump-version:
+	
+    $EXE x.x.x
+	
+Help
+	
+    change the version number to x.x.x 
+    
+    current version: \"$VERSION\"
+
+"
 
 
-echo "Version is currently $VERSION, changing to $MAJOR . $MINOR . $BUGFIX -p $PATCH"
+if [ "$1" == "-v" ]; then
+    echo "Version is $VERSION"
+    exit
+fi
+
+if [ "$1" == "-t" ]; then
+    nargs=2
+    NEWVERSION=$2
+else
+    nargs=1
+    NEWVERSION=$1
+fi
+
+if [ "$#" -ne $nargs ]; then
+	echo "$USAGE"
+	exit
+fi
+
+
+MAJOR=`echo $NEWVERSION | grep -E "$SPLITREGEX" | sed -Ee "s/$SPLITREGEX/\1/"`
+MINOR=`echo $NEWVERSION | grep -E "$SPLITREGEX" | sed -Ee "s/$SPLITREGEX/\2/"`
+BUGFIX=`echo $NEWVERSION | grep -E "$SPLITREGEX" | sed -Ee "s/$SPLITREGEX/\4/"`
+PATCH=`echo $NEWVERSION | grep -E "$SPLITREGEX" | sed -Ee "s/$SPLITREGEX/\6/"`
+
+if [ "$MAJOR" == '' ] || [ "$MINOR" == '' ]; then
+    echo "Cannot parse version: \"$NEWVERSION\""
+    echo "  Found: major=$MAJOR minor=$MINOR bugfix=$BUGFIX patch=$PATCH"
+    exit
+fi
+
+echo "Version is currently $VERSION, changing to $NEWVERSION"
+echo " extracted as major=$MAJOR minor=$MINOR bugfix=$BUGFIX patch=$PATCH"
 
 if [ "$BUGFIX" == '' ]
 then
@@ -51,16 +74,26 @@ then
     PATCH='None'
 fi
 
-echo "Manipulating Python (.py) file comments"
-files=`find AstroObject/*.py`
+echo " entered as major=$MAJOR minor=$MINOR bugfix=$BUGFIX patch=$PATCH"
 
+if [ "$1" == "-t" ]; then
+    exit
+fi
+
+echo "Manipulating Python (.py) file comments"
+files=`find . -name '*.py' -not -path '*build*'`
 for file in $files
-do
-	sed -i '' -Ee "s/# +Version $SELECTREGEX/#  Version $NEWVERSION/" $file
-	echo "  Changed Version Comment to $NEWVERSION in $file"
+do  
+    found=`grep -E "# +Version" $file`
+    if [ "$found" == '' ]; then
+        echo "  No Version Comment in $file"
+    else
+    	sed -i '' -Ee "s/# +Version $SELECTREGEX/#  Version $NEWVERSION/" $file
+    	echo "  Changed Version Comment to $NEWVERSION in $file"
+    fi
 done
 
-files=`find *.md`
+files=`find . -name '*.md'`
 
 echo "Manipulating Markdown (.md) files"
 for file in $files
@@ -74,6 +107,7 @@ sed -i '' -Ee "s/major += +$SELECTREGEX/major = $MAJOR/" $VERSIONFILE
 sed -i '' -Ee "s/minor += +$SELECTREGEX/minor = $MINOR/" $VERSIONFILE
 sed -i '' -Ee "s/bugfix += +$SELECTREGEX/bugfix = $BUGFIX/" $VERSIONFILE
 sed -i '' -Ee "s/patch += +$SELECTREGEX/patch = $PATCH/" $VERSIONFILE
+echo "   Version variables set to major=$MAJOR minor=$MINOR bugfix=$BUGFIX patch=$PATCH"
 
 
 
