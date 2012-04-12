@@ -211,15 +211,20 @@ class Stage(object):
         text += "|-----------------------|--------|------------|"
         return text
         
-    def table_row(self):
+    def table_row(self,total=None):
         """Return a profiling string table row."""
         assert self.ran, "Stage %s didn't run" % self.name
-        return "| %(stage)21s | %(result)6s | %(time) 6.2es |" % {
-            "stage": self.name,
-            "result": str(self.complete),
-            "time": self.endTime - self.startTime,
-        }
-    
+        keys = {
+                "stage": self.name,
+                "result": str(self.complete),
+                "time": self.durTime,
+            }
+        if total == None:            
+            string =  "| %(stage)21s | %(result)6s | %(time) 9.2fs |" % keys
+        else:
+            keys["per"] = ( self.durTime / total ) * 100.0
+            string = "| %(stage)21s | %(result)6s | %(time) 4.2fs %(per)2d%% |" % keys
+        return string
         
     def profile(self):
         """Return a string stage profile for this stage."""
@@ -227,7 +232,7 @@ class Stage(object):
         return "Stage %(stage)s %(result)s in %(time).2fe" % {
             "stage": self.name,
             "result": "completed" if self.complete else "failed",
-            "time": self.endTime - self.startTime,
+            "time": self.durTime,
         }
         
     def run(self):
@@ -242,6 +247,7 @@ class Stage(object):
             self.complete = True
         finally:
             self.endTime = time.clock()
+            self.durTime = self.endTime - self.startTime
         
 
 class Simulator(object):
@@ -693,11 +699,13 @@ class Simulator(object):
     def show_profile(self):
         """Show the profile of the simulation"""
         
+        total = sum([ self.stages[stage].durTime for stage in self.ran])
+        
         text = "Simulation profile:\n"
         text += Stage.table_head() + "\n"
         
         for stage in self.ran:
-            text += self.stages[stage].table_row() + "\n"
+            text += self.stages[stage].table_row(total) + "\n"
             
         self.exit(msg=text)
             
@@ -790,7 +798,20 @@ class Simulator(object):
         sys.exit(code)
         
     def collect(self,matching=r'^(?!\_)',**kwargs):
-        """Collect class methods for inclusion as simulator stages. This method will collect all class methods of this object which are not included by default, and will register those functions as stages of this simulator. Stages will not be registered with any dependents. Stages are registered in alphabetical order (as returned by the `dir()` functon). This method does not do any logging. It should be called before the :meth:`run` method for the simulator is called.
+        """Collect class methods for inclusion as simulator stages. Class methods are collected if they do not belong to the parent :class:`Simulator` class (i.e. this method, and others like :meth:`registerStage` will not be collected.). Registered stages will default to having no dependents, to be named similar to thier own methods (``collected_stage`` becomes ``*collected-stage`` on the command line) and will use thier doc-string as the stage description. The way in which these stages are collected can be adjusted using the decorators provided in this module.
+        
+        To define a method as a stage with a dependent, help string, and by default inclusion, use::
+            
+            @collect
+            @include
+            @description("Doing something")
+            @help("Do something")
+            @depends("other-stage")
+            @replaces("missing-stage")
+            def stagename(self):
+                pass
+        
+        This method does not do any logging. It should be called before the :meth:`run` method for the simulator is called.
         
         Private methods are not included using the default matching string ``r'^(?!\_)'``. This string excludes any method beginning with an underscore. Alternative method name matching strings can be provided by the user.
         
@@ -808,7 +829,7 @@ class Simulator(object):
                     stageList.append(method)
                     
         stageList.sort(key=func_lineno)
-        [ self.registerStage(stage,**kwargs) for stage in stageList]
+        [ self.registerStage(stage,**kwargs) for stage in stageList ]
     
     
     def _start_progress_bar(self,length,color):
