@@ -5,7 +5,7 @@
  Created by Alexander Rudy on 2011-10-07.
  Copyright 2011 Alexander Rudy. All rights reserved.
 
-  Version 0.3.4
+  Version 0.3.5
 
 ---
 
@@ -138,3 +138,7 @@ As well, the library is useful for building object-based representations of new 
     - Simulator can collect stages automatically
     - Simualtor can be setup using decorators on functions
     - Simulator can produces stage timing profiles
+* 0.3.5
+    - Better version numbering
+    - Use of the built-in NotImplementedError
+    

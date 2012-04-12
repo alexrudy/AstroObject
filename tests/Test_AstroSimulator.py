@@ -10,7 +10,6 @@
 from tests.Test_AstroObjectAPI import *
 import AstroObject.AstroSimulator as AS
 from AstroObject.AstroCache import *
-from AstroObject.Utilities import AbstractError
 import nose.tools as nt
 from nose.plugins.skip import Skip,SkipTest
 import numpy as np

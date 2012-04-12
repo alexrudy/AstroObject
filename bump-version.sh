@@ -24,29 +24,40 @@ then
 	exit
 fi
 
-SELECTREGEX="[0-9a-zA-Z\.\+]+"
 
-VSPECFILE="VERSION"
-AVSPECFILE="AstroObject/VERSION"
+SELECTREGEX="[0-9a-zA-Z\.\+\-]+"
+SPLITREGEX="([0-9]+)\.([0-9]+)(\.([0-9]+))?(-p([0-9]+))?($SELECTREGEX)?"
+VERSIONFILE="AstroObject/version.py"
 
-VERSION=`cat $VSPECFILE`
+VERSION=`python $VERSIONFILE`
+NEWVERSION=$1
 
-echo "Version is currently $VERSION, changing to $1"
+MAJOR=`echo $NEWVERSION | sed -Ee "s/$SPLITREGEX/\1/"`
+MINOR=`echo $NEWVERSION | sed -Ee "s/$SPLITREGEX/\2/"`
+BUGFIX=`echo $NEWVERSION | sed -Ee "s/$SPLITREGEX/\4/"`
+PATCH=`echo $NEWVERSION | sed -Ee "s/$SPLITREGEX/\6/"`
 
-echo "$1" > $VSPECFILE
-echo "$1" > $AVSPECFILE
 
-VERSION=`cat $VSPECFILE`
+echo "Version is currently $VERSION, changing to $MAJOR . $MINOR . $BUGFIX -p $PATCH"
 
-echo "New Version $VERSION"
+if [ "$BUGFIX" == '' ]
+then
+    BUGFIX='None'
+fi
 
-echo "Manipulating Python (.py) files"
+
+if [ "$PATCH" == '' ]
+then
+    PATCH='None'
+fi
+
+echo "Manipulating Python (.py) file comments"
 files=`find AstroObject/*.py`
 
 for file in $files
 do
-	sed -i '' -Ee "s/# +Version $SELECTREGEX/#  Version $VERSION/" $file
-	echo "  Changed Version to $VERSION in $file"
+	sed -i '' -Ee "s/# +Version $SELECTREGEX/#  Version $NEWVERSION/" $file
+	echo "  Changed Version Comment to $NEWVERSION in $file"
 done
 
 files=`find *.md`
@@ -54,18 +65,17 @@ files=`find *.md`
 echo "Manipulating Markdown (.md) files"
 for file in $files
 do
-	sed -i '' -Ee "s/ +Version $SELECTREGEX/  Version $VERSION/" $file
-	echo "  Changed Version to $VERSION in $file"
+	sed -i '' -Ee "s/ +Version $SELECTREGEX/  Version $NEWVERSION/" $file
+	echo "  Changed Version to $NEWVERSION in $file"
 done
 
-echo "Manipulating Special Files:"
-sed -i '' -Ee "s/__version__ += +\'$SELECTREGEX\'/__version__ = \'$VERSION\'/" 'AstroObject/__init__.py'
-echo "  Changed AstroObject/__init__.py version variable to $VERSION"
-sed -i '' -Ee "s/    version = \"$SELECTREGEX\",/    version = \"$VERSION\",/" 'setup.py'
-echo "  Changed setup.py version variable to $VERSION"
-sed -i '' -Ee "s/version += +\'$SELECTREGEX\'/version = \'$VERSION\'/" 'Docs/source/conf.py'
-echo "  Changed Sphinyx conf.py version variable to $VERSION"
-sed -i '' -Ee "s/release += +\'$SELECTREGEX\'/release = \'$VERSION\'/" 'Docs/source/conf.py'
-echo "  Changed Sphinyx conf.py release variable to $VERSION"
+echo "Manipulating Special File $VERSIONFILE:"
+sed -i '' -Ee "s/major += +$SELECTREGEX/major = $MAJOR/" $VERSIONFILE
+sed -i '' -Ee "s/minor += +$SELECTREGEX/minor = $MINOR/" $VERSIONFILE
+sed -i '' -Ee "s/bugfix += +$SELECTREGEX/bugfix = $BUGFIX/" $VERSIONFILE
+sed -i '' -Ee "s/patch += +$SELECTREGEX/patch = $PATCH/" $VERSIONFILE
+
+
+
 
 echo "Done."

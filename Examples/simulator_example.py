@@ -27,6 +27,7 @@ class SimpleStage(Simulator):
     
     def __init__(self,*args,**kwargs):
         super(SimpleStage, self).__init__(*args,**kwargs)
+        self.blist = range(100000)
         self.collect()
         self.registerStage(None,"ex",description="Example Macro",dependencies=["main","other"],help="example Macro")
         self.Caches["Random Image"] = Cache(self._cache,self._load,self._save)
@@ -43,9 +44,23 @@ class SimpleStage(Simulator):
         
     @include
     @on_collection(LIST)
+    @description("Acting")
     @help("Add one to each item in a list, but really do nothing")
     def act(self,item):
         item + 1
+    
+    @include
+    @on_instance_collection(lambda s: s.blist)
+    @help("Run a function on a runtime avaialbe (instance) collection")
+    @description("Acting 2")
+    def act2(self,item):
+        item + 1
+    
+    @include
+    @help("Act on a collection using map")
+    def act3(self):
+        """Acting 3"""
+        self.map(np.exp,self.blist)
     
     @include()
     @ignore

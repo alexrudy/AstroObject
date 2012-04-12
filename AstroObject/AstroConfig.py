@@ -4,7 +4,7 @@
 #  
 #  Created by Alexander Rudy on 2012-02-08.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.3.4
+#  Version 0.3.5
 # 
 
 # Standard Python Modules

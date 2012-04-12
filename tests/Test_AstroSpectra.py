@@ -21,7 +21,6 @@ from nose.plugins.skip import Skip,SkipTest
 from tests.Test_AstroObjectAPI import *
 
 import AstroObject.AstroSpectra as AS
-from AstroObject.Utilities import AbstractError
 
 class test_SpectraFrame(API_Base_Frame):
     """AstroSpectra.SpectraFrame"""

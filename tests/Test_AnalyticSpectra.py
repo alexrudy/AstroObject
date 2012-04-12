@@ -23,7 +23,6 @@ from tests.Test_AstroObjectAPI import *
 from tests.Test_AstroSpectra import *
 
 import AstroObject.AnalyticSpectra as AS
-from AstroObject.Utilities import AbstractError
 
 class API_AnalyticSpectra(API_Abstract_Frame):
     """Set up and basic tests for analytic spectra"""
@@ -102,12 +101,12 @@ class test_AnalyticSpectraFrame(API_AnalyticSpectra,API_Abstract_Frame):
         
         def SAMEDATA(first,second):
             """Return whether these two are the same data"""
-            raise AbstractError("Data undefined...")
+            raise NotImplementedError("Data undefined...")
         
         
         def SAME(first,second):
             """Return whether these two are the same"""
-            raise AbstractError("Data undefined...")
+            raise NotImplementedError("Data undefined...")
         
         self.SAME = SAME
         self.SAMEDATA = SAMEDATA
@@ -115,14 +114,14 @@ class test_AnalyticSpectraFrame(API_AnalyticSpectra,API_Abstract_Frame):
         
         self.check_constants()
     
-    @nt.raises(AbstractError)
+    @nt.raises(NotImplementedError)
     def test_call(self):
         """__call__() raises abstract error"""
         AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
         data = AFrame(wavelengths=self.WAVELENGTHS)
         
-    @nt.raises(AbstractError)
+    @nt.raises(NotImplementedError)
     def test_call_with_arbitrary_arguments(self):
         """__call__() accepts arbitrary keyword arguments"""
         AFrame = self.FRAME(data=self.VALID,label="Valid")

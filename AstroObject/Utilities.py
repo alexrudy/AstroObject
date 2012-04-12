@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.4
+#  Version 0.3.5
 #
 
 from __future__ import division
@@ -18,11 +18,15 @@ from pkg_resources import resource_string
 
 from matplotlib.ticker import LogFormatter
 
-import terminal
+import terminal as terminal
+from version import version as versionstr
 
-__all__ = ["LogFormatterTeXExponent","getVersion","expandLim","BlackBody","Gaussian","validate_filename","update","npArrayInfo","AbstractError","HDUFrameTypeError","ConfigurationError","resource_string","func_lineno","make_decorator","terminal","ProgressBar","ColorBar"]
+
+__all__ = ["abstractmethod","LogFormatterTeXExponent","getVersion","expandLim","BlackBody","Gaussian","validate_filename","update","npArrayInfo","HDUFrameTypeError","ConfigurationError","resource_string","func_lineno","make_decorator","terminal","ProgressBar","ColorBar"]
 
 LOG = logging.getLogger(__name__)
+
+
 
 def disable_Console():
     """Disables console Logging"""
@@ -34,13 +38,7 @@ def enable_Console():
     
 def getVersion(rel=__name__,filename="VERSION",getTuple=False):
     """Returns the version number as either a string or tuple. The version number is retrieved from the "VERSION" file, which should contain just the text for the version and nothing else. When the version is returned as a tuple, each component (level) of the version number is a seperate, integer element of the tuple."""
-    string = resource_string(rel,filename)
-    if getTuple:
-        stuple = string.split(".")
-        stuple = [ int(val) for val in stuple ]
-        return tuple(stuple)
-    else:
-        return string
+    return versionstr
 
 def get_padding(*otherxy):
     """This function returns axis values to provide 5-percent padding around the given data."""
@@ -160,6 +158,24 @@ def make_decorator(func):
         return newfunc
     return decorate
 
+def abstractmethod(message):
+    """Decorator for abstract methods"""
+    if callable(message):
+        func = message
+        message = "Call to abstract method %s"
+        default_message = True
+    
+    def decorate(func):
+        name = func.__name__
+        def newfunc(*args,**kwargs):
+            raise NotImplementedError(message % name)
+        newfunc = make_decorator(func)(newfunc)
+        return newfunc
+    
+    if default_message:
+        return decorate(func)
+    
+    return decorate
 
 def npArrayInfo(array,name=None):
     """Message describing this array in excruciating detail. Used in debugging arrays where we don't know what they contain. Returns a message string.
@@ -235,9 +251,6 @@ def npArrayInfo(array,name=None):
         MSG = "%(name)s doesn't appear to be a Numpy Array! Type: %(type)s"
     return MSG % fmtr
 
-class AbstractError(Exception):
-    """An error which arose due to bad abstraction implemetnation"""
-    pass
 
 class HDUFrameTypeError(Exception):
     """An error caused because an HDUFrame is of the wrong type for interpretation."""

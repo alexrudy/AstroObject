@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-14.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.4
+#  Version 0.3.5
 # 
 """The Simulator is designed to provide a high level, command-line useful interface to large computational tasks. As the name suggests, Simulators often do a lot of programming work, and do so across many distinct "stages", whcih can be configured in any way the user desires. All of the abilities in this program are simply object abstraction techniques to provide a complex program with a command line interface and better control and reporting on the activities carreid out to successfully complete the program. It allows for the configuration of simple test cases and "macros" from within the program, eliminating the need to provide small wrapper scripts and test handlers.
 
@@ -140,7 +140,7 @@ from AstroCache import *
 from AstroConfig import *
 from Utilities import *
 
-__all__ = ["Simulator","on_collection","help","replaces","excepts","depends","include","optional","description","collect","ignore"]
+__all__ = ["Simulator","on_collection","help","replaces","excepts","depends","include","optional","description","collect","ignore","on_instance_collection"]
 
 __version__ = getVersion()
 
@@ -820,7 +820,7 @@ class Simulator(object):
         self.progressbar = False
         self.progress = 0
         
-    def map_over_collection(self,function,idfun=str,collection=[],exceptions=True,color="green"):
+    def map(self,function,collection=[],idfun=str,exceptions=True,color="green"):
         """Map a function over a given collection."""
         if exceptions == True:
             exceptions = Exception
@@ -844,7 +844,11 @@ class Simulator(object):
                 self.log.warning("Trapped %d errors" % len(self.errors))
                 for error in self.errors:
                     self.log.debug("Error %s caught" % error)
-            
+    
+    def map_over_collection(self,function,idfun=str,collection=[],exceptions=True,color="green"):
+        """docstring for map_over_collection"""
+        self.map(function,collection,idfun,exceptions,color)
+    
     def _collection_map(self,i,function,exceptions,idfun,showBar):
         """Maps something over a bunch of lenslets"""
         identity = idfun(i)
@@ -946,6 +950,16 @@ def ignore(ignore=True):
     return decorate
     
 
+def on_instance_collection(get_collection,idfun=str,exceptions=True,color="green"):
+    """Decorator for acting a specific method over a collection"""
+    def decorate(func):
+        name = func.__name__
+        def newfunc(self):
+            self.map_over_collection(lambda i: func(self,i),idfun,get_collection(self),exceptions,color)
+        newfunc = make_decorator(func)(newfunc)
+        return newfunc
+    return decorate
+    
 def on_collection(collection,idfun=str,exceptions=True,color="green"):
     """Decorator for acting a specific method over a collection"""
     def decorate(func):

@@ -4,13 +4,16 @@
 #  
 #  Created by Alexander Rudy on 2011-10-19.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.4
+#  Version 0.3.5
 # 
-
+"""This file maintains module level compatibility with the 0.2 API for base classes. It has been depreciated."""
 # This file maintains compatability with the 0.2 API for base classes
 
-from AstroObjectBase import *
+import AstroObject.AstroObjectBase
+from AstroObject.AstroObjectBase import *
 import logging
+
+__all__ = AstroObject.AstroObjectBase.__all__
 
 LOG = logging.getLogger(__name__)
 
