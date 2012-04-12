@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>10. Simulator AstroSimulator &mdash; AstroObject 0.3.3 documentation</title>
+    <title>10. Simulator AstroSimulator &mdash; AstroObject 0.3.6-dev-git-9db6c8869f82336c36ccaed361e2ca88dabad4f2 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.3',
+        VERSION:     '0.3.6-dev-git-9db6c8869f82336c36ccaed361e2ca88dabad4f2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.3 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.3.6-dev-git-9db6c8869f82336c36ccaed361e2ca88dabad4f2 documentation" href="index.html" />
     <link rel="next" title="11. Easy Logging AstroObjectLogging" href="AstroObjectLogging.html" />
     <link rel="prev" title="9. HDU Objects and Storage AstroFITS" href="AstroFITS.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="AstroFITS.html" title="9. HDU Objects and Storage AstroFITS"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.6-dev-git-9db6c8869f82336c36ccaed361e2ca88dabad4f2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -243,7 +243,7 @@ $ Simulator *none</pre>
 <p>The following methods handle the external-API for the simulator.</p>
 <dl class="class">
 <dt id="AstroObject.AstroSimulator.Simulator">
-<em class="property">class </em><tt class="descclassname">AstroObject.AstroSimulator.</tt><tt class="descname">Simulator</tt><big>(</big><em>name='__class__.__name__'</em>, <em>commandLine=True</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">AstroObject.AstroSimulator.</tt><tt class="descname">Simulator</tt><big>(</big><em>name='__class__.__name__'</em>, <em>commandLine=True</em>, <em>version=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator" title="Permalink to this definition">¶</a></dt>
 <dd><p>A Simulator, used for running large segements of code with detailed logging and progress checking. Simulators have a name, the <cite>name</cite> parameter can be left as is to use the name of the simulator&#8217;s class (mostly useful if you subclassed it!). The <cite>commandLine</cite> parameter can be set to False to prevent the simulator collecting arguments from <cite>sys.argv</cite> for use. This allows you to programatically call the simulator with the <a class="reference internal" href="#AstroObject.AstroSimulator.Simulator.do" title="AstroObject.AstroSimulator.Simulator.do"><tt class="xref py py-meth docutils literal"><span class="pre">do()</span></tt></a> method.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -258,10 +258,28 @@ $ Simulator *none</pre>
 </tbody>
 </table>
 <p>By default simulators are named for their class.</p>
-<blockquote>
-<div><dl class="method">
+<dl class="method">
+<dt id="AstroObject.AstroSimulator.Simulator.collect">
+<tt class="descname">collect</tt><big>(</big><em>matching='^(?!\_)'</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.collect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collect class methods for inclusion as simulator stages. This method will collect all class methods of this object which are not included by default, and will register those functions as stages of this simulator. Stages will not be registered with any dependents. Stages are registered in alphabetical order (as returned by the <cite>dir()</cite> functon). This method does not do any logging. It should be called before the <a class="reference internal" href="#AstroObject.AstroSimulator.Simulator.run" title="AstroObject.AstroSimulator.Simulator.run"><tt class="xref py py-meth docutils literal"><span class="pre">run()</span></tt></a> method for the simulator is called.</p>
+<p>Private methods are not included using the default matching string <tt class="docutils literal"><span class="pre">r'^(?!\_)'</span></tt>. This string excludes any method beginning with an underscore. Alternative method name matching strings can be provided by the user.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>matching</strong> (<em>string</em>) &#8211; Regular expression used for matching method names.</li>
+<li><strong>kwargs</strong> &#8211; Keyword arguments passed to the <a class="reference internal" href="#AstroObject.AstroSimulator.Simulator.registerStage" title="AstroObject.AstroSimulator.Simulator.registerStage"><tt class="xref py py-meth docutils literal"><span class="pre">registerStage()</span></tt></a> function.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="AstroObject.AstroSimulator.Simulator.registerStage">
-<tt class="descname">registerStage</tt><big>(</big><em>stage</em>, <em>name</em>, <em>description=None</em>, <em>exceptions=None</em>, <em>include=False</em>, <em>help=False</em>, <em>dependencies=None</em>, <em>replaces=None</em>, <em>optional=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.registerStage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.registerStage" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">registerStage</tt><big>(</big><em>stage</em>, <em>name=None</em>, <em>description=None</em>, <em>exceptions=None</em>, <em>include=None</em>, <em>help=False</em>, <em>dependencies=None</em>, <em>replaces=None</em>, <em>optional=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.registerStage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.registerStage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register a stage for operation with the simulator. The stage will then be available as a command line option, and will be operated with the simulator. Stages should be registered early in the operation of the simulator (preferably in the initialization, after the simulator class itself has initialized) so that the program is aware of the stages for running.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -415,12 +433,69 @@ $ Simulator -test +test</pre>
 </table>
 </dd></dl>
 
-</div></blockquote>
+<dl class="method">
+<dt id="AstroObject.AstroSimulator.Simulator.map_over_collection">
+<tt class="descname">map_over_collection</tt><big>(</big><em>function</em>, <em>idfun=&lt;type 'str'&gt;</em>, <em>collection=</em><span class="optional">[</span><span class="optional">]</span>, <em>exceptions=True</em>, <em>color='green'</em><big>)</big><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.map_over_collection" title="Permalink to this definition">¶</a></dt>
+<dd><p>docstring for map_over_collection</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="decorators">
+<h2>10.4. Decorators<a class="headerlink" href="#decorators" title="Permalink to this headline">¶</a></h2>
+<p>The following decorators can be used (in conjuction with <a class="reference internal" href="#AstroObject.AstroSimulator.Simulator.collect" title="AstroObject.AstroSimulator.Simulator.collect"><tt class="xref py py-meth docutils literal"><span class="pre">AstroObject.AstroSimulator.Simulator.collect()</span></tt></a>) to register and configure simulator stages:</p>
+<dl class="function">
+<dt id="AstroObject.AstroSimulator.collect">
+<tt class="descclassname">AstroObject.AstroSimulator.</tt><tt class="descname">collect</tt><big>(</big><em>collect=True</em><big>)</big><a class="headerlink" href="#AstroObject.AstroSimulator.collect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Include stage explicitly in collection</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="AstroObject.AstroSimulator.ignore">
+<tt class="descclassname">AstroObject.AstroSimulator.</tt><tt class="descname">ignore</tt><big>(</big><em>ignore=True</em><big>)</big><a class="headerlink" href="#AstroObject.AstroSimulator.ignore" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ignore stage explicitly in collection</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="AstroObject.AstroSimulator.include">
+<tt class="descclassname">AstroObject.AstroSimulator.</tt><tt class="descname">include</tt><big>(</big><em>include=True</em><big>)</big><a class="headerlink" href="#AstroObject.AstroSimulator.include" title="Permalink to this definition">¶</a></dt>
+<dd><p>Commands this object to be included</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="AstroObject.AstroSimulator.help">
+<tt class="descclassname">AstroObject.AstroSimulator.</tt><tt class="descname">help</tt><big>(</big><em>help</em><big>)</big><a class="headerlink" href="#AstroObject.AstroSimulator.help" title="Permalink to this definition">¶</a></dt>
+<dd><p>Registers a help string for this function</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="AstroObject.AstroSimulator.description">
+<tt class="descclassname">AstroObject.AstroSimulator.</tt><tt class="descname">description</tt><big>(</big><em>description</em><big>)</big><a class="headerlink" href="#AstroObject.AstroSimulator.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gives this object a description</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="AstroObject.AstroSimulator.depends">
+<tt class="descclassname">AstroObject.AstroSimulator.</tt><tt class="descname">depends</tt><big>(</big><em>*dependencies</em><big>)</big><a class="headerlink" href="#AstroObject.AstroSimulator.depends" title="Permalink to this definition">¶</a></dt>
+<dd><p>Registers dependencies for this function</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="AstroObject.AstroSimulator.replaces">
+<tt class="descclassname">AstroObject.AstroSimulator.</tt><tt class="descname">replaces</tt><big>(</big><em>*replaces</em><big>)</big><a class="headerlink" href="#AstroObject.AstroSimulator.replaces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Registers replacements for this stage</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="AstroObject.AstroSimulator.optional">
+<tt class="descclassname">AstroObject.AstroSimulator.</tt><tt class="descname">optional</tt><big>(</big><em>optional=True</em><big>)</big><a class="headerlink" href="#AstroObject.AstroSimulator.optional" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes this object optional</p>
 </dd></dl>
 
 </div>
 <div class="section" id="private-methods-and-classes">
-<h2>10.4. Private Methods and Classes<a class="headerlink" href="#private-methods-and-classes" title="Permalink to this headline">¶</a></h2>
+<h2>10.5. Private Methods and Classes<a class="headerlink" href="#private-methods-and-classes" title="Permalink to this headline">¶</a></h2>
 <p>These methods are used to implment the public-facing API. They are documented here to explain their use in development.</p>
 <dl class="method">
 <dt id="AstroObject.AstroSimulator.Simulator._initOptions">
@@ -595,7 +670,8 @@ $ Simulator -test +test</pre>
 <li><a class="reference internal" href="#simulator-command-line-interface">10.1. <strong class="program">Simulator</strong> Command Line Interface</a></li>
 <li><a class="reference internal" href="#simulator-configuration-files">10.2. <strong class="program">Simulator</strong> Configuration Files</a></li>
 <li><a class="reference internal" href="#api-methods">10.3. API Methods</a></li>
-<li><a class="reference internal" href="#private-methods-and-classes">10.4. Private Methods and Classes</a></li>
+<li><a class="reference internal" href="#decorators">10.4. Decorators</a></li>
+<li><a class="reference internal" href="#private-methods-and-classes">10.5. Private Methods and Classes</a></li>
 </ul>
 </li>
 </ul>
@@ -643,7 +719,7 @@ $ Simulator -test +test</pre>
         <li class="right" >
           <a href="AstroFITS.html" title="9. HDU Objects and Storage AstroFITS"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.6-dev-git-9db6c8869f82336c36ccaed361e2ca88dabad4f2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

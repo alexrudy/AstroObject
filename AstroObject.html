@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>4. Custom Object Basics: FITSObject &mdash; AstroObject 0.3.3 documentation</title>
+    <title>4. Custom Object Basics: FITSObject &mdash; AstroObject 0.3.6-dev-git-9db6c8869f82336c36ccaed361e2ca88dabad4f2 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.3',
+        VERSION:     '0.3.6-dev-git-9db6c8869f82336c36ccaed361e2ca88dabad4f2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.3 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.3.6-dev-git-9db6c8869f82336c36ccaed361e2ca88dabad4f2 documentation" href="index.html" />
     <link rel="next" title="6. Image Objects and Storage AstroImage" href="AstroImage.html" />
     <link rel="prev" title="3. AstroObject API" href="api.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="api.html" title="3. AstroObject API"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.6-dev-git-9db6c8869f82336c36ccaed361e2ca88dabad4f2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -324,7 +324,7 @@
 </div>
 <div class="section" id="custom-frame-basics-fitsframe">
 <h1>5. Custom Frame Basics <a class="reference internal" href="#AstroObject.AstroObjectBase.FITSFrame" title="AstroObject.AstroObjectBase.FITSFrame"><tt class="xref py py-class docutils literal"><span class="pre">FITSFrame</span></tt></a><a class="headerlink" href="#custom-frame-basics-fitsframe" title="Permalink to this headline">¶</a></h1>
-<p>AstroObjectBase provides template objects for the Object-Oriented Modules <tt class="xref py py-mod docutils literal"><span class="pre">AstroImage</span></tt> and <tt class="xref py py-mod docutils literal"><span class="pre">AstroSpectra</span></tt>. Template classes implement all of the required methods. However, calling a method defined by a template class will usually raise an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> indicating that an Abstract method was called. If you intend to work with <tt class="docutils literal"><span class="pre">.fits</span></tt> files directly, then you should subclass <a class="reference internal" href="#AstroObject.AstroObjectBase.FITSFrame" title="AstroObject.AstroObjectBase.FITSFrame"><tt class="xref py py-class docutils literal"><span class="pre">FITSFrame</span></tt></a>. If not, subclass <a class="reference internal" href="api.html#AstroObject.AstroObjectBase.BaseFrame" title="AstroObject.AstroObjectBase.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a>, which is purely abstract, and makes no assumptions about your data structure.</p>
+<p>AstroObjectBase provides template objects for the Object-Oriented Modules <tt class="xref py py-mod docutils literal"><span class="pre">AstroImage</span></tt> and <tt class="xref py py-mod docutils literal"><span class="pre">AstroSpectra</span></tt>. Template classes implement all of the required methods. However, calling a method defined by a template class will usually raise an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> indicating that an Abstract method was called. If you intend to work with <tt class="docutils literal"><span class="pre">.fits</span></tt> files directly, then you should subclass <a class="reference internal" href="#AstroObject.AstroObjectBase.FITSFrame" title="AstroObject.AstroObjectBase.FITSFrame"><tt class="xref py py-class docutils literal"><span class="pre">FITSFrame</span></tt></a>. If not, subclass <a class="reference internal" href="api.html#AstroObject.AstroObjectBase.BaseFrame" title="AstroObject.AstroObjectBase.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a>, which is purely abstract, and makes no assumptions about your data structure.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">You should still use Template Classes even though they really only raise abstract errors. This helps you to ensure that you have implemented all of the required methods. As well, if new methods are added to the APIs in the future, using the Abstract class will likely cause your program to fail quietly on these new API calls, allowing you to mix old and new code with out too much concern for what has changed.</p>
@@ -335,7 +335,7 @@
 <dd><p>Bases: <a class="reference internal" href="api.html#AstroObject.AstroObjectBase.BaseFrame" title="AstroObject.AstroObjectBase.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">AstroObject.AstroObjectBase.BaseFrame</span></tt></a></p>
 <p>A single frame of a FITS image.
 Frames are known as Header Data Units, or HDUs when written to a FITS file.
-This frame is generic. It does not legitimately implement any functions. Rather, each function implemented is a placeholder, and will generate an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> if called. Several objects inherit from this one to create HDUs which have some semantic meaning.</p>
+This frame is generic. It does not legitimately implement any functions. Rather, each function implemented is a placeholder, and will generate an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> if called. Several objects inherit from this one to create HDUs which have some semantic meaning.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -352,11 +352,11 @@ This frame is generic. It does not legitimately implement any functions. Rather,
 </table>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">This is an abstract object. Methods implemented here will <em>likely</em> raise an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> indicating that you shouldn&#8217;t be using these methods. This class is provided so that users can sub-class it for their own purposes. It also serves as the base class for other Frames in this package.</p>
+<p class="last">This is an abstract object. Methods implemented here will <em>likely</em> raise an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> indicating that you shouldn&#8217;t be using these methods. This class is provided so that users can sub-class it for their own purposes. It also serves as the base class for other Frames in this package.</p>
 </div>
 <dl class="method">
 <dt id="AstroObject.AstroObjectBase.FITSFrame.__call__">
-<tt class="descname">__call__</tt><big>(</big><em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroObjectBase.FITSFrame.__call__" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">__call__</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroObjectBase.FITSFrame.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Should return the data within this frame, usually as a <tt class="docutils literal"><span class="pre">numpy</span></tt> array.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -436,7 +436,7 @@ This frame is generic. It does not legitimately implement any functions. Rather,
 <dl class="classmethod">
 <dt id="AstroObject.AstroObjectBase.FITSFrame.__save__">
 <em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>data</em>, <em>label</em><big>)</big><a class="headerlink" href="#AstroObject.AstroObjectBase.FITSFrame.__save__" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method should retun an instance of the parent class if the given data can be turned into an object of that class. If the data cannot be correctly cast, this method should throw an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt>.</p>
+<dd><p>This method should retun an instance of the parent class if the given data can be turned into an object of that class. If the data cannot be correctly cast, this method should throw an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -447,7 +447,7 @@ This frame is generic. It does not legitimately implement any functions. Rather,
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><p class="first"><tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> when this data can&#8217;t be saved.</p>
+<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><p class="first"><tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> when this data can&#8217;t be saved.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><a class="reference internal" href="api.html#AstroObject.AstroObjectBase.BaseFrame" title="AstroObject.AstroObjectBase.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a></p>
@@ -457,12 +457,12 @@ This frame is generic. It does not legitimately implement any functions. Rather,
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p>Because the <a class="reference internal" href="#AstroObject.AstroObjectBase.FITSFrame.__valid__" title="AstroObject.AstroObjectBase.FITSFrame.__valid__"><tt class="xref py py-meth docutils literal"><span class="pre">__valid__()</span></tt></a> is called when an object is initialized, it is possible to check some aspects of the provided data in this initialization function. However, this would raise an <tt class="xref py py-exc docutils literal"><span class="pre">AssertionError</span></tt> not an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt>. To avoid this problem, it is suggested that you wrap your initialization in a try...except block like:</p>
+<p>Because the <a class="reference internal" href="#AstroObject.AstroObjectBase.FITSFrame.__valid__" title="AstroObject.AstroObjectBase.FITSFrame.__valid__"><tt class="xref py py-meth docutils literal"><span class="pre">__valid__()</span></tt></a> is called when an object is initialized, it is possible to check some aspects of the provided data in this initialization function. However, this would raise an <tt class="xref py py-exc docutils literal"><span class="pre">AssertionError</span></tt> not an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt>. To avoid this problem, it is suggested that you wrap your initialization in a try...except block like:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">try</span><span class="p">:</span>
     <span class="n">Object</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">HDU</span><span class="o">.</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">AE</span><span class="p">:</span>
     <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> data did not validate: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="n">AE</span><span class="p">)</span>
-    <span class="k">raise</span> <span class="n">AbstractError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </pre></div>
 </div>
 <p class="last">This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like <tt class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></tt>) which are diffult to track and diagnose without the code in <a class="reference internal" href="#AstroObject.AstroObjectBase.FITSFrame.__save__" title="AstroObject.AstroObjectBase.FITSFrame.__save__"><tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt></a>. See <tt class="xref py py-meth docutils literal"><span class="pre">AstroImage.__save__()</span></tt> for an example <tt class="docutils literal"><span class="pre">__save__</span></tt> function which uses this trick, but also includes some basic data validation.</p>
@@ -483,7 +483,7 @@ This frame is generic. It does not legitimately implement any functions. Rather,
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><p class="first"><tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> when this data can&#8217;t be saved.</p>
+<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><p class="first"><tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> when this data can&#8217;t be saved.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#AstroObject.AstroObjectBase.FITSFrame" title="AstroObject.AstroObjectBase.FITSFrame"><tt class="xref py py-class docutils literal"><span class="pre">FITSFrame</span></tt></a></p>
@@ -552,7 +552,7 @@ This frame is generic. It does not legitimately implement any functions. Rather,
         <li class="right" >
           <a href="api.html" title="3. AstroObject API"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.6-dev-git-9db6c8869f82336c36ccaed361e2ca88dabad4f2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

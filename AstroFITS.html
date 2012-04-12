@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>9. HDU Objects and Storage AstroFITS &mdash; AstroObject 0.3.3 documentation</title>
+    <title>9. HDU Objects and Storage AstroFITS &mdash; AstroObject 0.3.6-dev-git-9db6c8869f82336c36ccaed361e2ca88dabad4f2 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.3',
+        VERSION:     '0.3.6-dev-git-9db6c8869f82336c36ccaed361e2ca88dabad4f2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.3 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.3.6-dev-git-9db6c8869f82336c36ccaed361e2ca88dabad4f2 documentation" href="index.html" />
     <link rel="next" title="10. Simulator AstroSimulator" href="AstroSimulator.html" />
     <link rel="prev" title="8. Analytic Spectra and Interpolation AnalyticSpectra" href="AnalyticSpectra.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="AnalyticSpectra.html" title="8. Analytic Spectra and Interpolation AnalyticSpectra"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.6-dev-git-9db6c8869f82336c36ccaed361e2ca88dabad4f2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -99,7 +99,7 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
 <dl class="classmethod">
 <dt id="AstroObject.AstroFITS.HDUFrame.__save__">
 <em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>data</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroFITS.html#HDUFrame.__save__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroFITS.HDUFrame.__save__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attempts to create a <tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt> object from the provided data. This requres some type checking to ensure that the provided data meets the general sense of such an image. If the data does not appear to be correct, this method will raise an <tt class="xref py py-exc docutils literal"><span class="pre">AbstractError</span></tt> with a message describing why the data did not validate. Generally, this error will be intercepted by the caller, and simply provides an indication that this is not the right class for a particular piece of data.</p>
+<dd><p>Attempts to create a <tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt> object from the provided data. This requres some type checking to ensure that the provided data meets the general sense of such an image. If the data does not appear to be correct, this method will raise an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> with a message describing why the data did not validate. Generally, this error will be intercepted by the caller, and simply provides an indication that this is not the right class for a particular piece of data.</p>
 <p>If the data is saved successfully, this method will return an object of type <tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt></p>
 <p>The validation requires that the data be a type <tt class="docutils literal"><span class="pre">numpy.ndarray</span></tt> and that the data have 2 and only 2 dimensions.</p>
 </dd></dl>
@@ -484,7 +484,7 @@ In either case, this is followed by: for k in F: D[k] = F[k]</p>
         <li class="right" >
           <a href="AnalyticSpectra.html" title="8. Analytic Spectra and Interpolation AnalyticSpectra"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.6-dev-git-9db6c8869f82336c36ccaed361e2ca88dabad4f2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

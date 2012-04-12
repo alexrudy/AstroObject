@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>An Example Simulator &mdash; AstroObject 0.3.3 documentation</title>
+    <title>An Example Simulator &mdash; AstroObject 0.3.6-dev-git-9db6c8869f82336c36ccaed361e2ca88dabad4f2 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.3',
+        VERSION:     '0.3.6-dev-git-9db6c8869f82336c36ccaed361e2ca88dabad4f2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.3 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.3.6-dev-git-9db6c8869f82336c36ccaed361e2ca88dabad4f2 documentation" href="index.html" />
     <link rel="prev" title="14. Release Notes" href="rnotes.html" /> 
   </head>
   <body>
@@ -41,7 +41,7 @@
         <li class="right" >
           <a href="rnotes.html" title="14. Release Notes"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.6-dev-git-9db6c8869f82336c36ccaed361e2ca88dabad4f2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -77,41 +77,76 @@
     
 <span class="k">class</span> <span class="nc">SimpleStage</span><span class="p">(</span><span class="n">Simulator</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An example simulator designed to show the power of simulations and for use while testing.&quot;&quot;&quot;</span>
+    
+    <span class="n">LIST</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000000</span><span class="p">)</span>
+    
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SimpleStage</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">registerStage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">main</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;examp&quot;</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="s">&quot;Example Stage&quot;</span><span class="p">,</span><span class="n">include</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">registerStage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">other</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;other&quot;</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="s">&quot;Other Stage&quot;</span><span class="p">,</span><span class="n">include</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">registerStage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;last&quot;</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="s">&quot;Last Stage&quot;</span><span class="p">,</span><span class="n">include</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">registerStage</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span><span class="s">&quot;ex&quot;</span><span class="p">,</span><span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;examp&quot;</span><span class="p">,</span><span class="s">&quot;other&quot;</span><span class="p">],</span><span class="n">help</span><span class="o">=</span><span class="s">&quot;example Macro&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Caches</span><span class="p">[</span><span class="s">&quot;Random Image&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Caches</span><span class="p">[</span><span class="s">&quot;Random NPY&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">NumpyCache</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cache</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">/Random.npy&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Dirs&quot;</span><span class="p">][</span><span class="s">&quot;Caches&quot;</span><span class="p">])</span>
-        
-    <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blist</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100000</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">registerStage</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span><span class="s">&quot;ex&quot;</span><span class="p">,</span><span class="n">description</span><span class="o">=</span><span class="s">&quot;Example Macro&quot;</span><span class="p">,</span><span class="n">dependencies</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;main&quot;</span><span class="p">,</span><span class="s">&quot;other&quot;</span><span class="p">],</span><span class="n">help</span><span class="o">=</span><span class="s">&quot;example Macro&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Caches</span><span class="p">[</span><span class="s">&quot;Random Image&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_load</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_save</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Caches</span><span class="p">[</span><span class="s">&quot;Random NPY&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">NumpyCache</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">/Random.npy&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Dirs&quot;</span><span class="p">][</span><span class="s">&quot;Caches&quot;</span><span class="p">])</span>
+    
+    <span class="nd">@include</span>
+    <span class="nd">@description</span><span class="p">(</span><span class="s">&quot;The Main Stage&quot;</span><span class="p">)</span>
+    <span class="nd">@help</span><span class="p">(</span><span class="s">&quot;Manage the main stage&quot;</span><span class="p">)</span>
+    <span class="nd">@depends</span><span class="p">(</span><span class="s">&quot;other&quot;</span><span class="p">,</span><span class="s">&quot;last&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">main_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">print</span> <span class="s">&quot;Hello from </span><span class="si">%s</span><span class="s"> Object&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
         <span class="n">img</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Caches</span><span class="p">[</span><span class="s">&quot;Random Image&quot;</span><span class="p">]</span>
         <span class="k">print</span> <span class="n">img</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
         
+    <span class="nd">@include</span>
+    <span class="nd">@on_collection</span><span class="p">(</span><span class="n">LIST</span><span class="p">)</span>
+    <span class="nd">@description</span><span class="p">(</span><span class="s">&quot;Acting&quot;</span><span class="p">)</span>
+    <span class="nd">@help</span><span class="p">(</span><span class="s">&quot;Add one to each item in a list, but really do nothing&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">act</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">item</span><span class="p">):</span>
+        <span class="n">item</span> <span class="o">+</span> <span class="mi">1</span>
+    
+    <span class="nd">@include</span>
+    <span class="nd">@on_instance_collection</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">.</span><span class="n">blist</span><span class="p">)</span>
+    <span class="nd">@help</span><span class="p">(</span><span class="s">&quot;Run a function on a runtime avaialbe (instance) collection&quot;</span><span class="p">)</span>
+    <span class="nd">@description</span><span class="p">(</span><span class="s">&quot;Acting 2&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">act2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">item</span><span class="p">):</span>
+        <span class="n">item</span> <span class="o">+</span> <span class="mi">1</span>
+    
+    <span class="nd">@include</span>
+    <span class="nd">@help</span><span class="p">(</span><span class="s">&quot;Act on a collection using map&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">act3</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Acting 3&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">blist</span><span class="p">)</span>
+    
+    <span class="nd">@include</span><span class="p">()</span>
+    <span class="nd">@ignore</span>
+    <span class="nd">@excepts</span><span class="p">(</span><span class="ne">Exception</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">raiser</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A function which rasies others&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">Exception</span>
+        
+    <span class="nd">@include</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">other</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Other Stage Function&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Other Stage&quot;&quot;&quot;</span>
         <span class="k">print</span> <span class="s">&quot;Hello from </span><span class="si">%s</span><span class="s"> Stage&quot;</span> <span class="o">%</span> <span class="s">&quot;other&quot;</span>
         <span class="n">img</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Caches</span><span class="p">[</span><span class="s">&quot;Random NPY&quot;</span><span class="p">]</span>
         <span class="k">print</span> <span class="n">img</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
     
+    <span class="nd">@include</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">last</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Last Stage Function&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Last Stage&quot;&quot;&quot;</span>
         <span class="k">print</span> <span class="s">&quot;Last Stage&quot;</span>
         <span class="n">img</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Caches</span><span class="p">[</span><span class="s">&quot;Random Image&quot;</span><span class="p">]</span>
         <span class="k">print</span> <span class="n">img</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
     
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Saves some cache data&quot;&quot;&quot;</span>
         <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">/Random.npy&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Dirs&quot;</span><span class="p">][</span><span class="s">&quot;Caches&quot;</span><span class="p">],</span><span class="n">data</span><span class="p">)</span>
         
-    <span class="k">def</span> <span class="nf">cache</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Cache this image&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">,(</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1000</span><span class="p">))</span>
         
-    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_load</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Load the image&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">/Random.npy&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Dirs&quot;</span><span class="p">][</span><span class="s">&quot;Caches&quot;</span><span class="p">])</span>
         
@@ -189,7 +224,7 @@ logging:
         <li class="right" >
           <a href="rnotes.html" title="14. Release Notes"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.3.6-dev-git-9db6c8869f82336c36ccaed361e2ca88dabad4f2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
