@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2012-03-17.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.0.0
+#  Version 0.3.6
 # 
 
 # Python Imports

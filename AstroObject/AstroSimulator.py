@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-14.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.5
+#  Version 0.3.6
 # 
 """The Simulator is designed to provide a high level, command-line useful interface to large computational tasks. As the name suggests, Simulators often do a lot of programming work, and do so across many distinct "stages", whcih can be configured in any way the user desires. All of the abilities in this program are simply object abstraction techniques to provide a complex program with a command line interface and better control and reporting on the activities carreid out to successfully complete the program. It allows for the configuration of simple test cases and "macros" from within the program, eliminating the need to provide small wrapper scripts and test handlers.
 
@@ -254,7 +254,7 @@ class Simulator(object):
     
     name = "Simulator"
     
-    def __init__(self,name="__class__.__name__",commandLine=True):
+    def __init__(self,name="__class__.__name__",commandLine=True,version=None):
         super(Simulator, self).__init__()
         self.stages = {}
         self.macros = {}
@@ -287,6 +287,12 @@ class Simulator(object):
         self.commandLine = commandLine
         self.Caches = CacheManager()
         self.options = None
+        
+        if version==None:
+            self.version = u"AstroObject: " + __version__
+        else:
+            self.version = u"AstroObject: " + __version__ + "\n"+self.name+": " + version
+        
         self._initOptions()
         
     def _initOptions(self):
@@ -341,7 +347,7 @@ class Simulator(object):
         self.inc_stage_parser = self.parser.add_argument_group('Stages')
         
         # Add the basic controls for the script
-        self.parser.add_argument('--version',action='version',version=__version__)
+        self.parser.add_argument('--version',action='version',version=self.version)
         
         # Operational Controls
         self.registerConfigOpts('d',{'Debug':True},help="enable debugging messages and plots")
