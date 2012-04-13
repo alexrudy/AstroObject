@@ -76,6 +76,7 @@ from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
 
 # Standard Python Modules
 import math, logging, os, time
+import copy
 import collections
 
 from abc import ABCMeta, abstractmethod, abstractproperty
@@ -83,7 +84,7 @@ from abc import ABCMeta, abstractmethod, abstractproperty
 # Submodules from this system
 from Utilities import *
 
-__all__ = ["FITSFrame","FITSObject","BaseFrame"]
+__all__ = ["FITSFrame","FITSObject","BaseFrame","AnalyticFrame","NoHDUFrame"]
 
 __version__ = getVersion()
 
@@ -99,27 +100,52 @@ class BaseFrame(object):
     :raises AttributeError: when the frame fails to validate. See :meth:`__valid__`
     
     """
+    
+    __metaclass__ = ABCMeta
         
     def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
         super(BaseFrame, self).__init__(**kwargs)
         if data != None:
             self.data = data
-        self.label = label # A label for this frame, for selection in parent object
+        self._label = label # A label for this frame, for selection in parent object
         self.header = pf.core.Header() # Header object for HDU header items
         self.metadata = metadata # An optional metadata dictionary
         self.time = time.clock() # An object representing the time this object was created
+        self._valid = None
         
         if self.metadata == None:
             self.metadata = {}
-        if header != None:
+        if isinstance(header,pf.core.Header):
+            self.header = header
+        elif isinstance(header,collections.Mapping):
             for key, value in header.iteritems():
                 self.header.update(key,value)
+        else:
+            assert header == None, "%s doesn't understand the header, %s, type %s" % (self,header,type(header))
+            
         try:
             self.__valid__()
             assert isinstance(self.label,(str,unicode)), "Frame requires a label, got %s" % self.label
         except AssertionError as e:
             raise AttributeError(str(e))
     
+    @property
+    def label(self):
+        return self._label
+        
+    def copy(self,label=None):
+        """Return a re-labeled copy of this object."""
+        if label == None:
+            _newFrame = copy.copy(self)
+        else:
+            _oldLabel = self.label
+            self._label = label
+            _newFrame = copy.copy(self)
+            self._label = _oldLabel
+        _newFrame.__valid__()
+        return _newFrame
+    
+    @abstractmethod
     def __call__(self,**kwargs):
         """Should return the data within this frame, usually as a ``numpy`` array.
         
@@ -148,6 +174,27 @@ class BaseFrame(object):
         :returns: ``None``"""
         assert not hasattr(self,'data'), "Abstract Class cannot accept data!"
     
+    @property
+    def valid(self):
+        """Whether this object is valid."""
+        if self._valid == None:
+            try:
+                self.__valid__()
+            except AssertionError:
+                self._valid = False
+            else:
+                self._valid = True
+        return self._valid
+    
+    def hdu(self,primary=False):
+        """Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.
+        
+        :param bool primary: Return a primary HDU
+        :returns: pyfits.primaryHDU or pyfits.ImageHDU
+        """
+        return self.__setheader__(self.__hdu__(primary))
+    
+    @abstractmethod
     def __hdu__(self,primary=False):
         """This method returns an HDU which represents the object. The HDU should respect the object's :attr:`header` attribute, and use that dictionary to populate the headers of the HDU. 
         
@@ -158,7 +205,8 @@ class BaseFrame(object):
         If the frame cannot reasonable generate a :class:`pyFITS.PrimaryHDU`, then it should raise an :exc:`NotImplementedError` in that case."""
         msg = "Abstract Data Structure %s cannot be used for HDU Generation!" % (self)
         raise NotImplementedError(msg)
-
+    
+    @abstractmethod
     def __show__(self):
         """This method should create a simple view of the provided frame. Often this is done using :mod:`Matplotlib.pyplot` to create a simple plot. The plot should have the minimum amount of work done to make a passable plot view, but still be basic enough that the end user can customize the plot object after calling :meth:`__show__`.
         
@@ -214,7 +262,48 @@ class BaseFrame(object):
         raise NotImplementedError(msg)
         
 
+def semiabstractmethod(func):
+    """Convert semi-abstract-methods into raisers for NotImplementedErrors"""
+    def raiser(self,*args,**kwargs):
+        msg = "Cannot call %s.%s() as it is an abstact method." % (self,func.__name__)
+        raise NotImplementedError(msg)
+    newfunc = make_decorator(func)(raiser)
+    return newfunc
+
+class NoHDUFrame(BaseFrame):
+    """A single frame of data which cannot be converted into an HDU."""
     
+    @semiabstractmethod
+    def __hdu__(self,primary=False):
+        pass
+    
+    @semiabstractmethod
+    def __show__(self,label):
+        pass
+
+    @classmethod    
+    @semiabstractmethod
+    def __read__(cls,HDU,label):
+        pass
+
+
+class AnalyticFrame(NoHDUFrame):
+    """A single frame which cannot be called or converted to an HDU"""
+    
+    @semiabstractmethod
+    def __call__(self,**kwargs):
+        pass
+    
+    @classmethod
+    @semiabstractmethod
+    def __save__(self,data,label):
+        pass
+    
+        
+
+
+    
+        
         
 
 class FITSFrame(BaseFrame):
@@ -234,13 +323,15 @@ class FITSFrame(BaseFrame):
     def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
         super(FITSFrame, self).__init__(data=data, label=label, header=header, metadata=metadata,**kwargs)
     
-    def hdu(self,primary=False):
-        """Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.
+    @semiabstractmethod
+    def __call__(self):
+        """Return data"""
+        return None
         
-        :param bool primary: Return a primary HDU
-        :returns: pyfits.primaryHDU or pyfits.ImageHDU
-        """
-        return self.__setheader__(self.__hdu__(primary))
+    @semiabstractmethod
+    def __show__(self):
+        """Show no data... NotImplemented"""
+        pass
         
     def __hdu__(self,primary=False):
         """Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.
@@ -385,12 +476,13 @@ class FITSObject(collections.MutableMapping):
             if not Object:
                 raise TypeError("Object to be saved cannot be cast as %s" % self.dataClasses)
         else:
-            Object = data
+            Object = data.copy(label=statename)
             
         if statename == None:
             statename = Object.label
         else:
-            Object.label = statename
+            assert Object.label == statename, "Object label improperly set by constructor"
+            
         if statename in self.states and not (clobber or self.clobber):
             raise KeyError("Cannot Duplicate State Name: \'%s\' Use this.remove(\'%s\') or clobber=True" % (statename,statename))
         elif statename in self.states:

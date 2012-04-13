@@ -142,7 +142,8 @@ class test_InterpolatedSpectra(API_AnalyticSpectra,test_SpectraFrame):
         self.FRAMESTR = "<'InterpolatedSpectrum' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.artist.Artist
-        self.WAVELENGTHS = (np.arange(100)/2 + 1.0) * 1e-7
+        self.WAVELENGTHS = ((np.arange(98)+1)/2.0 + 1.0) * 1e-7
+        self.WAVELENGHTS_LOWR = ((np.arange(23)+1)*2.0 + 1.0) * 1e-7
         self.VALID = np.array([(np.arange(50) + 1.0) * 1e-7,np.sin(np.arange(50))+2.0])
         
         self.imHDU = pf.ImageHDU
@@ -173,110 +174,30 @@ class test_InterpolatedSpectra(API_AnalyticSpectra,test_SpectraFrame):
         figure = AFrame.__show__()
         assert isinstance(figure,self.SHOWTYPE), "Found type %s" % type(figure)
     
-
-
-
-class test_ResampledSpectra(API_AnalyticSpectra,test_SpectraFrame):
-    """AnalyticSpectra.ResampledSpectra"""
-    def setUp(self):
-        """Sets up the test with some basic image data."""
-        
-        self.FRAME = AS.InterpolatedSpectrum
-        self.INVALID = np.array([1,2,3])
-        self.FRAMESTR = "<'InterpolatedSpectrum' labeled 'Valid'>"
-        self.HDUTYPE = pf.ImageHDU
-        self.SHOWTYPE = mpl.artist.Artist
-        self.WAVELENGTHS = (np.arange(100)/2.0 + 1.0) * 1e-7
-        self.VALID = np.array([(np.arange(200)/4.0 + 1.0) * 1e-7,np.sin(np.arange(200))+2.0])
-        self.imHDU = pf.ImageHDU
-        self.pmHDU = pf.PrimaryHDU
-        
-        
-        
-        self.attributes = copy.deepcopy(self.attributes) + ['WAVELENGTHS']
-        
-        def SAMEDATA(first,second):
-            """Return whether these two are the same data"""
-            return not (np.abs(first-second) > 1e-6).any()
-        
-        
-        def SAME(first,second):
-            """Return whether these two are the same"""
-            return SAMEDATA(first(method='resampled'),second(method='resampled'))
-        
-        self.SAME = SAME
-        self.SAMEDATA = SAMEDATA
-        
-        
-        self.check_constants()
     
-    def test_show(self):
-        """__show__() returns a valid type"""
+    def test_call_resample(self):
+        """__call__(method='resample') yields data"""
         AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
-        figure = AFrame.__show__()
-        assert isinstance(figure,self.SHOWTYPE), "Found type %s" % type(figure)
-    
-    def test_call(self):
-        """__call__() yields data"""
+        WL = self.WAVELENGHTS_LOWR
+        data = AFrame(wavelengths=WL[:-1],resolution=(WL[:-1]/np.diff(WL))/4,method='resample')
+        
+    def test_call_resample_with_arbitrary_arguments(self):
+        """__call__(method='resample') accepts arbitrary keyword arguments"""
         AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
-        data = AFrame(wavelengths=self.WAVELENGTHS[:-1],resolution=(self.WAVELENGTHS[:-1]/np.diff(self.WAVELENGTHS))/4,method='resample')
-        
-    def test_call_with_arbitrary_arguments(self):
-        """__call__() accepts arbitrary keyword arguments"""
-        AFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert AFrame.label == "Valid"
-        data = AFrame(wavelengths=self.WAVELENGTHS[:-1],resolution=np.diff(self.WAVELENGTHS),other=1,arbitrary="str",arguments="blah",method='resample')
+        WL = self.WAVELENGHTS_LOWR
+        data = AFrame(wavelengths=WL[:-1],resolution=(WL[:-1]/np.diff(WL))/4,other=1,arbitrary="str",arguments="blah",method='resample')
     
-class test_FLambdaSpectra(API_AnalyticSpectra,API_Base_Frame):
-    """AnalyticSpecra.FLambdaSpectra"""
-    def setUp(self):
-        """Sets up the test with some basic image data."""
-        
-        self.FRAME = AS.InterpolatedSpectrum
-        self.INVALID = np.array([1,2,3])
-        self.FRAMESTR = "<'InterpolatedSpectrum' labeled 'Valid'>"
-        self.HDUTYPE = pf.ImageHDU
-        self.SHOWTYPE = mpl.artist.Artist
-        self.WAVELENGTHS = (np.arange(100)/2.0 + 1.0) * 1e-7
-        self.VALID = np.array([(np.arange(50) + 1.0) * 1e-7,np.sin(np.arange(50))+2.0])
-        self.imHDU = pf.ImageHDU
-        self.pmHDU = pf.PrimaryHDU
-        
-        
-        self.attributes = copy.deepcopy(self.attributes) + ['WAVELENGTHS']
-        
-        def SAMEDATA(first,second):
-            """Return whether these two are the same data"""
-            return not (np.abs(first-second) > 1e-6).any()
-        
-        
-        def SAME(first,second):
-            """Return whether these two are the same"""
-            return SAMEDATA(first(method="integrate_quad"),second(method="integrate_quad"))
-        
-        self.SAME = SAME
-        self.SAMEDATA = SAMEDATA
-        
-        
-        self.check_constants()
-    
-    def test_show(self):
-        """__show__() returns a valid type"""
-        AFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert AFrame.label == "Valid"
-        figure = AFrame.__show__()
-        assert isinstance(figure,self.SHOWTYPE), "Found type %s" % type(figure)
 
-    def test_call(self):
-        """__call__() yields data"""
+    def test_call_integrate_quad(self):
+        """__call__(method='integrate_quad') yields data"""
         AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
         data = AFrame(wavelengths=self.WAVELENGTHS[:-1],resolution=(self.WAVELENGTHS[:-1]/np.diff(self.WAVELENGTHS)),method="integrate_quad")
         
-    def test_call_with_arbitrary_arguments(self):
-        """__call__() accepts arbitrary keyword arguments"""
+    def test_call_integrate_quad_with_arbitrary_arguments(self):
+        """__call__(method='integrate_quad') accepts arbitrary keyword arguments"""
         AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
         data = AFrame(wavelengths=self.WAVELENGTHS[:-1],resolution=np.diff(self.WAVELENGTHS),other=1,arbitrary="str",arguments="blah",method="integrate_quad")
