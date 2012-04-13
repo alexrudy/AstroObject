@@ -182,6 +182,7 @@ class Stage(object):
     """
     def __init__(self,stage,name="a Stage",description=None,exceptions=None,dependencies=None,replaces=None,optional=False):
         super(Stage, self).__init__()
+        self._name = name
         self.macro = False
         if callable(stage):
             self.do = stage
@@ -194,7 +195,6 @@ class Stage(object):
             self.exceptions = tuple()
         else:
             self.exceptions = exceptions
-        self.name = name
         self.description = description
         self.deps = dependencies
         self.reps = replaces
@@ -203,6 +203,10 @@ class Stage(object):
         self.endTime = None
         self.ran = False
         self.complete = False
+    
+    @property
+    def name(self):
+        return self._name
     
     @staticmethod
     def table_head():
