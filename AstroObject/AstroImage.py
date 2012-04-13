@@ -56,6 +56,8 @@ class ImageFrame(AstroObjectBase.FITSFrame):
     def __valid__(self):
         """Runs a series of assertions which ensure that the data for this frame is valid"""
         assert isinstance(self.data,np.ndarray), "Frame data is not correct type: %s" % type(self.data)
+        if len(self.data.shape) != 2:
+            LOG.warning("The data appears to be %d dimensional. This object expects 2 dimensional data." % len(self.data.shape))
         
     
     def __hdu__(self,primary=False):
@@ -66,10 +68,6 @@ class ImageFrame(AstroObjectBase.FITSFrame):
         else:
             LOG.log(5,"Generating an image HDU for %s" % self)
             HDU = pf.ImageHDU(self())
-        HDU.header.update('label',self.label)
-        HDU.header.update('object',self.label)
-        for key,value in self.header.iteritems():
-            HDU.header.update(key,value)
         return HDU
     
     def __show__(self):
@@ -95,8 +93,6 @@ class ImageFrame(AstroObjectBase.FITSFrame):
         if not isinstance(data,np.ndarray):
             msg = "ImageFrame cannot handle objects of type %s, must be type %s" % (type(data),np.ndarray)
             raise NotImplementedError(msg)
-        if len(data.shape) != 2:
-            LOG.warning("The data appears to be %d dimensional. This object expects 2 dimensional data." % len(data.shape))
         try:
             Object = cls(data,label)
         except AttributeError as AE:
@@ -113,12 +109,9 @@ class ImageFrame(AstroObjectBase.FITSFrame):
         if not isinstance(HDU,(pf.ImageHDU,pf.PrimaryHDU)):
             msg = "Must save a PrimaryHDU or ImageHDU to a %s, found %s" % (cls.__name__,type(HDU))
             raise NotImplementedError(msg)
-        if not isinstance(HDU.data,np.ndarray):
-            msg = "HDU Data must be %s for %s, found data of %s" % (np.ndarray,cls.__name__,type(HDU.data))
-            raise NotImplementedError(msg)
         try:
             Object = cls(HDU.data,label,header=HDU.header)
-        except AssertionError as AE:
+        except AttributeError as AE:
             msg = "%s data did not validate: %s" % (cls.__name__,AE)
             raise NotImplementedError(msg)
         LOG.log(2,"Created %s" % Object)

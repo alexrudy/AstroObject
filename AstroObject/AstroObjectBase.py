@@ -105,14 +105,15 @@ class BaseFrame(object):
         if data != None:
             self.data = data
         self.label = label # A label for this frame, for selection in parent object
-        self.header = header # A dictionary of header keys and values for use in HDU generation
+        self.header = pf.core.Header() # Header object for HDU header items
         self.metadata = metadata # An optional metadata dictionary
         self.time = time.clock() # An object representing the time this object was created
         
         if self.metadata == None:
             self.metadata = {}
-        if self.header == None:
-            self.header = {}
+        if header != None:
+            for key, value in header.iteritems():
+                self.header.update(key,value)
         try:
             self.__valid__()
             assert isinstance(self.label,(str,unicode)), "Frame requires a label, got %s" % self.label
@@ -233,6 +234,14 @@ class FITSFrame(BaseFrame):
     def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
         super(FITSFrame, self).__init__(data=data, label=label, header=header, metadata=metadata,**kwargs)
     
+    def hdu(self,primary=False):
+        """Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.
+        
+        :param bool primary: Return a primary HDU
+        :returns: pyfits.primaryHDU or pyfits.ImageHDU
+        """
+        return self.__setheader__(self.__hdu__(primary))
+        
     def __hdu__(self,primary=False):
         """Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.
         
@@ -244,11 +253,20 @@ class FITSFrame(BaseFrame):
         else:
             HDU = pf.ImageHDU()
         LOG.log(8,"%s: Generating an Empty %sHDU" % (self,"primary " if primary else ""))
+        return HDU
+    
+        
+    def __setheader__(self,HDU):
+        """Apply header values to a given HDU and return that HDU."""
         HDU.header.update('label',self.label)
         HDU.header.update('object',self.label)
         for key,value in self.header.iteritems():
             HDU.header.update(key,value)
         return HDU
+        
+    def __getheader__(self,HDU):
+        """Extract header values from a given HDU"""
+        self.header = HDU.header
     
     @classmethod
     def __read__(cls,HDU,label):
@@ -335,7 +353,9 @@ class FITSObject(collections.MutableMapping):
         return self.states.keys()
         
     def __len__(self):
-        """docstring for __len__"""
+        """Dictionary length.
+        
+        :returns: integer"""
         return len(self.states.keys())
         
     ###############################
@@ -586,9 +606,9 @@ class FITSObject(collections.MutableMapping):
                 filename = self.filename
                 LOG.log(2,"Set filename from Object. Filename: %s" % filename)
         filename = validate_filename(filename)
-        PrimaryHDU = self.states[primaryState].__hdu__(primary=True)
+        PrimaryHDU = self.states[primaryState].hdu(primary=True)
         if len(states) > 0:
-            HDUs = [self.states[state].__hdu__(primary=False) for state in states]
+            HDUs = [self.states[state].hdu(primary=False) for state in states]
             HDUList = pf.HDUList([PrimaryHDU]+HDUs)
         else:
             HDUList = pf.HDUList([PrimaryHDU])
