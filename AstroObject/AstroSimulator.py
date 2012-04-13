@@ -211,31 +211,43 @@ class Stage(object):
     @staticmethod
     def table_head():
         """docstring for table_head"""
-        text  = "|         Stage         | Passed |     Time      |\n"
-        text += "|-----------------------|--------|---------------|"
+        text  = ""
+        text += "|%(BLUE)s-----------------------%(NORMAL)s|%(BLUE)s--------%(NORMAL)s|%(BLUE)s---------------%(NORMAL)s|\n" % terminal.__dict__
+        text += "|         Stage         | Passed |     Time      |\n"
+        text += "|%(BLUE)s-----------------------%(NORMAL)s|%(BLUE)s--------%(NORMAL)s|%(BLUE)s---------------%(NORMAL)s|" % terminal.__dict__
         return text
       
     @staticmethod 
     def table_foot(total):
         """docstring for taple_foot"""
-        text  = "|-----------------------  Total Time: %-9s  |" % datetime.timedelta(seconds=int(total))
+        text  = "|" + terminal.BLUE + "-----------------------"+terminal.NORMAL+" Total Time: %-9s" % datetime.timedelta(seconds=int(total)) + terminal.BLUE + "---" + terminal.NORMAL + "|"
         return text
         
     def table_row(self,total=None):
         """Return a profiling string table row."""
         assert self.ran, "Stage %s didn't run" % self.name
+        string =  u"| %(stage)21s | %(color)s%(result)6s%(normal)s | %(timestr) 12s |"
         keys = {
                 "stage": self.name,
+                "color": terminal.GREEN if self.complete else terminal.RED,
+                "normal": terminal.NORMAL,
                 "result": str(self.complete),
                 "time": datetime.timedelta(seconds=int(self.durTime)),
             }
-        if total == None:            
-            string =  u"| %(stage)21s | %(result)6s | %(time) 12s |" % keys
+        if total == None:
+            keys["timestr"] = "% 12s" % keys["time"]            
         else:
             keys["per"] = ( self.durTime / total ) * 100.0
-            string = u"| %(stage)21s | %(result)6s | %(time)9s %(per)2d%% |" % keys
+            if keys["per"] > 50:
+                string += terminal.RED
+            elif keys["per"] > 20:
+                string += terminal.BLUE
+            elif keys["per"] > 10:
+                string += terminal.GREEN
             string += u"█" * int(keys["per"] * (terminal.COLUMNS - 50) / 75)
-        return string
+            string += terminal.NORMAL
+            keys["timestr"] = "%(time)9s %(per)2d%%" % keys
+        return string % keys
         
     def profile(self):
         """Return a string stage profile for this stage."""

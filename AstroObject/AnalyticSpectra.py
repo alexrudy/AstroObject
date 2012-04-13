@@ -810,10 +810,8 @@ class InterpolatedSpectrum(AstroSpectra.SpectraFrame,InterpolatedSpectrumBase):
         # This call explicitly overrides MRO for this class, as a workaround.
         # Simply put, we want SpectraFrame calls to show up before AnalyticSpectrum, so that __hdu__ and __show__ etc
         # end up pulled from the SpectraFrame, and then __call__ gets pulled from InterpolatedSpectrumBase
-        # This allows a custom __call__ function for extraction of interpolated spectral data withouth the difficulties caused by
+        # This allows a custom __call__ function for extraction of interpolated spectral data withouth the difficulties caused by MROs
     
-
-        
 
 class Resolver(InterpolatedSpectrum):
     """This spectrum performs a unitary operation on any InterpolatedSpectrum-type-object. The operation (specified by the `method` keyword) is performed after the contained spectrum is called. The included spectrum is called immediately and then discarded. As such, wavelength and resolution keywords should be provided when appropriate to resolve the spectrum immediately. This operation does not save the old data state. All methods in :class:`InterpolatedSpectrum` are available."""
