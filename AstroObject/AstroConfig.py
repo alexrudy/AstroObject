@@ -60,25 +60,19 @@ class Configuration(collections.MutableMapping):
     def update(self,other,deep=True):
         """Deep update by default"""
         if deep:
-            print "DEEP UPDATE -> MERGE"
             self.merge(other)
         else:
             self._store.update(other)
     
     def merge(self,other):
         """Merge another configuration into this (the master)"""
-        print "CONFIGURATON MERGE"
-        print str(self) + " + " + str(other)
         self._merge(self,other)
-        print "-> " + str(self)
     
     def _merge(self,d,u):
         """Recursive merging function"""
-        print "Merging",d,"+",u
         if len(u)==0:
             return d
         for k, v in u.iteritems():
-            print " examining",k
             if isinstance(v, collections.Mapping):
                 r = self._merge(d.get(k, {}), v)
                 d[k] = r
