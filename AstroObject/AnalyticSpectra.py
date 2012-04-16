@@ -25,9 +25,24 @@ This module provides basic analytic spectrum capabilites. There is a simple prin
     A = AnalyticSpectrum()
     B = AnaltyicSpectrum()
     C = A + B * 20
-    
+   
 .. Note::
     I believe that STSCI Python has some spectrum capabilities, and I am researching combining this module to provide adaptors for the STSCI implementation.
+
+Module Structure
+----------------
+
+.. inheritance-diagram:: 
+    AstroObject.AnalyticSpectra.AnalyticSpectrum
+    AstroObject.AnalyticSpectra.CompositeSpectra
+    AstroObject.AnalyticSpectra.InterpolatedSpectrum
+    AstroObject.AnalyticSpectra.Resolver
+    AstroObject.AnalyticSpectra.UnitarySpectrum
+    :parts: 1
+
+
+Simple Objects
+--------------
 
 .. autoclass::
     AstroObject.AnalyticSpectra.AnalyticSpectrum
@@ -128,7 +143,7 @@ import itertools
 # Submodules from this system
 from Utilities import *
 
-__all__ = ["AnalyticSpectrum","CompositeSpectra","InterpolatedSpectrum","InterpolatedSpectrumBase"]
+__all__ = ["AnalyticSpectrum","CompositeSpectra","InterpolatedSpectrum","InterpolatedSpectrumBase","Resolver","UnitarySpectrum"]
 
 LOG = logging.getLogger(__name__)
 
