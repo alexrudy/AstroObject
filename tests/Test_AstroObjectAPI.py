@@ -89,6 +89,7 @@ class API_Abstract_Frame(API_Base):
     def test_save_none(self):
         """__save__() with none object raises an NotImplementedError"""
         self.FRAME.__save__(None,"None")
+    
     @nt.raises(NotImplementedError)
     def test_read_SecondaryHDU(self):
         """__read__() secondary HDU type should get an abstract error"""

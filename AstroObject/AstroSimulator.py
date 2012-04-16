@@ -132,6 +132,8 @@ import yaml
 
 from pkg_resources import resource_filename
 
+import multiprocessing
+
 # Dependent Modules
 from progressbar import *
 
@@ -182,6 +184,7 @@ class Stage(object):
     """
     def __init__(self,stage,name="a Stage",description=None,exceptions=None,dependencies=None,replaces=None,optional=False):
         super(Stage, self).__init__()
+        self._name = name
         self.macro = False
         if callable(stage):
             self.do = stage
@@ -194,7 +197,6 @@ class Stage(object):
             self.exceptions = tuple()
         else:
             self.exceptions = exceptions
-        self.name = name
         self.description = description
         self.deps = dependencies
         self.reps = replaces
@@ -204,34 +206,54 @@ class Stage(object):
         self.ran = False
         self.complete = False
     
+    @property
+    def name(self):
+        return self._name
+    
     @staticmethod
     def table_head():
-        """docstring for table_head"""
-        text  = "|         Stage         | Passed |     Time      |\n"
-        text += "|-----------------------|--------|---------------|"
+        """Table head for profiling."""
+        text  = ""
+        text += terminal.render("|%(BLUE)s-----------------------%(NORMAL)s|%(BLUE)s--------%(NORMAL)s|%(BLUE)s---------------%(NORMAL)s|\n")
+        text += "|         Stage         | Passed |     Time      |\n"
+        text += terminal.render("|%(BLUE)s-----------------------%(NORMAL)s|%(BLUE)s--------%(NORMAL)s|%(BLUE)s---------------%(NORMAL)s|")
         return text
       
     @staticmethod 
     def table_foot(total):
-        """docstring for taple_foot"""
-        text  = "|-----------------------  Total Time: %-9s  |" % datetime.timedelta(seconds=int(total))
+        """Table footer for profiling."""
+        text  = terminal.render("|%(BLUE)s-----------------------%(NORMAL)s Total Time: ")+"%(time)-9s"+terminal.render("%(BLUE)s---%(NORMAL)s|")
+        text = text % {"time":datetime.timedelta(seconds=int(total))}
         return text
         
     def table_row(self,total=None):
         """Return a profiling string table row."""
         assert self.ran, "Stage %s didn't run" % self.name
+        string =  u"| %(stage)21s | %(color)s%(result)6s%(normal)s | %(timestr) 12s |"
         keys = {
                 "stage": self.name,
+                "color": terminal.GREEN if self.complete else terminal.RED,
+                "normal": terminal.NORMAL,
                 "result": str(self.complete),
                 "time": datetime.timedelta(seconds=int(self.durTime)),
             }
-        if total == None:            
-            string =  u"| %(stage)21s | %(result)6s | %(time) 12s |" % keys
+        if total == None:
+            keys["timestr"] = "% 12s" % keys["time"]            
         else:
             keys["per"] = ( self.durTime / total ) * 100.0
-            string = u"| %(stage)21s | %(result)6s | %(time)9s %(per)2d%% |" % keys
-            string += u"█" * int(keys["per"] * (terminal.COLUMNS - 50) / 75)
-        return string
+            if keys["per"] > 50:
+                string += terminal.RED
+            elif keys["per"] > 20:
+                string += terminal.BLUE
+            elif keys["per"] > 10:
+                string += terminal.GREEN
+            blen = int(keys["per"] * (terminal.COLUMNS - 50) / 75)
+            if blen > terminal.COLUMNS - 50:
+                blen = terminal.COLUMNS - 50
+            string += u"█" * blen
+            string += terminal.NORMAL
+            keys["timestr"] = "%(time)9s %(per)2d%%" % keys
+        return string % keys
         
     def profile(self):
         """Return a string stage profile for this stage."""

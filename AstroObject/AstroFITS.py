@@ -32,6 +32,7 @@ from scipy.linalg import norm
 import math, copy, sys, time, logging, os
 
 # Submodules from this system
+from noconflict import classmaker
 from Utilities import *
 
 __version__ = getVersion()
@@ -46,6 +47,7 @@ class HDUFrame(AstroObjectBase.FITSFrame,pf.ImageHDU):
     This object requires *array*, the data, a *label*, and can optionally take *headers* and *metadata*.
     
     """
+    __metaclass__ = classmaker()
     def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
         self.data = data
         super(HDUFrame, self).__init__(data=None, label=label, header=header, metadata=metadata, **kwargs)
@@ -126,9 +128,9 @@ class HDUFrame(AstroObjectBase.FITSFrame,pf.ImageHDU):
             raise NotImplementedError(msg)
         try:
             # Swizzle:
+            HDU._label = label
             HDU.__class__ = HDUFrame
-            HDU.label = label
-            Object = HDU
+            Object = HDU.copy(label)
             # Object = cls(data=HDU.data,label=label,header=HDU.header)
         except AssertionError as AE:
             msg = "%s data did not validate: %s" % (cls.__name__,AE)

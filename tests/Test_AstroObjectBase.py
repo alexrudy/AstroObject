@@ -46,10 +46,10 @@ class API_Abstract_Object(API_Base_Object):
 
 
 class test_BASEFrame(API_Abstract_Frame):
-    """AstroObjectBase.BaseFrame"""
+    """AstroObjectBase.AnalyticFrame"""
     def setUp(self):
-        self.FRAME = AOB.BaseFrame
-        self.FRAMESTR = "<'BaseFrame' labeled 'Valid'>"
+        self.FRAME = AOB.AnalyticFrame
+        self.FRAMESTR = "<'AnalyticFrame' labeled 'Valid'>"
         self.VALID = None
         self.INVALID = np.array([1,2,3]).astype(np.int16)
         self.SHOWTYPE = None
