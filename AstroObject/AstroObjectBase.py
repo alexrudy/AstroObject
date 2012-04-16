@@ -513,6 +513,11 @@ class FITSObject(collections.MutableMapping):
         else:
             self._key_error(statename)
     
+    @property
+    def f(self):
+        """The selected FITS frame. This frame is usually the last modified frame in the system."""
+        return self.states[self.statename]
+    
     def frame(self,statename=None):
         """Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.
         
