@@ -304,11 +304,16 @@ class InterpolatedSpectrumBase(AnalyticSpectrum):
             msg += [u"Given λ must be monotonically increasing."]
             arrays[u"Given λ"] = oldwl
             error = ValueError
-            
-        if (np.diff(newwl) < 0).any():
-            msg += [u"Requested λ must be monotonically increasing."]
-            arrays[u"Requested λ"] = oldwl
+        try:    
+            if (np.diff(newwl) < 0).any():
+                msg += [u"Requested λ must be monotonically increasing."]
+                arrays[u"Requested λ"] = newwl
+                error = ValueError
+        except:
+            msg += [u"Requested λ threw an error"]
+            arrays[u"Requested λ"] = newwl
             error = ValueError
+            
         
         # Check that we have non-zero, positive flux provided.
         if (oldfl <= 0).any():
@@ -414,7 +419,8 @@ class InterpolatedSpectrumBase(AnalyticSpectrum):
                 LOG.debug(u"%s: %s" % (self,npArrayInfo(array,name)))
                 
         if error:
-            raise error(msg[0])
+            e = error(msg[0])
+            raise e
         
             
     def _postsanity(self,oldwl,oldfl,newwl,newfl,newrs=None,extrapolate=False,debug=False,warning=False,error=False,message=None,**kwargs):
@@ -491,6 +497,8 @@ class InterpolatedSpectrumBase(AnalyticSpectrum):
         .. Warning :: This method does not prevent you from interpolating your spectrum into a higher resolution state. As such, it is possible, when calling interpolate, to increase the resolution of the spectrum, and end up 'creating' information."""
         if wavelengths == None:
             wavelengths = self.wavelengths
+        if wavelengths == None:
+            raise ValueError(u"Requires Wavelenths")
         
         LOG.debug(u"Interpolate Starting")
         
@@ -520,6 +528,8 @@ class InterpolatedSpectrumBase(AnalyticSpectrum):
         Input should be a set of wavelengths requested for the system (in the `wavelengths` keyword). The output will be a data array of wavelengths and fluxes (should be the provided `wavelengths`, and an equivalently shaped array with fluxes.)"""
         if wavelengths == None:
             wavelengths = self.wavelengths
+        if wavelengths == None:
+            raise ValueError(u"Requires Wavelenths")
         
         LOG.debug(u"Polyfit Starting")
         
@@ -653,6 +663,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum):
             bins = wavelengths
         
         # Data sanity check
+        LOG.debug(u"Interpolating to wavelength bins.")
         oldwl,oldfl = self.interpolate(wavelengths=bins,extrapolate=True,**kwargs)
         LOG.debug(u"Integration Starting")
         
@@ -745,7 +756,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum):
         The resolution provided (`resolution` keyword) are used to request a resampled resolution. However, to prevent information loss, by default (see the `upscaling` keyword) the method automatically prevents the new resolution from exceeding the inherent resolution of the provided data. This allows the system to request a high resolution spectrum, and instead receive the maximum amount of information available at every point.
         """
         self.resolver = getattr(self,resolve_method)
-        
+        self.resolve_method = resolve_method
         newwl = np.copy(wavelengths)
         newrs = np.copy(resolution)
         oldwl,oldfl = self.data
@@ -783,23 +794,24 @@ class InterpolatedSpectrumBase(AnalyticSpectrum):
         
         LOG.debug(u"Resolve and Resample Starting")
         if hasattr(self,'resolved'):
-            txt = u"Resolved" if self.resolved else "Resolving"
+            txt = u"Resolved using %s" % self.resolve_method if self.resolved else "Resolving using %s" % resolve_method
             oldwl,oldfl = self.data
             # Test resolution for current validity:
             bincount,bins = np.histogram(oldwl[:-1],wavelengths)
             if (bincount == 0).any():
-                txt = u"Re-resolving"
+                txt = u"Re-resolving using %s" % resolve_method
                 self.resolved = False            
             LOG.debug(u"%s: %s" % (self,txt))
         else:
             self.resolved = False
-            LOG.debug(u"%s: %s" % (self,"Resolving first"))
+            LOG.debug(u"%s: %s" % (self,"Resolving first using %s" % resolve_method))
         
         # First pass resolving the spectrum to a denser data set.
         # This pass uses the upscaling parameter to find a much denser resolution.
         if not self.resolved:
             self.resolve(wavelengths=wavelengths,resolution=resolution,resolve_method=resolve_method,**kwargs)
         
+        LOG.debug("Integrating using %s" % integration_method)
         self.integrator = getattr(self,integration_method)
         self.data = self.resolved_data
         integrated = self.integrator(wavelengths=wavelengths,resolution=resolution,**kwargs)
@@ -821,7 +833,7 @@ class InterpolatedSpectrum(AstroSpectra.SpectraFrame,InterpolatedSpectrumBase):
         
     def __call__(self,method=None,**kwargs):
         """Calls this interpolated spectrum over certain wavelengths. The `method` parameter will default to the one set for the object, and controls the method used to interpret this spectrum. Available methods include all members of :class:`InterpolatedSpectrum` which provide return values (all those documented below)."""
-        InterpolatedSpectrumBase.__call__(self,method=None,**kwargs)
+        return InterpolatedSpectrumBase.__call__(self,method=method,**kwargs)
         # This call explicitly overrides MRO for this class, as a workaround.
         # Simply put, we want SpectraFrame calls to show up before AnalyticSpectrum, so that __hdu__ and __show__ etc
         # end up pulled from the SpectraFrame, and then __call__ gets pulled from InterpolatedSpectrumBase
