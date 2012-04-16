@@ -27,3 +27,20 @@ Base Frame :class:`BaseFrame`
     AstroObject.AstroObjectBase.BaseFrame
     :members:
     :special-members:
+
+Module Structure
+----------------
+
+.. inheritance-diagram::
+	AstroObject.AstroImage.ImageFrame
+	AstroObject.AstroImage.ImageObject
+	AstroObject.AstroSpectra.SpectraFrame
+	AstroObject.AstroSpectra.SpectraObject
+	AstroObject.AstroFITS.HDUFrame
+	AstroObject.AstroFITS.HDUObject
+    AstroObject.AnalyticSpectra.AnalyticSpectrum
+    AstroObject.AnalyticSpectra.CompositeSpectra
+    AstroObject.AnalyticSpectra.InterpolatedSpectrum
+    AstroObject.AnalyticSpectra.Resolver
+    AstroObject.AnalyticSpectra.UnitarySpectrum
+    :parts: 1
