@@ -132,6 +132,8 @@ import yaml
 
 from pkg_resources import resource_filename
 
+import multiprocessing
+
 # Dependent Modules
 from progressbar import *
 
@@ -210,17 +212,18 @@ class Stage(object):
     
     @staticmethod
     def table_head():
-        """docstring for table_head"""
+        """Table head for profiling."""
         text  = ""
-        text += "|%(BLUE)s-----------------------%(NORMAL)s|%(BLUE)s--------%(NORMAL)s|%(BLUE)s---------------%(NORMAL)s|\n" % terminal.__dict__
+        text += terminal.render("|%(BLUE)s-----------------------%(NORMAL)s|%(BLUE)s--------%(NORMAL)s|%(BLUE)s---------------%(NORMAL)s|\n")
         text += "|         Stage         | Passed |     Time      |\n"
-        text += "|%(BLUE)s-----------------------%(NORMAL)s|%(BLUE)s--------%(NORMAL)s|%(BLUE)s---------------%(NORMAL)s|" % terminal.__dict__
+        text += terminal.render("|%(BLUE)s-----------------------%(NORMAL)s|%(BLUE)s--------%(NORMAL)s|%(BLUE)s---------------%(NORMAL)s|")
         return text
       
     @staticmethod 
     def table_foot(total):
-        """docstring for taple_foot"""
-        text  = "|" + terminal.BLUE + "-----------------------"+terminal.NORMAL+" Total Time: %-9s" % datetime.timedelta(seconds=int(total)) + terminal.BLUE + "---" + terminal.NORMAL + "|"
+        """Table footer for profiling."""
+        text  = terminal.render("|%(BLUE)s-----------------------%(NORMAL)s Total Time: ")+"%(time)-9s"+terminal.render("%(BLUE)s---%(NORMAL)s|")
+        text = text % {"time":datetime.timedelta(seconds=int(total))}
         return text
         
     def table_row(self,total=None):
@@ -244,7 +247,10 @@ class Stage(object):
                 string += terminal.BLUE
             elif keys["per"] > 10:
                 string += terminal.GREEN
-            string += u"█" * int(keys["per"] * (terminal.COLUMNS - 50) / 75)
+            blen = int(keys["per"] * (terminal.COLUMNS - 50) / 75)
+            if blen > terminal.COLUMNS - 50:
+                blen = terminal.COLUMNS - 50
+            string += u"█" * blen
             string += terminal.NORMAL
             keys["timestr"] = "%(time)9s %(per)2d%%" % keys
         return string % keys
