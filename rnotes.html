@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>14. Release Notes &mdash; AstroObject 0.3.6-p1 documentation</title>
+    <title>13. Release Notes &mdash; AstroObject 0.4 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.6-p1',
+        VERSION:     '0.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,9 +25,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.6-p1 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.4 documentation" href="index.html" />
     <link rel="next" title="An Example Simulator" href="SimulatorExample.html" />
-    <link rel="prev" title="13. Development Plans" href="future.html" /> 
+    <link rel="prev" title="12. Development Plans" href="future.html" /> 
   </head>
   <body>
     <div class="related">
@@ -43,9 +43,9 @@
           <a href="SimulatorExample.html" title="An Example Simulator"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="future.html" title="13. Development Plans"
+          <a href="future.html" title="12. Development Plans"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.6-p1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.4 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -55,184 +55,91 @@
           <div class="body">
             
   <div class="section" id="release-notes">
-<h1>14. Release Notes<a class="headerlink" href="#release-notes" title="Permalink to this headline">¶</a></h1>
+<h1>13. Release Notes<a class="headerlink" href="#release-notes" title="Permalink to this headline">¶</a></h1>
 <ul>
 <li><dl class="first docutils">
-<dt>0.1.0</dt>
+<dt>0.4.0</dt>
 <dd><ul class="first last simple">
-<li>Basic operation of Spectra</li>
-<li>Basic operation of Images</li>
-<li>Untested IRAF Interaction Lines</li>
-<li>Basic FITS File Writing</li>
-<li>NO Metadata and Header Features</li>
+<li>Inheritance structure improved, now with abstract classes and mixins. See <a class="reference internal" href="AstroObject.html#astroobjectapi"><em>AstroObject API</em></a></li>
+<li>Documentation improved wildly, now everything except AstroCache is documented. See <a class="reference internal" href="index.html"><em>Welcome to AstroObject!</em></a>.</li>
+<li>Header handling is greatly improved. See <a class="reference internal" href="AstroObject.html#astroobjectapi"><em>AstroObject API</em></a></li>
+<li>Write-only attributes are now properties. Frame labels cannot be changed, instead, frame must be copied. See <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="AstroObject.AstroObjectBase.BaseFrame"><tt class="xref py py-meth docutils literal"><span class="pre">BaseFrame()</span></tt></a></li>
 </ul>
 </dd>
 </dl>
 </li>
 <li><dl class="first docutils">
-<dt>0.1.1</dt>
+<dt>0.3.6</dt>
 <dd><ul class="first last simple">
-<li>Fixed a log message formatting error in AstroImage which caused a printing error</li>
-<li>Removed the &#8220;Logs/&#8221; folder requirement from the module</li>
+<li>Matplotlib setuptools compatibility.</li>
 </ul>
 </dd>
 </dl>
 </li>
 <li><dl class="first docutils">
-<dt>0.1.2</dt>
+<dt>0.3.5</dt>
 <dd><ul class="first last simple">
-<li>Logs only written to file when a &#8220;Logs/&#8221; folder is present.</li>
+<li>Better version numbering.</li>
+<li>Use of the built-in NotImplementedError for abstraction.</li>
 </ul>
 </dd>
 </dl>
 </li>
 <li><dl class="first docutils">
-<dt>0.1.3</dt>
+<dt>0.3.4</dt>
 <dd><ul class="first last simple">
-<li>Handling Overflows in Blackbody Function</li>
+<li>Simulator can collect stages automatically. See <a class="reference internal" href="AstroSimulator.html#AstroObject.AstroSimulator.Simulator.collect" title="AstroObject.AstroSimulator.Simulator.collect"><tt class="xref py py-meth docutils literal"><span class="pre">AstroObject.AstroSimulator.Simulator.collect()</span></tt></a></li>
+<li>Simualtor can be setup using decorators on functions. See <a class="reference internal" href="AstroSimulator.html#simulator-decorators"><em>Decorators</em></a></li>
+<li>Simulator can produces stage timing profiles. See <em class="xref std std-option">--profile</em>.</li>
 </ul>
 </dd>
 </dl>
 </li>
 <li><dl class="first docutils">
-<dt>0.1.4</dt>
+<dt>0.3.3</dt>
 <dd><ul class="first last simple">
-<li>Logging cannot capture warnings in python 0.1.4, so don&#8217;t import that!</li>
+<li>Stages provide description from function&#8217;s docstring if no description is given. <a class="reference internal" href="AstroSimulator.html#module-AstroObject.AstroSimulator" title="AstroObject.AstroSimulator"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSimulator</span></tt></a></li>
+<li>Default keyword is used to set default stage operation. <a class="reference internal" href="AstroSimulator.html#module-AstroObject.AstroSimulator" title="AstroObject.AstroSimulator"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSimulator</span></tt></a></li>
 </ul>
 </dd>
 </dl>
 </li>
 <li><dl class="first docutils">
-<dt>0.2.0</dt>
+<dt>0.3.2</dt>
 <dd><ul class="first last simple">
-<li>API Has CHANGED! Please see SPEC.md to understand the 0.2 API</li>
+<li>Documentation, Documentation, Documentation.</li>
+<li>Added a <tt class="docutils literal"><span class="pre">select</span></tt> parameter to the save() function to allow the user to prevent automatic selection. See <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseObject" title="AstroObject.AstroObjectBase.BaseObject"><tt class="xref py py-class docutils literal"><span class="pre">AstroObject.AstroObjectBase.BaseObject</span></tt></a></li>
+<li>Pass <tt class="docutils literal"><span class="pre">**kwargs</span></tt> through a <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseObject.data" title="AstroObject.AstroObjectBase.BaseObject.data"><tt class="xref py py-meth docutils literal"><span class="pre">data()</span></tt></a> call to <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame.__call__" title="AstroObject.AstroObjectBase.BaseFrame.__call__"><tt class="xref py py-meth docutils literal"><span class="pre">__call__()</span></tt></a>. See <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseObject.data" title="AstroObject.AstroObjectBase.BaseObject.data"><tt class="xref py py-meth docutils literal"><span class="pre">AstroObject.AstroObjectBase.BaseObject.data()</span></tt></a></li>
+<li>Uniform <tt class="docutils literal"><span class="pre">KeyError</span></tt> formatting support. See <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseObject" title="AstroObject.AstroObjectBase.BaseObject"><tt class="xref py py-class docutils literal"><span class="pre">AstroObject.AstroObjectBase.BaseObject</span></tt></a></li>
+<li>Simulator differentiates between stages which have been satisfied (<tt class="docutils literal"><span class="pre">complete</span></tt>) and stages which have actually run (<tt class="docutils literal"><span class="pre">done</span></tt>). See <a class="reference internal" href="AstroSimulator.html#module-AstroObject.AstroSimulator" title="AstroObject.AstroSimulator"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSimulator</span></tt></a></li>
+<li>Simulator stage dependents will always run in simulator-registration order. See <a class="reference internal" href="AstroSimulator.html#module-AstroObject.AstroSimulator" title="AstroObject.AstroSimulator"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSimulator</span></tt></a></li>
 </ul>
 </dd>
 </dl>
 </li>
 <li><dl class="first docutils">
-<dt>0.2.1</dt>
+<dt>0.3.1</dt>
 <dd><ul class="first last simple">
-<li>object.keep() only keeps the specified states</li>
-<li>object.keep() and object.remove() both accept arbitrary numbers of arguments</li>
-<li>derived classes now have a __valid__() method</li>
-<li>object.object() has become object.frame() for more naming consistency. NOTE: object.object() will be depreciated.</li>
-<li>AstroObject has been renamed AstroObjectBase to reflect its use as a base class. NOTE: AstroObject.AstroObject will be depreciated.</li>
-<li>improvement to nosetests/spec</li>
-<li>improvements to documentation</li>
+<li>Dictionary methods for AstroObject (do things like <tt class="docutils literal"><span class="pre">AstroObject[&quot;Label&quot;]</span> <span class="pre">=</span> <span class="pre">Frame</span></tt>). See <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseObject" title="AstroObject.AstroObjectBase.BaseObject"><tt class="xref py py-class docutils literal"><span class="pre">AstroObject.AstroObjectBase.BaseObject</span></tt></a>.</li>
+<li>Unified InterpolatedSpectrum model with various methods. See <tt class="xref py py-class docutils literal"><span class="pre">AstroObject.AnalyticSpectrum.InterpolatedSpectrum</span></tt>.</li>
+<li>Simulator has better options controls (for configuration and arbitrary functions). See <a class="reference internal" href="AstroSimulator.html#module-AstroObject.AstroSimulator" title="AstroObject.AstroSimulator"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSimulator</span></tt></a>.</li>
+<li>Cache module has been re-written. Now has a dict-like interface.</li>
+<li>New configuration module. See <a class="reference internal" href="AstroConfig.html#module-AstroObject.AstroConfig" title="AstroObject.AstroConfig"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroConfig</span></tt></a>.</li>
+<li>Unicode text in Simulator and AnalyticSpectra.</li>
 </ul>
 </dd>
 </dl>
 </li>
 <li><dl class="first docutils">
-<dt>0.2.2</dt>
+<dt>0.3.0</dt>
 <dd><ul class="first last simple">
-<li>Hotfix to include updated notes in the README and to update documentation</li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>0.2.3</dt>
-<dd><ul class="first last simple">
-<li>Uniform <cite>__init__</cite> call signature (data,label,header=,metadata=) This will change to (**kwargs) in the next release. The signature will primarily use (data=,label=), so that can be included now for future compatibility.</li>
-<li>Uniform <cite>__call__</cite> call signature for AnalyticSpectra items. This allows nested calls with a variety of keywords (see ResampledSpectrum)</li>
-<li>New InterpolatedSpectrum (using Spline by default) and ResampledSpectrum objects provide analytic interfaces to data-based spectra.</li>
-<li>AstroImage and AstroObject save header values to in <cite>__hdu__</cite> call.</li>
-<li>AstroObject now has a <cite>clobber</cite> mode which allows <cite>.save()</cite> to overwrite data</li>
-<li>AstroObject now has a <cite>.clear()</cite> method to delete all data.</li>
-<li>Fixed a bug which might crop up when saving only a single frame to a FITS file in AstroObject.</li>
-<li>AstroObject more consistently uses the <cite>._default_state()</cite> call to set statename.</li>
-<li>Made a temporary fix for data copying bugs</li>
-<li>Documentation of API</li>
-<li>Documentation of AnalyticSpectra</li>
-<li>Documentation includes examples</li>
-<li>Documentation intro improved</li>
-<li>Improvements to SpectraFrame <cite>__show__()</cite> plot limits</li>
-<li>Improvements to messaging from AstroObject</li>
-<li>Code style cleanup</li>
-<li><cite>__all__</cite> settings for modules</li>
-<li>Testing for AnalyticSpectra</li>
-<li>Testing for AstroImage functional test cases</li>
-<li>Tests now include an API for functional testing</li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>0.2.4</dt>
-<dd><ul class="first last simple">
-<li>Better debugging information and errors from the AnaltyicSpectra.ResampledSpectra class&#8217;s <cite>resample()</cite></li>
-<li>AstroSpectra&#8217;s <cite>__hdu__</cite> includes header information stored in the HDU.</li>
-<li>New utility function <cite>npArrayInfo()</cite> which handles array log messages for information about the array.</li>
-<li>Testing updates to conform to new Resampling function (better example Spectra provided)</li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>0.2.5</dt>
-<dd><ul class="first last">
-<li><p class="first">All <cite>__init__</cite> functions now accept arbitrary keywords, and all arguments to these functions are keywords. This shouldn&#8217;t have any effect on currently implemented items, but new unittests will not test against non-keyword schemed inits</p>
-</li>
-<li><p class="first">As such, the keyword for initializing data is always <cite>data</cite> and never <cite>array</cite>.</p>
-</li>
-<li><dl class="first docutils">
-<dt>Changes to the <cite>ResampledSpectrum</cite> resample algorithm</dt>
-<dd><ul class="first last simple">
-<li>Tightened tolerance on spectrum interpolation in resampled spectra.</li>
-<li>Added a warning if you are resampling a spectrum to a higher resolution than the original source. The warning will not affect operation, but will message stdout</li>
-<li>Now we clip zeros out of the flux, so that the resampled spectra will never return zero. The resulting value just won&#8217;t be in the array.</li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><p class="first">Added the HDU-based frame and object system. The HDU system allows more direct manipulaton of HDUs. I&#8217;m still not confident in HDU&#8217;s ability to preserve data during reads and writes. (Specifically writes, but I&#8217;m unsure about reads as well...)</p>
-</li>
-<li><p class="first"><cite>_default_state(self,states=None)</cite> allows the user to filter states that you will use for the default collection</p>
-</li>
-<li><p class="first">Prevented object <cite>write()</cite> function from taking the primary state from outside of the set of written states.</p>
-</li>
-<li><p class="first"><cite>write()</cite> now uses the HDU header &#8220;LABEL&#8221; in order to set the state label</p>
-</li>
-<li><p class="first">Removed initilaizng frame data from object initialization.</p>
-</li>
-<li><p class="first">Added the <cite>__version__</cite> variable to all module components</p>
-</li>
-<li><p class="first"><cite>__all__</cite> filtering for Utilities (and other modules)</p>
-</li>
-<li><p class="first"><cite>getVersion()</cite> function which (by default) reads the <cite>VERSION</cite> file for version information.</p>
-</li>
-<li><p class="first"><cite>npArrayInfo()</cite> handles data that isn&#8217;t <cite>np.ndarray</cite> or isn&#8217;t normal</p>
-</li>
-<li><p class="first">Documentation of AstroFITS</p>
-</li>
-<li><p class="first">Documentation of Utilities</p>
-</li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>0.2.6</dt>
-<dd><ul class="first last simple">
-<li>Compatible with SetupTools setup.py paradigm</li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>0.2.7</dt>
-<dd><ul class="first last simple">
-<li>Fix for missing VERSION file in <cite>install</cite>-ed package</li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>0.2.8</dt>
-<dd><ul class="first last simple">
-<li>Release Notes for 0.2.7 and 0.2.8</li>
+<li>New Simulator Module</li>
+<li>New Caches Module</li>
+<li>Unified Logging Module System</li>
+<li>Setup.py Distribution</li>
+<li>Unified Analytic Spectrum interface when using interpolation.</li>
+<li>Unitary spectrum to collapse interpolated spectra early.</li>
+<li>Ability to resolve and resample analytic spectra.</li>
 </ul>
 </dd>
 </dl>
@@ -260,28 +167,181 @@
 </dl>
 </li>
 <li><dl class="first docutils">
-<dt>0.3.0</dt>
+<dt>0.2.8</dt>
 <dd><ul class="first last simple">
-<li>New Simulator Module</li>
-<li>New Caches Module</li>
-<li>Unified Logging Module System</li>
-<li>Setup.py Distribution</li>
-<li>Unified Analytic Spectrum interface when using interpolation.</li>
-<li>Unitary spectrum to collapse interpolated spectra early.</li>
-<li>Ability to resolve and resample analytic spectra.</li>
+<li>Release Notes for 0.2.7 and 0.2.8</li>
 </ul>
 </dd>
 </dl>
 </li>
 <li><dl class="first docutils">
-<dt>0.3.1</dt>
+<dt>0.2.7</dt>
 <dd><ul class="first last simple">
-<li>Dictionary methods for AstroObject (do things like AstroObject[&#8220;Label&#8221;] = Frame)</li>
-<li>Unified InterpolatedSpectrum model with various methods.</li>
-<li>Simulator has better options controls (for configuration and arbitrary functions)</li>
-<li>Cache module has been re-written. Now has a dict-like interface.</li>
-<li>New configuration module</li>
-<li>Unicode text in Simulator and AnalyticSpectra</li>
+<li>Fix for missing VERSION file in <cite>install</cite>-ed package</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.2.6</dt>
+<dd><ul class="first last simple">
+<li>Compatible with SetupTools setup.py paradigm</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.2.5</dt>
+<dd><ul class="first last">
+<li><p class="first">All <tt class="docutils literal"><span class="pre">__init__</span></tt> functions now accept arbitrary keywords, and all arguments to these functions are keywords. This shouldn&#8217;t have any effect on currently implemented items, but new unittests will not test against non-keyword schemed inits</p>
+</li>
+<li><p class="first">As such, the keyword for initializing data is always <tt class="docutils literal"><span class="pre">data</span></tt> and never <tt class="docutils literal"><span class="pre">array</span></tt>.</p>
+</li>
+<li><dl class="first docutils">
+<dt>Changes to the <tt class="docutils literal"><span class="pre">ResampledSpectrum</span></tt> resample algorithm</dt>
+<dd><ul class="first last simple">
+<li>Tightened tolerance on spectrum interpolation in resampled spectra.</li>
+<li>Added a warning if you are resampling a spectrum to a higher resolution than the original source. The warning will not affect operation, but will message stdout</li>
+<li>Now we clip zeros out of the flux, so that the resampled spectra will never return zero. The resulting value just won&#8217;t be in the array.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">Added the HDU-based frame and object system. The HDU system allows more direct manipulaton of HDUs. I&#8217;m still not confident in HDU&#8217;s ability to preserve data during reads and writes. (Specifically writes, but I&#8217;m unsure about reads as well...)</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">_default_state(self,states=None)</span></tt> allows the user to filter states that you will use for the default collection</p>
+</li>
+<li><p class="first">Prevented object <cite>write()</cite> function from taking the primary state from outside of the set of written states.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">write()</span></tt> now uses the HDU header &#8220;LABEL&#8221; in order to set the state label</p>
+</li>
+<li><p class="first">Removed initilaizng frame data from object initialization.</p>
+</li>
+<li><p class="first">Added the <tt class="docutils literal"><span class="pre">__version__</span></tt> variable to all module components</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">__all__</span></tt> filtering for Utilities (and other modules)</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">getVersion()</span></tt> function which (by default) reads the <tt class="docutils literal"><span class="pre">VERSION</span></tt> file for version information.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">npArrayInfo()</span></tt> handles data that isn&#8217;t <tt class="docutils literal"><span class="pre">np.ndarray</span></tt> or isn&#8217;t normal</p>
+</li>
+<li><p class="first">Documentation of AstroFITS</p>
+</li>
+<li><p class="first">Documentation of Utilities</p>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.2.4</dt>
+<dd><ul class="first last simple">
+<li>Better debugging information and errors from the AnaltyicSpectra.ResampledSpectra class&#8217;s <tt class="docutils literal"><span class="pre">resample()</span></tt></li>
+<li>AstroSpectra&#8217;s <tt class="docutils literal"><span class="pre">__hdu__</span></tt> includes header information stored in the HDU.</li>
+<li>New utility function <tt class="docutils literal"><span class="pre">npArrayInfo()</span></tt> which handles array log messages for information about the array.</li>
+<li>Testing updates to conform to new Resampling function (better example Spectra provided)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.2.3</dt>
+<dd><ul class="first last simple">
+<li>Uniform <tt class="docutils literal"><span class="pre">__init__</span></tt> call signature <tt class="docutils literal"><span class="pre">(data,label,header=,metadata=)</span></tt> This will change to (<tt class="docutils literal"><span class="pre">**kwargs</span></tt>) in the next release. The signature will primarily use (<tt class="docutils literal"><span class="pre">data=,label=</span></tt>), so that can be included now for future compatibility.</li>
+<li>Uniform <tt class="docutils literal"><span class="pre">__call__</span></tt> call signature for AnalyticSpectra items. This allows nested calls with a variety of keywords (see ResampledSpectrum)</li>
+<li>New InterpolatedSpectrum (using Spline by default) and ResampledSpectrum objects provide analytic interfaces to data-based spectra.</li>
+<li>AstroImage and AstroObject save header values to in <tt class="docutils literal"><span class="pre">__hdu__</span></tt> call.</li>
+<li>AstroObject now has a <tt class="docutils literal"><span class="pre">clobber</span></tt> mode which allows <tt class="docutils literal"><span class="pre">.save()</span></tt> to overwrite data</li>
+<li>AstroObject now has a <tt class="docutils literal"><span class="pre">.clear()</span></tt> method to delete all data.</li>
+<li>Fixed a bug which might crop up when saving only a single frame to a FITS file in AstroObject.</li>
+<li>AstroObject more consistently uses the <tt class="docutils literal"><span class="pre">._default_state()</span></tt> call to set statename.</li>
+<li>Made a temporary fix for data copying bugs</li>
+<li>Documentation of API</li>
+<li>Documentation of AnalyticSpectra</li>
+<li>Documentation includes examples</li>
+<li>Documentation intro improved</li>
+<li>Improvements to SpectraFrame <tt class="docutils literal"><span class="pre">__show__()</span></tt> plot limits</li>
+<li>Improvements to messaging from AstroObject</li>
+<li>Code style cleanup</li>
+<li><tt class="docutils literal"><span class="pre">__all__</span></tt> settings for modules</li>
+<li>Testing for AnalyticSpectra</li>
+<li>Testing for AstroImage functional test cases</li>
+<li>Tests now include an API for functional testing</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.2.2</dt>
+<dd><ul class="first last simple">
+<li>Hotfix to include updated notes in the README and to update documentation</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.2.1</dt>
+<dd><ul class="first last simple">
+<li><tt class="docutils literal"><span class="pre">object.keep()</span></tt> only keeps the specified states</li>
+<li><tt class="docutils literal"><span class="pre">object.keep()</span></tt> and <tt class="docutils literal"><span class="pre">object.remove()</span></tt> both accept arbitrary numbers of arguments</li>
+<li>derived classes now have a <tt class="docutils literal"><span class="pre">__valid__()</span></tt> method</li>
+<li><tt class="docutils literal"><span class="pre">object.object()</span></tt> has become <tt class="docutils literal"><span class="pre">object.frame()</span></tt> for more naming consistency. NOTE: <tt class="docutils literal"><span class="pre">object.object()</span></tt> will be depreciated.</li>
+<li>AstroObject has been renamed AstroObjectBase to reflect its use as a base class. NOTE: <tt class="docutils literal"><span class="pre">AstroObject.AstroObject</span></tt> will be depreciated.</li>
+<li>improvement to nosetests/spec</li>
+<li>improvements to documentation</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.2.0</dt>
+<dd><ul class="first last simple">
+<li>API Has CHANGED! Please see SPEC.md to understand the 0.2 API</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.1.4</dt>
+<dd><ul class="first last simple">
+<li>Logging cannot capture warnings in python 0.1.4, so don&#8217;t import that!</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.1.3</dt>
+<dd><ul class="first last simple">
+<li>Handling Overflows in Blackbody Function</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.1.2</dt>
+<dd><ul class="first last simple">
+<li>Logs only written to file when a &#8220;Logs/&#8221; folder is present.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.1.1</dt>
+<dd><ul class="first last simple">
+<li>Fixed a log message formatting error in AstroImage which caused a printing error</li>
+<li>Removed the &#8220;Logs/&#8221; folder requirement from the module</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.1.0</dt>
+<dd><ul class="first last simple">
+<li>Basic operation of Spectra</li>
+<li>Basic operation of Images</li>
+<li>Untested IRAF Interaction Lines</li>
+<li>Basic FITS File Writing</li>
+<li>NO Metadata and Header Features</li>
 </ul>
 </dd>
 </dl>
@@ -297,7 +357,7 @@
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
   <p class="topless"><a href="future.html"
-                        title="previous chapter">13. Development Plans</a></p>
+                        title="previous chapter">12. Development Plans</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="SimulatorExample.html"
                         title="next chapter">An Example Simulator</a></p>
@@ -336,9 +396,9 @@
           <a href="SimulatorExample.html" title="An Example Simulator"
              >next</a> |</li>
         <li class="right" >
-          <a href="future.html" title="13. Development Plans"
+          <a href="future.html" title="12. Development Plans"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.6-p1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.4 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

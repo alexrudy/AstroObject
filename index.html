@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to AstroObject! &mdash; AstroObject 0.3.6-p1 documentation</title>
+    <title>Welcome to AstroObject! &mdash; AstroObject 0.4 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.6-p1',
+        VERSION:     '0.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.6-p1 documentation" href="#" />
+    <link rel="top" title="AstroObject 0.4 documentation" href="#" />
     <link rel="next" title="1. Introduction to AstroObject" href="intro.html" /> 
   </head>
   <body>
@@ -41,7 +41,7 @@
         <li class="right" >
           <a href="intro.html" title="1. Introduction to AstroObject"
              accesskey="N">next</a> |</li>
-        <li><a href="#">AstroObject 0.3.6-p1 documentation</a> &raquo;</li> 
+        <li><a href="#">AstroObject 0.4 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -52,58 +52,87 @@
             
   <div class="section" id="welcome-to-astroobject">
 <h1>Welcome to AstroObject!<a class="headerlink" href="#welcome-to-astroobject" title="Permalink to this headline">¶</a></h1>
-<p>AstroObject is a library for Object-Oriented Astronomy. Currently under development, it contains tools for object-oriented management of Spectrum Data, Image Data, and Analytic Spectrum Data. More features are planned for the future. To get a sense of the philosophy of this project, read the introduction.</p>
+<p>AstroObject is a library for Object-Oriented Astronomy. Currently under development at <a class="reference external" href="http://github.com/alexrudy/AstroObject/">github</a>, it contains tools for object-oriented management of Spectrum Data, Image Data, and Analytic Spectrum Data. More features are planned for the future. To get a sense of the philosophy of this project, read the introduction.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">This module is under development. The version number 0.3.6-p1 is very low, indicating that much of this module may be unreliable. The behavior in specific instances is not guaranteed nor should it be trusted. For more information about the development of this module, see <a class="reference internal" href="development.html"><em>Development of AstroObject</em></a>.</p>
+<p class="last">This module is under development. The version number 0.4 is very low, indicating that much of this module may be unreliable. The behavior in specific instances is not guaranteed nor should it be trusted. For more information about the development of this module, see <a class="reference internal" href="installation.html"><em>Installation</em></a>.</p>
 </div>
-<p>About AstroObject:</p>
+</div>
+<div class="section" id="about-astroobject">
+<h1>About AstroObject<a class="headerlink" href="#about-astroobject" title="Permalink to this headline">¶</a></h1>
 <p><em>These pages are meant to be read for an understanding of what this module is good for. In the future, the tutorial will be here, as well as simple installation instructions, etc</em>.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">1. Introduction to <tt class="docutils literal"><span class="pre">AstroObject</span></tt></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="intro.html#frames">1.1. Frames</a></li>
 <li class="toctree-l2"><a class="reference internal" href="intro.html#object">1.2. Object</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intro.html#expansion">1.3. Expansion</a></li>
-<li class="toctree-l2"><a class="reference internal" href="intro.html#example">1.4. Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#simulators">1.3. Simulators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#library-users">1.4. Library Users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#library-developers">1.5. Library Developers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#example">1.6. Example</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="development.html">2. Development of <tt class="docutils literal"><span class="pre">AstroObject</span></tt></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="development.html#methods-of-development">2.1. Methods of Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">2. Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installation-via-pip">2.1. Installation via <tt class="docutils literal"><span class="pre">pip</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installation-via-setuptools">2.2. Installation via <tt class="docutils literal"><span class="pre">setuptools</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#what-to-do-about-bugs">2.3. What to do about Bugs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#development-of-astroobject">2.4. Development of <tt class="docutils literal"><span class="pre">AstroObject</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#testing-the-pacakge">2.5. Testing the Pacakge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#source-code-for-development">2.6. Source Code for Development</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="api.html">3. AstroObject API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api.html#base-frame-baseframe">3.1. Base Frame <tt class="docutils literal"><span class="pre">BaseFrame</span></tt></a></li>
+<li class="toctree-l1"><a class="reference internal" href="AstroFITS.html">3. Empty FITS HDUs: <tt class="docutils literal"><span class="pre">AstroFITS</span></tt></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="AstroFITS.html#empty-hdu-objects-fitsobject">3.1. Empty HDU <strong>objects</strong>: <tt class="docutils literal"><span class="pre">FITSObject</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="AstroFITS.html#empty-hdu-frames-fitsframe">3.2. Empty HDU <strong>frames</strong> <tt class="docutils literal"><span class="pre">FITSFrame</span></tt></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="AstroObject.html">4. Custom Object Basics: <tt class="docutils literal"><span class="pre">FITSObject</span></tt></a></li>
-<li class="toctree-l1"><a class="reference internal" href="AstroObject.html#custom-frame-basics-fitsframe">5. Custom Frame Basics <tt class="docutils literal"><span class="pre">FITSFrame</span></tt></a></li>
-<li class="toctree-l1"><a class="reference internal" href="AstroImage.html">6. Image Objects and Storage <tt class="docutils literal"><span class="pre">AstroImage</span></tt></a></li>
-<li class="toctree-l1"><a class="reference internal" href="AstroSpectra.html">7. Raw Spectrum Management <tt class="docutils literal"><span class="pre">AstroSpectra</span></tt></a></li>
-<li class="toctree-l1"><a class="reference internal" href="AnalyticSpectra.html">8. Analytic Spectra and Interpolation <tt class="docutils literal"><span class="pre">AnalyticSpectra</span></tt></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="AnalyticSpectra.html#expansion-objects">8.1. Expansion Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="AnalyticSpectra.html#analytic-spectrum-objects">8.2. Analytic Spectrum Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="AstroImage.html">4. Image Objects and Storage <tt class="docutils literal"><span class="pre">AstroImage</span></tt></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="AstroImage.html#image-objects-imageobject">4.1. Image <strong>objects</strong>: <tt class="docutils literal"><span class="pre">ImageObject</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="AstroImage.html#image-frames-imageframe">4.2. Image <strong>frames</strong>: <tt class="docutils literal"><span class="pre">ImageFrame</span></tt></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="AstroFITS.html">9. HDU Objects and Storage <tt class="docutils literal"><span class="pre">AstroFITS</span></tt></a></li>
-<li class="toctree-l1"><a class="reference internal" href="AstroSimulator.html">10. Simulator <tt class="docutils literal"><span class="pre">AstroSimulator</span></tt></a><ul>
-<li class="toctree-l2"><a class="reference internal" href="AstroSimulator.html#simulator-command-line-interface">10.1. <strong class="program">Simulator</strong> Command Line Interface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="AstroSimulator.html#simulator-configuration-files">10.2. <strong class="program">Simulator</strong> Configuration Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="AstroSimulator.html#api-methods">10.3. API Methods</a></li>
-<li class="toctree-l2"><a class="reference internal" href="AstroSimulator.html#decorators">10.4. Decorators</a></li>
-<li class="toctree-l2"><a class="reference internal" href="AstroSimulator.html#private-methods-and-classes">10.5. Private Methods and Classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="AstroSpectra.html">5. Raw Spectrum Management <tt class="docutils literal"><span class="pre">AstroSpectra</span></tt></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="AstroSpectra.html#raw-spectrum-objects-spectraobject">5.1. Raw Spectrum <strong>objects</strong>: <tt class="docutils literal"><span class="pre">SpectraObject</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="AstroSpectra.html#raw-spectrum-frames-spectraframe">5.2. Raw Spectrum <strong>frames</strong>: <tt class="docutils literal"><span class="pre">SpectraFrame</span></tt></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="AstroObjectLogging.html">11. Easy Logging <tt class="docutils literal"><span class="pre">AstroObjectLogging</span></tt></a></li>
-<li class="toctree-l1"><a class="reference internal" href="Utilities.html">12. AstroObject Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="future.html">13. Development Plans</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="future.html#pyraf-interaction">13.1. PyRAF Interaction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="future.html#linear-fitting">13.2. Linear Fitting</a></li>
-<li class="toctree-l2"><a class="reference internal" href="future.html#binning">13.3. Binning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="future.html#analytic-convolutions">13.4. Analytic Convolutions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="AnalyticSpectra.html">6. Analytic Spectra and Interpolation <tt class="docutils literal"><span class="pre">AnalyticSpectra</span></tt></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="AnalyticSpectra.html#module-structure">6.1. Module Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AnalyticSpectra.html#simple-objects">6.2. Simple Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AnalyticSpectra.html#expansion-objects">6.3. Expansion Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AnalyticSpectra.html#analytic-spectrum-objects">6.4. Analytic Spectrum Objects</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="rnotes.html">14. Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="AstroObject.html">7. AstroObject API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="AstroObject.html#module-structure">7.1. Module Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AstroObject.html#base-frame-baseframe">7.2. Base Frame <tt class="docutils literal"><span class="pre">BaseFrame</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="AstroObject.html#mixins-in-astroobjectbase">7.3. Mixins in <tt class="docutils literal"><span class="pre">AstroObjectBase</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="AstroObject.html#base-object-baseobject">7.4. Base Object <tt class="docutils literal"><span class="pre">BaseObject</span></tt></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="AstroSimulator.html">8. Simulator <tt class="docutils literal"><span class="pre">AstroSimulator</span></tt></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="AstroSimulator.html#simulator-command-line-interface">8.1. <strong class="program">Simulator</strong> Command Line Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AstroSimulator.html#simulator-configuration-files">8.2. <strong class="program">Simulator</strong> Configuration Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AstroSimulator.html#api-methods">8.3. API Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AstroSimulator.html#decorators">8.4. Decorators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="AstroSimulator.html#private-methods-and-classes">8.5. Private Methods and Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="AstroConfig.html">9. YAML-based Configuration Dictionaries: <tt class="docutils literal"><span class="pre">AstroConfig</span></tt></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="AstroConfig.html#basic-configurations-configuration">9.1. Basic Configurations: <tt class="docutils literal"><span class="pre">Configuration</span></tt></a></li>
+<li class="toctree-l2"><a class="reference internal" href="AstroConfig.html#structured-configurations-structuredconfiguration">9.2. Structured Configurations: <tt class="docutils literal"><span class="pre">StructuredConfiguration</span></tt></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="AstroObjectLogging.html">10. Easy Logging <tt class="docutils literal"><span class="pre">AstroObjectLogging</span></tt></a></li>
+<li class="toctree-l1"><a class="reference internal" href="Utilities.html">11. AstroObject <tt class="docutils literal"><span class="pre">Utilities</span></tt></a></li>
+<li class="toctree-l1"><a class="reference internal" href="future.html">12. Development Plans</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="future.html#pyraf-interaction">12.1. PyRAF Interaction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="future.html#linear-fitting">12.2. Linear Fitting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="future.html#binning">12.3. Binning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="future.html#analytic-convolutions">12.4. Analytic Convolutions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rnotes.html">13. Release Notes</a></li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
@@ -126,7 +155,8 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Welcome to AstroObject!</a><ul>
+<li><a class="reference internal" href="#">Welcome to AstroObject!</a></li>
+<li><a class="reference internal" href="#about-astroobject">About AstroObject</a><ul>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
@@ -134,7 +164,7 @@
 
   <h4>Next topic</h4>
   <p class="topless"><a href="intro.html"
-                        title="next chapter">1. Introduction to <tt class="docutils literal docutils literal"><span class="pre">AstroObject</span></tt></a></p>
+                        title="next chapter">1. Introduction to <tt class="docutils literal"><span class="pre">AstroObject</span></tt></a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/index.txt"
@@ -169,7 +199,7 @@
         <li class="right" >
           <a href="intro.html" title="1. Introduction to AstroObject"
              >next</a> |</li>
-        <li><a href="#">AstroObject 0.3.6-p1 documentation</a> &raquo;</li> 
+        <li><a href="#">AstroObject 0.4 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

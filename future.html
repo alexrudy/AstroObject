@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>13. Development Plans &mdash; AstroObject 0.3.6-p1 documentation</title>
+    <title>12. Development Plans &mdash; AstroObject 0.4 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.6-p1',
+        VERSION:     '0.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,9 +25,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.6-p1 documentation" href="index.html" />
-    <link rel="next" title="14. Release Notes" href="rnotes.html" />
-    <link rel="prev" title="12. AstroObject Utilities" href="Utilities.html" /> 
+    <link rel="top" title="AstroObject 0.4 documentation" href="index.html" />
+    <link rel="next" title="13. Release Notes" href="rnotes.html" />
+    <link rel="prev" title="11. AstroObject Utilities" href="Utilities.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,12 +40,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="rnotes.html" title="14. Release Notes"
+          <a href="rnotes.html" title="13. Release Notes"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="Utilities.html" title="12. AstroObject Utilities"
+          <a href="Utilities.html" title="11. AstroObject Utilities"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.6-p1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.4 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -55,22 +55,22 @@
           <div class="body">
             
   <div class="section" id="development-plans">
-<h1>13. Development Plans<a class="headerlink" href="#development-plans" title="Permalink to this headline">¶</a></h1>
+<h1>12. Development Plans<a class="headerlink" href="#development-plans" title="Permalink to this headline">¶</a></h1>
 <p>This section contains information and rough plans of items which are included for future development in the AstroObject Library</p>
 <div class="section" id="pyraf-interaction">
-<h2>13.1. PyRAF Interaction<a class="headerlink" href="#pyraf-interaction" title="Permalink to this headline">¶</a></h2>
+<h2>12.1. PyRAF Interaction<a class="headerlink" href="#pyraf-interaction" title="Permalink to this headline">¶</a></h2>
 <p>The module will support writing out temporary FITS files for PyRAF commands, and then re-loading this data in the program. This will allow the user to not worry about temporary files, and to save the full history state of their images in Python objects without the mechanics of reading and writing FITS files.</p>
 </div>
 <div class="section" id="linear-fitting">
-<h2>13.2. Linear Fitting<a class="headerlink" href="#linear-fitting" title="Permalink to this headline">¶</a></h2>
+<h2>12.2. Linear Fitting<a class="headerlink" href="#linear-fitting" title="Permalink to this headline">¶</a></h2>
 <p>There will be a submodule built for fitting data, both a generic API and a linear fit object. These objects will include access to standard scientific fitting parameters, such as Chi-Squared and Normalized Residuals.</p>
 </div>
 <div class="section" id="binning">
-<h2>13.3. Binning<a class="headerlink" href="#binning" title="Permalink to this headline">¶</a></h2>
+<h2>12.3. Binning<a class="headerlink" href="#binning" title="Permalink to this headline">¶</a></h2>
 <p>I&#8217;ve been searching for a good, robust way to do image binning, but haven&#8217;t found one. This is very useful for simulations as it allows us to over-sample simulated data.</p>
 </div>
 <div class="section" id="analytic-convolutions">
-<h2>13.4. Analytic Convolutions<a class="headerlink" href="#analytic-convolutions" title="Permalink to this headline">¶</a></h2>
+<h2>12.4. Analytic Convolutions<a class="headerlink" href="#analytic-convolutions" title="Permalink to this headline">¶</a></h2>
 <p>I&#8217;d like to develop a <em>fast</em> analytic way to do spectral convolutions. Managing individual spectra is okay, but handling a spectra that has a non-zero PSF, and hence is 2-D, is difficult. Generalizing this approach in the library is something I hope to do if I can figure this out.</p>
 </div>
 </div>
@@ -83,21 +83,21 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">13. Development Plans</a><ul>
-<li><a class="reference internal" href="#pyraf-interaction">13.1. PyRAF Interaction</a></li>
-<li><a class="reference internal" href="#linear-fitting">13.2. Linear Fitting</a></li>
-<li><a class="reference internal" href="#binning">13.3. Binning</a></li>
-<li><a class="reference internal" href="#analytic-convolutions">13.4. Analytic Convolutions</a></li>
+<li><a class="reference internal" href="#">12. Development Plans</a><ul>
+<li><a class="reference internal" href="#pyraf-interaction">12.1. PyRAF Interaction</a></li>
+<li><a class="reference internal" href="#linear-fitting">12.2. Linear Fitting</a></li>
+<li><a class="reference internal" href="#binning">12.3. Binning</a></li>
+<li><a class="reference internal" href="#analytic-convolutions">12.4. Analytic Convolutions</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="Utilities.html"
-                        title="previous chapter">12. AstroObject Utilities</a></p>
+                        title="previous chapter">11. AstroObject <tt class="docutils literal docutils literal docutils literal"><span class="pre">Utilities</span></tt></a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="rnotes.html"
-                        title="next chapter">14. Release Notes</a></p>
+                        title="next chapter">13. Release Notes</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/future.txt"
@@ -130,12 +130,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="rnotes.html" title="14. Release Notes"
+          <a href="rnotes.html" title="13. Release Notes"
              >next</a> |</li>
         <li class="right" >
-          <a href="Utilities.html" title="12. AstroObject Utilities"
+          <a href="Utilities.html" title="11. AstroObject Utilities"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.6-p1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.4 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

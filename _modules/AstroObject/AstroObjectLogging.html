@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObject.AstroObjectLogging &mdash; AstroObject 0.3.6-p1 documentation</title>
+    <title>AstroObject.AstroObjectLogging &mdash; AstroObject 0.4 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.6-p1',
+        VERSION:     '0.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.6-p1 documentation" href="../../index.html" />
+    <link rel="top" title="AstroObject 0.4 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.3.6-p1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.4 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -49,15 +49,42 @@
           <div class="body">
             
   <h1>Source code for AstroObject.AstroObjectLogging</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
 <span class="c"># </span>
 <span class="c">#  AstroObjectLogging.py</span>
 <span class="c">#  AstroObject</span>
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2011-12-12.</span>
 <span class="c">#  Copyright 2011 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.3.6-p1</span>
+<span class="c">#  Version 0.4.0</span>
 <span class="c">#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Easy Logging :mod:`AstroObjectLogging`</span>
+<span class="sd">======================================</span>
 
+<span class="sd">This module provides basic access to logging functions. It elimiates much of the variablity in logging, replacing it with the simple logging configuration options that AstroObject is constantly using. It is, however, built on the normal logging module, and so shouldn&#39;t break any other logging schemes. &lt;http://docs.python.org/library/logging.html&gt;</span>
+
+<span class="sd">Other than a simpler set of possible configuration options, this object has the advantage that it allows for dynamic configurations which vary from run to run. As is common in complex programs, a lot happens before reading a configuration file. However, without the configuration file, the system can&#39;t start logging. This logger holds all the messages it recieves pre-configuration for use once the logger starts, preserving these messages for later debugging.</span>
+
+<span class="sd">To use the logging::</span>
+<span class="sd">	</span>
+<span class="sd">	LOG = logging.getLogger(__name__)</span>
+<span class="sd">	LOG.info(&quot;Buffered Message Saved for later output&quot;)</span>
+<span class="sd">	LOG.configure(configFile=&quot;some.yaml&quot;)</span>
+<span class="sd">	LOG.info(&quot;Buffered Message, saved for later output&quot;)</span>
+<span class="sd">	LOG.start()</span>
+<span class="sd">	LOG.info(&quot;Normal Message&quot;)</span>
+<span class="sd">	LOG.useConsole(False)</span>
+<span class="sd">	LOG.info(&quot;Not on the console&quot;)</span>
+<span class="sd">	LOG.useConsole(True)</span>
+<span class="sd">	LOG.info(&quot;Back to the console!&quot;)</span>
+<span class="sd">	</span>
+
+<span class="sd">.. autoclass::</span>
+<span class="sd">    AstroObject.AstroObjectLogging.LogManager</span>
+<span class="sd">    :members:</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">logging.handlers</span> <span class="kn">as</span> <span class="nn">handlers</span>
 
@@ -324,7 +351,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.3.6-p1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.4 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

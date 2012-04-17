@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>1. Introduction to AstroObject &mdash; AstroObject 0.3.6-p1 documentation</title>
+    <title>1. Introduction to AstroObject &mdash; AstroObject 0.4 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.6-p1',
+        VERSION:     '0.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.6-p1 documentation" href="index.html" />
-    <link rel="next" title="2. Development of AstroObject" href="development.html" />
+    <link rel="top" title="AstroObject 0.4 documentation" href="index.html" />
+    <link rel="next" title="2. Installation" href="installation.html" />
     <link rel="prev" title="Welcome to AstroObject!" href="index.html" /> 
   </head>
   <body>
@@ -40,12 +40,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="development.html" title="2. Development of AstroObject"
+          <a href="installation.html" title="2. Installation"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="index.html" title="Welcome to AstroObject!"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.6-p1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.4 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -57,26 +57,49 @@
   <div class="section" id="introduction-to-astroobject">
 <h1>1. Introduction to <tt class="xref py py-mod docutils literal"><span class="pre">AstroObject</span></tt><a class="headerlink" href="#introduction-to-astroobject" title="Permalink to this headline">¶</a></h1>
 <p>Welcome to AstroObject, a library for managing Astronomical Data. The idea behind this library is to bring Astronomical data and data reduction into the object-oriented age. This library is not meant for use with what astronomers lovingly call &#8220;codes&#8221;, but rather is designed with full fledged programs in mind.</p>
-<p>With that in mind, it is good to know that this module is based around two concepts, Objects and Frames.</p>
-<p>Often, when doing data reduction, you end up manipulating the same image or spectra many times. This process (in my experience) has led me to litter my directories with numerous FITS files, always prepending or appending <tt class="docutils literal"><span class="pre">b</span></tt> or some other character to indicate the current state of the image. This module allows you to think of each of those states of the same image as a &#8220;frame&#8221;, all belonging to the same &#8220;image&#8221; object.</p>
-<p>It just so happens that the FITS data format supports this understanding as well, by way of FITS extensions. As such, you can store your beautifully reduced science image in the front of a FITS image, but include a full history of that image in subsequent FITS extension frames.</p>
+<p>With that in mind, it is good to know that this module is based around two concepts, <strong>Objects</strong> and <strong>Frames</strong>.</p>
+<p>Often, when doing data reduction, you end up manipulating the same image or spectra many times. This process (in my experience) has led me to litter my directories with numerous FITS files, always prepending or appending <tt class="docutils literal"><span class="pre">b</span></tt> or some other character to indicate the current state of the image. This module allows you to think of each of those states of the same image as a <strong>frame</strong>, all belonging to the same image <strong>object</strong>.</p>
+<p>It just so happens that the FITS data format supports this understanding as well, by way of FITS extensions. As such, you can store your beautifully reduced science image in the front of a FITS image, but include a full history of that image in subsequent FITS extension frames. Of course, this might make for rather large FITS files, so this library makes no assumptions about how you write FITS files at the end of the day.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The terms <strong>Object</strong> and <strong>Frame</strong> are used throughout the documentation here. Unfortunately, <em>object</em> has a different meaning in python. In this documentation, when I refer to a python-style <em>object</em>, I will use <em>italics</em>, and when I refer to an AstroObject style <strong>object</strong>, I will use <strong>bold</strong>. For clarity and emphasis sake, I will also try to use <strong>bold</strong> when refering to AstroObject-style <strong>frames</strong></p>
+</div>
 <div class="section" id="frames">
 <h2>1.1. Frames<a class="headerlink" href="#frames" title="Permalink to this headline">¶</a></h2>
-<p>A frame is a single instance of data. It doesn&#8217;t have to be image data, it could instead be spectral data, or any other data you could think of. The point is that a frame is just one instance of such data. Each frame in <tt class="xref py py-mod docutils literal"><span class="pre">AstroObject</span></tt> has a label, and each frame can carry its own data as well as its own metadata.</p>
-<p>The format of data in a frame depends on what type of frame you want to use. For the simple <tt class="xref py py-mod docutils literal"><span class="pre">AstroImage</span></tt> implementation, a frame is a two-dimensional array of numpy data (along with a stack of other meta-data that it gets to carry around). You should really only write to a frame once (although sometimes you may need a place to put an image temporarily, and then wish to over-write it or delete it later... that is perfectly fine, see CLOBBER), and then that frame will preserve the image data for you.</p>
-<p>The <tt class="xref py py-mod docutils literal"><span class="pre">AstroObject</span></tt> module comes with a variety of frames, but it is easy to create your own. The required functions for each frame are documented in <a class="reference internal" href="api.html#astroobjectapi"><em>AstroObject API</em></a>, and a template class is provided in <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.FITSFrame</span></tt></p>
+<p>A <strong>frame</strong> is a single instance of data. It doesn&#8217;t have to be image data, it could instead be spectral data, or any other data you could think of. The point is that a <strong>frame</strong> is just one instance of such data. Each <strong>frame</strong> in <tt class="xref py py-mod docutils literal"><span class="pre">AstroObject</span></tt> has a label, and each <strong>frame</strong> can carry its own data as well as its own metadata.</p>
+<p>The format of data in a <strong>frame</strong> depends on what type of <strong>frame</strong> you want to use. For the simple <a class="reference internal" href="AstroImage.html#module-AstroObject.AstroImage" title="AstroObject.AstroImage"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroImage</span></tt></a> implementation, a <strong>frame</strong> is a two-dimensional array of numpy data (along with a stack of other meta-data that it gets to carry around). You should really only write to a <strong>frame</strong> once (although sometimes you may need a place to put an image temporarily, and then wish to over-write it or delete it later... that is perfectly fine), and then that <strong>frame</strong> will preserve the image data for you.</p>
+<p>The <tt class="xref py py-mod docutils literal"><span class="pre">AstroObject</span></tt> module comes with a variety of <strong>frames</strong>, and it is easy to create your own. The required functions for each <strong>frame</strong> are documented in <a class="reference internal" href="AstroObject.html#astroobjectapi"><em>AstroObject API</em></a>, and a template class is provided in <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="AstroObject.AstroObjectBase.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.BaseFrame</span></tt></a>. However, if you want to work with images, you can use <strong>frames</strong> from <a class="reference internal" href="AstroImage.html#module-AstroObject.AstroImage" title="AstroObject.AstroImage"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroImage</span></tt></a>, and if you want to work with spectra, you can use <strong>frames</strong> from <a class="reference internal" href="AstroSpectra.html#module-AstroObject.AstroSpectra" title="AstroObject.AstroSpectra"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSpectra</span></tt></a> and <a class="reference internal" href="AnalyticSpectra.html#module-AstroObject.AnalyticSpectra" title="AstroObject.AnalyticSpectra"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AnalyticSpectra</span></tt></a>.</p>
 </div>
 <div class="section" id="object">
 <h2>1.2. Object<a class="headerlink" href="#object" title="Permalink to this headline">¶</a></h2>
-<p>Objects are really just collections of frames with a few additional helpful features. When you reduce an image, you really only care about a single image, and most of the time, you want the most recent changes to that image. That is where objects help. Instead of storing innumerable FITS files, you just add each frame (image) to a single object. Then, you can use that object&#8217;s methods to easily retrieve and store new data.</p>
-<p>Objects provide smart <tt class="xref py py-meth docutils literal"><span class="pre">save()</span></tt> methods which allow you to pass either an already instantiated <tt class="xref py py-meth docutils literal"><span class="pre">frame()</span></tt> or just the raw data you wish to store. Then, to retrieve your data, you can ask an object for the <tt class="xref py py-meth docutils literal"><span class="pre">frame()</span></tt> or the raw data. All of these methods are documented at <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.FITSObject</span></tt>.</p>
+<p><strong>Objects</strong> are really just collections of <strong>frames</strong> with a few additional helpful features. When you reduce an image, you really only care about a single image, and most of the time, you want the most recent changes to that image. That is where <strong>objects</strong> help. Instead of storing innumerable FITS files, you just add each <strong>frame</strong> (image) to a single <strong>object</strong>. Then, you can use that <strong>object</strong>&#8216;s methods to easily retrieve and store new data.</p>
+<p><strong>Objects</strong> provide smart <tt class="xref py py-meth docutils literal"><span class="pre">save()</span></tt> methods which allow you to pass either an already instantiated <tt class="xref py py-meth docutils literal"><span class="pre">frame()</span></tt> or just the raw data you wish to store. Then, to retrieve your data, you can ask an object for the <tt class="xref py py-meth docutils literal"><span class="pre">frame()</span></tt> or the raw data. All of these methods are documented at <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseObject" title="AstroObject.AstroObjectBase.BaseObject"><tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.BaseObject</span></tt></a>.</p>
+<p>If you intend to use <strong>objects</strong> and <strong>frames</strong> built into <tt class="xref py py-mod docutils literal"><span class="pre">AstroObject</span></tt>, then you really don&#8217;t need to worry about the implementaion of <strong>frames</strong>, in fact, you should be able to do everything you need, just knowing that a <strong>frame</strong> is a python-style <em>object</em> you can pass around, and using the methods provided by <strong>objects</strong></p>
 </div>
-<div class="section" id="expansion">
-<h2>1.3. Expansion<a class="headerlink" href="#expansion" title="Permalink to this headline">¶</a></h2>
-<p>This module is designed to be expanded by users. The <tt class="xref py py-mod docutils literal"><span class="pre">AstroObjectBase</span></tt> module provides basic abstract classes with source code which can be used to create sub-classes with specific functionality. By implementing their own <tt class="docutils literal"><span class="pre">frame</span></tt>, users can create Objects (using the <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.FITSObject</span></tt> class, and <tt class="docutils literal"><span class="pre">dataClasses</span></tt>) to make their own data reduction systems.</p>
+<div class="section" id="simulators">
+<h2>1.3. Simulators<a class="headerlink" href="#simulators" title="Permalink to this headline">¶</a></h2>
+<p>Simulators are complex task management tools which provide a command line interface, and dependency chain resolution. They help to structure and run large bodies of code, especially those that might have complex dependency chains, and may need multiple modes of operation. The basic principle is to design long programs as a single class isntance, with methods attached for each important function in the <strong>simulator</strong>. The module will then handle each of these instance methods as a <strong>stage</strong> which can be run independtly from each other. Normally, <strong>stages</strong> will depend on each other to run, and so a chain of dependencies can be built. As well, <strong>simulator</strong> tries to handle exceptions and loops gracefully, and provides methods to loop over various collections. See <a class="reference internal" href="AstroSimulator.html#module-AstroObject.AstroSimulator" title="AstroObject.AstroSimulator"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSimulator</span></tt></a>.</p>
+</div>
+<div class="section" id="library-users">
+<h2>1.4. Library Users<a class="headerlink" href="#library-users" title="Permalink to this headline">¶</a></h2>
+<p>General users should, when examining basic AstroObject functionality, understand the use of <strong>objects</strong>, and understand what <strong>frames</strong> are, but not necessarily their instance methods or uses. All normal operations can be handled by the <strong>object</strong> model in <tt class="xref py py-mod docutils literal"><span class="pre">AstroObject</span></tt>. As well, general users might use the <a class="reference internal" href="AstroSimulator.html#module-AstroObject.AstroSimulator" title="AstroObject.AstroSimulator"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSimulator</span></tt></a> tool, and may also wish to examine <a class="reference internal" href="AstroConfig.html#module-AstroObject.AstroConfig" title="AstroObject.AstroConfig"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroConfig</span></tt></a> for information about configuration objects and <tt class="docutils literal"><span class="pre">yaml</span></tt> based configurations.</p>
+<p>For modules which specifically handle ceratin functions, see:</p>
+<ul class="simple">
+<li>Images: See <a class="reference internal" href="AstroImage.html#module-AstroObject.AstroImage" title="AstroObject.AstroImage"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroImage</span></tt></a></li>
+<li>Spectral Data: See <a class="reference internal" href="AstroSpectra.html#module-AstroObject.AstroSpectra" title="AstroObject.AstroSpectra"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSpectra</span></tt></a></li>
+<li>Analytic and manipulated Spectra: See <a class="reference internal" href="AnalyticSpectra.html#module-AstroObject.AnalyticSpectra" title="AstroObject.AnalyticSpectra"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AnalyticSpectra</span></tt></a></li>
+<li>Empty FITS Files: See <a class="reference internal" href="AstroObject.html#module-AstroObject.AstroObjectBase" title="AstroObject.AstroObjectBase"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroObjectBase</span></tt></a></li>
+<li>Advanced FITS HDUs: See <a class="reference internal" href="AstroFITS.html#module-AstroObject.AstroFITS" title="AstroObject.AstroFITS"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroFITS</span></tt></a></li>
+<li>Command-line Tools and Complex Tasks: See <a class="reference internal" href="AstroSimulator.html#module-AstroObject.AstroSimulator" title="AstroObject.AstroSimulator"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSimulator</span></tt></a></li>
+<li>Configuration: See <a class="reference internal" href="AstroConfig.html#module-AstroObject.AstroConfig" title="AstroObject.AstroConfig"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroConfig</span></tt></a></li>
+</ul>
+</div>
+<div class="section" id="library-developers">
+<h2>1.5. Library Developers<a class="headerlink" href="#library-developers" title="Permalink to this headline">¶</a></h2>
+<p>This module is designed to be expanded by users. The <a class="reference internal" href="AstroObject.html#module-AstroObject.AstroObjectBase" title="AstroObject.AstroObjectBase"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroObjectBase</span></tt></a> module provides basic abstract classes with source code which can be used to create sub-classes with specific functionality (see <a class="reference internal" href="AstroObject.html#astroobjectapi"><em>AstroObject API</em></a>). By implementing their own <tt class="docutils literal"><span class="pre">frame</span></tt>, users can create Objects (using the <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseObject" title="AstroObject.AstroObjectBase.BaseObject"><tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.BaseObject</span></tt></a> class, and the keyword <tt class="docutils literal"><span class="pre">dataClasses</span></tt>) to make their own data reduction systems.</p>
 </div>
 <div class="section" id="example">
-<h2>1.4. Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<h2>1.6. Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
 <p>Here is a simple example use for this module:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">ImageObject</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">loadFromFile</span><span class="p">(</span><span class="s">&quot;Picture.jpg&quot;</span><span class="p">)</span>
@@ -106,8 +129,10 @@
 <li><a class="reference internal" href="#">1. Introduction to <tt class="docutils literal"><span class="pre">AstroObject</span></tt></a><ul>
 <li><a class="reference internal" href="#frames">1.1. Frames</a></li>
 <li><a class="reference internal" href="#object">1.2. Object</a></li>
-<li><a class="reference internal" href="#expansion">1.3. Expansion</a></li>
-<li><a class="reference internal" href="#example">1.4. Example</a></li>
+<li><a class="reference internal" href="#simulators">1.3. Simulators</a></li>
+<li><a class="reference internal" href="#library-users">1.4. Library Users</a></li>
+<li><a class="reference internal" href="#library-developers">1.5. Library Developers</a></li>
+<li><a class="reference internal" href="#example">1.6. Example</a></li>
 </ul>
 </li>
 </ul>
@@ -116,8 +141,8 @@
   <p class="topless"><a href="index.html"
                         title="previous chapter">Welcome to AstroObject!</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="development.html"
-                        title="next chapter">2. Development of <tt class="docutils literal docutils literal docutils literal"><span class="pre">AstroObject</span></tt></a></p>
+  <p class="topless"><a href="installation.html"
+                        title="next chapter">2. Installation</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/intro.txt"
@@ -150,12 +175,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="development.html" title="2. Development of AstroObject"
+          <a href="installation.html" title="2. Installation"
              >next</a> |</li>
         <li class="right" >
           <a href="index.html" title="Welcome to AstroObject!"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.6-p1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.4 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

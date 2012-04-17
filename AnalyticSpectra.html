@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>8. Analytic Spectra and Interpolation AnalyticSpectra &mdash; AstroObject 0.3.6-p1 documentation</title>
+    <title>6. Analytic Spectra and Interpolation AnalyticSpectra &mdash; AstroObject 0.4 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.3.6-p1',
+        VERSION:     '0.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,9 +25,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.6-p1 documentation" href="index.html" />
-    <link rel="next" title="9. HDU Objects and Storage AstroFITS" href="AstroFITS.html" />
-    <link rel="prev" title="7. Raw Spectrum Management AstroSpectra" href="AstroSpectra.html" /> 
+    <link rel="top" title="AstroObject 0.4 documentation" href="index.html" />
+    <link rel="next" title="7. AstroObject API" href="AstroObject.html" />
+    <link rel="prev" title="5. Raw Spectrum Management AstroSpectra" href="AstroSpectra.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,12 +40,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="AstroFITS.html" title="9. HDU Objects and Storage AstroFITS"
+          <a href="AstroObject.html" title="7. AstroObject API"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="AstroSpectra.html" title="7. Raw Spectrum Management AstroSpectra"
+          <a href="AstroSpectra.html" title="5. Raw Spectrum Management AstroSpectra"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.6-p1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.4 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -55,7 +55,7 @@
           <div class="body">
             
   <span class="target" id="module-AstroObject.AnalyticSpectra"></span><div class="section" id="analytic-spectra-and-interpolation-analyticspectra">
-<h1>8. Analytic Spectra and Interpolation <tt class="xref py py-mod docutils literal"><span class="pre">AnalyticSpectra</span></tt><a class="headerlink" href="#analytic-spectra-and-interpolation-analyticspectra" title="Permalink to this headline">¶</a></h1>
+<h1>6. Analytic Spectra and Interpolation <tt class="xref py py-mod docutils literal"><span class="pre">AnalyticSpectra</span></tt><a class="headerlink" href="#analytic-spectra-and-interpolation-analyticspectra" title="Permalink to this headline">¶</a></h1>
 <p>Objects for manipulating and managing spectra which are inherently analytic (i.e. you want interpolation, or your spectrum to be defined by a single function). The classes provided in this module are <em>FRAMES</em> not <em>OBJECTS</em>, i.e. they are individual representations of spectra etc.</p>
 <p>It is possible to create an AnalyticSpectraObject to hold many spectra. However, such an object might be of limited utility, as it could not be used to write or read data saved in FITS files, as the FITS format is not conducive to storing analytic items.</p>
 <div class="admonition note">
@@ -73,59 +73,39 @@
 <p class="first admonition-title">Note</p>
 <p class="last">I believe that STSCI Python has some spectrum capabilities, and I am researching combining this module to provide adaptors for the STSCI implementation.</p>
 </div>
+<div class="section" id="module-structure">
+<h2>6.1. Module Structure<a class="headerlink" href="#module-structure" title="Permalink to this headline">¶</a></h2>
+<p>This module is built on a foundation of Analytic and semi-Analytic spectra. Analytic spectra are spectra that can be described purely as functions. They are known quantities, and show none of the features of a discritized, measured spectrum. The <a class="reference internal" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AstroObject.AnalyticSpectra.AnalyticSpectrum"><tt class="xref py py-class docutils literal"><span class="pre">AnalyticSpectrum</span></tt></a> class provides an abstract base for this type of spectra. The <a class="reference internal" href="#AstroObject.AnalyticSpectra.CompositeSpectra" title="AstroObject.AnalyticSpectra.CompositeSpectra"><tt class="xref py py-class docutils literal"><span class="pre">CompositeSpectra</span></tt></a> manages the mathematical operations that can be performed on any <a class="reference internal" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AstroObject.AnalyticSpectra.AnalyticSpectrum"><tt class="xref py py-class docutils literal"><span class="pre">AnalyticSpectrum</span></tt></a>.</p>
+<p>The <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.AnalyticMixin" title="AstroObject.AstroObjectBase.AnalyticMixin"><tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.AnalyticMixin</span></tt></a> is a mixin which provides for using data <strong>frames</strong> as analytic objects with no data access attributes.</p>
+<p>The <a class="reference internal" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum" title="AstroObject.AnalyticSpectra.InterpolatedSpectrum"><tt class="xref py py-class docutils literal"><span class="pre">InterpolatedSpectrum</span></tt></a> provides a spectrum which is entered as raw data (like a <a class="reference internal" href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraFrame" title="AstroObject.AstroSpectra.SpectraFrame"><tt class="xref py py-class docutils literal"><span class="pre">AstroSpectra.SpectraFrame</span></tt></a>) and then returned, using a transformation function, as a different, discrite spectrum. The methods for this transformation are defined in <tt class="xref py py-class docutils literal"><span class="pre">InterpolatedSpectrumBase</span></tt>. The <tt class="xref py py-class docutils literal"><span class="pre">SpectraMixin</span></tt> provides the properties and plotting methods used by spectra which have discrete raw data.</p>
+<p><a class="reference internal" href="#AstroObject.AnalyticSpectra.UnitarySpectrum" title="AstroObject.AnalyticSpectra.UnitarySpectrum"><tt class="xref py py-class docutils literal"><span class="pre">UnitarySpectrum</span></tt></a> is used to perform a single interpolation operation on a spectrum, <em>when that spectrum is called</em>. As it operates when the spectrum is called, it does not contain accessible <em>raw data</em>, and so is &#8220;analytic&#8221; in some sense.</p>
+<p><a class="reference internal" href="#AstroObject.AnalyticSpectra.Resolver" title="AstroObject.AnalyticSpectra.Resolver"><tt class="xref py py-class docutils literal"><span class="pre">Resolver</span></tt></a> is used to perform a single interpolation on a spectrum <em>immediately</em>. As such, it is a full-class spectrum like an <a class="reference internal" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum" title="AstroObject.AnalyticSpectra.InterpolatedSpectrum"><tt class="xref py py-class docutils literal"><span class="pre">InterpolatedSpectrum</span></tt></a>.</p>
+<p>The <a class="reference internal" href="#AstroObject.AnalyticSpectra.FlatSpectrum" title="AstroObject.AnalyticSpectra.FlatSpectrum"><tt class="xref py py-class docutils literal"><span class="pre">FlatSpectrum</span></tt></a>, <a class="reference internal" href="#AstroObject.AnalyticSpectra.GaussianSpectrum" title="AstroObject.AnalyticSpectra.GaussianSpectrum"><tt class="xref py py-class docutils literal"><span class="pre">GaussianSpectrum</span></tt></a>, and <a class="reference internal" href="#AstroObject.AnalyticSpectra.BlackBodySpectrum" title="AstroObject.AnalyticSpectra.BlackBodySpectrum"><tt class="xref py py-class docutils literal"><span class="pre">BlackBodySpectrum</span></tt></a> objects are all analytic spectra with a specific functional implementation (as thier names imply).</p>
+<p class="graphviz">
+<img src="_images/inheritance-a1578cd8250a91da72615e446221b07395d02879.png" alt="Inheritance diagram of AstroObject.AnalyticSpectra.AnalyticSpectrum, AstroObject.AnalyticSpectra.CompositeSpectra, AstroObject.AnalyticSpectra.InterpolatedSpectrum, AstroObject.AnalyticSpectra.Resolver, AstroObject.AnalyticSpectra.UnitarySpectrum, AstroObject.AnalyticSpectra.FlatSpectrum, AstroObject.AnalyticSpectra.GaussianSpectrum, AstroObject.AnalyticSpectra.BlackBodySpectrum" usemap="#inheritance7515099a54" class="inheritance"/>
+<map id="inheritance7515099a54" name="inheritance7515099a54">
+<area shape="rect" id="node1" href="#AstroObject.AnalyticSpectra.Resolver" title="Resolver" alt="" coords="696,71,763,93"/>
+<area shape="rect" id="node2" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum" title="InterpolatedSpectrum" alt="" coords="511,71,654,93"/>
+<area shape="rect" id="node4" href="AstroObject.html#AstroObject.AstroObjectBase.NoDataMixin" title="NoDataMixin" alt="" coords="5,223,95,245"/>
+<area shape="rect" id="node13" href="AstroObject.html#AstroObject.AstroObjectBase.AnalyticMixin" title="AnalyticMixin" alt="" coords="152,202,243,224"/>
+<area shape="rect" id="node36" href="#AstroObject.AnalyticSpectra.UnitarySpectrum" title="UnitarySpectrum" alt="" coords="525,28,640,50"/>
+<area shape="rect" id="node6" href="AstroObject.html#AstroObject.AstroSpectra.SpectraMixin" title="SpectraMixin" alt="" coords="152,26,243,49"/>
+<area shape="rect" id="node24" href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraFrame" title="SpectraFrame" alt="" coords="334,71,434,93"/>
+<area shape="rect" id="node8" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="138,158,256,181"/>
+<area shape="rect" id="node21" href="#AstroObject.AnalyticSpectra.CompositeSpectra" title="CompositeSpectra" alt="" coords="322,202,446,224"/>
+<area shape="rect" id="node10" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="9,71,92,93"/>
+<area shape="rect" id="node16" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="140,115,254,137"/>
+<area shape="rect" id="node20" href="AstroObject.html#AstroObject.AstroObjectBase.NoHDUMixin" title="NoHDUMixin" alt="" coords="5,179,95,202"/>
+</map>
+</p>
+</div>
+<div class="section" id="simple-objects">
+<h2>6.2. Simple Objects<a class="headerlink" href="#simple-objects" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum">
 <em class="property">class </em><tt class="descclassname">AstroObject.AnalyticSpectra.</tt><tt class="descname">AnalyticSpectrum</tt><big>(</big><em>data=None</em>, <em>label=None</em>, <em>wavelengths=None</em>, <em>units=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="Permalink to this definition">¶</a></dt>
-<dd><p>A functional spectrum object for spe ctrum generation. The default implementation is a flat spectrum.</p>
+<dd><p>A functional spectrum object for spectrum generation. This is an abstract class which implements spectrum arithmetic. Spectrum arithmetic has a delayed implementation, whereby it is applied to the spectrum only once the spectrum is called for data, allowing spectra to produce data which matches the requested wavelengths (and resolution, if applicable).</p>
 <p>The Analytic spectrum can be provided with a set of wavelengths upon intialization. The <cite>wavelengths</cite> keyword will be stored and used when this spectrum is later called by the system. The <cite>units</cite> keyword is currently unused.</p>
-<dl class="method">
-<dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__add__">
-<tt class="descname">__add__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__add__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__add__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Implements spectrum addition</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__mul__">
-<tt class="descname">__mul__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__mul__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__mul__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Implements spectrum multiplication</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__sub__">
-<tt class="descname">__sub__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__sub__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__sub__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Implements spectrum subtraction</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__div__">
-<tt class="descname">__div__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__div__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__div__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Implements spectrum division</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__rsub__">
-<tt class="descname">__rsub__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__rsub__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__rsub__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reverse subtraction</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__rdiv__">
-<tt class="descname">__rdiv__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__rdiv__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__rdiv__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reverse division</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__rmul__">
-<tt class="descname">__rmul__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__rmul__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__rmul__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reverse Multiplication</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="AstroObject.AnalyticSpectra.AnalyticSpectrum.__radd__">
-<tt class="descname">__radd__</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#AnalyticSpectrum.__radd__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum.__radd__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reverse Addition</p>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="class">
@@ -135,13 +115,42 @@
 <dl class="method">
 <dt id="AstroObject.AnalyticSpectra.CompositeSpectra.__call__">
 <tt class="descname">__call__</tt><big>(</big><em>wavelengths=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#CompositeSpectra.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.CompositeSpectra.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calls the composite function components. The keyword arguments are passed on to calls to spectra contained within this composite spectra. All spectra varieties should accept arbitrary keywords, so this argument is used to pass keywords to spectra which require specific alternatives. Pass in <cite>wavelengths</cite> to use the given wavelengths. If none are passed in, it will look for object-level saved wavelengths, which you can specify simply by setting the <cite>self.wavelengths</cite> parameter on the object.</p>
+<dd><p>Calls the composite function components. The keyword arguments are passed on to calls to spectra contained within this composite spectra. All spectra varieties should accept arbitrary keywords, so this argument is used to pass keywords to spectra which require specific alternatives. Pass in <cite>wavelengths</cite> to use the given wavelengths. If none are passed in, it will look for object-level saved wavelengths, which you can specify simply by setting the <cite>self._wavelengths</cite> parameter on the object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AnalyticSpectra.CompositeSpectra.copy">
+<tt class="descname">copy</tt><big>(</big><em>label=None</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.CompositeSpectra.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a re-labeled copy of this object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AnalyticSpectra.CompositeSpectra.hdu">
+<tt class="descname">hdu</tt><big>(</big><em>primary=False</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.CompositeSpectra.hdu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>primary</strong> (<em>bool</em>) &#8211; Return a primary HDU</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">pyfits.primaryHDU or pyfits.ImageHDU</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.AnalyticSpectra.CompositeSpectra.valid">
+<tt class="descname">valid</tt><a class="headerlink" href="#AstroObject.AnalyticSpectra.CompositeSpectra.valid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether this object is valid.</p>
 </dd></dl>
 
 </dd></dl>
 
+</div>
 <div class="section" id="expansion-objects">
-<h2>8.1. Expansion Objects<a class="headerlink" href="#expansion-objects" title="Permalink to this headline">¶</a></h2>
+<h2>6.3. Expansion Objects<a class="headerlink" href="#expansion-objects" title="Permalink to this headline">¶</a></h2>
 <p>These objects expand the concept of an analytic spectrum to be any spectrum which can respond to calls with arbitrary wavelength boundaries. The spectra in the <a class="reference internal" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum" title="AstroObject.AnalyticSpectra.InterpolatedSpectrum"><tt class="xref py py-class docutils literal"><span class="pre">InterpolatedSpectrum</span></tt></a> class rely on a number of potential methods to calculate the desired wavelength values. The public methods for this class are generally the accepted potential resolution methods.</p>
 <dl class="class">
 <dt id="AstroObject.AnalyticSpectra.InterpolatedSpectrum">
@@ -150,7 +159,7 @@
 <p>Passing the name of any member function in this class to the <cite>method</cite> parameter will change the interpolation/method used for this spectrum.</p>
 <dl class="method">
 <dt id="AstroObject.AnalyticSpectra.InterpolatedSpectrum.__call__">
-<tt class="descname">__call__</tt><big>(</big><em>method=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum.__call__" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">__call__</tt><big>(</big><em>method=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#InterpolatedSpectrum.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calls this interpolated spectrum over certain wavelengths. The <cite>method</cite> parameter will default to the one set for the object, and controls the method used to interpret this spectrum. Available methods include all members of <a class="reference internal" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum" title="AstroObject.AnalyticSpectra.InterpolatedSpectrum"><tt class="xref py py-class docutils literal"><span class="pre">InterpolatedSpectrum</span></tt></a> which provide return values (all those documented below).</p>
 </dd></dl>
 
@@ -182,6 +191,34 @@
 <li>If there were no <tt class="docutils literal"><span class="pre">0</span></tt> s in the old flux, then the new flux should have no <tt class="docutils literal"><span class="pre">0</span></tt> s (<strong>Warning</strong>)</li>
 <li>Flux and wavelength should have the same shape.</li>
 </ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AnalyticSpectra.InterpolatedSpectrum.copy">
+<tt class="descname">copy</tt><big>(</big><em>label=None</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a re-labeled copy of this object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.AnalyticSpectra.InterpolatedSpectrum.flux">
+<tt class="descname">flux</tt><a class="headerlink" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum.flux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to get the flux from this spectrum</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AnalyticSpectra.InterpolatedSpectrum.hdu">
+<tt class="descname">hdu</tt><big>(</big><em>primary=False</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum.hdu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>primary</strong> (<em>bool</em>) &#8211; Return a primary HDU</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">pyfits.primaryHDU or pyfits.ImageHDU</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -260,6 +297,18 @@
 </div>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="AstroObject.AnalyticSpectra.InterpolatedSpectrum.valid">
+<tt class="descname">valid</tt><a class="headerlink" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum.valid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether this object is valid.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.AnalyticSpectra.InterpolatedSpectrum.wavelengths">
+<tt class="descname">wavelengths</tt><a class="headerlink" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum.wavelengths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to get the wavelengths from this spectrum</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -288,7 +337,7 @@
 
 </div>
 <div class="section" id="analytic-spectrum-objects">
-<h2>8.2. Analytic Spectrum Objects<a class="headerlink" href="#analytic-spectrum-objects" title="Permalink to this headline">¶</a></h2>
+<h2>6.4. Analytic Spectrum Objects<a class="headerlink" href="#analytic-spectrum-objects" title="Permalink to this headline">¶</a></h2>
 <p>These objects actually have spectral functions included.</p>
 <dl class="class">
 <dt id="AstroObject.AnalyticSpectra.BlackBodySpectrum">
@@ -298,6 +347,34 @@
 <dt id="AstroObject.AnalyticSpectra.BlackBodySpectrum.__call__">
 <tt class="descname">__call__</tt><big>(</big><em>wavelengths=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.BlackBodySpectrum.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calls this blackbody spectrum over certain wavelengths</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AnalyticSpectra.BlackBodySpectrum.copy">
+<tt class="descname">copy</tt><big>(</big><em>label=None</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.BlackBodySpectrum.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a re-labeled copy of this object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AnalyticSpectra.BlackBodySpectrum.hdu">
+<tt class="descname">hdu</tt><big>(</big><em>primary=False</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.BlackBodySpectrum.hdu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>primary</strong> (<em>bool</em>) &#8211; Return a primary HDU</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">pyfits.primaryHDU or pyfits.ImageHDU</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.AnalyticSpectra.BlackBodySpectrum.valid">
+<tt class="descname">valid</tt><a class="headerlink" href="#AstroObject.AnalyticSpectra.BlackBodySpectrum.valid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether this object is valid.</p>
 </dd></dl>
 
 </dd></dl>
@@ -312,6 +389,34 @@
 <dd><p>Calls this gaussian spectrum over certain wavelengths</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="AstroObject.AnalyticSpectra.GaussianSpectrum.copy">
+<tt class="descname">copy</tt><big>(</big><em>label=None</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.GaussianSpectrum.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a re-labeled copy of this object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AnalyticSpectra.GaussianSpectrum.hdu">
+<tt class="descname">hdu</tt><big>(</big><em>primary=False</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.GaussianSpectrum.hdu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>primary</strong> (<em>bool</em>) &#8211; Return a primary HDU</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">pyfits.primaryHDU or pyfits.ImageHDU</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.AnalyticSpectra.GaussianSpectrum.valid">
+<tt class="descname">valid</tt><a class="headerlink" href="#AstroObject.AnalyticSpectra.GaussianSpectrum.valid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether this object is valid.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -322,6 +427,34 @@
 <dt id="AstroObject.AnalyticSpectra.FlatSpectrum.__call__">
 <tt class="descname">__call__</tt><big>(</big><em>wavelengths</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.FlatSpectrum.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calls a flat spectrum over given wavelengths</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AnalyticSpectra.FlatSpectrum.copy">
+<tt class="descname">copy</tt><big>(</big><em>label=None</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.FlatSpectrum.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a re-labeled copy of this object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AnalyticSpectra.FlatSpectrum.hdu">
+<tt class="descname">hdu</tt><big>(</big><em>primary=False</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.FlatSpectrum.hdu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>primary</strong> (<em>bool</em>) &#8211; Return a primary HDU</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">pyfits.primaryHDU or pyfits.ImageHDU</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.AnalyticSpectra.FlatSpectrum.valid">
+<tt class="descname">valid</tt><a class="headerlink" href="#AstroObject.AnalyticSpectra.FlatSpectrum.valid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether this object is valid.</p>
 </dd></dl>
 
 </dd></dl>
@@ -337,19 +470,21 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">8. Analytic Spectra and Interpolation <tt class="docutils literal"><span class="pre">AnalyticSpectra</span></tt></a><ul>
-<li><a class="reference internal" href="#expansion-objects">8.1. Expansion Objects</a></li>
-<li><a class="reference internal" href="#analytic-spectrum-objects">8.2. Analytic Spectrum Objects</a></li>
+<li><a class="reference internal" href="#">6. Analytic Spectra and Interpolation <tt class="docutils literal"><span class="pre">AnalyticSpectra</span></tt></a><ul>
+<li><a class="reference internal" href="#module-structure">6.1. Module Structure</a></li>
+<li><a class="reference internal" href="#simple-objects">6.2. Simple Objects</a></li>
+<li><a class="reference internal" href="#expansion-objects">6.3. Expansion Objects</a></li>
+<li><a class="reference internal" href="#analytic-spectrum-objects">6.4. Analytic Spectrum Objects</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="AstroSpectra.html"
-                        title="previous chapter">7. Raw Spectrum Management <tt class="docutils literal"><span class="pre">AstroSpectra</span></tt></a></p>
+                        title="previous chapter">5. Raw Spectrum Management <tt class="docutils literal"><span class="pre">AstroSpectra</span></tt></a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="AstroFITS.html"
-                        title="next chapter">9. HDU Objects and Storage <tt class="docutils literal"><span class="pre">AstroFITS</span></tt></a></p>
+  <p class="topless"><a href="AstroObject.html"
+                        title="next chapter">7. AstroObject API</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/AnalyticSpectra.txt"
@@ -382,12 +517,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="AstroFITS.html" title="9. HDU Objects and Storage AstroFITS"
+          <a href="AstroObject.html" title="7. AstroObject API"
              >next</a> |</li>
         <li class="right" >
-          <a href="AstroSpectra.html" title="7. Raw Spectrum Management AstroSpectra"
+          <a href="AstroSpectra.html" title="5. Raw Spectrum Management AstroSpectra"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.3.6-p1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.4 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

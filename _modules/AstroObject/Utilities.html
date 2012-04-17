@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObject.Utilities &mdash; AstroObject 0.3.6-p1 documentation</title>
+    <title>AstroObject.Utilities &mdash; AstroObject 0.4 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.3.6-p1',
+        VERSION:     '0.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.3.6-p1 documentation" href="../../index.html" />
+    <link rel="top" title="AstroObject 0.4 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.3.6-p1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.4 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -56,9 +56,27 @@
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2011-10-07.</span>
 <span class="c">#  Copyright 2011 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.3.6-p1</span>
+<span class="c">#  Version 0.4.0</span>
 <span class="c">#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">AstroObject :mod:`Utilities`</span>
+<span class="sd">============================</span>
 
+<span class="sd">These are mostly internal module utility functions, documented here in case you find them useful. They are not guaranteed to function in any way.</span>
+
+<span class="sd">.. autofunction:: AstroObject.Utilities.getVersion</span>
+
+<span class="sd">.. autofunction:: AstroObject.Utilities.npArrayInfo</span>
+
+<span class="sd">.. autofunction:: AstroObject.Utilities.expandLim</span>
+
+<span class="sd">.. autofunction:: AstroObject.Utilities.bin</span>
+
+<span class="sd">.. autofunction:: AstroObject.Utilities.BlackBody</span>
+
+<span class="sd">.. autofunction:: AstroObject.Utilities.Gaussian</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">scipy</span> <span class="kn">as</span> <span class="nn">sp</span>
@@ -67,13 +85,12 @@
 <span class="kn">import</span> <span class="nn">logging</span><span class="o">,</span><span class="nn">time</span><span class="o">,</span><span class="nn">sys</span><span class="o">,</span><span class="nn">collections</span><span class="o">,</span><span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">resource_string</span>
 
-<span class="kn">from</span> <span class="nn">matplotlib.ticker</span> <span class="kn">import</span> <span class="n">LogFormatter</span>
 
 <span class="kn">import</span> <span class="nn">terminal</span> <span class="kn">as</span> <span class="nn">terminal</span>
 <span class="kn">from</span> <span class="nn">version</span> <span class="kn">import</span> <span class="n">version</span> <span class="k">as</span> <span class="n">versionstr</span>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;abstractmethod&quot;</span><span class="p">,</span><span class="s">&quot;LogFormatterTeXExponent&quot;</span><span class="p">,</span><span class="s">&quot;getVersion&quot;</span><span class="p">,</span><span class="s">&quot;expandLim&quot;</span><span class="p">,</span><span class="s">&quot;BlackBody&quot;</span><span class="p">,</span><span class="s">&quot;Gaussian&quot;</span><span class="p">,</span><span class="s">&quot;validate_filename&quot;</span><span class="p">,</span><span class="s">&quot;update&quot;</span><span class="p">,</span><span class="s">&quot;npArrayInfo&quot;</span><span class="p">,</span><span class="s">&quot;HDUFrameTypeError&quot;</span><span class="p">,</span><span class="s">&quot;ConfigurationError&quot;</span><span class="p">,</span><span class="s">&quot;resource_string&quot;</span><span class="p">,</span><span class="s">&quot;func_lineno&quot;</span><span class="p">,</span><span class="s">&quot;make_decorator&quot;</span><span class="p">,</span><span class="s">&quot;terminal&quot;</span><span class="p">,</span><span class="s">&quot;ProgressBar&quot;</span><span class="p">,</span><span class="s">&quot;ColorBar&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;getVersion&quot;</span><span class="p">,</span><span class="s">&quot;expandLim&quot;</span><span class="p">,</span><span class="s">&quot;BlackBody&quot;</span><span class="p">,</span><span class="s">&quot;Gaussian&quot;</span><span class="p">,</span><span class="s">&quot;validate_filename&quot;</span><span class="p">,</span><span class="s">&quot;update&quot;</span><span class="p">,</span><span class="s">&quot;npArrayInfo&quot;</span><span class="p">,</span><span class="s">&quot;HDUFrameTypeError&quot;</span><span class="p">,</span><span class="s">&quot;ConfigurationError&quot;</span><span class="p">,</span><span class="s">&quot;resource_string&quot;</span><span class="p">,</span><span class="s">&quot;func_lineno&quot;</span><span class="p">,</span><span class="s">&quot;make_decorator&quot;</span><span class="p">,</span><span class="s">&quot;terminal&quot;</span><span class="p">,</span><span class="s">&quot;ProgressBar&quot;</span><span class="p">,</span><span class="s">&quot;ColorBar&quot;</span><span class="p">]</span>
 
 <span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
@@ -121,7 +138,7 @@
     <span class="n">axis</span> <span class="o">=</span> <span class="p">(</span><span class="n">xmin</span><span class="p">,</span><span class="n">xmax</span><span class="p">,</span><span class="n">ymin</span><span class="p">,</span><span class="n">ymax</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">axis</span>
 </div>
-<span class="k">def</span> <span class="nf">bin</span><span class="p">(</span><span class="n">array</span><span class="p">,</span><span class="n">factor</span><span class="p">):</span>
+<div class="viewcode-block" id="bin"><a class="viewcode-back" href="../../Utilities.html#AstroObject.Utilities.bin">[docs]</a><span class="k">def</span> <span class="nf">bin</span><span class="p">(</span><span class="n">array</span><span class="p">,</span><span class="n">factor</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Bins an array by the given factor&quot;&quot;&quot;</span>
     
     <span class="n">finalShape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">/</span> <span class="n">factor</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">))</span>
@@ -133,7 +150,7 @@
     
     <span class="k">return</span> <span class="n">Aout</span>
 
-
+</div>
 <div class="viewcode-block" id="BlackBody"><a class="viewcode-back" href="../../Utilities.html#AstroObject.Utilities.BlackBody">[docs]</a><span class="k">def</span> <span class="nf">BlackBody</span><span class="p">(</span><span class="n">wl</span><span class="p">,</span><span class="n">T</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Return black-body flux as a function of wavelength. Usese constants from Scipy Constants, and expects SI units&quot;&quot;&quot;</span>
     <span class="n">h</span> <span class="o">=</span> <span class="n">spconst</span><span class="o">.</span><span class="n">h</span>
@@ -207,25 +224,6 @@
             <span class="c"># can&#39;t set func name in 2.3</span>
             <span class="n">newfunc</span><span class="o">.</span><span class="n">compat_func_name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="k">return</span> <span class="n">newfunc</span>
-    <span class="k">return</span> <span class="n">decorate</span>
-
-<span class="k">def</span> <span class="nf">abstractmethod</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Decorator for abstract methods&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
-        <span class="n">func</span> <span class="o">=</span> <span class="n">message</span>
-        <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Call to abstract method </span><span class="si">%s</span><span class="s">&quot;</span>
-        <span class="n">default_message</span> <span class="o">=</span> <span class="bp">True</span>
-    
-    <span class="k">def</span> <span class="nf">decorate</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">__name__</span>
-        <span class="k">def</span> <span class="nf">newfunc</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">message</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
-        <span class="n">newfunc</span> <span class="o">=</span> <span class="n">make_decorator</span><span class="p">(</span><span class="n">func</span><span class="p">)(</span><span class="n">newfunc</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">newfunc</span>
-    
-    <span class="k">if</span> <span class="n">default_message</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">decorate</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-    
     <span class="k">return</span> <span class="n">decorate</span>
 
 <div class="viewcode-block" id="npArrayInfo"><a class="viewcode-back" href="../../Utilities.html#AstroObject.Utilities.npArrayInfo">[docs]</a><span class="k">def</span> <span class="nf">npArrayInfo</span><span class="p">(</span><span class="n">array</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -390,26 +388,7 @@
             <span class="k">return</span> <span class="s">&#39;</span><span class="si">%s%s%s%s%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">color</span><span class="p">,</span><span class="n">left</span><span class="p">,</span> <span class="n">marked</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fill</span><span class="p">),</span> <span class="n">right</span><span class="p">,</span> <span class="n">nocolor</span><span class="p">)</span>
 
 
-<span class="kn">import</span> <span class="nn">re</span>
 
-<span class="k">class</span> <span class="nc">LogFormatterTeXExponent</span><span class="p">(</span><span class="n">LogFormatter</span><span class="p">,</span> <span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Extends pylab.LogFormatter to use</span>
-<span class="sd">    tex notation for tick labels.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">LogFormatterTeXExponent</span><span class="p">,</span>
-              <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Wrap call to parent class with</span>
-<span class="sd">        change to tex notation.&quot;&quot;&quot;</span>
-        <span class="n">label</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">LogFormatterTeXExponent</span><span class="p">,</span>
-                      <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">label</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">r&#39;e(\S)0?(\d+)&#39;</span><span class="p">,</span>
-                       <span class="s">r&#39;</span><span class="se">\\</span><span class="s">times 10^{\1\2}&#39;</span><span class="p">,</span>
-                       <span class="nb">str</span><span class="p">(</span><span class="n">label</span><span class="p">))</span>
-        <span class="n">label</span> <span class="o">=</span> <span class="s">&quot;$&quot;</span> <span class="o">+</span> <span class="n">label</span> <span class="o">+</span> <span class="s">&quot;$&quot;</span>
-        <span class="k">return</span> <span class="n">label</span>
                 
 <span class="n">__version__</span> <span class="o">=</span> <span class="n">getVersion</span><span class="p">()</span>
 </pre></div>
@@ -445,7 +424,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.3.6-p1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.4 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
