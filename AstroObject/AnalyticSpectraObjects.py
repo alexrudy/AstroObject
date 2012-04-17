@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.6-p1
+#  Version 0.4.0
 # 
 
 # Parent Modules
@@ -31,7 +31,7 @@ __all__ = ["BlackBodySpectrum","GaussianSpectrum","FlatSpectrum"]
 
 __version__ = getVersion()
 
-class BlackBodySpectrum(AstroObjectBase.AnalyticFrame,AnalyticSpectra.AnalyticSpectrum):
+class BlackBodySpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSpectrum):
     """An analytic representation of a Blackbody Spectrum at a Kelvin Tempertaure"""
     def __init__(self, temperature, label=None, **kwargs):
         if label == None:
@@ -44,7 +44,7 @@ class BlackBodySpectrum(AstroObjectBase.AnalyticFrame,AnalyticSpectra.AnalyticSp
         return np.vstack((wavelengths,BlackBody(wavelengths,self.temperature)))
         
         
-class GaussianSpectrum(AstroObjectBase.AnalyticFrame,AnalyticSpectra.AnalyticSpectrum):
+class GaussianSpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSpectrum):
     """An analytic representation of a gaussian function in spectral form"""
     def __init__(self, mean, stdev, height, label=None):
         if label == None:
@@ -61,7 +61,7 @@ class GaussianSpectrum(AstroObjectBase.AnalyticFrame,AnalyticSpectra.AnalyticSpe
         
     
 
-class FlatSpectrum(AstroObjectBase.AnalyticFrame,AnalyticSpectra.AnalyticSpectrum):
+class FlatSpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSpectrum):
     """An analytc form of a flat value at every wavelength"""
     def __init__(self, value, label=None):
         if label == None:

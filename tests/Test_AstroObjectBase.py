@@ -5,10 +5,12 @@
 #  
 #  Created by Alexander Rudy on 2011-10-28.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
+#  Version 0.4.0
 # 
 
 from tests.Test_AstroObjectAPI import *
 import AstroObject.AstroObjectBase as AOB
+import AstroObject.AstroFITS as AOF
 import nose.tools as nt
 from nose.plugins.skip import Skip,SkipTest
 import numpy as np
@@ -50,7 +52,7 @@ class test_FITSFrame(API_Abstract_Frame):
     """AstroObjectBase.FITSFrame"""
     
     def setUp(self):
-        self.FRAME = AOB.FITSFrame
+        self.FRAME = AOF.FITSFrame
         self.FRAMESTR = "<'FITSFrame' labeled 'Valid'>"
         self.VALID = None
         self.INVALID = np.array([1,2,3]).astype(np.int16)
@@ -135,8 +137,8 @@ class test_FITSObject(API_Abstract_Object):
     """AstroObjectBase.BaseObject"""
     def setUp(self):
         self.FILENAME = "TestFile.fits"
-        self.FRAME = AOB.FITSFrame
-        self.OBJECT = AOB.FITSObject
+        self.FRAME = AOF.FITSFrame
+        self.OBJECT = AOF.FITSObject
         self.FRAMESTR = "<'FITSFrame' labeled 'Valid'>"
         self.VALID = None
         self.INVALID = np.array([1,2,3]).astype(np.int16)
@@ -155,7 +157,7 @@ class test_FITSObject(API_Abstract_Object):
         
         def SAME(first,second):
             """Return whether these two are the same"""
-            return isinstance(first,AOB.FITSFrame) and isinstance(second,AOB.FITSFrame)
+            return isinstance(first,AOF.FITSFrame) and isinstance(second,AOF.FITSFrame)
         
         self.SAME = SAME
         self.SAMEDATA = SAMEDATA

@@ -5,9 +5,39 @@
 #  
 #  Created by Alexander Rudy on 2011-04-28.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.6-p1
+#  Version 0.4.0
 # 
+"""
+Image Objects and Storage :mod:`AstroImage`
+===========================================
 
+**Objects** and **frames** for manipulating and managing images. Images are simply defined as a two-dimensional numpy array. Image **objects** have two special methods, :meth:`ImageObject.loadFromFile` and :meth:`ImageObject.show3D`.
+
+Right now, there are no facilities for integrating this module with pyraf, but such integration is planned for a future edition. The integration will work by writing and removing temporary FITS files.
+
+.. inheritance-diagram::
+    AstroObject.AstroImage.ImageObject
+    AstroObject.AstroImage.ImageFrame
+    :parts: 1
+
+
+Image **objects**: :class:`ImageObject`
+---------------------------------------
+
+.. autoclass::
+    AstroObject.AstroImage.ImageObject
+    :members:
+    :inherited-members:
+
+Image **frames**: :class:`ImageFrame`
+-------------------------------------
+
+.. autoclass::
+    AstroObject.AstroImage.ImageFrame
+    :members:
+    :special-members:
+
+"""
 # Parent Modules
 import AstroObjectBase
 
