@@ -3,6 +3,7 @@ Installation
 You can install AstroObject through ``pypi`` using :ref:`pip` (**Recommended**) or from source using :ref:`setuptools`
 
 .. _pip:
+
 Installation via ``pip``
 ------------------------
 
@@ -14,6 +15,7 @@ To isntall this module via ``pip``, use::
 	
 
 .. _setuptools:
+
 Installation via ``setuptools``
 -------------------------------
 

@@ -164,6 +164,8 @@ The following methods handle the external-API for the simulator. Normally, when 
     .. automethod:: exit
     
     .. automethod:: map_over_collection
+
+.. _Simulator_Decorators:
     
 Decorators
 ----------
