@@ -21,12 +21,12 @@ About AstroObject:
     
     intro
     development
-    api
     AstroObject
     AstroImage
     AstroSpectra
     AnalyticSpectra
     AstroFITS
+    api
     AstroSimulator
     AstroObjectLogging
     Utilities
