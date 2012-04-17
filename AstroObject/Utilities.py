@@ -16,13 +16,12 @@ import math
 import logging,time,sys,collections,os
 from pkg_resources import resource_string
 
-from matplotlib.ticker import LogFormatter
 
 import terminal as terminal
 from version import version as versionstr
 
 
-__all__ = ["LogFormatterTeXExponent","getVersion","expandLim","BlackBody","Gaussian","validate_filename","update","npArrayInfo","HDUFrameTypeError","ConfigurationError","resource_string","func_lineno","make_decorator","terminal","ProgressBar","ColorBar"]
+__all__ = ["getVersion","expandLim","BlackBody","Gaussian","validate_filename","update","npArrayInfo","HDUFrameTypeError","ConfigurationError","resource_string","func_lineno","make_decorator","terminal","ProgressBar","ColorBar"]
 
 LOG = logging.getLogger(__name__)
 
@@ -320,25 +319,6 @@ class ColorBar(progressbar.Bar):
             return '%s%s%s%s%s' % (color,left, marked.rjust(width, self.fill), right, nocolor)
 
 
-import re
 
-class LogFormatterTeXExponent(LogFormatter, object):
-    """Extends pylab.LogFormatter to use
-    tex notation for tick labels."""
-
-    def __init__(self, *args, **kwargs):
-        super(LogFormatterTeXExponent,
-              self).__init__(*args, **kwargs)
-
-    def __call__(self, *args, **kwargs):
-        """Wrap call to parent class with
-        change to tex notation."""
-        label = super(LogFormatterTeXExponent,
-                      self).__call__(*args, **kwargs)
-        label = re.sub(r'e(\S)0?(\d+)',
-                       r'\\times 10^{\1\2}',
-                       str(label))
-        label = "$" + label + "$"
-        return label
                 
 __version__ = getVersion()
