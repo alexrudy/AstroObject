@@ -104,7 +104,7 @@ Class Inherits From:                                                            
 	AstroObject.AstroSpectra.SpectraMixin
 
 Base Object :class:`BaseObject`
------------------------------------------------
+-------------------------------
 
 The base object definition provides the normal object accessor methods. It should be subclassed as shown in :ref:`AstroObjectAPI`
 
