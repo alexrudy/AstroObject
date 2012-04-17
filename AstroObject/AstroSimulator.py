@@ -819,6 +819,7 @@ class Simulator(object):
         except:
             if self.options["profile"] and not self.running:
                 self.show_profile()
+                raise
         
         if self.options['dry_run'] and not self.running:
             text = "Stages done:\n"
@@ -844,7 +845,7 @@ class Simulator(object):
             
         text += Stage.table_foot(total)
             
-        self.exit(msg=text)
+        self.log.info(text)
             
     def execute(self,stage,deps=True):
         """Actually exectue a particular stage. This function can be called to execute individual stages, either with or without dependencies. As such, it gives finer granularity than :func:`do`.
