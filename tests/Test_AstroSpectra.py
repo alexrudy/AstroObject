@@ -1,5 +1,6 @@
+# -*- coding: utf-8 -*-
 # 
-#  Test_AstroImage.py
+#  Test_AstroSpectra.py
 #  ObjectModel
 #  
 #  Created by Alexander Rudy on 2011-10-31.
