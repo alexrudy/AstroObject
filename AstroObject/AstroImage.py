@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # 
 #  AstroImage.py
 #  Astronomy ObjectModel
@@ -34,7 +35,7 @@ __version__ = getVersion()
 
 LOG = logging.getLogger(__name__)
 
-class ImageFrame(AstroObjectBase.FITSFrame):
+class ImageFrame(AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame):
     """
     A single frame of a FITS image.
     Frames are known as Header Data Units, or HDUs when written to a FITS file.
@@ -110,7 +111,8 @@ class ImageFrame(AstroObjectBase.FITSFrame):
             msg = "Must save a PrimaryHDU or ImageHDU to a %s, found %s" % (cls.__name__,type(HDU))
             raise NotImplementedError(msg)
         try:
-            Object = cls(HDU.data,label,header=HDU.header)
+            Object = cls(HDU.data,label)
+            Object.__getheader__(HDU)
         except AttributeError as AE:
             msg = "%s data did not validate: %s" % (cls.__name__,AE)
             raise NotImplementedError(msg)
@@ -119,13 +121,11 @@ class ImageFrame(AstroObjectBase.FITSFrame):
     
 
 
-class ImageObject(AstroObjectBase.FITSObject):
-    """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.FITSObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`ImageFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.
+class ImageObject(AstroObjectBase.BaseObject):
+    """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`ImageFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.
     """
-    def __init__(self, array=None, **kwargs):
-        super(ImageObject, self).__init__(**kwargs)
-        self.dataClasses += [ImageFrame]
-        self.dataClasses.remove(AstroObjectBase.FITSFrame)
+    def __init__(self, array=None,dataClasses=[ImageFrame], **kwargs):
+        super(ImageObject, self).__init__(dataClasses=dataClasses,**kwargs)
         if array != None:
             raise NotImplemented("Cannot initialize with data")        # Save the initializing data
             
@@ -158,7 +158,7 @@ class ImageObject(AstroObjectBase.FITSObject):
             raise KeyError("Object not instantiated with any data...")
 
 
-class OLDImageObject(AstroObjectBase.FITSObject):
+class OLDImageObject(AstroObjectBase.BaseObject):
     """docstring for ImageObject"""
     
     ##########################
