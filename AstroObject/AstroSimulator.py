@@ -819,7 +819,7 @@ class Simulator(object):
         except:
             if self.options["profile"] and not self.running:
                 self.show_profile()
-                raise
+            raise
         
         if self.options['dry_run'] and not self.running:
             text = "Stages done:\n"
