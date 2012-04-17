@@ -309,6 +309,8 @@ class Simulator(object):
         
         if name == "__class__.__name__":
             self.name = self.__class__.__name__
+        if isinstance(name,str):
+            self.name = self.name.encode('utf-8')
         self.log = logging.getLogger(self.name)
         # The following are boolean state values for the simulator
         self.configured = False
@@ -327,7 +329,7 @@ class Simulator(object):
         if version==None:
             self.version = u"AstroObject: " + __version__
         else:
-            self.version = u"AstroObject: " + __version__ + "\n"+self.name+": " + version
+            self.version = self.name + u": " + version + u"\n" + u"AstroObject: " + __version__
         
         self._initOptions()
         
@@ -707,13 +709,16 @@ class Simulator(object):
                 self.inorder = True
                 self.complete = []
         
-        while self.running and not self.paused:
+        try:
             for stage in self.orders:
                 if stage in self.options["macro"]:
                     self.execute(stage)
                 elif stage in self.options["include"]:
                     self.execute(stage,deps=False)
             self.running = False
+        except:
+            if self.options["profile"] and not self.running:
+                self.show_profile()
         
         if self.options['dry_run'] and not self.running:
             text = "Stages done:\n"
