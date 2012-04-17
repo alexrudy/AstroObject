@@ -31,7 +31,7 @@ class API_AnalyticSpectra(API_Abstract_Frame):
     def test_init_with_wavelengths(self):
         """__init__() works with wavelengths"""
         SFrame = self.FRAME(data=self.VALID,label="Empty",wavelengths=self.WAVELENGTHS)
-        assert not np.abs(self.WAVELENGTHS - SFrame.wavelengths > 1e-6).any()
+        assert not np.abs(self.WAVELENGTHS - SFrame.requested_wavelengths > 1e-6).any()
     
     
     def test_call_with_arbitrary_arguments(self):
@@ -80,60 +80,12 @@ class API_AnalyticSpectra(API_Abstract_Frame):
         SFrame2 = 10.0
         SFrame3 = SFrame1 + SFrame2
         assert isinstance(SFrame3,AS.CompositeSpectra)
-            
-
-class test_AnalyticSpectraFrame(API_AnalyticSpectra,API_Abstract_Frame):
-    """AnalyticSpecra.AnalyticSpectrum"""
     
-    def setUp(self):
-        """Sets up the test with some basic image data."""
-        
-        self.VALID = None
-        self.FRAME = AS.AnalyticSpectrum
-        self.INVALID = np.array([1,2,3])
-        self.FRAMESTR = "<'AnalyticSpectrum' labeled 'Valid'>"
-        self.HDUTYPE = pf.ImageHDU
-        self.SHOWTYPE = mpl.artist.Artist
-        self.WAVELENGTHS = (np.arange(100) + 1.0) * 1e-7
-        self.imHDU = pf.ImageHDU
-        self.pmHDU = pf.PrimaryHDU
-        
-        self.attributes = copy.deepcopy(self.attributes) + ['WAVELENGTHS']
-        
-        def SAMEDATA(first,second):
-            """Return whether these two are the same data"""
-            raise NotImplementedError("Data undefined...")
-        
-        
-        def SAME(first,second):
-            """Return whether these two are the same"""
-            raise NotImplementedError("Data undefined...")
-        
-        self.SAME = SAME
-        self.SAMEDATA = SAMEDATA
-        
-        
-        self.check_constants()
-    
-    @nt.raises(NotImplementedError)
-    def test_call(self):
-        """__call__() raises abstract error"""
-        AFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert AFrame.label == "Valid"
-        data = AFrame(wavelengths=self.WAVELENGTHS)
-        
-    @nt.raises(NotImplementedError)
-    def test_call_with_arbitrary_arguments(self):
-        """__call__() accepts arbitrary keyword arguments"""
-        AFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert AFrame.label == "Valid"
-        data = AFrame(wavelengths=self.WAVELENGTHS,other=1,arbitrary="str",arguments="blah")
-        
 
 
 
 
-class test_InterpolatedSpectra(API_AnalyticSpectra,test_SpectraFrame):
+class test_InterpolatedSpectra(API_AnalyticSpectra,API_Spectra_Frame):
     """AnalyticSpecra.InterpolatedSpectra"""
     def setUp(self):
         """Sets up the test with some basic image data."""

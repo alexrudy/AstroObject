@@ -147,16 +147,15 @@ __all__ = ["AnalyticSpectrum","CompositeSpectra","InterpolatedSpectrum","Interpo
 
 LOG = logging.getLogger(__name__)
 
-class AnalyticSpectrum(AstroObjectBase.AnalyticFrame):
+class AnalyticSpectrum(AstroObjectBase.BaseFrame):
     """A functional spectrum object for spe ctrum generation. The default implementation is a flat spectrum.
     
     The Analytic spectrum can be provided with a set of wavelengths upon intialization. The `wavelengths` keyword will be stored and used when this spectrum is later called by the system. The `units` keyword is currently unused."""
     def __init__(self,data=None,label=None,wavelengths=None,units=None,**kwargs):
         super(AnalyticSpectrum, self).__init__(data=data,label=label, **kwargs)
-        self.wavelengths = wavelengths
+        self._wavelengths = wavelengths
         self.units = units #Future will be used for enforcing unit behaviors
         
-    
     def __add__(self,other):
         """Implements spectrum addition"""
         return CompositeSpectra(self,other,'add')
@@ -192,9 +191,14 @@ class AnalyticSpectrum(AstroObjectBase.AnalyticFrame):
     def __radd__(self,other):
         """Reverse Addition"""
         return CompositeSpectra(other,self,'add')
+        
+    @property
+    def requested_wavelengths(self):
+        return self._wavelengths
+    
 
 
-class CompositeSpectra(AnalyticSpectrum):
+class CompositeSpectra(AstroObjectBase.AnalyticFrame,AnalyticSpectrum):
     """Binary composition of two functional spectra. This object should not be initialized by the user. Instead, this class is returned when you combine two spectra of different types, or combine a spectra with any other type. As such, do not initialze composite spectra idependently. See the :meth:`__call__` function for documentation of how to use this type of object."""
     ops = {'sub':"-",'add':"+",'mul':"*",'div':"/"}
     def __init__(self, partA, partB, operation):
@@ -210,9 +214,9 @@ class CompositeSpectra(AnalyticSpectrum):
         
     
     def __call__(self,wavelengths=None,**kwargs):
-        """Calls the composite function components. The keyword arguments are passed on to calls to spectra contained within this composite spectra. All spectra varieties should accept arbitrary keywords, so this argument is used to pass keywords to spectra which require specific alternatives. Pass in `wavelengths` to use the given wavelengths. If none are passed in, it will look for object-level saved wavelengths, which you can specify simply by setting the `self.wavelengths` parameter on the object."""
+        """Calls the composite function components. The keyword arguments are passed on to calls to spectra contained within this composite spectra. All spectra varieties should accept arbitrary keywords, so this argument is used to pass keywords to spectra which require specific alternatives. Pass in `wavelengths` to use the given wavelengths. If none are passed in, it will look for object-level saved wavelengths, which you can specify simply by setting the `self._wavelengths` parameter on the object."""
         if wavelengths == None:
-            wavelengths = self.wavelengths
+            wavelengths = self._wavelengths
         if wavelengths == None:
             raise ValueError(u"No wavelengths specified in %s" % (self))
             
@@ -241,11 +245,11 @@ class CompositeSpectra(AnalyticSpectrum):
     
 
 
-class InterpolatedSpectrumBase(AnalyticSpectrum):
+class InterpolatedSpectrumBase(AstroSpectra.SpectraMixin,AnalyticSpectrum,AstroObjectBase.BaseFrame):
 
     def __init__(self, data=None, label=None, wavelengths=None,resolution=None, method=u"interpolate",integrator='integrate_hist', **kwargs):
         super(InterpolatedSpectrumBase, self).__init__(data=data,label=label,**kwargs)
-        self.wavelengths = wavelengths
+        self._wavelengths = wavelengths
         self.resolution = resolution
         self.method = getattr(self,method)
         self.default_integrator = integrator        
@@ -496,23 +500,22 @@ class InterpolatedSpectrumBase(AnalyticSpectrum):
         
         .. Warning :: This method does not prevent you from interpolating your spectrum into a higher resolution state. As such, it is possible, when calling interpolate, to increase the resolution of the spectrum, and end up 'creating' information."""
         if wavelengths == None:
-            wavelengths = self.wavelengths
+            wavelengths = self._wavelengths
         if wavelengths == None:
             raise ValueError(u"Requires Wavelenths")
         
         LOG.debug(u"Interpolate Starting")
         
-        oldwl,oldfl = self.data
         # Sanity Checks for Data
-        self._presanity(oldwl,oldfl,wavelengths,extrapolate=extrapolate)
+        self._presanity(self.wavelengths,self.flux,wavelengths,extrapolate=extrapolate)
         
         # Interpolation function (invented on the spot!)
-        func = sp.interpolate.interp1d(oldwl,oldfl,bounds_error=False,fill_value=fill_value)
+        func = sp.interpolate.interp1d(self.wavelengths,self.flux,bounds_error=False,fill_value=fill_value)
         
         # Actually calling the interpolation
         flux = func(wavelengths)
         
-        self._postsanity(oldwl,oldfl,wavelengths,flux)
+        self._postsanity(self.wavelengths,self.flux,wavelengths,flux)
         # We do print fun information about the final calculation regardless.
         LOG.debug(u"%s: %s" % (self,npArrayInfo(flux,"New Flux")))
         LOG.debug(u"Interpolate Finished")
@@ -527,21 +530,20 @@ class InterpolatedSpectrumBase(AnalyticSpectrum):
         
         Input should be a set of wavelengths requested for the system (in the `wavelengths` keyword). The output will be a data array of wavelengths and fluxes (should be the provided `wavelengths`, and an equivalently shaped array with fluxes.)"""
         if wavelengths == None:
-            wavelengths = self.wavelengths
+            wavelengths = self._wavelengths
         if wavelengths == None:
             raise ValueError(u"Requires Wavelenths")
         
         LOG.debug(u"Polyfit Starting")
         
-        oldwl,oldfl = self.data
         # Sanity Checks for Data
-        self._presanity(oldwl,oldfl,wavelengths,extrapolate=True)
+        self._presanity(self.wavelengths,self.flux,wavelengths,extrapolate=True)
         
-        func = np.poly1d(np.polyfit(oldwl,oldfl,order))
+        func = np.poly1d(np.polyfit(self.wavelengths,self.flux,order))
         
         flux = func(wavelengths)
         
-        self._postsanity(oldwl,oldfl,wavelengths,flux,extrapolate=True)
+        self._postsanity(self.wavelengths,self.flux,wavelengths,flux,extrapolate=True)
         # We do print fun information about the final calculation regardless.
         LOG.debug(u"%s: %s" % (self,npArrayInfo(flux,"New Flux")))
         
@@ -562,7 +564,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum):
         
         This is a vector-based calculation, and so should be relatively fast. This function contains ZERO for loops, and uses entirely numpy-based vector mathematics."""        
         if wavelengths == None:
-            wavelengths = self.wavelengths
+            wavelengths = self._wavelengths
         if resolution == None:
             resolution = self.resolution
         if wavelengths == None:
@@ -573,11 +575,8 @@ class InterpolatedSpectrumBase(AnalyticSpectrum):
         LOG.debug(u"Resample Starting")
         
         
-        
-        # Redshifting
-        oldwl,oldfl = self.data
         # Sanity Checks for Data
-        self._presanity(oldwl,oldfl,wavelengths,resolution,upsample=upsample)
+        self._presanity(self.wavelengths,self.flux,wavelengths,resolution,upsample=upsample)
         
         # The main resampling function.
         # A two dimensional grid is used (instead of two for-loops). The grid stretches across wavelength (data), wavelength (requested). The 
@@ -587,17 +586,17 @@ class InterpolatedSpectrumBase(AnalyticSpectrum):
         curve = lambda wl,center,sig : (1.0/np.sqrt(np.pi * sig ** 2.0 )) * np.exp( - 0.5 * (wl - center) ** 2.0 / (sig ** 2.0) ).astype(np.float)
         
         # This is the two dimensional grid for the resampling function.
-        MWL,MCENT = np.meshgrid(oldwl,wavelengths)
-        MWL,MSIGM = np.meshgrid(oldwl,sigma)
+        MWL,MCENT = np.meshgrid(self.wavelengths,wavelengths)
+        MWL,MSIGM = np.meshgrid(self.wavelengths,sigma)
         
         # DO THE MATH!
         curves = curve(MWL,MCENT,MSIGM)
         
         # We then must normalize the light spread across each aperture by the gaussian. This makes sure the blurring gaussian only distributes
         # the amont of flux under each wavelength.
-        ones = np.ones(oldwl.shape)
+        ones = np.ones(self.wavelengths.shape)
         base = np.sum(curves * ones, axis=1)
-        top  = np.sum(curves * oldfl,axis=1)
+        top  = np.sum(curves * self.flux,axis=1)
         
         # If we try to normalize by dividing by zero, we are doing something wrong.
         # Removing these data points should be okay, because they are data points which we calculated to
@@ -621,11 +620,11 @@ class InterpolatedSpectrumBase(AnalyticSpectrum):
             u"Curve Evaluated" : curves,
         }
         if (topzo.astype(int) < zeros.astype(int)).any():
-            self._postsanity(oldwl,oldfl,wavelengths,flux,resolution,error=ValueError,message=u"Normalizing Zero error." % (np.sum(zeros)),**msgarray)
+            self._postsanity(self.wavelengths,self.flux,wavelengths,flux,resolution,error=ValueError,message=u"Normalizing Zero error." % (np.sum(zeros)),**msgarray)
         elif np.sum(zeros) > 0:
-            self._postsanity(oldwl,oldfl,wavelengths,flux,resolution,warning=True,message=u"Removed %d zeros from re-weighting." % (np.sum(zeros)),**msgarray)
+            self._postsanity(self.wavelengths,self.flux,wavelengths,flux,resolution,warning=True,message=u"Removed %d zeros from re-weighting." % (np.sum(zeros)),**msgarray)
         else:
-            self._postsanity(oldwl,oldfl,wavelengths,flux,resolution,**msgarray)
+            self._postsanity(self.wavelengths,self.flux,wavelengths,flux,resolution,**msgarray)
             
         
         
@@ -648,7 +647,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum):
         This calculation is based on the :meth:`interpolate` function and the :func:`np.histogram` function, both of which are not quite vector-fast, but are sufficiently fast for most purposes. This method has been tested to be much faster than :meth:`integrate_quad`
         """
         if wavelengths == None:
-            wavelengths = self.wavelengths
+            wavelengths = self._wavelengths
         if wavelengths == None:
             raise ValueError(u"Requires Wavelenths")
         
@@ -720,7 +719,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum):
         This integrator uses a generator based for-loop wraped around a call to :func:`scipy.integrate.quad`. On an operation with ~100 elements, this operation can consume close to 20s of computation time. Also, this method must stay strictly within the provided wavelength data. The `intSteps` keyword controls the maximum number of steps in each integration. Turning this value down speeds up the integrator.
         """
         if wavelengths == None:
-            wavelengths = self.wavelengths
+            wavelengths = self._wavelengths
         if wavelengths == None:
             raise ValueError(u"Requires Wavelenths")
         
@@ -728,10 +727,9 @@ class InterpolatedSpectrumBase(AnalyticSpectrum):
         
         
         # Data sanity check
-        oldwl,oldfl = self.data
-        self._presanity(oldwl,oldfl,wavelengths)
+        self._presanity(self.wavelengths,self.flux,wavelengths)
         
-        self.func = sp.interpolate.interp1d(oldwl,oldfl,bounds_error=False,fill_value=0)
+        self.func = sp.interpolate.interp1d(self.wavelengths,self.flux,bounds_error=False,fill_value=0)
         
         wlStart = wavelengths[:-1]
         wlEnd = wavelengths[1:]         
@@ -742,7 +740,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum):
         # This is our sanity check. Everything we calculated should be a number. If it comes out as nan, then we have done something wrong.
         # In that case, we raise an error after printing information about the whole calculation.
         arrays = { u"Requested lower bound λu" : wlStart , u"Requested upper bound λ" : wlEnd }
-        self._postsanity(oldwl,oldfl,wavelengths,flux,**arrays)
+        self._postsanity(self.wavelengths,self.flux,wavelengths,flux,**arrays)
 
         # We do print fun information about the final calculation regardless.
         LOG.debug(u"%s: %s" % (self,npArrayInfo(flux,"New Flux")))
@@ -795,9 +793,8 @@ class InterpolatedSpectrumBase(AnalyticSpectrum):
         LOG.debug(u"Resolve and Resample Starting")
         if hasattr(self,'resolved'):
             txt = u"Resolved using %s" % self.resolve_method if self.resolved else "Resolving using %s" % resolve_method
-            oldwl,oldfl = self.data
             # Test resolution for current validity:
-            bincount,bins = np.histogram(oldwl[:-1],wavelengths)
+            bincount,bins = np.histogram(self.wavelengths[:-1],wavelengths)
             if (bincount == 0).any():
                 txt = u"Re-resolving using %s" % resolve_method
                 self.resolved = False            

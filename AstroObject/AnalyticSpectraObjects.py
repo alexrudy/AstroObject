@@ -8,7 +8,7 @@
 # 
 
 # Parent Modules
-import AstroImage,AstroSpectra,AnalyticSpectra
+import AstroImage,AstroSpectra,AnalyticSpectra,AstroObjectBase
 
 # Standard Scipy Toolkits
 import numpy as np
@@ -38,7 +38,7 @@ __all__ = ["BlackBodySpectrum","GaussianSpectrum","FlatSpectrum"]
 
 __version__ = getVersion()
 
-class BlackBodySpectrum(AnalyticSpectra.AnalyticSpectrum):
+class BlackBodySpectrum(AstroObjectBase.AnalyticFrame,AnalyticSpectra.AnalyticSpectrum):
     """An analytic representation of a Blackbody Spectrum at a Kelvin Tempertaure"""
     def __init__(self, temperature, label=None, **kwargs):
         if label == None:
@@ -51,7 +51,7 @@ class BlackBodySpectrum(AnalyticSpectra.AnalyticSpectrum):
         return np.vstack((wavelengths,BlackBody(wavelengths,self.temperature)))
         
         
-class GaussianSpectrum(AnalyticSpectra.AnalyticSpectrum):
+class GaussianSpectrum(AstroObjectBase.AnalyticFrame,AnalyticSpectra.AnalyticSpectrum):
     """An analytic representation of a gaussian function in spectral form"""
     def __init__(self, mean, stdev, height, label=None):
         if label == None:
@@ -68,7 +68,7 @@ class GaussianSpectrum(AnalyticSpectra.AnalyticSpectrum):
         
     
 
-class FlatSpectrum(AnalyticSpectra.AnalyticSpectrum):
+class FlatSpectrum(AstroObjectBase.AnalyticFrame,AnalyticSpectra.AnalyticSpectrum):
     """An analytc form of a flat value at every wavelength"""
     def __init__(self, value, label=None):
         if label == None:

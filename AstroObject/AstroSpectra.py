@@ -34,13 +34,38 @@ import math, copy, sys, time, logging, os
 # Submodules from this system
 from Utilities import *
 
-__all__ = ["SpectraFrame","SpectraObject"]
+__all__ = ["SpectraMixin","SpectraFrame","SpectraObject"]
 
 __version__ = getVersion()
 
 LOG = logging.getLogger(__name__)
 
-class SpectraFrame(AstroObjectBase.FITSFrame):
+class SpectraMixin(object):
+    """An abstract implementation of a spectral frame, with the correct properties."""
+    @property
+    def wavelengths(self):
+        """Accessor to get the wavelengths from this spectrum"""
+        return self.data[0]
+        
+    @property
+    def flux(self):
+        """Accessor to get the flux from this spectrum"""
+        return self.data[1]
+    
+    def __show__(self):
+        """Plots the image in this frame using matplotlib's ``imshow`` function. The color map is set to an inverted binary, as is often useful when looking at astronomical images. The figure object is returned, and can be manipulated further.
+        
+        .. Note::
+            This function serves as a quick view of the current state of the frame. It is not intended for robust plotting support, as that can be easily accomplished using ``matplotlib``. Rather, it attempts to do the minimum possible to create an acceptable image for immediate inspection."""
+        LOG.log(2,"Plotting %s using matplotlib.pyplot.plot" % self)
+        plt.plot(self.wavelengths,self.flux,".-",label=self.label)
+        plt.axis(expandLim(plt.axis()))
+        plt.gca().ticklabel_format(style="sci",scilimits=(3,3))
+        return plt.gca()
+    
+        
+
+class SpectraFrame(AstroObjectBase.HDUHeaderMixin,SpectraMixin,AstroObjectBase.BaseFrame):
     """A single frame of a spectrum. This will save the spectrum as an image, with the first row having flux, and second row having the wavelength equivalent. Further rows can accomodate further spectral frames when stored to a FITS image. However, the frame only accepts a single spectrum."""
     def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
         self.data = data # The image data
@@ -78,20 +103,10 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
         for key,value in self.header.iteritems():
             HDU.header.update(key,value)
         return HDU
-        
     
-    def __show__(self):
-        """Plots the image in this frame using matplotlib's ``imshow`` function. The color map is set to an inverted binary, as is often useful when looking at astronomical images. The figure object is returned, and can be manipulated further.
-        
-        .. Note::
-            This function serves as a quick view of the current state of the frame. It is not intended for robust plotting support, as that can be easily accomplished using ``matplotlib``. Rather, it attempts to do the minimum possible to create an acceptable image for immediate inspection."""
-        LOG.log(2,"Plotting %s using matplotlib.pyplot.plot" % self)
-        x,y = self.data #Slice Data
-        plt.plot(x,y,".-",label=self.label)
-        plt.axis(expandLim(plt.axis()))
-        plt.gca().ticklabel_format(style="sci",scilimits=(3,3))
-        return plt.gca()
-    
+    # def __show__(self):
+    #     """Call parent show method."""
+    #     return SpectraMixin.__show__(self)
     
     @classmethod
     def __save__(cls,data,label):
@@ -126,7 +141,8 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
             msg = "HDU Data must be %s for %s, found data of %s" % (np.ndarray,cls.__name__,type(HDU.data))
             raise NotImplementedError(msg)    
         try:
-            Object = cls(HDU.data,label)        
+            Object = cls(HDU.data,label)
+            Object.__getheader__(HDU)        
         except AssertionError as AE:
             msg = "%s data did not validate: %s" % (cls.__name__,AE)
             raise NotImplementedError(msg)
@@ -137,12 +153,10 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
     
 
 
-class SpectraObject(AstroObjectBase.FITSObject):
-    """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.FITSObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`SpectraFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately."""
-    def __init__(self, **kwargs):
-        super(SpectraObject, self).__init__(**kwargs)
-        self.dataClasses += [SpectraFrame]
-        self.dataClasses.remove(AstroObjectBase.FITSFrame)
+class SpectraObject(AstroObjectBase.BaseObject):
+    """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`SpectraFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately."""
+    def __init__(self,dataClasses=[SpectraFrame],**kwargs):
+        super(SpectraObject, self).__init__(dataClasses=dataClasses,**kwargs)
 
     def load(self,filename=None,statename=None):
         """Loads spectral data from a data file which contains two columns, one for wavelenght, and one for flux."""
