@@ -39,7 +39,7 @@ __version__ = getVersion()
 
 LOG = logging.getLogger(__name__)
 
-class HDUFrame(AstroObjectBase.FITSFrame,pf.ImageHDU):
+class HDUFrame(AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame,pf.ImageHDU):
     """
     A single frame of a FITS image.
     Frames are known as Header Data Units, or HDUs when written to a FITS file. This frame simply stores the HDU.
@@ -140,13 +140,11 @@ class HDUFrame(AstroObjectBase.FITSFrame,pf.ImageHDU):
     
 
 
-class HDUObject(AstroObjectBase.FITSObject):
-    """This object tracks a number of HDU frames. This class is a simple subclass of :class:`AstroObjectBase.FITSObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. It uses only the :class:`HDUFrame` class for data.
+class HDUObject(AstroObjectBase.BaseObject):
+    """This object tracks a number of HDU frames. This class is a simple subclass of :class:`AstroObjectBase.BaseObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. It uses only the :class:`HDUFrame` class for data.
     """
-    def __init__(self, filename=None):
-        super(HDUObject, self).__init__()
-        self.dataClasses += [HDUFrame]
-        self.dataClasses.remove(AstroObjectBase.FITSFrame)
+    def __init__(self, dataClasses=[HDUFrame],filename=None):
+        super(HDUObject, self).__init__(dataClasses=dataClasses)
         if filename != None:
             self.read(filename)        # Save the initializing data
             
