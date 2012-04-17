@@ -156,7 +156,14 @@ LOG = logging.getLogger(__name__)
 class AnalyticSpectrum(AstroObjectBase.BaseFrame):
     """A functional spectrum object for spectrum generation. This is an abstract class which implements spectrum arithmetic. Spectrum arithmetic has a delayed implementation, whereby it is applied to the spectrum only once the spectrum is called for data, allowing spectra to produce data which matches the requested wavelengths (and resolution, if applicable).
     
-    The Analytic spectrum can be provided with a set of wavelengths upon intialization. The `wavelengths` keyword will be stored and used when this spectrum is later called by the system. The `units` keyword is currently unused."""
+    The Analytic spectrum can be provided with a set of wavelengths upon intialization. The `wavelengths` keyword will be stored and used when this spectrum is later called by the system. The `units` keyword is currently unused.
+    
+    .. inheritance-diagram::
+        AstroObject.AnalyticSpectra.AnalyticSpectrum
+        :parts: 1
+        
+    
+    """
     def __init__(self,data=None,label=None,wavelengths=None,units=None,**kwargs):
         super(AnalyticSpectrum, self).__init__(data=data,label=label, **kwargs)
         self._wavelengths = wavelengths
@@ -205,7 +212,14 @@ class AnalyticSpectrum(AstroObjectBase.BaseFrame):
 
 
 class CompositeSpectra(AstroObjectBase.AnalyticMixin,AnalyticSpectrum):
-    """Binary composition of two functional spectra. This object should not be initialized by the user. Instead, this class is returned when you combine two spectra of different types, or combine a spectra with any other type. As such, do not initialze composite spectra idependently. See the :meth:`__call__` function for documentation of how to use this type of object."""
+    """Binary composition of two functional spectra. This object should not be initialized by the user. Instead, this class is returned when you combine two spectra of different types, or combine a spectra with any other type. As such, do not initialze composite spectra idependently. See the :meth:`__call__` function for documentation of how to use this type of object.
+    
+    .. inheritance-diagram::
+        AstroObject.AnalyticSpectra.CompositeSpectra
+        :parts: 1
+        
+    
+    """
     ops = {'sub':"-",'add':"+",'mul':"*",'div':"/"}
     def __init__(self, partA, partB, operation):
         label = "("
@@ -827,6 +841,12 @@ class InterpolatedSpectrum(AstroSpectra.SpectraFrame,InterpolatedSpectrumBase):
     
     Passing the name of any member function in this class to the `method` parameter will change the interpolation/method used for this spectrum.
     
+    .. inheritance-diagram::
+        AstroObject.AnalyticSpectra.InterpolatedSpectrum
+        :parts: 1
+        
+    
+    
     """
     def __init__(self, data=None, label=None,**kwargs):    
         self.data = data
@@ -844,7 +864,14 @@ class InterpolatedSpectrum(AstroSpectra.SpectraFrame,InterpolatedSpectrumBase):
     
 
 class Resolver(InterpolatedSpectrum):
-    """This spectrum performs a unitary operation on any InterpolatedSpectrum-type-object. The operation (specified by the `method` keyword) is performed after the contained spectrum is called. The included spectrum is called immediately and then discarded. As such, wavelength and resolution keywords should be provided when appropriate to resolve the spectrum immediately. This operation does not save the old data state. All methods in :class:`InterpolatedSpectrum` are available."""
+    """This spectrum performs a unitary operation on any InterpolatedSpectrum-type-object. The operation (specified by the `method` keyword) is performed after the contained spectrum is called. The included spectrum is called immediately and then discarded. As such, wavelength and resolution keywords should be provided when appropriate to resolve the spectrum immediately. This operation does not save the old data state. All methods in :class:`InterpolatedSpectrum` are available.
+    
+    .. inheritance-diagram::
+        AstroObject.AnalyticSpectra.Resolver
+        :parts: 1
+        
+    
+    """
     def __init__(self, spectrum, label=None, new_method='interpolate',**kwargs):
         data = spectrum(**kwargs)
         if not label:
@@ -853,7 +880,14 @@ class Resolver(InterpolatedSpectrum):
         
         
 class UnitarySpectrum(InterpolatedSpectrumBase):
-    """This spectrum performs a unitary operation on any InterpolatedSpectrum-type-object. The operation (specified by the `method` keyword) is performed after the contained spectrum is called. All methods in :class:`InterpolatedSpectrum` are available."""
+    """This spectrum performs a unitary operation on any InterpolatedSpectrum-type-object. The operation (specified by the `method` keyword) is performed after the contained spectrum is called. All methods in :class:`InterpolatedSpectrum` are available.
+    
+    .. inheritance-diagram::
+        AstroObject.AnalyticSpectra.UnitarySpectrum
+        :parts: 1
+        
+    
+    """
     def __init__(self, spectrum, method='interpolate', label=None,**kwargs):
         if not label:
             label =  u"[" + spectrum.label + "]"

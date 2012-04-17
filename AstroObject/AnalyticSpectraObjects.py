@@ -32,7 +32,14 @@ __all__ = ["BlackBodySpectrum","GaussianSpectrum","FlatSpectrum"]
 __version__ = getVersion()
 
 class BlackBodySpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSpectrum):
-    """An analytic representation of a Blackbody Spectrum at a Kelvin Tempertaure"""
+    """An analytic representation of a Blackbody Spectrum at a Kelvin Tempertaure.
+    
+    .. inheritance-diagram::
+        AstroObject.AnalyticSpectra.BlackBodySpectrum
+        :parts: 1
+        
+    
+    """
     def __init__(self, temperature, label=None, **kwargs):
         if label == None:
             label = "Black Body Spectrum at %4.2eK" % temperature
@@ -45,7 +52,14 @@ class BlackBodySpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSp
         
         
 class GaussianSpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSpectrum):
-    """An analytic representation of a gaussian function in spectral form"""
+    """An analytic representation of a gaussian function in spectral form.
+    
+    .. inheritance-diagram::
+        AstroObject.AnalyticSpectra.GaussianSpectrum
+        :parts: 1
+        
+    
+    """
     def __init__(self, mean, stdev, height, label=None):
         if label == None:
             label = "Gaussian Spectrum with mean: %4.2e and standard deviation: %4.2e" % (mean,stdev)
@@ -62,7 +76,14 @@ class GaussianSpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSpe
     
 
 class FlatSpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSpectrum):
-    """An analytc form of a flat value at every wavelength"""
+    """An analytc form of a flat value at every wavelength.
+    
+    .. inheritance-diagram::
+        AstroObject.AnalyticSpectra.FlatSpectrum
+        :parts: 1
+        
+    
+    """
     def __init__(self, value, label=None):
         if label == None:
             label = "Flat spectrum with value %3f" % value

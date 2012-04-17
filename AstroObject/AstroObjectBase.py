@@ -214,6 +214,7 @@ class BaseFrame(object):
         """
         return "<\'%s\' labeled \'%s\'>" % (self.__class__.__name__,self.label)
     
+    @abstractmethod
     def __valid__(self):
         """Runs a series of assertions which ensure that the data for this frame is valid
         
@@ -400,6 +401,7 @@ class NoDataMixin(object):
         
     def __valid__(self):
         """Require no data"""
+        super(NoDataMixin,self).__valid__()
         if hasattr(self,'data'):
             assert self.data == None, "The frame %s cannot accept data, found data with type %s" % (self,type(self.data))
     
