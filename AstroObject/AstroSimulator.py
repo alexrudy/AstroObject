@@ -5,9 +5,13 @@
 #  
 #  Created by Alexander Rudy on 2011-12-14.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.6-p1
+#  Version 0.4.0
 # 
-"""The Simulator is designed to provide a high level, command-line useful interface to large computational tasks. As the name suggests, Simulators often do a lot of programming work, and do so across many distinct "stages", whcih can be configured in any way the user desires. All of the abilities in this program are simply object abstraction techniques to provide a complex program with a command line interface and better control and reporting on the activities carreid out to successfully complete the program. It allows for the configuration of simple test cases and "macros" from within the program, eliminating the need to provide small wrapper scripts and test handlers.
+"""
+Simulator :mod:`AstroSimulator`
+===============================
+
+The Simulator is designed to provide a high level, command-line useful interface to large computational tasks. As the name suggests, Simulators often do a lot of programming work, and do so across many distinct "stages", whcih can be configured in any way the user desires. All of the abilities in this program are simply object abstraction techniques to provide a complex program with a command line interface and better control and reporting on the activities carreid out to successfully complete the program. It allows for the configuration of simple test cases and "macros" from within the program, eliminating the need to provide small wrapper scripts and test handlers.
 
 An example (simple) program using the simulator can be found in :ref:`SimulatorExample`
 
@@ -31,6 +35,12 @@ The program is actually agnostic to the order of arguments. Any argument may com
 	The stages option specifies individual stages for the program to run. You must specify at least one stage to run in the simulator. By default, two basic stages are provided, ``*all`` and ``*none``. The default simulation is performed by ``*all``. To test the simulator without running any stages (for example, to test :meth:`AstroObject.AstroSimulator.Simulator.registerFunction` functionality), use the ``*none`` stage to opertate without using any stages.
 	
 	Stages are called with either a ``*``, ``+`` or ``-`` character at the beginning. Their resepctive actions are shown below. All commands must include at least one macro. If you don't want any particular macro, use the ``*none`` macro.
+	
+	To run a simulation using the ``*all`` macro, the command would be::
+		
+		$ Simulator *all
+		
+	
 	
 	========= ============ ================================
 	Character  Action      Description
@@ -105,6 +115,10 @@ The program is actually agnostic to the order of arguments. Any argument may com
 	
 	Dump the configuration to a file. Filenames are the configuration file name with ``-dump.yaml`` appended.
 
+.. option:: --profile
+    
+    Show a timing profile of the simulation, including status of stages, at the end of the simulation.
+
 .. _Configuration:
 
 :program:`Simulator` Configuration Files
@@ -121,16 +135,105 @@ The program is actually agnostic to the order of arguments. Any argument may com
     - ``Partials``: Location of partial output, including a dump of the configuration.
 - ``Logging``: Configuration of the :mod:`AstroObject.AstroObjectLogging` module
 
-A simple configuration file can be found in the :ref:`SimulatorExample`."""
+A simple configuration file can be found in the :ref:`SimulatorExample`.
+
+.. _Simulator_API:
+
+API Methods
+-----------
+    
+The following methods handle the external-API for the simulator. Normally, when you write a simulator, you will subclass the :class:`Simulator`, and then use the methods here to control the behavior of the simulator. At a minimum, a simulator must register stages, probably using :meth:`Simulator.collect` or :meth:`Simulator.registerStage`, and then call the :meth:`Simulator.run` function to process the command line interface and start the simulator.
+    
+.. autoclass::
+    AstroObject.AstroSimulator.Simulator
+    
+    .. automethod:: collect
+    
+    .. automethod:: registerStage
+    
+    .. automethod:: registerConfigOpts
+    
+    .. automethod:: registerFunction
+    
+    .. automethod:: run
+    
+    .. automethod:: startup
+    
+    .. automethod:: do
+    
+    .. automethod:: exit
+    
+    .. automethod:: map_over_collection
+
+.. _Simulator_Decorators:
+    
+Decorators
+----------
+The following decorators can be used (in conjuction with :meth:`AstroObject.AstroSimulator.Simulator.collect`) to register and configure simulator stages:
+
+.. autofunction:: collect
+
+.. autofunction:: ignore
+
+.. autofunction:: include
+
+.. autofunction:: help
+
+.. autofunction:: description
+
+.. autofunction:: depends
+
+.. autofunction:: replaces
+
+.. autofunction:: optional
+    
+Private Methods and Classes
+---------------------------
+    
+These methods are used to implment the public-facing API. They are documented here to explain their use in development.
+
+.. inheritance-diagram::
+    AstroObject.AstroSimulator.Simulator
+    AstroObject.AstroSimulator.Stage
+    :parts: 1
+
+.. automethod:: 
+    AstroObject.AstroSimulator.Simulator._initOptions
+
+.. automethod:: 
+    AstroObject.AstroSimulator.Simulator._default_macros
+    
+.. automethod:: 
+    AstroObject.AstroSimulator.Simulator._parseArguments
+    
+.. automethod:: 
+    AstroObject.AstroSimulator.Simulator._preConfiguration
+    
+.. automethod:: 
+    AstroObject.AstroSimulator.Simulator._configure
+    
+.. automethod:: 
+    AstroObject.AstroSimulator.Simulator._postConfiguration
+
+.. automethod:: 
+    AstroObject.AstroSimulator.Simulator.execute
+    
+.. autoclass::
+    AstroObject.AstroSimulator.Stage
+
+
+"""
 
 
 # Standard Python Modules
-import math, copy, sys, time, logging, os, json
+import math, copy, sys, time, logging, os, json, datetime
 import re
 import argparse
 import yaml
 
 from pkg_resources import resource_filename
+
+import multiprocessing
 
 # Dependent Modules
 from progressbar import *
@@ -182,6 +285,7 @@ class Stage(object):
     """
     def __init__(self,stage,name="a Stage",description=None,exceptions=None,dependencies=None,replaces=None,optional=False):
         super(Stage, self).__init__()
+        self._name = name
         self.macro = False
         if callable(stage):
             self.do = stage
@@ -194,7 +298,6 @@ class Stage(object):
             self.exceptions = tuple()
         else:
             self.exceptions = exceptions
-        self.name = name
         self.description = description
         self.deps = dependencies
         self.reps = replaces
@@ -204,22 +307,54 @@ class Stage(object):
         self.ran = False
         self.complete = False
     
+    @property
+    def name(self):
+        return self._name
+    
     @staticmethod
     def table_head():
-        """docstring for table_head"""
-        text  = "|         Stage         | Passed |    Time    |\n"
-        text += "|-----------------------|--------|------------|"
+        """Table head for profiling."""
+        text  = ""
+        text += terminal.render("|%(BLUE)s-----------------------%(NORMAL)s|%(BLUE)s--------%(NORMAL)s|%(BLUE)s---------------%(NORMAL)s|\n")
+        text += "|         Stage         | Passed |     Time      |\n"
+        text += terminal.render("|%(BLUE)s-----------------------%(NORMAL)s|%(BLUE)s--------%(NORMAL)s|%(BLUE)s---------------%(NORMAL)s|")
+        return text
+      
+    @staticmethod 
+    def table_foot(total):
+        """Table footer for profiling."""
+        text  = terminal.render("|%(BLUE)s-----------------------%(NORMAL)s Total Time: ")+"%(time)-9s"+terminal.render("%(BLUE)s---%(NORMAL)s|")
+        text = text % {"time":datetime.timedelta(seconds=int(total))}
         return text
         
-    def table_row(self):
+    def table_row(self,total=None):
         """Return a profiling string table row."""
         assert self.ran, "Stage %s didn't run" % self.name
-        return "| %(stage)21s | %(result)6s | %(time) 6.2es |" % {
-            "stage": self.name,
-            "result": str(self.complete),
-            "time": self.endTime - self.startTime,
-        }
-    
+        string =  u"| %(stage)21s | %(color)s%(result)6s%(normal)s | %(timestr) 12s |"
+        keys = {
+                "stage": self.name,
+                "color": terminal.GREEN if self.complete else terminal.RED,
+                "normal": terminal.NORMAL,
+                "result": str(self.complete),
+                "time": datetime.timedelta(seconds=int(self.durTime)),
+            }
+        if total == None:
+            keys["timestr"] = "% 12s" % keys["time"]            
+        else:
+            keys["per"] = ( self.durTime / total ) * 100.0
+            if keys["per"] > 50:
+                string += terminal.RED
+            elif keys["per"] > 20:
+                string += terminal.BLUE
+            elif keys["per"] > 10:
+                string += terminal.GREEN
+            blen = int(keys["per"] * (terminal.COLUMNS - 50) / 75)
+            if blen > terminal.COLUMNS - 50:
+                blen = terminal.COLUMNS - 50
+            string += u"█" * blen
+            string += terminal.NORMAL
+            keys["timestr"] = "%(time)9s %(per)2d%%" % keys
+        return string % keys
         
     def profile(self):
         """Return a string stage profile for this stage."""
@@ -227,7 +362,7 @@ class Stage(object):
         return "Stage %(stage)s %(result)s in %(time).2fe" % {
             "stage": self.name,
             "result": "completed" if self.complete else "failed",
-            "time": self.endTime - self.startTime,
+            "time": datetime.timedelta(seconds=self.durTime),
         }
         
     def run(self):
@@ -242,6 +377,7 @@ class Stage(object):
             self.complete = True
         finally:
             self.endTime = time.clock()
+            self.durTime = self.endTime - self.startTime
         
 
 class Simulator(object):
@@ -266,6 +402,7 @@ class Simulator(object):
         self.complete = [] # Stages and dependents which have been walked
         self.done = [] # Stages and dependents which have been checked
         self.ran = [] # Stages and dependents which have been executed
+        self.aran = []
         self.name = name
         self.order = None
         self.config = StructuredConfiguration({})
@@ -273,6 +410,8 @@ class Simulator(object):
         
         if name == "__class__.__name__":
             self.name = self.__class__.__name__
+        if isinstance(name,str):
+            self.name = self.name.encode('utf-8')
         self.log = logging.getLogger(self.name)
         # The following are boolean state values for the simulator
         self.configured = False
@@ -291,7 +430,7 @@ class Simulator(object):
         if version==None:
             self.version = u"AstroObject: " + __version__
         else:
-            self.version = u"AstroObject: " + __version__ + "\n"+self.name+": " + version
+            self.version = self.name + u": " + version + u"\n" + u"AstroObject: " + __version__
         
         self._initOptions()
         
@@ -636,6 +775,7 @@ class Simulator(object):
         self._preConfiguration()
         self._configure(configFile=self.config["Configurations"]["This"])
         self._postConfiguration()
+        self.log.info(self.version)
         self.starting = False
         
         
@@ -671,13 +811,17 @@ class Simulator(object):
                 self.inorder = True
                 self.complete = []
         
-        while self.running and not self.paused:
+        try:
             for stage in self.orders:
                 if stage in self.options["macro"]:
                     self.execute(stage)
                 elif stage in self.options["include"]:
                     self.execute(stage,deps=False)
             self.running = False
+        except:
+            if self.options["profile"] and not self.running:
+                self.show_profile()
+            raise
         
         if self.options['dry_run'] and not self.running:
             text = "Stages done:\n"
@@ -693,13 +837,17 @@ class Simulator(object):
     def show_profile(self):
         """Show the profile of the simulation"""
         
+        total = sum([ self.stages[stage].durTime for stage in self.ran])
+        
         text = "Simulation profile:\n"
         text += Stage.table_head() + "\n"
         
-        for stage in self.ran:
-            text += self.stages[stage].table_row() + "\n"
+        for stage in self.aran:
+            text += self.stages[stage].table_row(total) + "\n"
             
-        self.exit(msg=text)
+        text += Stage.table_foot(total)
+            
+        self.log.info(text)
             
     def execute(self,stage,deps=True):
         """Actually exectue a particular stage. This function can be called to execute individual stages, either with or without dependencies. As such, it gives finer granularity than :func:`do`.
@@ -775,6 +923,7 @@ class Simulator(object):
             self.complete += [stage] + s.reps
             self.ran += [stage]
         finally:
+            self.aran += [stage]
             self.log.debug(u"Finished \'%s\'" % s.name)
         
         return use
@@ -790,7 +939,20 @@ class Simulator(object):
         sys.exit(code)
         
     def collect(self,matching=r'^(?!\_)',**kwargs):
-        """Collect class methods for inclusion as simulator stages. This method will collect all class methods of this object which are not included by default, and will register those functions as stages of this simulator. Stages will not be registered with any dependents. Stages are registered in alphabetical order (as returned by the `dir()` functon). This method does not do any logging. It should be called before the :meth:`run` method for the simulator is called.
+        """Collect class methods for inclusion as simulator stages. Instance methods are collected if they do not belong to the parent :class:`Simulator` class (i.e. this method, and others like :meth:`registerStage` will not be collected.). Registered stages will default to having no dependents, to be named similar to thier own methods (``collected_stage`` becomes ``*collected-stage`` on the command line) and will use thier doc-string as the stage description. The way in which these stages are collected can be adjusted using the decorators provided in this module.
+        
+        To define a method as a stage with a dependent, help string, and by default inclusion, use::
+            
+            @collect
+            @include
+            @description("Doing something")
+            @help("Do something")
+            @depends("other-stage")
+            @replaces("missing-stage")
+            def stagename(self):
+                pass
+        
+        This method does not do any logging. It should be called before the :meth:`run` method for the simulator is called.
         
         Private methods are not included using the default matching string ``r'^(?!\_)'``. This string excludes any method beginning with an underscore. Alternative method name matching strings can be provided by the user.
         
@@ -808,7 +970,7 @@ class Simulator(object):
                     stageList.append(method)
                     
         stageList.sort(key=func_lineno)
-        [ self.registerStage(stage,**kwargs) for stage in stageList]
+        [ self.registerStage(stage,**kwargs) for stage in stageList ]
     
     
     def _start_progress_bar(self,length,color):

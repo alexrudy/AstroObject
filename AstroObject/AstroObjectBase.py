@@ -1,93 +1,144 @@
+# -*- coding: utf-8 -*-
 # 
-#  AstroObject.py
+#  AstroObjectBase.py
 #  ObjectModel
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.6-p1
+#  Version 0.4.0
 # 
 """
-Custom Object Basics: :class:`FITSObject` 
------------------------------------------
+.. _AstroObjectAPI:
 
-The Base API was introduced in version 0.2.1 to facilitate the creation and use of basic template classes.
+AstroObject API
+===============
 
-The FITSObject container is useful for handling many data frames. It can be sub-classed easily to make a customized data container which can handle new types of data frames. To create a custom data container, ensure you have a class which conforms to the :ref:`AstroObjectAPI` (called a ``frame``), then simply subclass :class:`AstroObjectBase.FITSObject` and provide the ``frame`` to :attr:`FITSObject.dataclasses`. For example, if :class:`FooFrame` conforms to the :ref:`AstroObjectAPI`, then you could use::
+The API is the foundation of the :mod:`AstroObject` module. When creating new types of data, you will want to create frames for that type of data. The functions shown below are the functions which must be present in every data frame type, in order to maintain compatibility with enclosing Objects. If your class conforms to this API, then it can easily be used as data for :class:`AstroObjectBase.BaseObject`. 
+
+
+To see how easy this will make objects, examine the following code for a custom Object class which accepts :class:`FooFrame`. To create the custom :class:`AstroObjectBase.BaseObject` which accepts your new data type :class:`FooFrame`, simply use::
     
-    class FooObject(AstroObjectBase.FITSObject):
-        \"\"\"A container for tracking FooFrames\"\"\"
-        def __init__(self, array=None):
-            super(ImageObject, self).__init__()
-            self.dataClasses += [FooFrame]
-            self.dataClasses.remove(AstroObjectBase.FITSFrame)
-            if array != None:
-                self.save(array)        # Save the initializing data
+    class FooObject(AstroObjectBase.BaseObject):
+        \"""A container for tracking FooFrames\"""
+        def __init__(self, dataClasses=[FooFrame]):
+            super(ImageObject, self).__init__(dataClasses = dataClasses)
             
         
     
-This object will then have all of the functions provided by :class:`AstroObjectBase.FITSObject`, but will only accept and handle data of type :class:`FooFrame`. :class:`FooFrame` should then implement all of the functions described in the :ref:`AstroObjectAPI`.
+This object will then have all of the functions provided by :class:`AstroObjectBase.BaseObject`, but will only accept and handle data of type :class:`FooFrame`. :class:`FooFrame` should then implement all of the functions described in the API below.
 
-.. autoclass::
-    AstroObject.AstroObjectBase.FITSObject
-    :show-inheritance:
-    :members:
-    
+To use this API, it is recommended that you sub-class :class:`AstroObjectBase.BaseFrame`. This template class is an abstract base which will ensure that you implement all of the required methods.
 
-Custom Frame Basics :class:`FITSFrame`
---------------------------------------
+The API also provides a number of Mixin classes for special cases. These mixins allow you to use incomplete, or standard implementations in certain cases. Mixins are useful when your data type cannot possibly conform to the full API provided by :class:`AstroObjectBase.BaseFrame`. Examples of this are classes which cannot produce HDUs or FITS files, or classes which do not actually contain raw data. See :ref:`Mixins` for more information.
 
-AstroObjectBase provides template objects for the Object-Oriented Modules :mod:`AstroImage` and :mod:`AstroSpectra`. Template classes implement all of the required methods. However, calling a method defined by a template class will usually raise an :exc:`NotImplementedError` indicating that an Abstract method was called. If you intend to work with ``.fits`` files directly, then you should subclass :class:`FITSFrame`. If not, subclass :class:`BaseFrame`, which is purely abstract, and makes no assumptions about your data structure.
+Module Structure
+----------------
 
-.. Note::
-    You should still use Template Classes even though they really only raise abstract errors. This helps you to ensure that you have implemented all of the required methods. As well, if new methods are added to the APIs in the future, using the Abstract class will likely cause your program to fail quietly on these new API calls, allowing you to mix old and new code with out too much concern for what has changed.
+.. inheritance-diagram::
+	AstroObject.AstroFITS.FITSFrame
+	AstroObject.AstroFITS.FITSObject
+	AstroObject.AstroImage.ImageFrame
+	AstroObject.AstroImage.ImageObject
+	AstroObject.AstroSpectra.SpectraFrame
+	AstroObject.AstroSpectra.SpectraObject
+	AstroObject.AstroHDU.HDUFrame
+	AstroObject.AstroHDU.HDUObject
+    AstroObject.AnalyticSpectra.AnalyticSpectrum
+    AstroObject.AnalyticSpectra.CompositeSpectra
+    AstroObject.AnalyticSpectra.InterpolatedSpectrum
+    AstroObject.AnalyticSpectra.Resolver
+    AstroObject.AnalyticSpectra.UnitarySpectrum
+	AstroObject.AnalyticSpectra.FlatSpectrum
+	AstroObject.AnalyticSpectra.GaussianSpectrum
+	AstroObject.AnalyticSpectra.BlackBodySpectrum
+    :parts: 1
 
+
+Base Frame :class:`BaseFrame`
+-----------------------------
+
+The :class:`BaseFrame` class provides abstract methods for all of the required frame methods. If you subclass from :class:`BaseFrame`, you will ensure that your subclass is interoperable with all of the frame and object features of this module.
 
 .. autoclass:: 
-    AstroObject.AstroObjectBase.FITSFrame
+    AstroObject.AstroObjectBase.BaseFrame
     :members:
-    :inherited-members:
-    :show-inheritance:
+    :special-members:
+
+.. _Mixins:
+
+Mixins in :mod:`AstroObjectBase`
+--------------------------------
+
+.. currentmodule:: AstroObject.AstroObjectBase
+
+Mixins allow certain classes to operate without all of the features required by :class:`BaseFrame`. Each class below implements certain methods and skips others. 
+
+A summary table is below. The table has classes provided from right to left. Note that :class:`AnalyticMixin` inherits from :class:`NoHDUMixin` and :class:`NoDataMixin`. This means that objects with type :class:`AnalyticMixin` are assumed by the system to be a type of frame, but they do not implement any of the major frame methods.
+
+=============================== ==================== ========================= ====================== ===================== ========================================== ======================================
+Method                           :class:`BaseFrame`   :class:`HDUHeaderMixin`   :class:`NoDataMixin`   :class:`NoHDUMixin`   :class:`AnalyticMixin`                     :class:`~.AstroSpectra.SpectraMixin`
+=============================== ==================== ========================= ====================== ===================== ========================================== ======================================
+Class Inherits From:                                                                                                         :class:`NoHDUMixin` :class:`NoDataMixin`                     
+:meth:`BaseFrame.__call__`       Abstract                                       Skipped                                      Abstract
+:meth:`BaseFrame.__setheader__`  Abstract              Implemented                                     Skipped               *Skipped*
+:meth:`BaseFrame.__getheader__`  Abstract              Implemented                                     Skipped               *Skipped*
+:meth:`BaseFrame.__hdu__`        Abstract                                                              Skipped               *Skipped*
+:meth:`BaseFrame.__show__`       Abstract                                       Skipped                                      *Skipped*                                     Implemented
+:meth:`BaseFrame.__save__`       Abstract                                                                                    Skipped
+:meth:`BaseFrame.__read__`       Abstract                                                              Skipped               *Skipped*
+=============================== ==================== ========================= ====================== ===================== ========================================== ======================================
+
+.. autoclass::
+	AstroObject.AstroObjectBase.HDUHeaderMixin
     
-    .. automethod:: __call__
-    
-    .. automethod:: __repr__    
-    
-    .. automethod:: __valid__
-    
-    .. automethod:: __hdu__
-    
-    .. automethod:: __show__
-    
-    .. automethod:: __save__
-    
-    .. automethod:: __read__
+.. autoclass::
+	AstroObject.AstroObjectBase.NoDataMixin
+	
+.. autoclass::
+	AstroObject.AstroObjectBase.NoHDUMixin
+	
+.. autoclass::
+	AstroObject.AstroObjectBase.AnalyticMixin
+	
+.. autoclass::
+	AstroObject.AstroSpectra.SpectraMixin
+
+Base Object :class:`BaseObject`
+-------------------------------
+
+The base object definition provides the normal object accessor methods. It should be subclassed as shown in :ref:`AstroObjectAPI`
+
+.. autoclass::
+	AstroObject.AstroObjectBase.BaseObject
+	:members:
+
+
 """
 
 # Standard Scipy Toolkits
 import numpy as np
 import pyfits as pf
 import scipy as sp
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-
-# Matplolib Extras
-import matplotlib.image as mpimage
-from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
 
 # Standard Python Modules
 import math, logging, os, time
+import copy
+import collections
+
+from abc import ABCMeta, abstractmethod, abstractproperty
 
 # Submodules from this system
 from Utilities import *
 
-__all__ = ["FITSFrame","FITSObject","BaseFrame"]
+__all__ = ["BaseObject","BaseFrame","AnalyticMixin","NoHDUMixin","HDUHeaderMixin","NoDataMixin"]
 
 __version__ = getVersion()
 
 LOG = logging.getLogger(__name__)
 
+
 class BaseFrame(object):
-    """This is the API for frame objects, that is, objects which represnet a single state of data. See :class:`AstroObjectBase.FITSFrame`. This API is generally not called by the end user, but rather is called by the parent :class:`AstroObject.AstroObjectBase.FITSObject`'s function. For an example of a parent object, see :class:`AstroObjectBase.FITSObject`.
+    """This is the API for frame objects, that is, objects which represnet a single state of data. See :class:`AstroObjectBase.FITSFrame`. This API is generally not called by the end user, but rather is called by the parent :class:`AstroObject.AstroObjectBase.BaseObject`'s function. For an example of a parent object, see :class:`AstroObjectBase.BaseObject`.
     
     :param data: Initalizing data
     :param label: string label
@@ -96,24 +147,50 @@ class BaseFrame(object):
     :raises AttributeError: when the frame fails to validate. See :meth:`__valid__`
     
     """
+    
+    __metaclass__ = ABCMeta
+        
     def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
         super(BaseFrame, self).__init__(**kwargs)
         if data != None:
             self.data = data
-        self.label = label # A label for this frame, for selection in parent object
-        self.header = header # A dictionary of header keys and values for use in HDU generation
+        self._label = label # A label for this frame, for selection in parent object
+        self.header = pf.core.Header() # Header object for HDU header items
         self.metadata = metadata # An optional metadata dictionary
         self.time = time.clock() # An object representing the time this object was created
+        self._valid = None
         
         if self.metadata == None:
             self.metadata = {}
-        if self.header == None:
-            self.header = {}
+        if isinstance(header,pf.core.Header):
+            self.header = header
+        elif isinstance(header,collections.Mapping):
+            for key, value in header.iteritems():
+                self.header.update(key,value)
+        else:
+            assert header == None, "%s doesn't understand the header, %s, type %s" % (self,header,type(header))
+            
         try:
             self.__valid__()
             assert isinstance(self.label,(str,unicode)), "Frame requires a label, got %s" % self.label
         except AssertionError as e:
             raise AttributeError(str(e))
+    
+    @property
+    def label(self):
+        return self._label
+        
+    def copy(self,label=None):
+        """Return a re-labeled copy of this object."""
+        if label == None:
+            _newFrame = copy.copy(self)
+        else:
+            _oldLabel = self.label
+            self._label = label
+            _newFrame = copy.copy(self)
+            self._label = _oldLabel
+        _newFrame.__valid__()
+        return _newFrame
     
     @abstractmethod
     def __call__(self,**kwargs):
@@ -129,7 +206,7 @@ class BaseFrame(object):
         """
         msg = "Abstract Data Structure %s was called, but cannot return data!" % self
         raise NotImplementedError(msg)
-    
+
     def __repr__(self):
         """Returns String Representation of this frame object. Will display the class name and the label. This method does not need to be overwritten by subclasses.
         
@@ -142,8 +219,53 @@ class BaseFrame(object):
         
         :raises: :exc:`AssertionError` when frame is invalid
         :returns: ``None``"""
-        assert not hasattr(self,'data'), "Abstract Class cannot accept data!"
+        assert True
     
+    @property
+    def valid(self):
+        """Whether this object is valid."""
+        if self._valid == None:
+            try:
+                self.__valid__()
+            except AssertionError:
+                self._valid = False
+            else:
+                self._valid = True
+        return self._valid
+    
+    def hdu(self,primary=False):
+        """Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.
+        
+        :param bool primary: Return a primary HDU
+        :returns: pyfits.primaryHDU or pyfits.ImageHDU
+        """
+        return self.__setheader__(self.__hdu__(primary))
+    
+    @abstractmethod
+    def __setheader__(self,hdu):
+        """Apply header values to a given HDU and return that HDU.
+        
+        :param pf.HDU HDU: Header-Data-Unit on which to add the header information.
+        :returns: HDU with modified header attributes.
+        
+        """
+        msg = "Abstract Data Structure %s cannot be used for HDU Generation!" % (self)
+        raise NotImplementedError(msg)
+
+        
+    @abstractmethod
+    def __getheader__(self,hdu):
+        """Extract header values from a given HDU and save them to this object.
+        
+        :param pf.HDU HDU: Header-Data-Unit from which to get the header information.
+        :returns: *None*
+        
+        """
+        msg = "Abstract Data Structure %s cannot be used for HDU Generation!" % (self)
+        raise NotImplementedError(msg)
+    
+    
+    @abstractmethod
     def __hdu__(self,primary=False):
         """This method returns an HDU which represents the object. The HDU should respect the object's :attr:`header` attribute, and use that dictionary to populate the headers of the HDU. 
         
@@ -154,8 +276,8 @@ class BaseFrame(object):
         If the frame cannot reasonable generate a :class:`pyFITS.PrimaryHDU`, then it should raise an :exc:`NotImplementedError` in that case."""
         msg = "Abstract Data Structure %s cannot be used for HDU Generation!" % (self)
         raise NotImplementedError(msg)
-
     
+    @abstractmethod
     def __show__(self):
         """This method should create a simple view of the provided frame. Often this is done using :mod:`Matplotlib.pyplot` to create a simple plot. The plot should have the minimum amount of work done to make a passable plot view, but still be basic enough that the end user can customize the plot object after calling :meth:`__show__`.
         
@@ -164,6 +286,7 @@ class BaseFrame(object):
         raise NotImplementedError(msg)
     
     @classmethod
+    @abstractmethod    
     def __save__(cls,data,label):
         """This method should retun an instance of the parent class if the given data can be turned into an object of that class. If the data cannot be correctly cast, this method should throw an :exc:`NotImplementedError`.
         
@@ -186,6 +309,7 @@ class BaseFrame(object):
         
     
     @classmethod
+    @abstractmethod
     def __read__(cls,HDU,label):
         """This method should return an instance of the parent class if the given ``HDU`` can be turned into an object of that class. If this is not possible (i.e. a Table HDU is provided to an Image Frame), this method should raise an :exc:`NotImplementedError` with a message that describes the resaon the data could not be cast into this type of frame.
         
@@ -209,65 +333,117 @@ class BaseFrame(object):
         raise NotImplementedError(msg)
         
 
-    
-        
+def semiabstractmethod(txt):
+    """Convert semi-abstract-methods into raisers for NotImplementedErrors"""
+    if callable(txt):
+        func = txt
+        txt = "Abstract method %s.%s() cannot be called."
+    def decorator(func):
+        def raiser(self,*args,**kwargs):
+            msg = txt % (self,func.__name__)
+            raise NotImplementedError(msg)
+        newfunc = make_decorator(func)(raiser)
+        return newfunc
+    return decorator
 
-class FITSFrame(BaseFrame):
-    """A single frame of a FITS image.
-    Frames are known as Header Data Units, or HDUs when written to a FITS file.
-    This frame is generic. It does not legitimately implement any functions. Rather, each function implemented is a placeholder, and will generate an :exc:`NotImplementedError` if called. Several objects inherit from this one to create HDUs which have some semantic meaning.
+class HDUHeaderMixin(object):
+    """Mixin to provide the default :meth:`~BaseFrame.__setheader__` and :meth:`~BaseFrame.__getheader__` functions. These functions are not provided by default in :class:`BaseFrame`.
     
-    :param None data: The data to be saved.
-    :param string label: A string name for this frame
-    :param header: pyfits.header or dictionary of header options
-    :param metadata: dictionary of arbitrary metadata
+    :meth:`~BaseFrame.__setheader__` applies the **frame** label to the "label" and "object" keywords, then applies all of the existing keywords to the header.
     
-    .. Warning::
-        This is an abstract object. Methods implemented here will *likely* raise an :exc:`NotImplementedError` indicating that you shouldn't be using these methods. This class is provided so that users can sub-class it for their own purposes. It also serves as the base class for other Frames in this package.
-    
+    :meth:`~BaseFrame.__getheader__` retrieves the pyfits HDU for storage in the frame.
     """
-    def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
-        super(FITSFrame, self).__init__(data=data, label=label, header=header, metadata=metadata,**kwargs)
     
-    def __hdu__(self,primary=False):
-        """Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.
+    def __setheader__(self,HDU):
+        """Apply header values to a given HDU and return that HDU.
         
-        :param bool primary: Return a primary HDU
-        :returns: pyfits.primaryHDU or pyfits.ImageHDU
+        :param pf.HDU HDU: Header-Data-Unit on which to add the header information.
+        :returns: HDU with modified header attributes.
+        
         """
-        if primary:
-            HDU = pf.PrimaryHDU()
-        else:
-            HDU = pf.ImageHDU()
-        LOG.log(8,"%s: Generating an Empty %sHDU" % (self,"primary " if primary else ""))
         HDU.header.update('label',self.label)
         HDU.header.update('object',self.label)
-        for key,value in self.header.iteritems():
+        if isinstance(self.header,collections.Mapping):
+            headeri = self.header.iteritems()
+        else:
+            headeri = self.header.ascardlist().iteritems()
+        for key,value in headeri:
             HDU.header.update(key,value)
         return HDU
+        
+    def __getheader__(self,HDU):
+        """Extract header values from a given HDU and save them to this object.
+        
+        :param pf.HDU HDU: Header-Data-Unit from which to get the header information.
+        :returns: *None*
+        
+        """
+        self.header = HDU.header
+    
+        
+
+class NoDataMixin(object):
+    """Mixin to allow for frames which **cannot** contain data. This mixin allows the developer to not implement :meth:`~BaseFrame.__call__` and :meth:`~BaseFrame.__show__`, both of which are only sensible methods for actual data.
+    
+    Due to the validity of empty HDUs, it is possible to have an object which doesn't contain data, but can still produce HDUs.
+    """
+    
+    @semiabstractmethod("Cannot call %s.%s() as this frame cannot contain data.")
+    def __call__(self):
+        """Return data"""
+        return None
+        
+    @semiabstractmethod("Cannot call %s.%s() as this frame cannot contain data.")
+    def __show__(self):
+        """Show no data... NotImplemented"""
+        pass
+        
+    def __valid__(self):
+        """Require no data"""
+        if hasattr(self,'data'):
+            assert self.data == None, "The frame %s cannot accept data, found data with type %s" % (self,type(self.data))
+    
+        
+class NoHDUMixin(object):
+    """Mixin to allow for frames which **cannot** produce FITS Header-Data-Units (HDUs) and as such **cannot** produce FITS files.
+    
+    This mixin allows the developer to not implement :meth:`~BaseFrame.__getheader__`, :meth:`~BaseFrame.__setheader__`, :meth:`~BaseFrame.__hdu__`, and :meth:`~BaseFrame.__read__`.
+    """
+    
+    @semiabstractmethod("Cannot call %s.%s() as this frame cannot read HDUs.")
+    def __getheader__(self):
+        pass
+    
+    @semiabstractmethod("Cannot call %s.%s() as this frame cannot create HDUs.")
+    def __setheader__(self):
+        pass
+    
+    @semiabstractmethod("Cannot call %s.%s() as this frame cannot create HDUs.")
+    def __hdu__(self,primary=False):
+        pass
+
+    @classmethod    
+    @semiabstractmethod("Cannot call %s.%s() as this frame cannot read HDUs.")
+    def __read__(cls,HDU,label):
+        pass
+
+
+class AnalyticMixin(NoHDUMixin,NoDataMixin):
+    """Mixin for purely-analytic frames. These frames do not contain actual raw data, and cannot produce HDUs. However, they are callable (and their call signature should accept a ``wavelengths`` keyword, see e.g. :class:`~.AnalyticSpectra.FlatSpectrum`).
+    
+    This mixin allows the developer to not implement :meth:`~BaseFrame.__getheader__`, :meth:`~BaseFrame.__setheader__`, :meth:`~BaseFrame.__hdu__`, :meth:`~BaseFrame.__read__`, :meth:`~BaseFrame.__save__`, and :meth:`~BaseFrame.__show__`. It requires that developers implement :meth:`~BaseFrame.__call__` to access data."""
+    
+    @abstractmethod
+    def __call__(self):
+        pass
     
     @classmethod
-    def __read__(cls,HDU,label):
-        """An abstract method for reading empty data HDU Frames.
-        
-        :param data: HDU to be saved, as a ``pyfits.HDU``.
-        :param label: Name for the newly created frame.
-        :raises: :exc:`NotImplementedError` when this data can't be saved.
-        :returns: :class:`FITSFrame`
-        """
-        if not isinstance(HDU,pf.PrimaryHDU):
-            msg = "Must save a %s to a %s, found %s" % (pf.PrimaryHDU.__name__,cls.__name__,HDU.__class__.__name__)
-            raise NotImplementedError(msg)
-        if not HDU.data == None:
-            msg = "HDU Data must be type %s for %s, found data of type %s" % (None,cls,type(HDU.data).__name__)
-            raise NotImplementedError(msg)
-        Object = cls(None,label)
-        LOG.log(2,"%s: Created %s" % (cls,Object))
-        return Object
+    @semiabstractmethod("Cannot call %s.%s() as this frame cannot be the target of a save operation.")
+    def __save__(self,data,label):
+        pass
     
 
-
-class FITSObject(dict):
+class BaseObject(collections.MutableMapping):
     """This object tracks a number of data frames. The :attr:`Filename` is the default filename to use when reading and writing, and the :attr:`dataClass` argument accepts a list of new data classes to be used with this object. New data classes should conform to the data class standard.
     
     :param filename: String name of default file for reading and writing with :meth:`read` and :meth:`write`.
@@ -277,17 +453,21 @@ class FITSObject(dict):
         This is object only contains Abstract data objects. In order to use this class properly, you should set the dataClasses keyword for use when storing data.
     """
     def __init__(self,filename=None,dataClasses=None,**kwargs):
-        super(FITSObject, self).__init__(**kwargs)
+        super(BaseObject, self).__init__(**kwargs)
         # Image data variables.
-        self.dataClasses = [FITSFrame]
-        if dataClasses:
-            self.dataClasses += dataClasses
         self.states = {}            # Storage for all of the images
         self.statename = None       # The active state name
         self.filename = filename    # The filename to use for file loading and writing
-        self.plt = plt
         self.clobber = False
         self.name = False
+        self.dataClasses = []
+        if isinstance(dataClasses,list):
+            self.dataClasses += dataClasses
+        elif dataClasses:
+            raise AttributeError("Can't understand data classes")
+        if len(self.dataClasses) < 1:
+            raise NotImplementedError("Instantiating %s without any valid data classes!" % self)
+
         
     def __repr__(self):
         """String representation of this object.
@@ -297,7 +477,7 @@ class FITSObject(dict):
         if self.name:
             return "<\'%s\' labeled \'%s\'>" % (self.__class__.__name__,self.name)
         else:
-            return super(FITSObject, self).__repr__()
+            return super(BaseObject, self).__repr__()
     
     def __str__(self):
         """String label for this object."""
@@ -324,11 +504,11 @@ class FITSObject(dict):
         """Dictionary contain testing"""
         return item in self.states
         
-    def keys(self):
-        """Dictionary keys.
+    def __len__(self):
+        """Dictionary length.
         
-        :returns: list"""
-        return self.states.keys()
+        :returns: integer"""
+        return len(self.states.keys())
         
     ###############################
     # Basic Object Mode Functions #
@@ -357,12 +537,13 @@ class FITSObject(dict):
             if not Object:
                 raise TypeError("Object to be saved cannot be cast as %s" % self.dataClasses)
         else:
-            Object = data
+            Object = data.copy(label=statename)
             
         if statename == None:
             statename = Object.label
         else:
-            Object.label = statename
+            assert Object.label == statename, "Object label improperly set by constructor"
+            
         if statename in self.states and not (clobber or self.clobber):
             raise KeyError("Cannot Duplicate State Name: \'%s\' Use this.remove(\'%s\') or clobber=True" % (statename,statename))
         elif statename in self.states:
@@ -393,6 +574,11 @@ class FITSObject(dict):
         else:
             self._key_error(statename)
     
+    @property
+    def f(self):
+        """The selected FITS frame. This frame is usually the last modified frame in the system."""
+        return self.states[self.statename]
+    
     def frame(self,statename=None):
         """Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.
         
@@ -400,9 +586,9 @@ class FITSObject(dict):
         :returns: dataClass instance for this object
         
         .. Warning::
-            Unlike with the :meth:`FITSObject.data` call, the object returned here should be treated as roughly immutable. That is, it is not advisable to re-use the data frame here, as Python has returned a reference to all examples of this data frame in your code::
+            Unlike with the :meth:`BaseObject.data` call, the object returned here should be treated as roughly immutable. That is, it is not advisable to re-use the data frame here, as Python has returned a reference to all examples of this data frame in your code::
                 
-                >>> obj = FITSObject()
+                >>> obj = BaseObject()
                 >>> obj.save(FITSFrame(None,"Label"))
                 >>> Frame = obj.frame()
                 >>> Frame.label = "Other"
@@ -578,9 +764,9 @@ class FITSObject(dict):
                 filename = self.filename
                 LOG.log(2,"Set filename from Object. Filename: %s" % filename)
         filename = validate_filename(filename)
-        PrimaryHDU = self.states[primaryState].__hdu__(primary=True)
+        PrimaryHDU = self.states[primaryState].hdu(primary=True)
         if len(states) > 0:
-            HDUs = [self.states[state].__hdu__(primary=False) for state in states]
+            HDUs = [self.states[state].hdu(primary=False) for state in states]
             HDUList = pf.HDUList([PrimaryHDU]+HDUs)
         else:
             HDUList = pf.HDUList([PrimaryHDU])
@@ -592,7 +778,7 @@ class FITSObject(dict):
         
         ::
             
-            >>> obj = FITSObject()
+            >>> obj = BaseObject()
             >>> obj.read("SomeImage.fits")
             >>> obj.list()
             ["SomeImage","SomeImage Frame 1","SomeImage Frame 2"]
@@ -633,4 +819,21 @@ class FITSObject(dict):
         
         LOG.log(5,"Saved states %s" % Labels)
         return Labels
-    
+      
+    @classmethod  
+    def fromFile(cls,filename):
+        """Retrun a new object created from a filename. This method is a shortcut factory for :meth:`read`.
+        
+        ::
+            
+            >>> obj = BaseObject.fromFile("SomeImage.fits")
+            >>> obj.list()
+            ["SomeImage","SomeImage Frame 1","SomeImage Frame 2"]
+            
+        
+        """
+        Object = cls()
+        Object.read(filename)
+        return Object
+
+

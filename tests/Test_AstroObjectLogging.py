@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
 # 
 #  Test_AstroObjectLogging.py
 #  AstroObject
 #  
 #  Created by Alexander Rudy on 2011-12-29.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
+#  Version 0.4.0
 # 
 
 

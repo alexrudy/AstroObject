@@ -1,12 +1,42 @@
+# -*- coding: utf-8 -*-
 # 
 #  AstroSpectra.py
 #  ObjectModel
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.6-p1
+#  Version 0.4.0
 # 
+"""
+Raw Spectrum Management :mod:`AstroSpectra`
+===========================================
 
+An **object** and **frame** class which can handle raw spectrum data. This module only handles raw spectra. These spectra are simply data held in image-like **frames**. This class allows a spectrum to be consistently read and written to a FITS file, using image rows as data arrays. The spectra functions contained in this module are bland. For more sophisitcated spectral analysis, see the :mod:`AnalyticSpectra` module, which contians classes which can re-sample a raw spectrum and interpolate correctly across a spectrum to provide an analytic interface to otherwise discrete spectra.
+
+.. warning:: The class implemented here does not yet use a sophisticated enough method for saving FITS header data etc. As such, it will not preserve state names etc. The development of this class should bring it inline with the STSCI spectra classes in the future.
+
+.. inheritance-diagram::
+    AstroObject.AstroSpectra.SpectraObject
+    AstroObject.AstroSpectra.SpectraFrame
+    :parts: 1
+
+Raw Spectrum **objects**: :class:`SpectraObject`
+------------------------------------------------
+
+.. autoclass::
+    AstroObject.AstroSpectra.SpectraObject
+    :members:
+    :inherited-members:
+
+Raw Spectrum **frames**: :class:`SpectraFrame`
+----------------------------------------------
+
+.. autoclass::
+    AstroObject.AstroSpectra.SpectraFrame
+    :members:
+    :special-members:
+
+"""
 
 import AstroObjectBase, AstroImage
 
@@ -14,14 +44,6 @@ import AstroObjectBase, AstroImage
 import numpy as np
 import pyfits as pf
 import scipy as sp
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-
-# Matplolib Extras
-import matplotlib.image as mpimage
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import cm
-from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
 
 # Scipy Extras
 from scipy import ndimage
@@ -34,13 +56,42 @@ import math, copy, sys, time, logging, os
 # Submodules from this system
 from Utilities import *
 
-__all__ = ["SpectraFrame","SpectraObject"]
+__all__ = ["SpectraMixin","SpectraFrame","SpectraObject"]
 
 __version__ = getVersion()
 
 LOG = logging.getLogger(__name__)
 
-class SpectraFrame(AstroObjectBase.FITSFrame):
+class SpectraMixin(object):
+    """Mixin to set the properties of Spectra **frames** and to provide a :meth:`~.AstroObjectBase.BaseFrame.__show__` method. Used for any spectrum **frame** which contains raw data."""
+    @property
+    def wavelengths(self):
+        """Accessor to get the wavelengths from this spectrum"""
+        return self.data[0]
+        
+    @property
+    def flux(self):
+        """Accessor to get the flux from this spectrum"""
+        return self.data[1]
+    
+    def __show__(self):
+        """Plots the image in this frame using matplotlib's ``imshow`` function. The color map is set to an inverted binary, as is often useful when looking at astronomical images. The figure object is returned, and can be manipulated further.
+        
+        .. Note::
+            This function serves as a quick view of the current state of the frame. It is not intended for robust plotting support, as that can be easily accomplished using ``matplotlib``. Rather, it attempts to do the minimum possible to create an acceptable image for immediate inspection."""
+        LOG.log(2,"Plotting %s using matplotlib.pyplot.plot" % self)
+        import matplotlib as mpl
+        import matplotlib.pyplot as plt
+
+        
+        plt.plot(self.wavelengths,self.flux,".-",label=self.label)
+        plt.axis(expandLim(plt.axis()))
+        plt.gca().ticklabel_format(style="sci",scilimits=(3,3))
+        return plt.gca()
+    
+        
+
+class SpectraFrame(AstroObjectBase.HDUHeaderMixin,SpectraMixin,AstroObjectBase.BaseFrame):
     """A single frame of a spectrum. This will save the spectrum as an image, with the first row having flux, and second row having the wavelength equivalent. Further rows can accomodate further spectral frames when stored to a FITS image. However, the frame only accepts a single spectrum."""
     def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
         self.data = data # The image data
@@ -78,19 +129,6 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
         for key,value in self.header.iteritems():
             HDU.header.update(key,value)
         return HDU
-        
-    
-    def __show__(self):
-        """Plots the image in this frame using matplotlib's ``imshow`` function. The color map is set to an inverted binary, as is often useful when looking at astronomical images. The figure object is returned, and can be manipulated further.
-        
-        .. Note::
-            This function serves as a quick view of the current state of the frame. It is not intended for robust plotting support, as that can be easily accomplished using ``matplotlib``. Rather, it attempts to do the minimum possible to create an acceptable image for immediate inspection."""
-        LOG.log(2,"Plotting %s using matplotlib.pyplot.plot" % self)
-        x,y = self.data #Slice Data
-        plt.plot(x,y,label=self.label)
-        plt.axis(expandLim(plt.axis()))
-        plt.gca().ticklabel_format(style="sci",scilimits=(3,3))
-        return plt.gca()
     
     
     @classmethod
@@ -126,7 +164,8 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
             msg = "HDU Data must be %s for %s, found data of %s" % (np.ndarray,cls.__name__,type(HDU.data))
             raise NotImplementedError(msg)    
         try:
-            Object = cls(HDU.data,label)        
+            Object = cls(HDU.data,label)
+            Object.__getheader__(HDU)        
         except AssertionError as AE:
             msg = "%s data did not validate: %s" % (cls.__name__,AE)
             raise NotImplementedError(msg)
@@ -137,12 +176,10 @@ class SpectraFrame(AstroObjectBase.FITSFrame):
     
 
 
-class SpectraObject(AstroObjectBase.FITSObject):
-    """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.FITSObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`SpectraFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately."""
-    def __init__(self, **kwargs):
-        super(SpectraObject, self).__init__(**kwargs)
-        self.dataClasses += [SpectraFrame]
-        self.dataClasses.remove(AstroObjectBase.FITSFrame)
+class SpectraObject(AstroObjectBase.BaseObject):
+    """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`SpectraFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately."""
+    def __init__(self,dataClasses=[SpectraFrame],**kwargs):
+        super(SpectraObject, self).__init__(dataClasses=dataClasses,**kwargs)
 
     def load(self,filename=None,statename=None):
         """Loads spectral data from a data file which contains two columns, one for wavelenght, and one for flux."""

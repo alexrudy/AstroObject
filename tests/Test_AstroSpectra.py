@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
 # 
-#  Test_AstroImage.py
+#  Test_AstroSpectra.py
 #  ObjectModel
 #  
 #  Created by Alexander Rudy on 2011-10-31.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
+#  Version 0.4.0
 # 
 
 import numpy as np
@@ -22,7 +24,9 @@ from tests.Test_AstroObjectAPI import *
 
 import AstroObject.AstroSpectra as AS
 
-class test_SpectraFrame(API_Base_Frame):
+__all__ = ['API_Spectra_Frame']
+
+class API_Spectra_Frame(API_Base_Frame):
     """AstroSpectra.SpectraFrame"""
     
     def setUp(self):
@@ -50,7 +54,9 @@ class test_SpectraFrame(API_Base_Frame):
         
         self.check_constants()
         
-        
+class test_SpectraFrame(API_Spectra_Frame):
+    """AstroSpectra.SpectraFrame"""
+    pass
         
         
 class test_SpectraObject(API_Base_Object):

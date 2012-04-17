@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-
+# 
+#  setup.py
+#  AstroObject
+#  
+#  Created by Alexander Rudy on 2012-04-17.
+#  Copyright 2012 Alexander Rudy. All rights reserved.
+# 
+
 from distribute_setup import use_setuptools
 use_setuptools()
 from setuptools import setup

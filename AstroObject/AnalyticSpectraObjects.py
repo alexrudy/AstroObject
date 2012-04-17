@@ -1,27 +1,20 @@
+# -*- coding: utf-8 -*-
 # 
 #  AnalyticSpectraObjects.py
 #  ObjectModel
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.6-p1
+#  Version 0.4.0
 # 
 
 # Parent Modules
-import AstroImage,AstroSpectra,AnalyticSpectra
+import AstroImage,AstroSpectra,AnalyticSpectra,AstroObjectBase
 
 # Standard Scipy Toolkits
 import numpy as np
 import pyfits as pf
 import scipy as sp
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-
-# Matplolib Extras
-import matplotlib.image as mpimage
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import cm
-from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
 
 # Scipy Extras
 from scipy import ndimage
@@ -38,7 +31,7 @@ __all__ = ["BlackBodySpectrum","GaussianSpectrum","FlatSpectrum"]
 
 __version__ = getVersion()
 
-class BlackBodySpectrum(AnalyticSpectra.AnalyticSpectrum):
+class BlackBodySpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSpectrum):
     """An analytic representation of a Blackbody Spectrum at a Kelvin Tempertaure"""
     def __init__(self, temperature, label=None, **kwargs):
         if label == None:
@@ -51,7 +44,7 @@ class BlackBodySpectrum(AnalyticSpectra.AnalyticSpectrum):
         return np.vstack((wavelengths,BlackBody(wavelengths,self.temperature)))
         
         
-class GaussianSpectrum(AnalyticSpectra.AnalyticSpectrum):
+class GaussianSpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSpectrum):
     """An analytic representation of a gaussian function in spectral form"""
     def __init__(self, mean, stdev, height, label=None):
         if label == None:
@@ -68,7 +61,7 @@ class GaussianSpectrum(AnalyticSpectra.AnalyticSpectrum):
         
     
 
-class FlatSpectrum(AnalyticSpectra.AnalyticSpectrum):
+class FlatSpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSpectrum):
     """An analytc form of a flat value at every wavelength"""
     def __init__(self, value, label=None):
         if label == None:

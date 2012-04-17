@@ -1,16 +1,18 @@
+# -*- coding: utf-8 -*-
 # 
 #  Test_AstroFITS.py
 #  AstroObject
 #  
 #  Created by Alexander Rudy on 2011-11-08.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
+#  Version 0.4.0
 # 
 
 # Test API Imports
 from tests.Test_AstroObjectAPI import *
 
 # Parent Object Imports
-import AstroObject.AstroFITS as AF
+import AstroObject.AstroHDU as AH
 
 # Utility Imports
 from AstroObject.Utilities import npArrayInfo
@@ -31,7 +33,7 @@ import matplotlib.image as mpimage
 import math, copy, sys, time, logging, os
 
 class test_HDUFrame(API_Base_Frame):
-    """AstroFITS.HDUFrame"""
+    """AstroHDU.HDUFrame"""
     
     def setUp(self):
         """Sets up the test with some basic image data"""
@@ -43,12 +45,12 @@ class test_HDUFrame(API_Base_Frame):
             self.image = pf.open(self.testFITS)[0].data
             
         self.VALID = self.image
-        self.FRAME = AF.HDUFrame
+        self.FRAME = AH.HDUFrame
         self.INVALID = "20"
         self.FRAMESTR = "<'HDUFrame' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.image.AxesImage
-        self.FRAMEINST = AF.HDUFrame(self.image,"Hong Kong")
+        self.FRAMEINST = AH.HDUFrame(self.image,"Hong Kong")
         self.imHDU = pf.ImageHDU
         self.pmHDU = pf.PrimaryHDU
             
@@ -78,11 +80,11 @@ class test_HDUFrame(API_Base_Frame):
     def test_read_empty_HDU(self):
         """__read__() an empty primary HDU succeeds"""
         HDU = pf.PrimaryHDU()
-        AFrame = self.FRAME.__read__(HDU,"Empty")
+        AHrame = self.FRAME.__read__(HDU,"Empty")
     
 
 class test_ImageObject(API_Base_Object):
-    """AstroFITS.HDUObject"""
+    """AstroHDU.HDUObject"""
     
     def setUp(self):
         """Fixture for setting up a basic image frame"""
@@ -92,9 +94,9 @@ class test_ImageObject(API_Base_Object):
             self.image[450:550,450:550] = np.ones((100,100))
         else:
             self.image = np.int32(np.sum(mpimage.imread(self.testJPG),axis=2))
-        self.FRAMEINST = AF.HDUFrame(self.image,"Hong Kong")
+        self.FRAMEINST = AH.HDUFrame(self.image,"Hong Kong")
         self.FRAMELABEL = "Hong Kong"
-        self.FRAME = AF.HDUFrame
+        self.FRAME = AH.HDUFrame
         self.HDU = pf.PrimaryHDU
         self.imHDU = pf.ImageHDU
         self.VALID = self.image
@@ -102,7 +104,7 @@ class test_ImageObject(API_Base_Object):
         self.OBJECTSTR = None
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.image.AxesImage
-        self.OBJECT = AF.HDUObject
+        self.OBJECT = AH.HDUObject
         self.FILENAME = "TestFile.fits"
         
         def SAMEDATA(first,second):

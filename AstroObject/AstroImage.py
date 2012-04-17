@@ -1,12 +1,43 @@
+# -*- coding: utf-8 -*-
 # 
 #  AstroImage.py
 #  Astronomy ObjectModel
 #  
 #  Created by Alexander Rudy on 2011-04-28.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.3.6-p1
+#  Version 0.4.0
 # 
+"""
+Image Objects and Storage :mod:`AstroImage`
+===========================================
 
+**Objects** and **frames** for manipulating and managing images. Images are simply defined as a two-dimensional numpy array. Image **objects** have two special methods, :meth:`ImageObject.loadFromFile` and :meth:`ImageObject.show3D`.
+
+Right now, there are no facilities for integrating this module with pyraf, but such integration is planned for a future edition. The integration will work by writing and removing temporary FITS files.
+
+.. inheritance-diagram::
+    AstroObject.AstroImage.ImageObject
+    AstroObject.AstroImage.ImageFrame
+    :parts: 1
+
+
+Image **objects**: :class:`ImageObject`
+---------------------------------------
+
+.. autoclass::
+    AstroObject.AstroImage.ImageObject
+    :members:
+    :inherited-members:
+
+Image **frames**: :class:`ImageFrame`
+-------------------------------------
+
+.. autoclass::
+    AstroObject.AstroImage.ImageFrame
+    :members:
+    :special-members:
+
+"""
 # Parent Modules
 import AstroObjectBase
 
@@ -14,13 +45,6 @@ import AstroObjectBase
 import numpy as np
 import pyfits as pf
 import scipy as sp
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-
-# Matplotlib Extras
-import matplotlib.image as mpimage
-from matplotlib import cm
-from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
 
 # Standard Python Libraries
 import math, copy, sys, time, logging, os
@@ -34,7 +58,7 @@ __version__ = getVersion()
 
 LOG = logging.getLogger(__name__)
 
-class ImageFrame(AstroObjectBase.FITSFrame):
+class ImageFrame(AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame):
     """
     A single frame of a FITS image.
     Frames are known as Header Data Units, or HDUs when written to a FITS file.
@@ -56,6 +80,8 @@ class ImageFrame(AstroObjectBase.FITSFrame):
     def __valid__(self):
         """Runs a series of assertions which ensure that the data for this frame is valid"""
         assert isinstance(self.data,np.ndarray), "Frame data is not correct type: %s" % type(self.data)
+        if len(self.data.shape) != 2:
+            LOG.warning("The data appears to be %d dimensional. This object expects 2 dimensional data." % len(self.data.shape))
         
     
     def __hdu__(self,primary=False):
@@ -66,10 +92,6 @@ class ImageFrame(AstroObjectBase.FITSFrame):
         else:
             LOG.log(5,"Generating an image HDU for %s" % self)
             HDU = pf.ImageHDU(self())
-        HDU.header.update('label',self.label)
-        HDU.header.update('object',self.label)
-        for key,value in self.header.iteritems():
-            HDU.header.update(key,value)
         return HDU
     
     def __show__(self):
@@ -79,6 +101,8 @@ class ImageFrame(AstroObjectBase.FITSFrame):
             This function serves as a quick view of the current state of the frame. It is not intended for robust plotting support, as that can be easily accomplished using ``matplotlib``. Rather, it attempts to do the minimum possible to create an acceptable image for immediate inspection.
         """
         LOG.log(2,"Plotting %s using matplotlib.pyplot.imshow" % self)
+        import matplotlib as mpl
+        import matplotlib.pyplot as plt
         figure = plt.imshow(self())
         figure.set_cmap('binary_r')
         return figure
@@ -95,8 +119,6 @@ class ImageFrame(AstroObjectBase.FITSFrame):
         if not isinstance(data,np.ndarray):
             msg = "ImageFrame cannot handle objects of type %s, must be type %s" % (type(data),np.ndarray)
             raise NotImplementedError(msg)
-        if len(data.shape) != 2:
-            LOG.warning("The data appears to be %d dimensional. This object expects 2 dimensional data." % len(data.shape))
         try:
             Object = cls(data,label)
         except AttributeError as AE:
@@ -113,12 +135,10 @@ class ImageFrame(AstroObjectBase.FITSFrame):
         if not isinstance(HDU,(pf.ImageHDU,pf.PrimaryHDU)):
             msg = "Must save a PrimaryHDU or ImageHDU to a %s, found %s" % (cls.__name__,type(HDU))
             raise NotImplementedError(msg)
-        if not isinstance(HDU.data,np.ndarray):
-            msg = "HDU Data must be %s for %s, found data of %s" % (np.ndarray,cls.__name__,type(HDU.data))
-            raise NotImplementedError(msg)
         try:
-            Object = cls(HDU.data,label,header=HDU.header)
-        except AssertionError as AE:
+            Object = cls(HDU.data,label)
+            Object.__getheader__(HDU)
+        except AttributeError as AE:
             msg = "%s data did not validate: %s" % (cls.__name__,AE)
             raise NotImplementedError(msg)
         LOG.log(2,"Created %s" % Object)
@@ -126,13 +146,11 @@ class ImageFrame(AstroObjectBase.FITSFrame):
     
 
 
-class ImageObject(AstroObjectBase.FITSObject):
-    """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.FITSObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`ImageFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.
+class ImageObject(AstroObjectBase.BaseObject):
+    """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`ImageFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.
     """
-    def __init__(self, array=None, **kwargs):
-        super(ImageObject, self).__init__(**kwargs)
-        self.dataClasses += [ImageFrame]
-        self.dataClasses.remove(AstroObjectBase.FITSFrame)
+    def __init__(self, array=None,dataClasses=[ImageFrame], **kwargs):
+        super(ImageObject, self).__init__(dataClasses=dataClasses,**kwargs)
         if array != None:
             raise NotImplemented("Cannot initialize with data")        # Save the initializing data
             
@@ -144,6 +162,7 @@ class ImageObject(AstroObjectBase.FITSObject):
         if statename == None:
             statename = os.path.basename(filename)
             LOG.log(2,"Set statename for image from filename: %s" % statename)
+        import matplotlib.image as mpimage
         self.save(mpimage.imread(filename),statename)
         LOG.log(5,"Loaded Image from file: "+filename)
     
@@ -152,6 +171,9 @@ class ImageObject(AstroObjectBase.FITSObject):
         if not statename:
             statename = self._default_state()
         if statename != None and statename in self.states:
+            import matplotlib as mpl
+            import matplotlib.pyplot as plt
+            from matplotlib import cm            
             X = np.arange(self.states[self.statename]().shape[0])
             Y = np.arange(self.states[self.statename]().shape[1])
             X,Y = np.meshgrid(X,Y)
@@ -165,7 +187,7 @@ class ImageObject(AstroObjectBase.FITSObject):
             raise KeyError("Object not instantiated with any data...")
 
 
-class OLDImageObject(AstroObjectBase.FITSObject):
+class OLDImageObject(AstroObjectBase.BaseObject):
     """docstring for ImageObject"""
     
     ##########################

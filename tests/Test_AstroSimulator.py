@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
 # 
 #  Test_AstroSimulator.py
 #  AstroObject
 #  
 #  Created by Alexander Rudy on 2012-01-11.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
+#  Version 0.4.0
 # 
 
 

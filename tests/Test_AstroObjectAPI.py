@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
 #
 #  Test_AstroObjectAPI.py
 #  ObjectModel
 #
 #  Created by Alexander Rudy on 2011-10-31.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
+#  Version 0.4.0
 #
 
 # Parent Imports
@@ -89,6 +91,7 @@ class API_Abstract_Frame(API_Base):
     def test_save_none(self):
         """__save__() with none object raises an NotImplementedError"""
         self.FRAME.__save__(None,"None")
+    
     @nt.raises(NotImplementedError)
     def test_read_SecondaryHDU(self):
         """__read__() secondary HDU type should get an abstract error"""

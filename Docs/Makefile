@@ -56,6 +56,9 @@ gh-pages: html
 	@echo "Build finished. The HTML pages have been stored in the gh-pages branch of this repo."
 	@echo "  Note that switching to gh-pages could be bad, as that branch does not contain any of the non-tracked files."
 
+open: html
+	open $(BUILDDIR)/html/index.html
+
 html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo

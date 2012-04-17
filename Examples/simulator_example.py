@@ -62,12 +62,11 @@ class SimpleStage(Simulator):
         """Acting 3"""
         self.map(np.exp,self.blist)
     
-    @include()
-    @ignore
+    @include
     @excepts(Exception)
     def raiser(self):
         """A function which rasies others"""
-        raise Exception
+        raise Exception("Something which might sort-of be problematic")
         
     @include(False)
     def other(self):

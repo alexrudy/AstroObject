@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
 #
 #  Test_AstroImage.py
 #  ObjectModel
 #
 #  Created by Alexander Rudy on 2011-10-31.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
+#  Version 0.4.0
 #
 
 # Test API Imports
