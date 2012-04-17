@@ -33,7 +33,7 @@ import matplotlib.image as mpimage
 import math, copy, sys, time, logging, os
 
 class test_HDUFrame(API_Base_Frame):
-    """AstroFITS.HDUFrame"""
+    """AstroHDU.HDUFrame"""
     
     def setUp(self):
         """Sets up the test with some basic image data"""
@@ -84,7 +84,7 @@ class test_HDUFrame(API_Base_Frame):
     
 
 class test_ImageObject(API_Base_Object):
-    """AstroFITS.HDUObject"""
+    """AstroHDU.HDUObject"""
     
     def setUp(self):
         """Fixture for setting up a basic image frame"""

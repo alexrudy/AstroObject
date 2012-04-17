@@ -9,7 +9,7 @@
 # 
 """
 Analytic Spectra and Interpolation :mod:`AnalyticSpectra`
-*********************************************************
+=========================================================
 
 Objects for manipulating and managing spectra which are inherently analytic (i.e. you want interpolation, or your spectrum to be defined by a single function). The classes provided in this module are *FRAMES* not *OBJECTS*, i.e. they are individual representations of spectra etc.
 
@@ -32,12 +32,27 @@ This module provides basic analytic spectrum capabilites. There is a simple prin
 Module Structure
 ----------------
 
+This module is built on a foundation of Analytic and semi-Analytic spectra. Analytic spectra are spectra that can be described purely as functions. They are known quantities, and show none of the features of a discritized, measured spectrum. The :class:`AnalyticSpectrum` class provides an abstract base for this type of spectra. The :class:`CompositeSpectra` manages the mathematical operations that can be performed on any :class:`AnalyticSpectrum`.
+
+The :class:`.AstroObjectBase.AnalyticMixin` is a mixin which provides for using data **frames** as analytic objects with no data access attributes.
+
+The :class:`InterpolatedSpectrum` provides a spectrum which is entered as raw data (like a :class:`.AstroSpectra.SpectraFrame`) and then returned, using a transformation function, as a different, discrite spectrum. The methods for this transformation are defined in :class:`InterpolatedSpectrumBase`. The :class:`SpectraMixin` provides the properties and plotting methods used by spectra which have discrete raw data.
+
+:class:`UnitarySpectrum` is used to perform a single interpolation operation on a spectrum, *when that spectrum is called*. As it operates when the spectrum is called, it does not contain accessible *raw data*, and so is "analytic" in some sense.
+
+:class:`Resolver` is used to perform a single interpolation on a spectrum *immediately*. As such, it is a full-class spectrum like an :class:`InterpolatedSpectrum`.
+
+The :class:`FlatSpectrum`, :class:`GaussianSpectrum`, and :class:`BlackBodySpectrum` objects are all analytic spectra with a specific functional implementation (as thier names imply).
+
 .. inheritance-diagram:: 
     AstroObject.AnalyticSpectra.AnalyticSpectrum
     AstroObject.AnalyticSpectra.CompositeSpectra
     AstroObject.AnalyticSpectra.InterpolatedSpectrum
     AstroObject.AnalyticSpectra.Resolver
-    AstroObject.AnalyticSpectra.UnitarySpectrum
+    AstroObject.AnalyticSpectra.UnitarySpectrum	
+    AstroObject.AnalyticSpectra.FlatSpectrum
+	AstroObject.AnalyticSpectra.GaussianSpectrum
+	AstroObject.AnalyticSpectra.BlackBodySpectrum
     :parts: 1
 
 
@@ -47,7 +62,6 @@ Simple Objects
 .. autoclass::
     AstroObject.AnalyticSpectra.AnalyticSpectrum
     :members:
-    :special-members:
 
 .. autoclass::
     AstroObject.AnalyticSpectra.CompositeSpectra
@@ -140,7 +154,7 @@ __all__ = ["AnalyticSpectrum","CompositeSpectra","InterpolatedSpectrum","Interpo
 LOG = logging.getLogger(__name__)
 
 class AnalyticSpectrum(AstroObjectBase.BaseFrame):
-    """A functional spectrum object for spe ctrum generation. The default implementation is a flat spectrum.
+    """A functional spectrum object for spectrum generation. This is an abstract class which implements spectrum arithmetic. Spectrum arithmetic has a delayed implementation, whereby it is applied to the spectrum only once the spectrum is called for data, allowing spectra to produce data which matches the requested wavelengths (and resolution, if applicable).
     
     The Analytic spectrum can be provided with a set of wavelengths upon intialization. The `wavelengths` keyword will be stored and used when this spectrum is later called by the system. The `units` keyword is currently unused."""
     def __init__(self,data=None,label=None,wavelengths=None,units=None,**kwargs):
@@ -190,7 +204,7 @@ class AnalyticSpectrum(AstroObjectBase.BaseFrame):
     
 
 
-class CompositeSpectra(AstroObjectBase.AnalyticFrame,AnalyticSpectrum):
+class CompositeSpectra(AstroObjectBase.AnalyticMixin,AnalyticSpectrum):
     """Binary composition of two functional spectra. This object should not be initialized by the user. Instead, this class is returned when you combine two spectra of different types, or combine a spectra with any other type. As such, do not initialze composite spectra idependently. See the :meth:`__call__` function for documentation of how to use this type of object."""
     ops = {'sub':"-",'add':"+",'mul':"*",'div':"/"}
     def __init__(self, partA, partB, operation):

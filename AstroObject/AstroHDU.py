@@ -1,12 +1,33 @@
 # -*- coding: utf-8 -*-
 # 
-#  AstroFITS.py
+#  AstroHDU.py
 #  AstroObject
 #  
 #  Created by Alexander Rudy on 2011-11-08.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
 #  Version 0.4.0
 # 
+"""
+HDU Objects and Storage :mod:`AstroFITS`
+****************************************
+
+
+Objects for manipulating and managing HDUs directly.
+
+.. warning:: There are some problems in this feature at the moment. Right now, HDU generation and reading does not happen correctly, as only data and headers are extracted and included. This will be corrected shortly.
+
+.. autoclass::
+    AstroObject.AstroFITS.HDUObject
+    :members:
+    :inherited-members:
+
+.. autoclass::
+    AstroObject.AstroFITS.HDUFrame
+    :members:
+    :special-members:
+    
+"""
+
 
 # Parent Modules
 import AstroObjectBase
