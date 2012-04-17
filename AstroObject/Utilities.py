@@ -19,6 +19,8 @@ These are mostly internal module utility functions, documented here in case you 
 
 .. autofunction:: AstroObject.Utilities.expandLim
 
+.. autofunction:: AstroObject.Utilities.bin
+
 .. autofunction:: AstroObject.Utilities.BlackBody
 
 .. autofunction:: AstroObject.Utilities.Gaussian
