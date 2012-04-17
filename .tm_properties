@@ -1,5 +1,4 @@
 windowTitle = "AstroObject - $TM_DISPLAYNAME"
 
-['python','yaml']
+['python','yaml','restructuredtext']
 softTabs = True
-

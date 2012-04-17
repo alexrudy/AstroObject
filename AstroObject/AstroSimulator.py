@@ -7,7 +7,11 @@
 #  Copyright 2011 Alexander Rudy. All rights reserved.
 #  Version 0.4.0
 # 
-"""The Simulator is designed to provide a high level, command-line useful interface to large computational tasks. As the name suggests, Simulators often do a lot of programming work, and do so across many distinct "stages", whcih can be configured in any way the user desires. All of the abilities in this program are simply object abstraction techniques to provide a complex program with a command line interface and better control and reporting on the activities carreid out to successfully complete the program. It allows for the configuration of simple test cases and "macros" from within the program, eliminating the need to provide small wrapper scripts and test handlers.
+"""
+Simulator :mod:`AstroSimulator`
+===============================
+
+The Simulator is designed to provide a high level, command-line useful interface to large computational tasks. As the name suggests, Simulators often do a lot of programming work, and do so across many distinct "stages", whcih can be configured in any way the user desires. All of the abilities in this program are simply object abstraction techniques to provide a complex program with a command line interface and better control and reporting on the activities carreid out to successfully complete the program. It allows for the configuration of simple test cases and "macros" from within the program, eliminating the need to provide small wrapper scripts and test handlers.
 
 An example (simple) program using the simulator can be found in :ref:`SimulatorExample`
 
@@ -31,6 +35,12 @@ The program is actually agnostic to the order of arguments. Any argument may com
 	The stages option specifies individual stages for the program to run. You must specify at least one stage to run in the simulator. By default, two basic stages are provided, ``*all`` and ``*none``. The default simulation is performed by ``*all``. To test the simulator without running any stages (for example, to test :meth:`AstroObject.AstroSimulator.Simulator.registerFunction` functionality), use the ``*none`` stage to opertate without using any stages.
 	
 	Stages are called with either a ``*``, ``+`` or ``-`` character at the beginning. Their resepctive actions are shown below. All commands must include at least one macro. If you don't want any particular macro, use the ``*none`` macro.
+	
+	To run a simulation using the ``*all`` macro, the command would be::
+		
+		$ Simulator *all
+		
+	
 	
 	========= ============ ================================
 	Character  Action      Description
@@ -105,6 +115,10 @@ The program is actually agnostic to the order of arguments. Any argument may com
 	
 	Dump the configuration to a file. Filenames are the configuration file name with ``-dump.yaml`` appended.
 
+.. option:: --profile
+    
+    Show a timing profile of the simulation, including status of stages, at the end of the simulation.
+
 .. _Configuration:
 
 :program:`Simulator` Configuration Files
@@ -121,7 +135,92 @@ The program is actually agnostic to the order of arguments. Any argument may com
     - ``Partials``: Location of partial output, including a dump of the configuration.
 - ``Logging``: Configuration of the :mod:`AstroObject.AstroObjectLogging` module
 
-A simple configuration file can be found in the :ref:`SimulatorExample`."""
+A simple configuration file can be found in the :ref:`SimulatorExample`.
+
+.. _Simulator_API:
+
+API Methods
+-----------
+    
+The following methods handle the external-API for the simulator. Normally, when you write a simulator, you will subclass the :class:`Simulator`, and then use the methods here to control the behavior of the simulator. At a minimum, a simulator must register stages, probably using :meth:`Simulator.collect` or :meth:`Simulator.registerStage`, and then call the :meth:`Simulator.run` function to process the command line interface and start the simulator.
+    
+.. autoclass::
+    AstroObject.AstroSimulator.Simulator
+    
+    .. automethod:: collect
+    
+    .. automethod:: registerStage
+    
+    .. automethod:: registerConfigOpts
+    
+    .. automethod:: registerFunction
+    
+    .. automethod:: run
+    
+    .. automethod:: startup
+    
+    .. automethod:: do
+    
+    .. automethod:: exit
+    
+    .. automethod:: map_over_collection
+    
+Decorators
+----------
+The following decorators can be used (in conjuction with :meth:`AstroObject.AstroSimulator.Simulator.collect`) to register and configure simulator stages:
+
+.. autofunction:: collect
+
+.. autofunction:: ignore
+
+.. autofunction:: include
+
+.. autofunction:: help
+
+.. autofunction:: description
+
+.. autofunction:: depends
+
+.. autofunction:: replaces
+
+.. autofunction:: optional
+    
+Private Methods and Classes
+---------------------------
+    
+These methods are used to implment the public-facing API. They are documented here to explain their use in development.
+
+.. inheritance-diagram::
+    AstroObject.AstroSimulator.Simulator
+    AstroObject.AstroSimulator.Stage
+    :parts: 1
+
+.. automethod:: 
+    AstroObject.AstroSimulator.Simulator._initOptions
+
+.. automethod:: 
+    AstroObject.AstroSimulator.Simulator._default_macros
+    
+.. automethod:: 
+    AstroObject.AstroSimulator.Simulator._parseArguments
+    
+.. automethod:: 
+    AstroObject.AstroSimulator.Simulator._preConfiguration
+    
+.. automethod:: 
+    AstroObject.AstroSimulator.Simulator._configure
+    
+.. automethod:: 
+    AstroObject.AstroSimulator.Simulator._postConfiguration
+
+.. automethod:: 
+    AstroObject.AstroSimulator.Simulator.execute
+    
+.. autoclass::
+    AstroObject.AstroSimulator.Stage
+
+
+"""
 
 
 # Standard Python Modules
@@ -837,7 +936,7 @@ class Simulator(object):
         sys.exit(code)
         
     def collect(self,matching=r'^(?!\_)',**kwargs):
-        """Collect class methods for inclusion as simulator stages. Class methods are collected if they do not belong to the parent :class:`Simulator` class (i.e. this method, and others like :meth:`registerStage` will not be collected.). Registered stages will default to having no dependents, to be named similar to thier own methods (``collected_stage`` becomes ``*collected-stage`` on the command line) and will use thier doc-string as the stage description. The way in which these stages are collected can be adjusted using the decorators provided in this module.
+        """Collect class methods for inclusion as simulator stages. Instance methods are collected if they do not belong to the parent :class:`Simulator` class (i.e. this method, and others like :meth:`registerStage` will not be collected.). Registered stages will default to having no dependents, to be named similar to thier own methods (``collected_stage`` becomes ``*collected-stage`` on the command line) and will use thier doc-string as the stage description. The way in which these stages are collected can be adjusted using the decorators provided in this module.
         
         To define a method as a stage with a dependent, help string, and by default inclusion, use::
             

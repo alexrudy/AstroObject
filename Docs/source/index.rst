@@ -28,6 +28,7 @@ About AstroObject
     AnalyticSpectra
     AstroObject
     AstroSimulator
+    AstroConfig
     AstroObjectLogging
     Utilities
     
