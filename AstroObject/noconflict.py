@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # From http://code.activestate.com/recipes/204197-solving-the-metaclass-conflict/
 ## {{{ http://code.activestate.com/recipes/204197/ (r5)
 import inspect, types, __builtin__

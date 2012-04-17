@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # 
 #  AstroConfig.py
 #  AstroObject
