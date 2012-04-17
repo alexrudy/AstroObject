@@ -15,14 +15,6 @@ import AstroObjectBase
 import numpy as np
 import pyfits as pf
 import scipy as sp
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-
-# Matplolib Extras
-import matplotlib.image as mpimage
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import cm
-from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
 
 # Scipy Extras
 from scipy import ndimage
@@ -92,6 +84,8 @@ class HDUFrame(AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame,pf.Image
             This function serves as a quick view of the current state of the frame. It is not intended for robust plotting support, as that can be easily accomplished using ``matplotlib``. Rather, it attempts to do the minimum possible to create an acceptable image for immediate inspection.
         """
         LOG.debug("Plotting %s using matplotlib.pyplot.imshow" % self)
+        import matplotlib as mpl
+        import matplotlib.pyplot as plt
         figure = plt.imshow(self())
         figure.set_cmap('binary_r')
         return figure

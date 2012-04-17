@@ -15,14 +15,6 @@ import AstroObjectBase, AstroImage
 import numpy as np
 import pyfits as pf
 import scipy as sp
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-
-# Matplolib Extras
-import matplotlib.image as mpimage
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import cm
-from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
 
 # Scipy Extras
 from scipy import ndimage
@@ -59,6 +51,10 @@ class SpectraMixin(object):
         .. Note::
             This function serves as a quick view of the current state of the frame. It is not intended for robust plotting support, as that can be easily accomplished using ``matplotlib``. Rather, it attempts to do the minimum possible to create an acceptable image for immediate inspection."""
         LOG.log(2,"Plotting %s using matplotlib.pyplot.plot" % self)
+        import matplotlib as mpl
+        import matplotlib.pyplot as plt
+
+        
         plt.plot(self.wavelengths,self.flux,".-",label=self.label)
         plt.axis(expandLim(plt.axis()))
         plt.gca().ticklabel_format(style="sci",scilimits=(3,3))
@@ -105,9 +101,6 @@ class SpectraFrame(AstroObjectBase.HDUHeaderMixin,SpectraMixin,AstroObjectBase.B
             HDU.header.update(key,value)
         return HDU
     
-    # def __show__(self):
-    #     """Call parent show method."""
-    #     return SpectraMixin.__show__(self)
     
     @classmethod
     def __save__(cls,data,label):

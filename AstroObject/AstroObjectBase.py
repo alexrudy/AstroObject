@@ -49,12 +49,6 @@ Our first example frame is the :class:`FITSFrame`. This class is a data frame wh
 import numpy as np
 import pyfits as pf
 import scipy as sp
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-
-# Matplolib Extras
-import matplotlib.image as mpimage
-from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
 
 # Standard Python Modules
 import math, logging, os, time
@@ -408,7 +402,6 @@ class BaseObject(collections.MutableMapping):
         self.states = {}            # Storage for all of the images
         self.statename = None       # The active state name
         self.filename = filename    # The filename to use for file loading and writing
-        self.plt = plt
         self.clobber = False
         self.name = False
         self.dataClasses = []

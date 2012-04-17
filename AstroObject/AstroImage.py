@@ -15,13 +15,6 @@ import AstroObjectBase
 import numpy as np
 import pyfits as pf
 import scipy as sp
-import matplotlib as mpl
-import matplotlib.pyplot as plt
-
-# Matplotlib Extras
-import matplotlib.image as mpimage
-from matplotlib import cm
-from matplotlib.ticker import LinearLocator, FixedLocator, FormatStrFormatter
 
 # Standard Python Libraries
 import math, copy, sys, time, logging, os
@@ -78,6 +71,8 @@ class ImageFrame(AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame):
             This function serves as a quick view of the current state of the frame. It is not intended for robust plotting support, as that can be easily accomplished using ``matplotlib``. Rather, it attempts to do the minimum possible to create an acceptable image for immediate inspection.
         """
         LOG.log(2,"Plotting %s using matplotlib.pyplot.imshow" % self)
+        import matplotlib as mpl
+        import matplotlib.pyplot as plt
         figure = plt.imshow(self())
         figure.set_cmap('binary_r')
         return figure
@@ -137,6 +132,7 @@ class ImageObject(AstroObjectBase.BaseObject):
         if statename == None:
             statename = os.path.basename(filename)
             LOG.log(2,"Set statename for image from filename: %s" % statename)
+        import matplotlib.image as mpimage
         self.save(mpimage.imread(filename),statename)
         LOG.log(5,"Loaded Image from file: "+filename)
     
@@ -145,6 +141,9 @@ class ImageObject(AstroObjectBase.BaseObject):
         if not statename:
             statename = self._default_state()
         if statename != None and statename in self.states:
+            import matplotlib as mpl
+            import matplotlib.pyplot as plt
+            from matplotlib import cm            
             X = np.arange(self.states[self.statename]().shape[0])
             Y = np.arange(self.states[self.statename]().shape[1])
             X,Y = np.meshgrid(X,Y)
