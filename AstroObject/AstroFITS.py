@@ -113,7 +113,7 @@ class FITSFrame(HDUHeaderMixin,NoDataMixin,BaseFrame):
         :raises: :exc:`NotImplementedError` when this data can't be saved.
         :returns: :class:`FITSFrame`
         """
-        if not isinstance(HDU,pf.PrimaryHDU):
+        if not isinstance(HDU,(pf.PrimaryHDU,pf.ImageHDU)):
             msg = "Must save a %s to a %s, found %s" % (pf.PrimaryHDU.__name__,cls.__name__,HDU.__class__.__name__)
             raise NotImplementedError(msg)
         if not HDU.data == None:

@@ -416,6 +416,13 @@ class NoDataMixin(Mixin):
     def __show__(self):
         """Show no data... NotImplemented"""
         pass
+    
+    @classmethod    
+    @semiabstractmethod("Cannot call %s.%s() as this frame cannot contain data.")
+    def __save__(self):
+        """Show no data... NotImplemented"""
+        pass
+    
         
     def __valid__(self):
         """Require no data"""
