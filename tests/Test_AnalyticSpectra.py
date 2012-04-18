@@ -13,21 +13,46 @@ import pyfits as pf
 import scipy as sp
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import matplotlib.image as mpimage
+import matplotlib.axes
 
 import os,copy
 
 import nose.tools as nt
 from nose.plugins.skip import Skip,SkipTest
 
-from tests.Test_AstroObjectBase import *
-from tests.Test_AstroObjectAPI import *
-from tests.Test_AstroSpectra import *
+from tests.AstroTest import *
 
-import AstroObject.AnalyticSpectra as AS
+import AstroObject.AnalyticSpectra
 from AstroObject.Utilities import *
 
-class API_AnalyticSpectra(API_Abstract_Frame):
+class equality_AnalyticFrame(equality_Base):
+    """Equality methods for FITSFrames"""
+    
+    def data_eq_data(self,data,other):
+        """Return whether these two are the same data"""
+        return np.allclose(data,other)
+        
+    def frame_eq_frame(self,frame,other):
+        """Return whether these two FITS frames are the same"""
+        return frame.label == other.label
+                
+    def data_eq_frame(self,data,frame):
+        """Return whether this data is the same as the data in this frame."""
+        return False
+
+class equality_InterpolatedSpectraFrame(equality_AnalyticFrame):
+    """Equality methods for FITSFrames"""
+        
+    def frame_eq_frame(self,frame,other):
+        """Return whether these two FITS frames are the same"""
+        return np.allclose(frame.data,other.data)
+                
+    def data_eq_frame(self,data,frame):
+        """Return whether this data is the same as the data in this frame."""
+        return np.allclose(frame.data,data)
+
+
+class API_AnalyticSpectra(equality_AnalyticFrame,API_General_Frame):
     """Set up and basic tests for analytic spectra"""
     
     def test_init_with_wavelengths(self):
@@ -35,18 +60,25 @@ class API_AnalyticSpectra(API_Abstract_Frame):
         SFrame = self.FRAME(data=self.VALID,label="Empty",wavelengths=self.WAVELENGTHS)
         assert not np.abs(self.WAVELENGTHS - SFrame.requested_wavelengths > 1e-6).any()
     
-    
     def test_call_with_arbitrary_arguments(self):
         """__call__() accepts arbitrary keyword arguments"""
         AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
         data = AFrame(wavelengths=self.WAVELENGTHS,other=1,arbitrary="str",arguments="blah")
     
+    @nt.raises(ValueError)
     def test_call(self):
-        """__call__() yields data"""
+        """__call__() fails"""
+        AFrame = self.FRAME(data=self.VALID,label="Valid")
+        assert AFrame.label == "Valid"
+        data = AFrame()
+        
+    def test_call_with_kwargs(self):
+        """__call__(**kwargs) yields data"""
         AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
         data = AFrame(wavelengths=self.WAVELENGTHS)
+    
     
     def test_init_empty(self):
         """__init__() abstract frame works without data"""
@@ -59,14 +91,14 @@ class API_AnalyticSpectra(API_Abstract_Frame):
         SFrame1 = self.FRAME(data=self.VALID,label="Empty")
         SFrame2 = self.FRAME(data=self.VALID,label="Empty")
         SFrame3 = SFrame1 + SFrame2
-        assert isinstance(SFrame3,AS.CompositeSpectra)
+        assert isinstance(SFrame3,AstroObject.AnalyticSpectra.CompositeSpectra)
     
     def test_sub_objects(self):
         """__sub__() Objects respont to - operator"""
         SFrame1 = self.FRAME(data=self.VALID,label="Empty")
         SFrame2 = self.FRAME(data=self.VALID,label="Empty")
         SFrame3 = SFrame1 - SFrame2
-        assert isinstance(SFrame3,AS.CompositeSpectra)
+        assert isinstance(SFrame3,AstroObject.AnalyticSpectra.CompositeSpectra)
     
     
     def test_mul_objects(self):
@@ -74,60 +106,30 @@ class API_AnalyticSpectra(API_Abstract_Frame):
         SFrame1 = self.FRAME(data=self.VALID,label="Empty")
         SFrame2 = self.FRAME(data=self.VALID,label="Empty")
         SFrame3 = SFrame1 * SFrame2
-        assert isinstance(SFrame3,AS.CompositeSpectra)
+        assert isinstance(SFrame3,AstroObject.AnalyticSpectra.CompositeSpectra)
     
     def test_add_other(self):
         """__add__() Handles adding of other simple classes"""
         SFrame1 = self.FRAME(data=self.VALID,label="Empty")
         SFrame2 = 10.0
         SFrame3 = SFrame1 + SFrame2
-        assert isinstance(SFrame3,AS.CompositeSpectra)
-    
+        assert isinstance(SFrame3,AstroObject.AnalyticSpectra.CompositeSpectra)
 
+class test_InterpolatedSpectrum(equality_InterpolatedSpectraFrame,API_AnalyticSpectra):
+    """AnalyticSpecra.InterpolatedSpectrum"""
 
-
-
-class test_InterpolatedSpectra(API_AnalyticSpectra,API_Spectra_Frame):
-    """AnalyticSpecra.InterpolatedSpectra"""
-    def setUp(self):
-        """Sets up the test with some basic image data."""
-        
-        self.FRAME = AS.InterpolatedSpectrum
-        self.INVALID = np.array([1,2,3])
-        self.FRAMESTR = "<'InterpolatedSpectrum' labeled 'Valid'>"
-        self.HDUTYPE = pf.ImageHDU
-        self.SHOWTYPE = mpl.artist.Artist
+    def setup(self):
+        """Sets up the test with some basic image data"""
         self.WAVELENGTHS = ((np.arange(98)+1)/2.0 + 1.0) * 1e-7
         self.WAVELENGHTS_LOWR = ((np.arange(23)+1)*2.0 + 1.0) * 1e-7
         self.VALID = np.array([(np.arange(50) + 1.0) * 1e-7,np.sin(np.arange(50))+2.0])
-        
-        self.imHDU = pf.ImageHDU
-        self.pmHDU = pf.PrimaryHDU
-        
-        
-        self.attributes = copy.deepcopy(self.attributes) + ['WAVELENGTHS']
-        
-        def SAMEDATA(first,second):
-            """Return whether these two are the same data"""
-            return not (np.abs(first-second) > 1e-6).any()
-        
-        
-        def SAME(first,second):
-            """Return whether these two are the same"""
-            return SAMEDATA(first(),second())
-        
-        self.SAME = SAME
-        self.SAMEDATA = SAMEDATA
-        
-        
-        self.check_constants()
-    
-    def test_show(self):
-        """__show__() returns a valid type"""
-        AFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert AFrame.label == "Valid"
-        figure = AFrame.__show__()
-        assert isinstance(figure,self.SHOWTYPE), "Found type %s" % type(figure)
+        self.FRAME = AstroObject.AnalyticSpectra.InterpolatedSpectrum
+        self.INVALID = 20
+        self.FRAMESTR = "<'InterpolatedSpectrum' labeled 'Valid'>"
+        self.HDUTYPE = pf.ImageHDU
+        self.SHOWTYPE = mpl.axes.Subplot
+        self.RKWARGS = {'wavelengths':self.WAVELENGTHS}
+        super(test_InterpolatedSpectrum,self).setup()
     
     def save_or_compare(self,data,filename,skip=True):
         """Save or compare data"""
@@ -140,7 +142,7 @@ class test_InterpolatedSpectra(API_AnalyticSpectra,API_Spectra_Frame):
             else:
                 return True
         else:
-            passed = self.SAMEDATA(data,old_data)
+            passed = self.data_eq_data(data,old_data)
             
             if not passed:
                 print npArrayInfo(data,"New Calc")

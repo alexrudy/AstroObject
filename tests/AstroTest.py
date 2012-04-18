@@ -22,8 +22,14 @@ This module has test frameworks for all modules
     tests.AstroTest.API_AnalyticMixin
     tests.AstroTest.API_General_Frame
     tests.AstroTest.API_Base_Object
-    tests.Test_AstroObjectBase.test_FITSFrame
-    tests.Test_AstroObjectBase.test_FITSObject
+    tests.Test_AstroFITS.test_FITSFrame
+    tests.Test_AstroFITS.test_FITSObject
+    tests.test_AstroHDU.test_HDUFrame
+    tests.test_AstroHDU.test_HDUObject
+    tests.Test_AstroImage.test_ImageFrame
+    tests.Test_AstroImage.test_ImageObject
+    tests.Test_AstroSpectra.test_SpectraFrame
+    tests.Test_AstroSpectra.test_SpectraObject
     :parts: 1
 
 """
@@ -91,20 +97,43 @@ class API_Base(object):
     def _get_files(self):
         """Add files to the test working directory"""
         if hasattr(self,'data') and isinstance(self.data,collections.Sequence):
-            if not hasattr(self,files):
+            if not hasattr(self,'files'):
                 self.files = []
             for filename in self.data:
-                filepath = resource_filename(filename)
-                if not os.access(filename,os.F_OK):
+                filepath = resource_filename(__name__,filename)
+                if not os.access(filename,os.F_OK) and os.access(filepath,os.F_OK):
                     shutil.copy(filepath,os.getcwd()+filename)
                     self.files += [filename]
 
+
+class equality_Base(object):
+    """Equality methods for FITSFrames"""
+    
+    
+    @abstractmethod
+    def data_eq_data(self,data,other):
+        """Return whether these two are the same data"""
+        return True
+        
+    @abstractmethod
+    def frame_eq_frame(self,frame,other):
+        """Return whether these two FITS frames are the same"""
+        return True
+            
+    @abstractmethod
+    def data_eq_frame(self,data,frame):
+        """Return whether this data is the same as the data in this frame."""
+        return True
 
 
 class API_Base_Frame(API_Base):
     """Tests an Abstract Frame"""
     attributes = ['FRAME','VALID','INVALID','SHOWTYPE','HDUTYPE','FRAMESTR','RKWARGS']
     methods = ['frame_eq_frame','data_eq_data','data_eq_frame']
+    
+    def frame(self):
+        """Returns a valid frame"""
+        return self.FRAME(data=self.VALID,label="Valid")
     
     def test_init_data(self):
         """__init__() succeds with None (Valid) data"""
@@ -193,7 +222,27 @@ class API_Base_Frame(API_Base):
     @abstractmethod
     def test_save_empty(self):
         pass
+
+class API_CanBeEmpty_Frame(API_Base):
+    """API for AstroObjectBase.BaseFrame which can be empty"""
     
+    def test_init_empty(self):
+        """__init__() works without data"""
+        self.FRAME(data=None,label="Label")
+    
+    def test_read_empty_primary(self):
+        """__read__() works on an empty primary HDU"""
+        HDU = pf.PrimaryHDU()
+        BFrame = self.FRAME.__read__(HDU,"Empty")
+        assert isinstance(BFrame,self.FRAME)
+        assert BFrame.label == "Empty"
+        
+    def test_read_empty_secondary(self):
+        """__read__() works on an empty secondary HDU"""
+        HDU = self.HDUTYPE()
+        BFrame = self.FRAME.__read__(HDU,"Empty")
+        assert isinstance(BFrame,self.FRAME)
+        assert BFrame.label == "Empty"    
 
 class API_HDUHeader_Frame(API_Base):
     """API for AstroObjectBase.HDUHeaderMixin """
@@ -227,12 +276,8 @@ class API_HDUHeader_Frame(API_Base):
         nHDU = BFrame.__setheader__(HDU)
         assert isinstance(nHDU,self.HDUTYPE)
     
-class API_NoData_Frame(API_Base):
+class API_NoData_Frame(API_CanBeEmpty_Frame,API_Base):
     """API for AstroObjectBase.NoDataMixin"""
-    
-    def test_init_empty(self):
-        """__init__() works without data"""
-        self.FRAME(data=None,label="Label")
     
     @nt.raises(NotImplementedError)
     def test_call_with_kwargs(self):
@@ -354,7 +399,7 @@ class API_AnalyticMixin(API_NoHDU_Frame,API_NoData_Frame):
     @abstractmethod
     def test_call_with_kwargs(self):
         pass
-
+        
 
 class API_NotEmpty_Frame(API_Base):
     """API for AstroObjectBase.BaseFrame which cannot be empty"""
@@ -371,7 +416,7 @@ class API_NotEmpty_Frame(API_Base):
         
     @nt.raises(NotImplementedError)
     def test_read_empty_secondary(self):
-        """__read__() an empty primary HDU fails"""
+        """__read__() an empty secondary HDU fails"""
         BFrame = self.FRAME.__read__(self.HDUTYPE(),"Empty Primary HDU")
     
     @nt.raises(NotImplementedError)
@@ -442,7 +487,7 @@ class API_General_Frame(API_HDUHeader_Frame,API_NotEmpty_Frame,API_Base_Frame):
         assert BFrame.label == "Empty"
         HDU = BFrame.hdu()
         assert isinstance(HDU,self.HDUTYPE)
-        assert HDU.data == None
+        assert self.data_eq_data(HDU.data,self.VALID)
     
     def test_HDU_primary(self):
         """hdu() generates an empty Image HDU"""
@@ -450,8 +495,8 @@ class API_General_Frame(API_HDUHeader_Frame,API_NotEmpty_Frame,API_Base_Frame):
         assert BFrame.label == "Empty"
         HDU = BFrame.hdu(primary=True)
         assert isinstance(HDU,pf.PrimaryHDU)
-        assert HDU.data == None
-    
+        assert self.data_eq_data(HDU.data,self.VALID)
+
     def test_HDU_with_header(self):
         """hdu() generates an empty Image HDU with Header"""
         header = pf.core.Header()
@@ -473,7 +518,7 @@ class API_General_Frame(API_HDUHeader_Frame,API_NotEmpty_Frame,API_Base_Frame):
 class API_Base_Object(API_Base):
     """API for AstroObjectBase.BaseObject"""
     
-    attributes = ['FRAME','VALID','INVALID','SHOWTYPE','HDUTYPE','OBJECTSTR','OBJECT','FRAMESTR','FILENAME']
+    attributes = ['FRAME','VALID','INVALID','SHOWTYPE','HDUTYPE','OBJECTSTR','OBJECT','FRAMESTR']
     methods = ['frame_eq_frame','data_eq_data','data_eq_frame','frame']
     
     def frame(self):
@@ -551,7 +596,7 @@ class API_Base_Object(API_Base):
             AObject.select("Valid")
             assert AObject.statename == "Valid"
             assert AObject.frame().label == "Valid"
-            AObject.select(NewLabel)
+            AObject.select("Other")
             assert AObject.statename == "Other"
             assert AObject.frame().label == "Other"
         except AssertionError as e:

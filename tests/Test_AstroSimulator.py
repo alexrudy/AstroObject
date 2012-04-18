@@ -9,7 +9,7 @@
 # 
 
 
-from tests.Test_AstroObjectAPI import *
+from tests.AstroTest import *
 import AstroObject.AstroSimulator as AS
 from AstroObject.AstroCache import *
 import nose.tools as nt
@@ -27,10 +27,11 @@ class test_Simulator(API_Base):
     """AstroObject.AstroSimulator"""
     attributes = ["SIMULATOR"]
     
-    def setUp(self):
+    def setup(self):
         """Set up the simulator"""
         self.SIMULATOR = AS.Simulator("Tester")
-        self.doSetUp()
+        super(test_Simulator, self).setup()
+        
     
     def test_registerStage(self):
         """registerStage()"""

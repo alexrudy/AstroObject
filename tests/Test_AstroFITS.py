@@ -22,7 +22,7 @@ import matplotlib.pyplot as plt
 import copy
 import os    
 
-class equality_FITSFrame(object):
+class equality_FITSFrame(equality_Base):
     """Equality methods for FITSFrames"""
     
     def data_eq_data(self,data,other):
@@ -60,20 +60,6 @@ class test_FITSFrame(equality_FITSFrame,API_NoData_Frame,API_General_Frame):
         self.HDUTYPE = pf.ImageHDU
         self.RKWARGS = {}
         super(test_FITSFrame, self).setup()
-
-    def test_read_empty_primary(self):
-        """__read__() works on an empty primary HDU"""
-        HDU = pf.PrimaryHDU()
-        BFrame = self.FRAME.__read__(HDU,"Empty")
-        assert isinstance(BFrame,self.FRAME)
-        assert BFrame.label == "Empty"
-        
-    def test_read_empty_secondary(self):
-        """__read__() works on an empty secondary HDU"""
-        HDU = self.HDUTYPE()
-        BFrame = self.FRAME.__read__(HDU,"Empty")
-        assert isinstance(BFrame,self.FRAME)
-        assert BFrame.label == "Empty"
     
         
 class test_FITSObject(equality_FITSFrame,API_Base_Object):
