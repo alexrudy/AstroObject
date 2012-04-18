@@ -34,6 +34,8 @@ __version__ = getVersion()
 class BlackBodySpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSpectrum):
     """An analytic representation of a Blackbody Spectrum at a Kelvin Tempertaure.
     
+    :param float temperature: The temperature, in Kelvin, of this black body curve.
+    
     .. inheritance-diagram::
         AstroObject.AnalyticSpectra.BlackBodySpectrum
         :parts: 1
@@ -53,6 +55,10 @@ class BlackBodySpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSp
         
 class GaussianSpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSpectrum):
     """An analytic representation of a gaussian function in spectral form.
+    
+    :param float mean: The center of the Gaussian, in wavelength units.
+    :param float stdev: The standard deviation of the gaussian, in wavelength units.
+    :param float height: The maximum height of the gaussian in flux units.
     
     .. inheritance-diagram::
         AstroObject.AnalyticSpectra.GaussianSpectrum
@@ -77,6 +83,8 @@ class GaussianSpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSpe
 
 class FlatSpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSpectrum):
     """An analytc form of a flat value at every wavelength.
+    
+    :param float value: The height of this flat spectrum, in flux units.
     
     .. inheritance-diagram::
         AstroObject.AnalyticSpectra.FlatSpectrum
