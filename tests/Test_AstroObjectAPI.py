@@ -157,14 +157,14 @@ class API_Base_Frame(API_Abstract_Frame):
         """__init__() succeeds with valid data"""
         AFrame = self.FRAME(data=self.VALID,label="Valid")
         assert AFrame.label == "Valid"
-        assert self.SAMEDATA(AFrame.data,self.VALID)
+        assert self.SAMEDATA(AFrame(),self.VALID)
     
     
     def test_save_data(self):
         """__save__() valid data"""
         AFrame = self.FRAME.__save__(self.VALID,"Valid")
         assert AFrame.label == "Valid"
-        assert self.SAMEDATA(AFrame.data,self.VALID)
+        assert self.SAMEDATA(AFrame(),self.VALID)
     
     
     def test_read_PrimaryHDU(self):
@@ -172,7 +172,7 @@ class API_Base_Frame(API_Abstract_Frame):
         AFrame = self.FRAME.__read__(self.pmHDU(self.VALID),"Valid")
         assert isinstance(AFrame,self.FRAME)
         assert AFrame.label == "Valid"
-        assert self.SAMEDATA(AFrame.data,self.VALID)
+        assert self.SAMEDATA(AFrame(),self.VALID)
     
     
     def test_read_SecondaryHDU(self):
@@ -180,7 +180,7 @@ class API_Base_Frame(API_Abstract_Frame):
         AFrame = self.FRAME.__read__(self.imHDU(self.VALID),"Valid")
         assert isinstance(AFrame,self.FRAME)
         assert AFrame.label == "Valid"
-        assert self.SAMEDATA(AFrame.data,self.VALID)
+        assert self.SAMEDATA(AFrame(),self.VALID)
     
     
     
@@ -538,7 +538,7 @@ class API_Base_Object(API_Base):
         """object() call exists and works, but has been depreciated"""
         BObject = self.OBJECT()
         BObject.save(self.FRAMEINST)
-        assert BObject.object() == BObject.frame()
+        assert self.SAME(BObject.object(),BObject.frame())
     
 
 

@@ -26,6 +26,8 @@ About AstroObject
     AstroImage
     AstroSpectra
     AnalyticSpectra
+    AstroNDArray
+    AstroHDU
     AstroObject
     AstroSimulator
     AstroConfig

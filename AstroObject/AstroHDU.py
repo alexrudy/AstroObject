@@ -8,8 +8,8 @@
 #  Version 0.4.0
 # 
 """
-HDU Objects and Storage :mod:`AstroFITS`
-****************************************
+HDU Objects and Storage :mod:`AstroHDU`
+=======================================
 
 
 Objects for manipulating and managing HDUs directly.
@@ -17,12 +17,12 @@ Objects for manipulating and managing HDUs directly.
 .. warning:: There are some problems in this feature at the moment. Right now, HDU generation and reading does not happen correctly, as only data and headers are extracted and included. This will be corrected shortly.
 
 .. autoclass::
-    AstroObject.AstroFITS.HDUObject
+    AstroObject.AstroHDU.HDUObject
     :members:
     :inherited-members:
 
 .. autoclass::
-    AstroObject.AstroFITS.HDUFrame
+    AstroObject.AstroHDU.HDUFrame
     :members:
     :special-members:
     

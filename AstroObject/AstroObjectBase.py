@@ -35,22 +35,24 @@ Module Structure
 ----------------
 
 .. inheritance-diagram::
-	AstroObject.AstroFITS.FITSFrame
-	AstroObject.AstroFITS.FITSObject
-	AstroObject.AstroImage.ImageFrame
-	AstroObject.AstroImage.ImageObject
-	AstroObject.AstroSpectra.SpectraFrame
-	AstroObject.AstroSpectra.SpectraObject
-	AstroObject.AstroHDU.HDUFrame
-	AstroObject.AstroHDU.HDUObject
+    AstroObject.AstroFITS.FITSFrame
+    AstroObject.AstroFITS.FITSObject
+    AstroObject.AstroImage.ImageFrame
+    AstroObject.AstroImage.ImageObject
+    AstroObject.AstroSpectra.SpectraFrame
+    AstroObject.AstroSpectra.SpectraObject
+    AstroObject.AstroHDU.HDUFrame
+    AstroObject.AstroHDU.HDUObject
+    AstroObject.AstroNDArray.NDArrayFrame
+    AstroObject.AstroNDArray.NDArrayObject
     AstroObject.AnalyticSpectra.AnalyticSpectrum
     AstroObject.AnalyticSpectra.CompositeSpectra
     AstroObject.AnalyticSpectra.InterpolatedSpectrum
     AstroObject.AnalyticSpectra.Resolver
     AstroObject.AnalyticSpectra.UnitarySpectrum
-	AstroObject.AnalyticSpectra.FlatSpectrum
-	AstroObject.AnalyticSpectra.GaussianSpectrum
-	AstroObject.AnalyticSpectra.BlackBodySpectrum
+    AstroObject.AnalyticSpectra.FlatSpectrum
+    AstroObject.AnalyticSpectra.GaussianSpectrum
+    AstroObject.AnalyticSpectra.BlackBodySpectrum
     :parts: 1
 
 
@@ -93,19 +95,19 @@ Class Inherits From:              :class:`Mixin`        :class:`Mixin`          
     AstroObject.AstroObjectBase.Mixin
 
 .. autoclass::
-	AstroObject.AstroObjectBase.HDUHeaderMixin
+    AstroObject.AstroObjectBase.HDUHeaderMixin
     
 .. autoclass::
-	AstroObject.AstroObjectBase.NoDataMixin
-	
+    AstroObject.AstroObjectBase.NoDataMixin
+    
 .. autoclass::
-	AstroObject.AstroObjectBase.NoHDUMixin
-	
+    AstroObject.AstroObjectBase.NoHDUMixin
+    
 .. autoclass::
-	AstroObject.AstroObjectBase.AnalyticMixin
-	
+    AstroObject.AstroObjectBase.AnalyticMixin
+    
 .. autoclass::
-	AstroObject.AstroSpectra.SpectraMixin
+    AstroObject.AstroSpectra.SpectraMixin
 
 Base Object :class:`BaseObject`
 -------------------------------
@@ -113,8 +115,8 @@ Base Object :class:`BaseObject`
 The base object definition provides the normal object accessor methods. It should be subclassed as shown in :ref:`AstroObjectAPI`
 
 .. autoclass::
-	AstroObject.AstroObjectBase.BaseObject
-	:members:
+    AstroObject.AstroObjectBase.BaseObject
+    :members:
 
 
 """
@@ -564,7 +566,7 @@ class BaseObject(collections.MutableMapping):
                     LOG.log(2,"Cannot save as %s: %s" % (dataClass,AE))
                 else:
                     break
-            if not Object:
+            if Object is None:
                 raise TypeError("Object to be saved cannot be cast as %s" % self.dataClasses)
         else:
             Object = data.copy(label=statename)
@@ -821,20 +823,21 @@ class BaseObject(collections.MutableMapping):
         Labels = []
         for HDU in HDUList:
             Object = None
+            if "label" in HDU.header:
+                label = HDU.header["label"]
+            elif Read != 0:
+                label = statename + " Frame %d" % Read
+            else:
+                label = statename
             for dataClass in self.dataClasses:
-                if "label" in HDU.header:
-                    label = HDU.header["label"]
-                elif Read != 0:
-                    label = statename + " Frame %d" % Read
-                else:
-                    label = statename
                 try:
                     Object = dataClass.__read__(HDU,label)
+                    Object.__getheader__(HDU)
                 except NotImplementedError as AE:
                     LOG.log(2,"Cannot read as %s: %s" % (dataClass,AE))
                 else:
                     break
-            if not Object:
+            if Object == None:
                 LOG.log(8,"Skipping HDU %s, cannot save as valid type " % HDU)
             else:
                 Read += 1
