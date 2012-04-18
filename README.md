@@ -1,26 +1,32 @@
----
- README
- Astronomy ObjectModel
- 
- Created by Alexander Rudy on 2011-10-07.
- Copyright 2011 Alexander Rudy. All rights reserved.
+# AstroObject
 
-  Version 0.4.0
-
----
-
-# README
-
-This program consists of a few simple objects for the repersentation and manipulation of astronomical objects. It allows python programs to interact with FITS files and Raw Data without constantly re-saving such data to the system. It provides a consistent object model, and stores object history for all of your data so that you won't lose data unintentionally.
+AstroObject is a paradigm for manipulating Astronomical data in an object-oriented framework.
 
 Documentation is hosted by GitHub Pages <http://alexrudy.github.com/AstroObject/>
 
-There are two primary modules:
+## Frames and Objects
 
-- `AstroImage` for handling images.
-- `AstroSpectra` for handling 1D data like spectra.
+The primary structure of Object-Oriented astronomy data is the concept of **Frames** and **Objects**. **Frames** are single pieces of data. **Objects** are collections of **frames** which have a dictionary-like interface.
 
-As well, the library is useful for building object-based representations of new data formats. The library comes with template classes that make it easy to expand the object oriented paradigm to whatever you are doing, and to add in custom manipulation functions.
+The concept is that you might have a single image, say ``Data.fits`` that you want to use for a lot of reduction. At the end of that work, you want to have the final result, and still have access to all of the intermediate states of that object. Normally, you might write numerous different FITS files to a diretory with names like ``flat_Data.fits`` or ``flatdarkbias_Data.fits``. This paradigm is a little silly. In ``AstroObject``, you would accomplish the same thing with:
+
+```python
+from AstroObject.AstroImage import ImageObject
+Data = ImageObject(filename="Data.fits")
+Data.read()
+Data["Biased"] = Data.d - BiasValue # Data.d gets the data from the latest state. Here, that is the raw data.
+Data["Flattened"] = Data.d / FlatValue # Data.d will get Data["Biased"] here, the most recent state.
+Data["Scaled"] = numpy.sqrt(Data.d)
+Data.write(clobber=True) # Makes a file Data.fits, which uses FITS extensions to store all of this inforamtion.
+del Data["Scaled"] # Deletes the Scaled Data Frame
+Data.show("Flattened") # Shows a matplotlib plot of the flattened data.
+```	
+
+
+## Simulators
+
+The AstroObject module also has a simulator framework. The simulator is designed for easy command-line interface and dependency chaining of tasks. The simulator is writen with the concept of *stages*, which are semi-independent methods. *Stages* can have dependencies, and automatically implement error catching and logging features. As such, the simulator can be used for a multi-purpose command-line tool. See [the example simulator in the documentation]( http://alexrudy.github.com/AstroObject/SimulatorExample.html#simulatorexample).
+
 
 # Release Notes
 
