@@ -67,7 +67,7 @@ class NDArrayFrame(HDUHeaderMixin,BaseFrame,np.ndarray):
         obj = np.asarray(data).view(cls)
         if isinstance(header,collections.Mapping):
             obj.header = pf.core.Header()
-            for key,value in header:
+            for key,value in header.iteritems():
                 obj.header.update(key,value)
         elif isinstance(header,pf.core.Header):
             obj.header = header
@@ -75,10 +75,7 @@ class NDArrayFrame(HDUHeaderMixin,BaseFrame,np.ndarray):
             assert header == None, "%s doesn't understand the header, %s, type %s" % (self,header,type(header))
         if not hasattr(obj,'time'):
             obj.time = time.clock()
-        try:
-            obj.__setlabel__(label)
-        except NotImplementedError:
-            pass
+        obj.__setlabel__(label)
         try:
             obj.__valid__()
         except AssertionError as e:
@@ -111,6 +108,8 @@ class NDArrayFrame(HDUHeaderMixin,BaseFrame,np.ndarray):
             return
         if getattr(self,'label',None) == None:
             self._label = label
+        elif getattr(self,'label',None) == label:
+            return
         else:
             raise NotImplementedError("Cannot change label twice! %s -> %s" % (found_label,label))
             
