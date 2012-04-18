@@ -164,7 +164,6 @@ class SpectraFrame(AstroObjectBase.HDUHeaderMixin,SpectraMixin,AstroObjectBase.B
             raise NotImplementedError(msg)    
         try:
             Object = cls(HDU.data,label)
-            Object.__getheader__(HDU)        
         except AssertionError as AE:
             msg = "%s data did not validate: %s" % (cls.__name__,AE)
             raise NotImplementedError(msg)

@@ -138,7 +138,6 @@ class ImageFrame(AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame):
             raise NotImplementedError(msg)
         try:
             Object = cls(HDU.data,label)
-            Object.__getheader__(HDU)
         except AttributeError as AE:
             msg = "%s data did not validate: %s" % (cls.__name__,AE)
             raise NotImplementedError(msg)

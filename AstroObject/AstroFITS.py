@@ -70,7 +70,7 @@ from AstroObjectBase import BaseFrame,BaseObject,HDUHeaderMixin,NoDataMixin
 # Submodules from this system
 from Utilities import *
 
-__all__ = ["BaseObject","BaseFrame","AnalyticMixin","NoHDUMixin","HDUHeaderMixin","NoDataMixin"]
+__all__ = ["FITSFrame","FITSObject"]
 
 __version__ = getVersion()
 
