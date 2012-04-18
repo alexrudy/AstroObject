@@ -91,8 +91,6 @@ class FITSFrame(HDUHeaderMixin,NoDataMixin,BaseFrame):
     def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
         super(FITSFrame, self).__init__(data=data, label=label, header=header, metadata=metadata,**kwargs)
     
-   
-        
     def __hdu__(self,primary=False):
         """Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.
         
@@ -105,9 +103,6 @@ class FITSFrame(HDUHeaderMixin,NoDataMixin,BaseFrame):
             HDU = pf.ImageHDU()
         LOG.log(8,"%s: Generating an Empty %sHDU" % (self,"primary " if primary else ""))
         return HDU
-    
-        
-    
     
     @classmethod
     def __read__(cls,HDU,label):

@@ -82,6 +82,7 @@ class ImageFrame(AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame):
         assert isinstance(self.data,np.ndarray), "Frame data is not correct type: %s" % type(self.data)
         if len(self.data.shape) != 2:
             LOG.warning("The data appears to be %d dimensional. This object expects 2 dimensional data." % len(self.data.shape))
+        return super(ImageFrame, self).__valid__()
         
     
     def __hdu__(self,primary=False):

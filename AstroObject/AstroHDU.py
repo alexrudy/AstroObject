@@ -62,6 +62,7 @@ class HDUFrame(AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame,pf.Image
     
     """
     __metaclass__ = classmaker()
+    
     def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
         self.data = data
         super(HDUFrame, self).__init__(data=None, label=label, header=header, metadata=metadata, **kwargs)
@@ -81,8 +82,8 @@ class HDUFrame(AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame,pf.Image
     def __valid__(self):
         """Runs a series of assertions which ensure that the data for this frame is valid"""
         assert (isinstance(self.data,np.ndarray) or self.data==None), "Frame data is not correct type: %s" % type(self.data)
+        return super(HDUFrame, self).__valid__()
         
-    
     def __hdu__(self,primary=False):
         """Retruns an HDU which represents this frame. HDUs are either ``pyfits.PrimaryHDU`` or ``pyfits.ImageHDU`` depending on the *primary* keyword."""
         if primary and isinstance(self,pf.ImageHDU):

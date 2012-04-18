@@ -75,18 +75,22 @@ Mixins allow certain classes to operate without all of the features required by 
 
 A summary table is below. The table has classes provided from right to left. Note that :class:`AnalyticMixin` inherits from :class:`NoHDUMixin` and :class:`NoDataMixin`. This means that objects with type :class:`AnalyticMixin` are assumed by the system to be a type of frame, but they do not implement any of the major frame methods.
 
-=============================== ==================== ========================= ====================== ===================== ========================================== ======================================
-Method                           :class:`BaseFrame`   :class:`HDUHeaderMixin`   :class:`NoDataMixin`   :class:`NoHDUMixin`   :class:`AnalyticMixin`                     :class:`~.AstroSpectra.SpectraMixin`
-=============================== ==================== ========================= ====================== ===================== ========================================== ======================================
-Class Inherits From:                                                                                                         :class:`NoHDUMixin` :class:`NoDataMixin`                     
-:meth:`BaseFrame.__call__`       Abstract                                       Skipped                                      Abstract
-:meth:`BaseFrame.__setheader__`  Abstract              Implemented                                     Skipped               *Skipped*
-:meth:`BaseFrame.__getheader__`  Abstract              Implemented                                     Skipped               *Skipped*
-:meth:`BaseFrame.__hdu__`        Abstract                                                              Skipped               *Skipped*
-:meth:`BaseFrame.__show__`       Abstract                                       Skipped                                      *Skipped*                                     Implemented
-:meth:`BaseFrame.__save__`       Abstract                                                                                    Skipped
-:meth:`BaseFrame.__read__`       Abstract                                                              Skipped               *Skipped*
-=============================== ==================== ========================= ====================== ===================== ========================================== ======================================
+================================ ==================== ========================= ====================== ===================== ========================================== ======================================
+Method                            :class:`BaseFrame`   :class:`HDUHeaderMixin`   :class:`NoDataMixin`   :class:`NoHDUMixin`   :class:`AnalyticMixin`                     :class:`~.AstroSpectra.SpectraMixin`
+================================ ==================== ========================= ====================== ===================== ========================================== ======================================
+Class Inherits From:              :class:`Mixin`        :class:`Mixin`           :class:`Mixin`         :class:`Mixin`        :class:`NoHDUMixin` :class:`NoDataMixin`   :class:`Mixin` 
+:meth:`~BaseFrame.__init__`       Implemented           *Abstract*               *Abstract*             *Abstract*            *Abstract*                                 *Abstract*
+:meth:`~BaseFrame.__call__`       Abstract                                       Skipped                                      Abstract
+:meth:`~BaseFrame.__setheader__`  Abstract              Implemented                                     Skipped               *Skipped*
+:meth:`~BaseFrame.__getheader__`  Abstract              Implemented                                     Skipped               *Skipped*
+:meth:`~BaseFrame.__hdu__`        Abstract                                                              Skipped               *Skipped*
+:meth:`~BaseFrame.__show__`       Abstract                                       Skipped                                      *Skipped*                                  Implemented
+:meth:`~BaseFrame.__save__`       Abstract                                                                                    Skipped
+:meth:`~BaseFrame.__read__`       Abstract                                                              Skipped               *Skipped*
+================================ ==================== ========================= ====================== ===================== ========================================== ======================================
+
+.. autoclass::
+    AstroObject.AstroObjectBase.Mixin
 
 .. autoclass::
 	AstroObject.AstroObjectBase.HDUHeaderMixin
@@ -130,14 +134,25 @@ from abc import ABCMeta, abstractmethod, abstractproperty
 # Submodules from this system
 from Utilities import *
 
-__all__ = ["BaseObject","BaseFrame","AnalyticMixin","NoHDUMixin","HDUHeaderMixin","NoDataMixin"]
+__all__ = ["BaseObject","BaseFrame","AnalyticMixin","NoHDUMixin","HDUHeaderMixin","NoDataMixin","Mixin"]
 
 __version__ = getVersion()
 
 LOG = logging.getLogger(__name__)
 
+class Mixin(object):
+    """ This is an abstract base class for any class which is a Mixin. All such objects should have the appropriate meta-class, and cannot be instantiated unless they havae thier own :meth:`__init__` method.
+    
+    This prevents Mixin classes from being instantiated as stand-alone entities.
+    """
+    __metaclass__ = ABCMeta
+    
+    @abstractmethod
+    def __init__(self):
+        super(Mixin, self).__init__()
 
-class BaseFrame(object):
+
+class BaseFrame(Mixin):
     """This is the API for frame objects, that is, objects which represnet a single state of data. See :class:`AstroObjectBase.FITSFrame`. This API is generally not called by the end user, but rather is called by the parent :class:`AstroObject.AstroObjectBase.BaseObject`'s function. For an example of a parent object, see :class:`AstroObjectBase.BaseObject`.
     
     :param data: Initalizing data
@@ -219,8 +234,8 @@ class BaseFrame(object):
         """Runs a series of assertions which ensure that the data for this frame is valid
         
         :raises: :exc:`AssertionError` when frame is invalid
-        :returns: ``None``"""
-        assert True
+        :returns: ``True``"""
+        return True
     
     @property
     def valid(self):
@@ -346,8 +361,9 @@ def semiabstractmethod(txt):
         newfunc = make_decorator(func)(raiser)
         return newfunc
     return decorator
+        
 
-class HDUHeaderMixin(object):
+class HDUHeaderMixin(Mixin):
     """Mixin to provide the default :meth:`~BaseFrame.__setheader__` and :meth:`~BaseFrame.__getheader__` functions. These functions are not provided by default in :class:`BaseFrame`.
     
     :meth:`~BaseFrame.__setheader__` applies the **frame** label to the "label" and "object" keywords, then applies all of the existing keywords to the header.
@@ -383,7 +399,7 @@ class HDUHeaderMixin(object):
     
         
 
-class NoDataMixin(object):
+class NoDataMixin(Mixin):
     """Mixin to allow for frames which **cannot** contain data. This mixin allows the developer to not implement :meth:`~BaseFrame.__call__` and :meth:`~BaseFrame.__show__`, both of which are only sensible methods for actual data.
     
     Due to the validity of empty HDUs, it is possible to have an object which doesn't contain data, but can still produce HDUs.
@@ -401,12 +417,13 @@ class NoDataMixin(object):
         
     def __valid__(self):
         """Require no data"""
-        super(NoDataMixin,self).__valid__()
         if hasattr(self,'data'):
             assert self.data == None, "The frame %s cannot accept data, found data with type %s" % (self,type(self.data))
+        return super(NoDataMixin,self).__valid__()
+
     
         
-class NoHDUMixin(object):
+class NoHDUMixin(Mixin):
     """Mixin to allow for frames which **cannot** produce FITS Header-Data-Units (HDUs) and as such **cannot** produce FITS files.
     
     This mixin allows the developer to not implement :meth:`~BaseFrame.__getheader__`, :meth:`~BaseFrame.__setheader__`, :meth:`~BaseFrame.__hdu__`, and :meth:`~BaseFrame.__read__`.
@@ -511,6 +528,17 @@ class BaseObject(collections.MutableMapping):
         
         :returns: integer"""
         return len(self.states.keys())
+    
+    @property
+    def d(self):
+        """The data for the selected FITS frame."""
+        return self.data()
+    
+    @property
+    def f(self):
+        """The selected FITS frame. This frame is usually the last modified frame in the system."""
+        return self.frame()
+    
         
     ###############################
     # Basic Object Mode Functions #
@@ -576,10 +604,7 @@ class BaseObject(collections.MutableMapping):
         else:
             self._key_error(statename)
     
-    @property
-    def f(self):
-        """The selected FITS frame. This frame is usually the last modified frame in the system."""
-        return self.states[self.statename]
+
     
     def frame(self,statename=None):
         """Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.
