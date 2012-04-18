@@ -42,6 +42,12 @@ About AstroObject
     
     SimulatorExample
 
+Testing and Development Features
+================================
+
+.. toctree::
+	AstroTest
+
 Indices and tables
 ==================
 
