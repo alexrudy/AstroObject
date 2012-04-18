@@ -227,11 +227,17 @@ class CompositeSpectra(AstroObjectBase.AnalyticMixin,AnalyticSpectrum):
         label += ") " + self.ops[operation] + " ("
         label += partB.label if hasattr(partB,'label') else str(partB)
         label += ")"
+        self.operation = operation
         super(CompositeSpectra, self).__init__(None,label)
         self.A = partA
         self.B = partB
-        self.operation = operation
         
+    def __valid__(self):
+        """Check that the operation here is included in the system."""
+        assert self.operation in self.ops
+        return super(CompositeSpectra, self).__valid__()
+        
+    
     
     def __call__(self,wavelengths=None,**kwargs):
         """Calls the composite function components. The keyword arguments are passed on to calls to spectra contained within this composite spectra. All spectra varieties should accept arbitrary keywords, so this argument is used to pass keywords to spectra which require specific alternatives. Pass in `wavelengths` to use the given wavelengths. If none are passed in, it will look for object-level saved wavelengths, which you can specify simply by setting the `self._wavelengths` parameter on the object."""
@@ -693,7 +699,7 @@ class InterpolatedSpectrumBase(AstroSpectra.SpectraMixin,AnalyticSpectrum,AstroO
                 
         if (np.diff(bins) <= 0).any():
             msg = u"λ Bins must increase monotonically. [wl + %g]" % (wavelengths[-1]+np.diff(wavelengths)[-1])
-            arrays = {u"λ Binsu" : bins, u"Requested λ" : wavelengths ,u"Requested Δλ": wavelengths, u"Bin Δλ" : np.diff(bins),u"λ Offset" : offset }
+            arrays = {u"λ Bins" : bins, u"Requested λ" : wavelengths ,u"Requested Δλ": wavelengths, u"Bin Δλ" : np.diff(bins),u"λ Offset" : offset }
             error = ValueError
         else:
             bincount,wavelengths = np.histogram(oldwl[:-1],wavelengths)
@@ -759,7 +765,7 @@ class InterpolatedSpectrumBase(AstroSpectra.SpectraMixin,AnalyticSpectrum,AstroO
         
         # This is our sanity check. Everything we calculated should be a number. If it comes out as nan, then we have done something wrong.
         # In that case, we raise an error after printing information about the whole calculation.
-        arrays = { u"Requested lower bound λu" : wlStart , u"Requested upper bound λ" : wlEnd }
+        arrays = { u"Requested lower bound λ" : wlStart , u"Requested upper bound λ" : wlEnd }
         self._postsanity(self.wavelengths,self.flux,wavelengths,flux,**arrays)
 
         # We do print fun information about the final calculation regardless.
