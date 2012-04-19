@@ -7,11 +7,11 @@
 #  Copyright 2011 Alexander Rudy. All rights reserved.
 #  Version 0.4.0
 # 
-"""
+u"""
 .. _AstroObjectAPI:
 
-AstroObject API
-===============
+:mod:`AstroObjectBase` – AstroObject API
+========================================
 
 The API is the foundation of the :mod:`AstroObject` module. When creating new types of data, you will want to create frames for that type of data. The functions shown below are the functions which must be present in every data frame type, in order to maintain compatibility with enclosing Objects. If your class conforms to this API, then it can easily be used as data for :class:`AstroObjectBase.BaseObject`. 
 
@@ -752,7 +752,7 @@ class BaseObject(collections.MutableMapping):
                     LOG.info("%s: Not removing state %s as it does not exist" % (self,statename))
                 else:
                     raise IndexError("%s: Object %s does not exist!" % (self,statename))
-            if delete:
+            elif delete:
                 del self.states[statename]
             else:
                 self.states.pop(statename)
@@ -799,7 +799,8 @@ class BaseObject(collections.MutableMapping):
             else:
                 filename = self.filename
                 LOG.log(2,"Set filename from Object. Filename: %s" % filename)
-        filename = validate_filename(filename)
+        if isinstance(filename,(str,unicode)):
+            filename = validate_filename(filename)
         PrimaryHDU = self.states[primaryState].hdu(primary=True)
         if len(states) > 0:
             HDUs = [self.states[state].hdu(primary=False) for state in states]
@@ -822,20 +823,22 @@ class BaseObject(collections.MutableMapping):
         """
         if not filename:
             filename = self.filename
-        if statename == None:
-            statename = os.path.basename(filename)
-            LOG.log(2,"Set statename for image from filename: %s" % statename)
+        if statename is None:
+            LOG.log(2,"Set statename for image from filename: %s" % os.path.basename(filename))
         HDUList = pf.open(filename)
         Read = 0
         Labels = []
         for HDU in HDUList:
             Object = None
-            if "label" in HDU.header:
+            if statename is None and "label" in HDU.header:
                 label = HDU.header["label"]
-            elif Read != 0:
-                label = statename + " Frame %d" % Read
+            elif statename is None:
+                statename = os.path.basename(filename)
+                label = statename
             else:
                 label = statename
+            if label in Labels:
+                label = label + " Frame %d" % Read
             for dataClass in self.dataClasses:
                 try:
                     Object = dataClass.__read__(HDU,label)
