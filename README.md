@@ -31,6 +31,8 @@ The AstroObject module also has a simulator framework. The simulator is designed
 # Release Notes
 
 
+* 0.5.0
+	- IRAF Tools
 * 0.4.0
 	- Inheritance structure improved, now with abstract classes and mixins.
 	- Documentation improved wildly, now everything except AstroCache is documented.
