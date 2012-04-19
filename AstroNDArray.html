@@ -1,0 +1,215 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>7. AstroNDArray – Numpy Array Frames &mdash; AstroObject 0.5-a1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.5-a1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="AstroObject 0.5-a1 documentation" href="index.html" />
+    <link rel="next" title="8. HDU Objects and Storage AstroHDU" href="AstroHDU.html" />
+    <link rel="prev" title="6. Analytic Spectra and Interpolation AnalyticSpectra" href="AnalyticSpectra.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="AstroHDU.html" title="8. HDU Objects and Storage AstroHDU"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="AnalyticSpectra.html" title="6. Analytic Spectra and Interpolation AnalyticSpectra"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">AstroObject 0.5-a1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-AstroObject.AstroNDArray"></span><div class="section" id="astrondarray-numpy-array-frames">
+<h1>7. <tt class="xref py py-mod docutils literal"><span class="pre">AstroNDArray</span></tt> – Numpy Array Frames<a class="headerlink" href="#astrondarray-numpy-array-frames" title="Permalink to this headline">¶</a></h1>
+<p>This module implements a <strong>frame</strong> as a subclass of NDArray. This eliminates the difference between the <tt class="xref py py-attr docutils literal"><span class="pre">d</span></tt> attribute and the <tt class="xref py py-attr docutils literal"><span class="pre">f</span></tt>.</p>
+<p class="graphviz">
+<img src="_images/inheritance-d9263a52bc601a36cc8b4de9e0d4b10647e094c3.png" alt="Inheritance diagram of AstroObject.AstroNDArray.NDArrayObject, AstroObject.AstroNDArray.NDArrayFrame" usemap="#inheritance3e60dc01ce" class="inheritance"/>
+<map id="inheritance3e60dc01ce" name="inheritance3e60dc01ce">
+<area shape="rect" id="node1" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="12,153,84,178"/>
+<area shape="rect" id="node6" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="139,103,269,129"/>
+<area shape="rect" id="node8" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="157,153,251,178"/>
+<area shape="rect" id="node5" href="#AstroObject.AstroNDArray.NDArrayFrame" title="NDArrayFrame" alt="" coords="323,153,440,178"/>
+<area shape="rect" id="node11" href="AstroObject.html#AstroObject.AstroObjectBase.BaseObject" title="BaseObject" alt="" coords="494,54,589,79"/>
+<area shape="rect" id="node14" href="#AstroObject.AstroNDArray.NDArrayObject" title="NDArrayObject" alt="" coords="637,54,755,79"/>
+</map>
+</p>
+<div class="section" id="ndarrayobject-numpy-array-objects">
+<h2>7.1. <a class="reference internal" href="#AstroObject.AstroNDArray.NDArrayObject" title="AstroObject.AstroNDArray.NDArrayObject"><tt class="xref py py-class docutils literal"><span class="pre">NDArrayObject</span></tt></a> – Numpy Array objects<a class="headerlink" href="#ndarrayobject-numpy-array-objects" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="AstroObject.AstroNDArray.NDArrayObject">
+<em class="property">class </em><tt class="descclassname">AstroObject.AstroNDArray.</tt><tt class="descname">NDArrayObject</tt><big>(</big><em>dataClasses=[&lt;class 'AstroObject.AstroNDArray.NDArrayFrame'&gt;], **kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroNDArray.html#NDArrayObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>This object tracks a number of data frames. This class is a simple subclass of <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.BaseObject</span></tt> and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the <a class="reference internal" href="#AstroObject.AstroNDArray.NDArrayFrame" title="AstroObject.AstroNDArray.NDArrayFrame"><tt class="xref py py-class docutils literal"><span class="pre">NDArrayFrame</span></tt></a> class for data. As well, it accepts an array in the initializer that will be saved immediately.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="ndarrayframe-numpy-array-frames">
+<h2>7.2. <a class="reference internal" href="#AstroObject.AstroNDArray.NDArrayFrame" title="AstroObject.AstroNDArray.NDArrayFrame"><tt class="xref py py-class docutils literal"><span class="pre">NDArrayFrame</span></tt></a> – Numpy Array frames<a class="headerlink" href="#ndarrayframe-numpy-array-frames" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="AstroObject.AstroNDArray.NDArrayFrame">
+<em class="property">class </em><tt class="descclassname">AstroObject.AstroNDArray.</tt><tt class="descname">NDArrayFrame</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroNDArray.html#NDArrayFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayFrame" title="Permalink to this definition">¶</a></dt>
+<dd><p>A frame based on np.ndarray</p>
+<dl class="method">
+<dt id="AstroObject.AstroNDArray.NDArrayFrame.__array_finalize__">
+<tt class="descname">__array_finalize__</tt><big>(</big><em>obj</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroNDArray.html#NDArrayFrame.__array_finalize__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayFrame.__array_finalize__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finalize this array&#8217;s initialization</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroNDArray.NDArrayFrame.__setlabel__">
+<tt class="descname">__setlabel__</tt><big>(</big><em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroNDArray.html#NDArrayFrame.__setlabel__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayFrame.__setlabel__" title="Permalink to this definition">¶</a></dt>
+<dd><p>One use function to set the label</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroNDArray.NDArrayFrame.__call__">
+<tt class="descname">__call__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroNDArray.html#NDArrayFrame.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayFrame.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simply returns this data item.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroNDArray.NDArrayFrame.__str__">
+<tt class="descname">__str__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroNDArray.html#NDArrayFrame.__str__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayFrame.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>String representation of this object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroNDArray.NDArrayFrame.__valid__">
+<tt class="descname">__valid__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroNDArray.html#NDArrayFrame.__valid__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayFrame.__valid__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check this item for validity</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroNDArray.NDArrayFrame.__hdu__">
+<tt class="descname">__hdu__</tt><big>(</big><em>primary=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroNDArray.html#NDArrayFrame.__hdu__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayFrame.__hdu__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an HDU for this object</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroNDArray.NDArrayFrame.__show__">
+<tt class="descname">__show__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroNDArray.html#NDArrayFrame.__show__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayFrame.__show__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the image in this frame using matplotlib&#8217;s <tt class="docutils literal"><span class="pre">imshow</span></tt> function. The color map is set to an inverted binary, as is often useful when looking at astronomical images. The figure object is returned, and can be manipulated further.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This function serves as a quick view of the current state of the frame. It is not intended for robust plotting support, as that can be easily accomplished using <tt class="docutils literal"><span class="pre">matplotlib</span></tt>. Rather, it attempts to do the minimum possible to create an acceptable image for immediate inspection.</p>
+</div>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="AstroObject.AstroNDArray.NDArrayFrame.__save__">
+<em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>data</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroNDArray.html#NDArrayFrame.__save__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayFrame.__save__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save some data to this class</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="AstroObject.AstroNDArray.NDArrayFrame.__read__">
+<em class="property">classmethod </em><tt class="descname">__read__</tt><big>(</big><em>HDU</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroNDArray.html#NDArrayFrame.__read__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayFrame.__read__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read some data for this class from a HDU</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">7. <tt class="docutils literal"><span class="pre">AstroNDArray</span></tt> – Numpy Array Frames</a><ul>
+<li><a class="reference internal" href="#ndarrayobject-numpy-array-objects">7.1. <tt class="docutils literal"><span class="pre">NDArrayObject</span></tt> – Numpy Array objects</a></li>
+<li><a class="reference internal" href="#ndarrayframe-numpy-array-frames">7.2. <tt class="docutils literal"><span class="pre">NDArrayFrame</span></tt> – Numpy Array frames</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="AnalyticSpectra.html"
+                        title="previous chapter">6. Analytic Spectra and Interpolation <tt class="docutils literal docutils literal"><span class="pre">AnalyticSpectra</span></tt></a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="AstroHDU.html"
+                        title="next chapter">8. HDU Objects and Storage <tt class="docutils literal docutils literal"><span class="pre">AstroHDU</span></tt></a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/AstroNDArray.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="AstroHDU.html" title="8. HDU Objects and Storage AstroHDU"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="AnalyticSpectra.html" title="6. Analytic Spectra and Interpolation AnalyticSpectra"
+             >previous</a> |</li>
+        <li><a href="index.html">AstroObject 0.5-a1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Alexander Rudy.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

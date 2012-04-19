@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>1. Introduction to AstroObject &mdash; AstroObject 0.4 documentation</title>
+    <title>1. Introduction to AstroObject &mdash; AstroObject 0.5-a1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4',
+        VERSION:     '0.5-a1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.4 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.5-a1 documentation" href="index.html" />
     <link rel="next" title="2. Installation" href="installation.html" />
     <link rel="prev" title="Welcome to AstroObject!" href="index.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="index.html" title="Welcome to AstroObject!"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.4 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5-a1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -68,7 +68,7 @@
 <h2>1.1. Frames<a class="headerlink" href="#frames" title="Permalink to this headline">¶</a></h2>
 <p>A <strong>frame</strong> is a single instance of data. It doesn&#8217;t have to be image data, it could instead be spectral data, or any other data you could think of. The point is that a <strong>frame</strong> is just one instance of such data. Each <strong>frame</strong> in <tt class="xref py py-mod docutils literal"><span class="pre">AstroObject</span></tt> has a label, and each <strong>frame</strong> can carry its own data as well as its own metadata.</p>
 <p>The format of data in a <strong>frame</strong> depends on what type of <strong>frame</strong> you want to use. For the simple <a class="reference internal" href="AstroImage.html#module-AstroObject.AstroImage" title="AstroObject.AstroImage"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroImage</span></tt></a> implementation, a <strong>frame</strong> is a two-dimensional array of numpy data (along with a stack of other meta-data that it gets to carry around). You should really only write to a <strong>frame</strong> once (although sometimes you may need a place to put an image temporarily, and then wish to over-write it or delete it later... that is perfectly fine), and then that <strong>frame</strong> will preserve the image data for you.</p>
-<p>The <tt class="xref py py-mod docutils literal"><span class="pre">AstroObject</span></tt> module comes with a variety of <strong>frames</strong>, and it is easy to create your own. The required functions for each <strong>frame</strong> are documented in <a class="reference internal" href="AstroObject.html#astroobjectapi"><em>AstroObject API</em></a>, and a template class is provided in <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="AstroObject.AstroObjectBase.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.BaseFrame</span></tt></a>. However, if you want to work with images, you can use <strong>frames</strong> from <a class="reference internal" href="AstroImage.html#module-AstroObject.AstroImage" title="AstroObject.AstroImage"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroImage</span></tt></a>, and if you want to work with spectra, you can use <strong>frames</strong> from <a class="reference internal" href="AstroSpectra.html#module-AstroObject.AstroSpectra" title="AstroObject.AstroSpectra"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSpectra</span></tt></a> and <a class="reference internal" href="AnalyticSpectra.html#module-AstroObject.AnalyticSpectra" title="AstroObject.AnalyticSpectra"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AnalyticSpectra</span></tt></a>.</p>
+<p>The <tt class="xref py py-mod docutils literal"><span class="pre">AstroObject</span></tt> module comes with a variety of <strong>frames</strong>, and it is easy to create your own. The required functions for each <strong>frame</strong> are documented in <a class="reference internal" href="AstroObject.html#astroobjectapi"><em>AstroObjectBase – AstroObject API</em></a>, and a template class is provided in <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="AstroObject.AstroObjectBase.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.BaseFrame</span></tt></a>. However, if you want to work with images, you can use <strong>frames</strong> from <a class="reference internal" href="AstroImage.html#module-AstroObject.AstroImage" title="AstroObject.AstroImage"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroImage</span></tt></a>, and if you want to work with spectra, you can use <strong>frames</strong> from <a class="reference internal" href="AstroSpectra.html#module-AstroObject.AstroSpectra" title="AstroObject.AstroSpectra"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSpectra</span></tt></a> and <a class="reference internal" href="AnalyticSpectra.html#module-AstroObject.AnalyticSpectra" title="AstroObject.AnalyticSpectra"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AnalyticSpectra</span></tt></a>.</p>
 </div>
 <div class="section" id="object">
 <h2>1.2. Object<a class="headerlink" href="#object" title="Permalink to this headline">¶</a></h2>
@@ -96,7 +96,7 @@
 </div>
 <div class="section" id="library-developers">
 <h2>1.5. Library Developers<a class="headerlink" href="#library-developers" title="Permalink to this headline">¶</a></h2>
-<p>This module is designed to be expanded by users. The <a class="reference internal" href="AstroObject.html#module-AstroObject.AstroObjectBase" title="AstroObject.AstroObjectBase"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroObjectBase</span></tt></a> module provides basic abstract classes with source code which can be used to create sub-classes with specific functionality (see <a class="reference internal" href="AstroObject.html#astroobjectapi"><em>AstroObject API</em></a>). By implementing their own <tt class="docutils literal"><span class="pre">frame</span></tt>, users can create Objects (using the <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseObject" title="AstroObject.AstroObjectBase.BaseObject"><tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.BaseObject</span></tt></a> class, and the keyword <tt class="docutils literal"><span class="pre">dataClasses</span></tt>) to make their own data reduction systems.</p>
+<p>This module is designed to be expanded by users. The <a class="reference internal" href="AstroObject.html#module-AstroObject.AstroObjectBase" title="AstroObject.AstroObjectBase"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroObjectBase</span></tt></a> module provides basic abstract classes with source code which can be used to create sub-classes with specific functionality (see <a class="reference internal" href="AstroObject.html#astroobjectapi"><em>AstroObjectBase – AstroObject API</em></a>). By implementing their own <tt class="docutils literal"><span class="pre">frame</span></tt>, users can create Objects (using the <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseObject" title="AstroObject.AstroObjectBase.BaseObject"><tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.BaseObject</span></tt></a> class, and the keyword <tt class="docutils literal"><span class="pre">dataClasses</span></tt>) to make their own data reduction systems.</p>
 </div>
 <div class="section" id="example">
 <h2>1.6. Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
@@ -180,7 +180,7 @@
         <li class="right" >
           <a href="index.html" title="Welcome to AstroObject!"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.4 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5-a1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

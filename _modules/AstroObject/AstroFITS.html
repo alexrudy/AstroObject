@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObject.AstroFITS &mdash; AstroObject 0.4 documentation</title>
+    <title>AstroObject.AstroFITS &mdash; AstroObject 0.5-a1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.4',
+        VERSION:     '0.5-a1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.4 documentation" href="../../index.html" />
+    <link rel="top" title="AstroObject 0.5-a1 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.4 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.5-a1 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -56,7 +56,7 @@
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2012-04-17.</span>
 <span class="c">#  Copyright 2012 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.4.0</span>
+<span class="c">#  Version 0.5-a1</span>
 <span class="c"># </span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Empty FITS HDUs: :mod:`AstroFITS`</span>
@@ -121,7 +121,7 @@
 <span class="c"># Submodules from this system</span>
 <span class="kn">from</span> <span class="nn">Utilities</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;BaseObject&quot;</span><span class="p">,</span><span class="s">&quot;BaseFrame&quot;</span><span class="p">,</span><span class="s">&quot;AnalyticMixin&quot;</span><span class="p">,</span><span class="s">&quot;NoHDUMixin&quot;</span><span class="p">,</span><span class="s">&quot;HDUHeaderMixin&quot;</span><span class="p">,</span><span class="s">&quot;NoDataMixin&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;FITSFrame&quot;</span><span class="p">,</span><span class="s">&quot;FITSObject&quot;</span><span class="p">]</span>
 
 <span class="n">__version__</span> <span class="o">=</span> <span class="n">getVersion</span><span class="p">()</span>
 
@@ -142,8 +142,6 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">FITSFrame</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     
-   
-        
 <div class="viewcode-block" id="FITSFrame.__hdu__"><a class="viewcode-back" href="../../AstroFITS.html#AstroObject.AstroFITS.FITSFrame.__hdu__">[docs]</a>    <span class="k">def</span> <span class="nf">__hdu__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">primary</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.</span>
 <span class="sd">        </span>
@@ -156,9 +154,6 @@
             <span class="n">HDU</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">ImageHDU</span><span class="p">()</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Generating an Empty </span><span class="si">%s</span><span class="s">HDU&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s">&quot;primary &quot;</span> <span class="k">if</span> <span class="n">primary</span> <span class="k">else</span> <span class="s">&quot;&quot;</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">HDU</span>
-    
-        
-    
     </div>
     <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="FITSFrame.__read__"><a class="viewcode-back" href="../../AstroFITS.html#AstroObject.AstroFITS.FITSFrame.__read__">[docs]</a>    <span class="k">def</span> <span class="nf">__read__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="n">HDU</span><span class="p">,</span><span class="n">label</span><span class="p">):</span>
@@ -169,7 +164,7 @@
 <span class="sd">        :raises: :exc:`NotImplementedError` when this data can&#39;t be saved.</span>
 <span class="sd">        :returns: :class:`FITSFrame`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">HDU</span><span class="p">,</span><span class="n">pf</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">HDU</span><span class="p">,(</span><span class="n">pf</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">,</span><span class="n">pf</span><span class="o">.</span><span class="n">ImageHDU</span><span class="p">)):</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Must save a </span><span class="si">%s</span><span class="s"> to a </span><span class="si">%s</span><span class="s">, found </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pf</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="n">HDU</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">HDU</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
@@ -217,7 +212,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.4 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.5-a1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

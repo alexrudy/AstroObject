@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>8. Simulator AstroSimulator &mdash; AstroObject 0.4 documentation</title>
+    <title>11. Simulator AstroSimulator &mdash; AstroObject 0.5-a1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4',
+        VERSION:     '0.5-a1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,9 +25,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.4 documentation" href="index.html" />
-    <link rel="next" title="9. YAML-based Configuration Dictionaries: AstroConfig" href="AstroConfig.html" />
-    <link rel="prev" title="7. AstroObject API" href="AstroObject.html" /> 
+    <link rel="top" title="AstroObject 0.5-a1 documentation" href="index.html" />
+    <link rel="next" title="12. YAML-based Configuration Dictionaries: AstroConfig" href="AstroConfig.html" />
+    <link rel="prev" title="10. AstroObjectBase – AstroObject API" href="AstroObject.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,12 +40,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="AstroConfig.html" title="9. YAML-based Configuration Dictionaries: AstroConfig"
+          <a href="AstroConfig.html" title="12. YAML-based Configuration Dictionaries: AstroConfig"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="AstroObject.html" title="7. AstroObject API"
+          <a href="AstroObject.html" title="10. AstroObjectBase – AstroObject API"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.4 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5-a1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -55,11 +55,11 @@
           <div class="body">
             
   <span class="target" id="module-AstroObject.AstroSimulator"></span><div class="section" id="simulator-astrosimulator">
-<h1>8. Simulator <tt class="xref py py-mod docutils literal"><span class="pre">AstroSimulator</span></tt><a class="headerlink" href="#simulator-astrosimulator" title="Permalink to this headline">¶</a></h1>
+<h1>11. Simulator <tt class="xref py py-mod docutils literal"><span class="pre">AstroSimulator</span></tt><a class="headerlink" href="#simulator-astrosimulator" title="Permalink to this headline">¶</a></h1>
 <p>The Simulator is designed to provide a high level, command-line useful interface to large computational tasks. As the name suggests, Simulators often do a lot of programming work, and do so across many distinct &#8220;stages&#8221;, whcih can be configured in any way the user desires. All of the abilities in this program are simply object abstraction techniques to provide a complex program with a command line interface and better control and reporting on the activities carreid out to successfully complete the program. It allows for the configuration of simple test cases and &#8220;macros&#8221; from within the program, eliminating the need to provide small wrapper scripts and test handlers.</p>
 <p>An example (simple) program using the simulator can be found in <a class="reference internal" href="SimulatorExample.html#simulatorexample"><em>An Example Simulator</em></a></p>
 <div class="section" id="simulator-command-line-interface">
-<span id="simulator-cli"></span><h2>8.1. <strong class="program">Simulator</strong> Command Line Interface<a class="headerlink" href="#simulator-command-line-interface" title="Permalink to this headline">¶</a></h2>
+<span id="simulator-cli"></span><h2>11.1. <strong class="program">Simulator</strong> Command Line Interface<a class="headerlink" href="#simulator-command-line-interface" title="Permalink to this headline">¶</a></h2>
 <p>The master simulator program is a command-line interface to the <a class="reference internal" href="#AstroObject.AstroSimulator.Simulator.run" title="AstroObject.AstroSimulator.Simulator.run"><tt class="xref py py-meth docutils literal"><span class="pre">AstroObject.AstroSimulator.Simulator.run()</span></tt></a> method. Below are the major command line components.</p>
 <p>Usage Statement</p>
 <div class="highlight-python"><pre>Simulator [ options ][ configuration ] {stages}</pre>
@@ -211,7 +211,7 @@ $ Simulator *none</pre>
 
 </div>
 <div class="section" id="simulator-configuration-files">
-<span id="configuration"></span><h2>8.2. <strong class="program">Simulator</strong> Configuration Files<a class="headerlink" href="#simulator-configuration-files" title="Permalink to this headline">¶</a></h2>
+<span id="configuration"></span><h2>11.2. <strong class="program">Simulator</strong> Configuration Files<a class="headerlink" href="#simulator-configuration-files" title="Permalink to this headline">¶</a></h2>
 <p><strong class="program">Simulator</strong> configuration files are YAML files which contain a dictionary structure. All values in the YAML files are basic yaml, and contain no python-specific directives. To find out what the default or current configuration is, use the <a class="reference internal" href="#cmdoption-Simulator--dump"><em class="xref std std-option">--dump</em></a> command. The file produced from this will contain a YAML structure for the configuration in use when the system started up. The various directives in the configuration file are described below.</p>
 <ul>
 <li><dl class="first docutils">
@@ -248,7 +248,7 @@ $ Simulator *none</pre>
 <p>A simple configuration file can be found in the <a class="reference internal" href="SimulatorExample.html#simulatorexample"><em>An Example Simulator</em></a>.</p>
 </div>
 <div class="section" id="api-methods">
-<span id="simulator-api"></span><h2>8.3. API Methods<a class="headerlink" href="#api-methods" title="Permalink to this headline">¶</a></h2>
+<span id="simulator-api"></span><h2>11.3. API Methods<a class="headerlink" href="#api-methods" title="Permalink to this headline">¶</a></h2>
 <p>The following methods handle the external-API for the simulator. Normally, when you write a simulator, you will subclass the <a class="reference internal" href="#AstroObject.AstroSimulator.Simulator" title="AstroObject.AstroSimulator.Simulator"><tt class="xref py py-class docutils literal"><span class="pre">Simulator</span></tt></a>, and then use the methods here to control the behavior of the simulator. At a minimum, a simulator must register stages, probably using <a class="reference internal" href="#AstroObject.AstroSimulator.Simulator.collect" title="AstroObject.AstroSimulator.Simulator.collect"><tt class="xref py py-meth docutils literal"><span class="pre">Simulator.collect()</span></tt></a> or <a class="reference internal" href="#AstroObject.AstroSimulator.Simulator.registerStage" title="AstroObject.AstroSimulator.Simulator.registerStage"><tt class="xref py py-meth docutils literal"><span class="pre">Simulator.registerStage()</span></tt></a>, and then call the <a class="reference internal" href="#AstroObject.AstroSimulator.Simulator.run" title="AstroObject.AstroSimulator.Simulator.run"><tt class="xref py py-meth docutils literal"><span class="pre">Simulator.run()</span></tt></a> function to process the command line interface and start the simulator.</p>
 <dl class="class">
 <dt id="AstroObject.AstroSimulator.Simulator">
@@ -464,7 +464,7 @@ $ Simulator -test +test</pre>
 
 </div>
 <div class="section" id="decorators">
-<span id="simulator-decorators"></span><h2>8.4. Decorators<a class="headerlink" href="#decorators" title="Permalink to this headline">¶</a></h2>
+<span id="simulator-decorators"></span><h2>11.4. Decorators<a class="headerlink" href="#decorators" title="Permalink to this headline">¶</a></h2>
 <p>The following decorators can be used (in conjuction with <a class="reference internal" href="#AstroObject.AstroSimulator.Simulator.collect" title="AstroObject.AstroSimulator.Simulator.collect"><tt class="xref py py-meth docutils literal"><span class="pre">AstroObject.AstroSimulator.Simulator.collect()</span></tt></a>) to register and configure simulator stages:</p>
 <dl class="function">
 <dt id="AstroObject.AstroSimulator.collect">
@@ -516,7 +516,7 @@ $ Simulator -test +test</pre>
 
 </div>
 <div class="section" id="private-methods-and-classes">
-<h2>8.5. Private Methods and Classes<a class="headerlink" href="#private-methods-and-classes" title="Permalink to this headline">¶</a></h2>
+<h2>11.5. Private Methods and Classes<a class="headerlink" href="#private-methods-and-classes" title="Permalink to this headline">¶</a></h2>
 <p>These methods are used to implment the public-facing API. They are documented here to explain their use in development.</p>
 <p class="graphviz">
 <img src="_images/inheritance-12a013d94184f1fc886f43b537383ee36d03d91d.png" alt="Inheritance diagram of AstroObject.AstroSimulator.Simulator, AstroObject.AstroSimulator.Stage" usemap="#inheritance344162e111" class="inheritance"/>
@@ -694,22 +694,22 @@ $ Simulator -test +test</pre>
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">8. Simulator <tt class="docutils literal"><span class="pre">AstroSimulator</span></tt></a><ul>
-<li><a class="reference internal" href="#simulator-command-line-interface">8.1. <strong class="program">Simulator</strong> Command Line Interface</a></li>
-<li><a class="reference internal" href="#simulator-configuration-files">8.2. <strong class="program">Simulator</strong> Configuration Files</a></li>
-<li><a class="reference internal" href="#api-methods">8.3. API Methods</a></li>
-<li><a class="reference internal" href="#decorators">8.4. Decorators</a></li>
-<li><a class="reference internal" href="#private-methods-and-classes">8.5. Private Methods and Classes</a></li>
+<li><a class="reference internal" href="#">11. Simulator <tt class="docutils literal"><span class="pre">AstroSimulator</span></tt></a><ul>
+<li><a class="reference internal" href="#simulator-command-line-interface">11.1. <strong class="program">Simulator</strong> Command Line Interface</a></li>
+<li><a class="reference internal" href="#simulator-configuration-files">11.2. <strong class="program">Simulator</strong> Configuration Files</a></li>
+<li><a class="reference internal" href="#api-methods">11.3. API Methods</a></li>
+<li><a class="reference internal" href="#decorators">11.4. Decorators</a></li>
+<li><a class="reference internal" href="#private-methods-and-classes">11.5. Private Methods and Classes</a></li>
 </ul>
 </li>
 </ul>
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="AstroObject.html"
-                        title="previous chapter">7. AstroObject API</a></p>
+                        title="previous chapter">10. <tt class="docutils literal docutils literal"><span class="pre">AstroObjectBase</span></tt> – AstroObject API</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="AstroConfig.html"
-                        title="next chapter">9. YAML-based Configuration Dictionaries: <tt class="docutils literal docutils literal docutils literal"><span class="pre">AstroConfig</span></tt></a></p>
+                        title="next chapter">12. YAML-based Configuration Dictionaries: <tt class="docutils literal docutils literal docutils literal"><span class="pre">AstroConfig</span></tt></a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/AstroSimulator.txt"
@@ -742,12 +742,12 @@ $ Simulator -test +test</pre>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="AstroConfig.html" title="9. YAML-based Configuration Dictionaries: AstroConfig"
+          <a href="AstroConfig.html" title="12. YAML-based Configuration Dictionaries: AstroConfig"
              >next</a> |</li>
         <li class="right" >
-          <a href="AstroObject.html" title="7. AstroObject API"
+          <a href="AstroObject.html" title="10. AstroObjectBase – AstroObject API"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.4 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5-a1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

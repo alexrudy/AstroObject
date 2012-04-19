@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObject.AnalyticSpectra &mdash; AstroObject 0.4 documentation</title>
+    <title>AstroObject.AnalyticSpectra &mdash; AstroObject 0.5-a1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.4',
+        VERSION:     '0.5-a1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.4 documentation" href="../../index.html" />
+    <link rel="top" title="AstroObject 0.5-a1 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.4 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.5-a1 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -56,7 +56,7 @@
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2011-10-12.</span>
 <span class="c">#  Copyright 2011 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.4.0</span>
+<span class="c">#  Version 0.5-a1</span>
 <span class="c"># </span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Analytic Spectra and Interpolation :mod:`AnalyticSpectra`</span>
@@ -207,7 +207,14 @@
 <div class="viewcode-block" id="AnalyticSpectrum"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.AnalyticSpectrum">[docs]</a><span class="k">class</span> <span class="nc">AnalyticSpectrum</span><span class="p">(</span><span class="n">AstroObjectBase</span><span class="o">.</span><span class="n">BaseFrame</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A functional spectrum object for spectrum generation. This is an abstract class which implements spectrum arithmetic. Spectrum arithmetic has a delayed implementation, whereby it is applied to the spectrum only once the spectrum is called for data, allowing spectra to produce data which matches the requested wavelengths (and resolution, if applicable).</span>
 <span class="sd">    </span>
-<span class="sd">    The Analytic spectrum can be provided with a set of wavelengths upon intialization. The `wavelengths` keyword will be stored and used when this spectrum is later called by the system. The `units` keyword is currently unused.&quot;&quot;&quot;</span>
+<span class="sd">    The Analytic spectrum can be provided with a set of wavelengths upon intialization. The `wavelengths` keyword will be stored and used when this spectrum is later called by the system. The `units` keyword is currently unused.</span>
+<span class="sd">    </span>
+<span class="sd">    .. inheritance-diagram::</span>
+<span class="sd">        AstroObject.AnalyticSpectra.AnalyticSpectrum</span>
+<span class="sd">        :parts: 1</span>
+<span class="sd">        </span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">units</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">AnalyticSpectrum</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wavelengths</span> <span class="o">=</span> <span class="n">wavelengths</span>
@@ -256,7 +263,14 @@
 
 </div>
 <div class="viewcode-block" id="CompositeSpectra"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.CompositeSpectra">[docs]</a><span class="k">class</span> <span class="nc">CompositeSpectra</span><span class="p">(</span><span class="n">AstroObjectBase</span><span class="o">.</span><span class="n">AnalyticMixin</span><span class="p">,</span><span class="n">AnalyticSpectrum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Binary composition of two functional spectra. This object should not be initialized by the user. Instead, this class is returned when you combine two spectra of different types, or combine a spectra with any other type. As such, do not initialze composite spectra idependently. See the :meth:`__call__` function for documentation of how to use this type of object.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Binary composition of two functional spectra. This object should not be initialized by the user. Instead, this class is returned when you combine two spectra of different types, or combine a spectra with any other type. As such, do not initialze composite spectra idependently. See the :meth:`__call__` function for documentation of how to use this type of object.</span>
+<span class="sd">    </span>
+<span class="sd">    .. inheritance-diagram::</span>
+<span class="sd">        AstroObject.AnalyticSpectra.CompositeSpectra</span>
+<span class="sd">        :parts: 1</span>
+<span class="sd">        </span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">ops</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;sub&#39;</span><span class="p">:</span><span class="s">&quot;-&quot;</span><span class="p">,</span><span class="s">&#39;add&#39;</span><span class="p">:</span><span class="s">&quot;+&quot;</span><span class="p">,</span><span class="s">&#39;mul&#39;</span><span class="p">:</span><span class="s">&quot;*&quot;</span><span class="p">,</span><span class="s">&#39;div&#39;</span><span class="p">:</span><span class="s">&quot;/&quot;</span><span class="p">}</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">partA</span><span class="p">,</span> <span class="n">partB</span><span class="p">,</span> <span class="n">operation</span><span class="p">):</span>
         <span class="n">label</span> <span class="o">=</span> <span class="s">&quot;(&quot;</span>
@@ -264,11 +278,17 @@
         <span class="n">label</span> <span class="o">+=</span> <span class="s">&quot;) &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">ops</span><span class="p">[</span><span class="n">operation</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot; (&quot;</span>
         <span class="n">label</span> <span class="o">+=</span> <span class="n">partB</span><span class="o">.</span><span class="n">label</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">partB</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">partB</span><span class="p">)</span>
         <span class="n">label</span> <span class="o">+=</span> <span class="s">&quot;)&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">operation</span> <span class="o">=</span> <span class="n">operation</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">CompositeSpectra</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="n">partA</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">=</span> <span class="n">partB</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">operation</span> <span class="o">=</span> <span class="n">operation</span>
         
+    <span class="k">def</span> <span class="nf">__valid__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check that the operation here is included in the system.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">operation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ops</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CompositeSpectra</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__valid__</span><span class="p">()</span>
+        
+    
     
 <div class="viewcode-block" id="CompositeSpectra.__call__"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.CompositeSpectra.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calls the composite function components. The keyword arguments are passed on to calls to spectra contained within this composite spectra. All spectra varieties should accept arbitrary keywords, so this argument is used to pass keywords to spectra which require specific alternatives. Pass in `wavelengths` to use the given wavelengths. If none are passed in, it will look for object-level saved wavelengths, which you can specify simply by setting the `self._wavelengths` parameter on the object.&quot;&quot;&quot;</span>
@@ -730,7 +750,7 @@
                 
         <span class="k">if</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">u&quot;λ Bins must increase monotonically. [wl + </span><span class="si">%g</span><span class="s">]&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">wavelengths</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">wavelengths</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-            <span class="n">arrays</span> <span class="o">=</span> <span class="p">{</span><span class="s">u&quot;λ Binsu&quot;</span> <span class="p">:</span> <span class="n">bins</span><span class="p">,</span> <span class="s">u&quot;Requested λ&quot;</span> <span class="p">:</span> <span class="n">wavelengths</span> <span class="p">,</span><span class="s">u&quot;Requested Δλ&quot;</span><span class="p">:</span> <span class="n">wavelengths</span><span class="p">,</span> <span class="s">u&quot;Bin Δλ&quot;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">bins</span><span class="p">),</span><span class="s">u&quot;λ Offset&quot;</span> <span class="p">:</span> <span class="n">offset</span> <span class="p">}</span>
+            <span class="n">arrays</span> <span class="o">=</span> <span class="p">{</span><span class="s">u&quot;λ Bins&quot;</span> <span class="p">:</span> <span class="n">bins</span><span class="p">,</span> <span class="s">u&quot;Requested λ&quot;</span> <span class="p">:</span> <span class="n">wavelengths</span> <span class="p">,</span><span class="s">u&quot;Requested Δλ&quot;</span><span class="p">:</span> <span class="n">wavelengths</span><span class="p">,</span> <span class="s">u&quot;Bin Δλ&quot;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">bins</span><span class="p">),</span><span class="s">u&quot;λ Offset&quot;</span> <span class="p">:</span> <span class="n">offset</span> <span class="p">}</span>
             <span class="n">error</span> <span class="o">=</span> <span class="ne">ValueError</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">bincount</span><span class="p">,</span><span class="n">wavelengths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">oldwl</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">wavelengths</span><span class="p">)</span>
@@ -796,7 +816,7 @@
         
         <span class="c"># This is our sanity check. Everything we calculated should be a number. If it comes out as nan, then we have done something wrong.</span>
         <span class="c"># In that case, we raise an error after printing information about the whole calculation.</span>
-        <span class="n">arrays</span> <span class="o">=</span> <span class="p">{</span> <span class="s">u&quot;Requested lower bound λu&quot;</span> <span class="p">:</span> <span class="n">wlStart</span> <span class="p">,</span> <span class="s">u&quot;Requested upper bound λ&quot;</span> <span class="p">:</span> <span class="n">wlEnd</span> <span class="p">}</span>
+        <span class="n">arrays</span> <span class="o">=</span> <span class="p">{</span> <span class="s">u&quot;Requested lower bound λ&quot;</span> <span class="p">:</span> <span class="n">wlStart</span> <span class="p">,</span> <span class="s">u&quot;Requested upper bound λ&quot;</span> <span class="p">:</span> <span class="n">wlEnd</span> <span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_postsanity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">flux</span><span class="p">,</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">flux</span><span class="p">,</span><span class="o">**</span><span class="n">arrays</span><span class="p">)</span>
 
         <span class="c"># We do print fun information about the final calculation regardless.</span>
@@ -878,6 +898,12 @@
 <span class="sd">    </span>
 <span class="sd">    Passing the name of any member function in this class to the `method` parameter will change the interpolation/method used for this spectrum.</span>
 <span class="sd">    </span>
+<span class="sd">    .. inheritance-diagram::</span>
+<span class="sd">        AstroObject.AnalyticSpectra.InterpolatedSpectrum</span>
+<span class="sd">        :parts: 1</span>
+<span class="sd">        </span>
+<span class="sd">    </span>
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>    
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
@@ -895,7 +921,14 @@
     
 </div></div>
 <div class="viewcode-block" id="Resolver"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.Resolver">[docs]</a><span class="k">class</span> <span class="nc">Resolver</span><span class="p">(</span><span class="n">InterpolatedSpectrum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;This spectrum performs a unitary operation on any InterpolatedSpectrum-type-object. The operation (specified by the `method` keyword) is performed after the contained spectrum is called. The included spectrum is called immediately and then discarded. As such, wavelength and resolution keywords should be provided when appropriate to resolve the spectrum immediately. This operation does not save the old data state. All methods in :class:`InterpolatedSpectrum` are available.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;This spectrum performs a unitary operation on any InterpolatedSpectrum-type-object. The operation (specified by the `method` keyword) is performed after the contained spectrum is called. The included spectrum is called immediately and then discarded. As such, wavelength and resolution keywords should be provided when appropriate to resolve the spectrum immediately. This operation does not save the old data state. All methods in :class:`InterpolatedSpectrum` are available.</span>
+<span class="sd">    </span>
+<span class="sd">    .. inheritance-diagram::</span>
+<span class="sd">        AstroObject.AnalyticSpectra.Resolver</span>
+<span class="sd">        :parts: 1</span>
+<span class="sd">        </span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectrum</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">new_method</span><span class="o">=</span><span class="s">&#39;interpolate&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">spectrum</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">label</span><span class="p">:</span>
@@ -904,7 +937,14 @@
         
         </div>
 <div class="viewcode-block" id="UnitarySpectrum"><a class="viewcode-back" href="../../AnalyticSpectra.html#AstroObject.AnalyticSpectra.UnitarySpectrum">[docs]</a><span class="k">class</span> <span class="nc">UnitarySpectrum</span><span class="p">(</span><span class="n">InterpolatedSpectrumBase</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;This spectrum performs a unitary operation on any InterpolatedSpectrum-type-object. The operation (specified by the `method` keyword) is performed after the contained spectrum is called. All methods in :class:`InterpolatedSpectrum` are available.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;This spectrum performs a unitary operation on any InterpolatedSpectrum-type-object. The operation (specified by the `method` keyword) is performed after the contained spectrum is called. All methods in :class:`InterpolatedSpectrum` are available.</span>
+<span class="sd">    </span>
+<span class="sd">    .. inheritance-diagram::</span>
+<span class="sd">        AstroObject.AnalyticSpectra.UnitarySpectrum</span>
+<span class="sd">        :parts: 1</span>
+<span class="sd">        </span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectrum</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s">&#39;interpolate&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">label</span><span class="p">:</span>
             <span class="n">label</span> <span class="o">=</span>  <span class="s">u&quot;[&quot;</span> <span class="o">+</span> <span class="n">spectrum</span><span class="o">.</span><span class="n">label</span> <span class="o">+</span> <span class="s">&quot;]&quot;</span>
@@ -956,7 +996,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.4 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.5-a1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

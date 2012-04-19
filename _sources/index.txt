@@ -26,6 +26,9 @@ About AstroObject
     AstroImage
     AstroSpectra
     AnalyticSpectra
+    AstroNDArray
+    AstroHDU
+    iraftools
     AstroObject
     AstroSimulator
     AstroConfig
@@ -39,6 +42,12 @@ About AstroObject
     :hidden:
     
     SimulatorExample
+
+Testing and Development Features
+================================
+
+.. toctree::
+	AstroTest
 
 Indices and tables
 ==================

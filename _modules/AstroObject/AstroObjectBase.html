@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObject.AstroObjectBase &mdash; AstroObject 0.4 documentation</title>
+    <title>AstroObject.AstroObjectBase &mdash; AstroObject 0.5-a1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.4',
+        VERSION:     '0.5-a1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.4 documentation" href="../../index.html" />
+    <link rel="top" title="AstroObject 0.5-a1 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.4 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.5-a1 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -56,13 +56,13 @@
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2011-10-12.</span>
 <span class="c">#  Copyright 2011 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.4.0</span>
+<span class="c">#  Version 0.5-a1</span>
 <span class="c"># </span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">u&quot;&quot;&quot;</span>
 <span class="sd">.. _AstroObjectAPI:</span>
 
-<span class="sd">AstroObject API</span>
-<span class="sd">===============</span>
+<span class="sd">:mod:`AstroObjectBase` – AstroObject API</span>
+<span class="sd">========================================</span>
 
 <span class="sd">The API is the foundation of the :mod:`AstroObject` module. When creating new types of data, you will want to create frames for that type of data. The functions shown below are the functions which must be present in every data frame type, in order to maintain compatibility with enclosing Objects. If your class conforms to this API, then it can easily be used as data for :class:`AstroObjectBase.BaseObject`. </span>
 
@@ -86,22 +86,24 @@
 <span class="s">----------------</span>
 
 <span class="s">.. inheritance-diagram::</span>
-<span class="s">	AstroObject.AstroFITS.FITSFrame</span>
-<span class="s">	AstroObject.AstroFITS.FITSObject</span>
-<span class="s">	AstroObject.AstroImage.ImageFrame</span>
-<span class="s">	AstroObject.AstroImage.ImageObject</span>
-<span class="s">	AstroObject.AstroSpectra.SpectraFrame</span>
-<span class="s">	AstroObject.AstroSpectra.SpectraObject</span>
-<span class="s">	AstroObject.AstroHDU.HDUFrame</span>
-<span class="s">	AstroObject.AstroHDU.HDUObject</span>
+<span class="s">    AstroObject.AstroFITS.FITSFrame</span>
+<span class="s">    AstroObject.AstroFITS.FITSObject</span>
+<span class="s">    AstroObject.AstroImage.ImageFrame</span>
+<span class="s">    AstroObject.AstroImage.ImageObject</span>
+<span class="s">    AstroObject.AstroSpectra.SpectraFrame</span>
+<span class="s">    AstroObject.AstroSpectra.SpectraObject</span>
+<span class="s">    AstroObject.AstroHDU.HDUFrame</span>
+<span class="s">    AstroObject.AstroHDU.HDUObject</span>
+<span class="s">    AstroObject.AstroNDArray.NDArrayFrame</span>
+<span class="s">    AstroObject.AstroNDArray.NDArrayObject</span>
 <span class="s">    AstroObject.AnalyticSpectra.AnalyticSpectrum</span>
 <span class="s">    AstroObject.AnalyticSpectra.CompositeSpectra</span>
 <span class="s">    AstroObject.AnalyticSpectra.InterpolatedSpectrum</span>
 <span class="s">    AstroObject.AnalyticSpectra.Resolver</span>
 <span class="s">    AstroObject.AnalyticSpectra.UnitarySpectrum</span>
-<span class="s">	AstroObject.AnalyticSpectra.FlatSpectrum</span>
-<span class="s">	AstroObject.AnalyticSpectra.GaussianSpectrum</span>
-<span class="s">	AstroObject.AnalyticSpectra.BlackBodySpectrum</span>
+<span class="s">    AstroObject.AnalyticSpectra.FlatSpectrum</span>
+<span class="s">    AstroObject.AnalyticSpectra.GaussianSpectrum</span>
+<span class="s">    AstroObject.AnalyticSpectra.BlackBodySpectrum</span>
 <span class="s">    :parts: 1</span>
 
 
@@ -126,33 +128,37 @@
 
 <span class="s">A summary table is below. The table has classes provided from right to left. Note that :class:`AnalyticMixin` inherits from :class:`NoHDUMixin` and :class:`NoDataMixin`. This means that objects with type :class:`AnalyticMixin` are assumed by the system to be a type of frame, but they do not implement any of the major frame methods.</span>
 
-<span class="s">=============================== ==================== ========================= ====================== ===================== ========================================== ======================================</span>
-<span class="s">Method                           :class:`BaseFrame`   :class:`HDUHeaderMixin`   :class:`NoDataMixin`   :class:`NoHDUMixin`   :class:`AnalyticMixin`                     :class:`~.AstroSpectra.SpectraMixin`</span>
-<span class="s">=============================== ==================== ========================= ====================== ===================== ========================================== ======================================</span>
-<span class="s">Class Inherits From:                                                                                                         :class:`NoHDUMixin` :class:`NoDataMixin`                     </span>
-<span class="s">:meth:`BaseFrame.__call__`       Abstract                                       Skipped                                      Abstract</span>
-<span class="s">:meth:`BaseFrame.__setheader__`  Abstract              Implemented                                     Skipped               *Skipped*</span>
-<span class="s">:meth:`BaseFrame.__getheader__`  Abstract              Implemented                                     Skipped               *Skipped*</span>
-<span class="s">:meth:`BaseFrame.__hdu__`        Abstract                                                              Skipped               *Skipped*</span>
-<span class="s">:meth:`BaseFrame.__show__`       Abstract                                       Skipped                                      *Skipped*                                     Implemented</span>
-<span class="s">:meth:`BaseFrame.__save__`       Abstract                                                                                    Skipped</span>
-<span class="s">:meth:`BaseFrame.__read__`       Abstract                                                              Skipped               *Skipped*</span>
-<span class="s">=============================== ==================== ========================= ====================== ===================== ========================================== ======================================</span>
+<span class="s">================================ ==================== ========================= ====================== ===================== ========================================== ======================================</span>
+<span class="s">Method                            :class:`BaseFrame`   :class:`HDUHeaderMixin`   :class:`NoDataMixin`   :class:`NoHDUMixin`   :class:`AnalyticMixin`                     :class:`~.AstroSpectra.SpectraMixin`</span>
+<span class="s">================================ ==================== ========================= ====================== ===================== ========================================== ======================================</span>
+<span class="s">Class Inherits From:              :class:`Mixin`        :class:`Mixin`           :class:`Mixin`         :class:`Mixin`        :class:`NoHDUMixin` :class:`NoDataMixin`   :class:`Mixin` </span>
+<span class="s">:meth:`~BaseFrame.__init__`       Implemented           *Abstract*               *Abstract*             *Abstract*            *Abstract*                                 *Abstract*</span>
+<span class="s">:meth:`~BaseFrame.__call__`       Abstract                                       Skipped                                      Abstract</span>
+<span class="s">:meth:`~BaseFrame.__setheader__`  Abstract              Implemented                                     Skipped               *Skipped*</span>
+<span class="s">:meth:`~BaseFrame.__getheader__`  Abstract              Implemented                                     Skipped               *Skipped*</span>
+<span class="s">:meth:`~BaseFrame.__hdu__`        Abstract                                                              Skipped               *Skipped*</span>
+<span class="s">:meth:`~BaseFrame.__show__`       Abstract                                       Skipped                                      *Skipped*                                  Implemented</span>
+<span class="s">:meth:`~BaseFrame.__save__`       Abstract                                                                                    Skipped</span>
+<span class="s">:meth:`~BaseFrame.__read__`       Abstract                                                              Skipped               *Skipped*</span>
+<span class="s">================================ ==================== ========================= ====================== ===================== ========================================== ======================================</span>
 
 <span class="s">.. autoclass::</span>
-<span class="s">	AstroObject.AstroObjectBase.HDUHeaderMixin</span>
+<span class="s">    AstroObject.AstroObjectBase.Mixin</span>
+
+<span class="s">.. autoclass::</span>
+<span class="s">    AstroObject.AstroObjectBase.HDUHeaderMixin</span>
 <span class="s">    </span>
 <span class="s">.. autoclass::</span>
-<span class="s">	AstroObject.AstroObjectBase.NoDataMixin</span>
-<span class="s">	</span>
+<span class="s">    AstroObject.AstroObjectBase.NoDataMixin</span>
+<span class="s">    </span>
 <span class="s">.. autoclass::</span>
-<span class="s">	AstroObject.AstroObjectBase.NoHDUMixin</span>
-<span class="s">	</span>
+<span class="s">    AstroObject.AstroObjectBase.NoHDUMixin</span>
+<span class="s">    </span>
 <span class="s">.. autoclass::</span>
-<span class="s">	AstroObject.AstroObjectBase.AnalyticMixin</span>
-<span class="s">	</span>
+<span class="s">    AstroObject.AstroObjectBase.AnalyticMixin</span>
+<span class="s">    </span>
 <span class="s">.. autoclass::</span>
-<span class="s">	AstroObject.AstroSpectra.SpectraMixin</span>
+<span class="s">    AstroObject.AstroSpectra.SpectraMixin</span>
 
 <span class="s">Base Object :class:`BaseObject`</span>
 <span class="s">-------------------------------</span>
@@ -160,8 +166,8 @@
 <span class="s">The base object definition provides the normal object accessor methods. It should be subclassed as shown in :ref:`AstroObjectAPI`</span>
 
 <span class="s">.. autoclass::</span>
-<span class="s">	AstroObject.AstroObjectBase.BaseObject</span>
-<span class="s">	:members:</span>
+<span class="s">    AstroObject.AstroObjectBase.BaseObject</span>
+<span class="s">    :members:</span>
 
 
 <span class="s">&quot;&quot;&quot;</span>
@@ -181,14 +187,25 @@
 <span class="c"># Submodules from this system</span>
 <span class="kn">from</span> <span class="nn">Utilities</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;BaseObject&quot;</span><span class="p">,</span><span class="s">&quot;BaseFrame&quot;</span><span class="p">,</span><span class="s">&quot;AnalyticMixin&quot;</span><span class="p">,</span><span class="s">&quot;NoHDUMixin&quot;</span><span class="p">,</span><span class="s">&quot;HDUHeaderMixin&quot;</span><span class="p">,</span><span class="s">&quot;NoDataMixin&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;BaseObject&quot;</span><span class="p">,</span><span class="s">&quot;BaseFrame&quot;</span><span class="p">,</span><span class="s">&quot;AnalyticMixin&quot;</span><span class="p">,</span><span class="s">&quot;NoHDUMixin&quot;</span><span class="p">,</span><span class="s">&quot;HDUHeaderMixin&quot;</span><span class="p">,</span><span class="s">&quot;NoDataMixin&quot;</span><span class="p">,</span><span class="s">&quot;Mixin&quot;</span><span class="p">]</span>
 
 <span class="n">__version__</span> <span class="o">=</span> <span class="n">getVersion</span><span class="p">()</span>
 
 <span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
 
+<div class="viewcode-block" id="Mixin"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.Mixin">[docs]</a><span class="k">class</span> <span class="nc">Mixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; This is an abstract base class for any class which is a Mixin. All such objects should have the appropriate meta-class, and cannot be instantiated unless they havae thier own :meth:`__init__` method.</span>
+<span class="sd">    </span>
+<span class="sd">    This prevents Mixin classes from being instantiated as stand-alone entities.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+    
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Mixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
 
-<div class="viewcode-block" id="BaseFrame"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseFrame">[docs]</a><span class="k">class</span> <span class="nc">BaseFrame</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="BaseFrame"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseFrame">[docs]</a><span class="k">class</span> <span class="nc">BaseFrame</span><span class="p">(</span><span class="n">Mixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;This is the API for frame objects, that is, objects which represnet a single state of data. See :class:`AstroObjectBase.FITSFrame`. This API is generally not called by the end user, but rather is called by the parent :class:`AstroObject.AstroObjectBase.BaseObject`&#39;s function. For an example of a parent object, see :class:`AstroObjectBase.BaseObject`.</span>
 <span class="sd">    </span>
 <span class="sd">    :param data: Initalizing data</span>
@@ -265,12 +282,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="s">&quot;&lt;</span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s"> labeled </span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s">&gt;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
     </div>
+    <span class="nd">@abstractmethod</span>
 <div class="viewcode-block" id="BaseFrame.__valid__"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseFrame.__valid__">[docs]</a>    <span class="k">def</span> <span class="nf">__valid__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Runs a series of assertions which ensure that the data for this frame is valid</span>
 <span class="sd">        </span>
 <span class="sd">        :raises: :exc:`AssertionError` when frame is invalid</span>
-<span class="sd">        :returns: ``None``&quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="bp">True</span>
+<span class="sd">        :returns: ``True``&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">True</span>
     </div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="BaseFrame.valid"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseFrame.valid">[docs]</a>    <span class="k">def</span> <span class="nf">valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -396,8 +414,9 @@
         <span class="n">newfunc</span> <span class="o">=</span> <span class="n">make_decorator</span><span class="p">(</span><span class="n">func</span><span class="p">)(</span><span class="n">raiser</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">newfunc</span>
     <span class="k">return</span> <span class="n">decorator</span>
+        
 
-<div class="viewcode-block" id="HDUHeaderMixin"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin">[docs]</a><span class="k">class</span> <span class="nc">HDUHeaderMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="HDUHeaderMixin"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin">[docs]</a><span class="k">class</span> <span class="nc">HDUHeaderMixin</span><span class="p">(</span><span class="n">Mixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Mixin to provide the default :meth:`~BaseFrame.__setheader__` and :meth:`~BaseFrame.__getheader__` functions. These functions are not provided by default in :class:`BaseFrame`.</span>
 <span class="sd">    </span>
 <span class="sd">    :meth:`~BaseFrame.__setheader__` applies the **frame** label to the &quot;label&quot; and &quot;object&quot; keywords, then applies all of the existing keywords to the header.</span>
@@ -433,7 +452,7 @@
     
         
 </div>
-<div class="viewcode-block" id="NoDataMixin"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.NoDataMixin">[docs]</a><span class="k">class</span> <span class="nc">NoDataMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="NoDataMixin"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.NoDataMixin">[docs]</a><span class="k">class</span> <span class="nc">NoDataMixin</span><span class="p">(</span><span class="n">Mixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Mixin to allow for frames which **cannot** contain data. This mixin allows the developer to not implement :meth:`~BaseFrame.__call__` and :meth:`~BaseFrame.__show__`, both of which are only sensible methods for actual data.</span>
 <span class="sd">    </span>
 <span class="sd">    Due to the validity of empty HDUs, it is possible to have an object which doesn&#39;t contain data, but can still produce HDUs.</span>
@@ -448,14 +467,23 @@
     <span class="k">def</span> <span class="nf">__show__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Show no data... NotImplemented&quot;&quot;&quot;</span>
         <span class="k">pass</span>
+    
+    <span class="nd">@classmethod</span>    
+    <span class="nd">@semiabstractmethod</span><span class="p">(</span><span class="s">&quot;Cannot call </span><span class="si">%s</span><span class="s">.</span><span class="si">%s</span><span class="s">() as this frame cannot contain data.&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__save__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Show no data... NotImplemented&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+    
         
     <span class="k">def</span> <span class="nf">__valid__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Require no data&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s">&#39;data&#39;</span><span class="p">):</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="bp">None</span><span class="p">,</span> <span class="s">&quot;The frame </span><span class="si">%s</span><span class="s"> cannot accept data, found data with type </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">NoDataMixin</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__valid__</span><span class="p">()</span>
+
     
         </div>
-<div class="viewcode-block" id="NoHDUMixin"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.NoHDUMixin">[docs]</a><span class="k">class</span> <span class="nc">NoHDUMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="NoHDUMixin"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.NoHDUMixin">[docs]</a><span class="k">class</span> <span class="nc">NoHDUMixin</span><span class="p">(</span><span class="n">Mixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Mixin to allow for frames which **cannot** produce FITS Header-Data-Units (HDUs) and as such **cannot** produce FITS files.</span>
 <span class="sd">    </span>
 <span class="sd">    This mixin allows the developer to not implement :meth:`~BaseFrame.__getheader__`, :meth:`~BaseFrame.__setheader__`, :meth:`~BaseFrame.__hdu__`, and :meth:`~BaseFrame.__read__`.</span>
@@ -560,10 +588,21 @@
 <span class="sd">        </span>
 <span class="sd">        :returns: integer&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="BaseObject.d"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseObject.d">[docs]</a>    <span class="k">def</span> <span class="nf">d</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The data for the selected FITS frame.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
+    </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="BaseObject.f"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseObject.f">[docs]</a>    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The selected FITS frame. This frame is usually the last modified frame in the system.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">()</span>
+    
         
     <span class="c">###############################</span>
     <span class="c"># Basic Object Mode Functions #</span>
-    <span class="c">###############################</span>
+    <span class="c">###############################</span></div>
 <div class="viewcode-block" id="BaseObject.save"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseObject.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">select</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Saves the given data to this object. If the data is an instance of one of the acceptable :attr:`dataClasses` then this method will simply save the data. Otherwise, it will attempt to cast the data into one of the acceptable :attr:`dataClasses` using their :meth:`__save__` mehtod.</span>
 <span class="sd">        </span>
@@ -585,7 +624,7 @@
                     <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Cannot save as </span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dataClass</span><span class="p">,</span><span class="n">AE</span><span class="p">))</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">break</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">Object</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">Object</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Object to be saved cannot be cast as </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataClasses</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">Object</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">statename</span><span class="p">)</span>
@@ -624,11 +663,8 @@
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">statename</span><span class="p">](</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_key_error</span><span class="p">(</span><span class="n">statename</span><span class="p">)</span>
-    </div>
-    <span class="nd">@property</span>
-<div class="viewcode-block" id="BaseObject.f"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseObject.f">[docs]</a>    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The selected FITS frame. This frame is usually the last modified frame in the system.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">statename</span><span class="p">]</span>
+    
+
     </div>
 <div class="viewcode-block" id="BaseObject.frame"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseObject.frame">[docs]</a>    <span class="k">def</span> <span class="nf">frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.</span>
@@ -767,7 +803,7 @@
                     <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Not removing state </span><span class="si">%s</span><span class="s"> as it does not exist&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">))</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Object </span><span class="si">%s</span><span class="s"> does not exist!&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">))</span>
-            <span class="k">if</span> <span class="n">delete</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">delete</span><span class="p">:</span>
                 <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">statename</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">statename</span><span class="p">)</span>
@@ -790,13 +826,14 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_key_error</span><span class="p">(</span><span class="n">statename</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="BaseObject.write"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseObject.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">states</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">primaryState</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseObject.write"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseObject.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">states</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">primaryState</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">singleFrame</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify ``states`` then only those states will be used. ``primaryState`` should be the state of the front HDU. When not specified, the latest state will be used. It uses the :attr:`dataClasses` :meth:`FITSFrame.__hdu__` method to return a valid HDU object for each Frame.</span>
 <span class="sd">        </span>
 <span class="sd">        :param string filename: the name of the file for saving.</span>
 <span class="sd">        :param list states: A list of states to include in the file. If ``None``, save all states.</span>
 <span class="sd">        :param string primaryState: The state to become the front of the FITS file. If none, uses :meth:`_default_state`</span>
 <span class="sd">        :param bool clobber: Whether to overwrite the destination file or not.</span>
+<span class="sd">        :param bool singleFrame: Whether to save only a single frame.</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">states</span><span class="p">:</span>
@@ -807,6 +844,8 @@
             <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Set primary statename to default state </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">primaryState</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">primaryState</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
             <span class="n">states</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">primaryState</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">singleFrame</span><span class="p">:</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">filename</span> <span class="o">=</span> <span class="n">primaryState</span>
@@ -814,7 +853,8 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
                 <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Set filename from Object. Filename: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="n">validate_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,(</span><span class="nb">str</span><span class="p">,</span><span class="nb">unicode</span><span class="p">)):</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">validate_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="n">PrimaryHDU</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">primaryState</span><span class="p">]</span><span class="o">.</span><span class="n">hdu</span><span class="p">(</span><span class="n">primary</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">states</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">HDUs</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">hdu</span><span class="p">(</span><span class="n">primary</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">]</span>
@@ -837,28 +877,31 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
-        <span class="k">if</span> <span class="n">statename</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">statename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Set statename for image from filename: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">statename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">statename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Set statename for image from filename: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
         <span class="n">HDUList</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="n">Read</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">Labels</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">HDU</span> <span class="ow">in</span> <span class="n">HDUList</span><span class="p">:</span>
             <span class="n">Object</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">if</span> <span class="n">statename</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="s">&quot;label&quot;</span> <span class="ow">in</span> <span class="n">HDU</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="n">HDU</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;label&quot;</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">statename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">statename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="n">statename</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="n">statename</span>
+            <span class="k">if</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">Labels</span><span class="p">:</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="n">label</span> <span class="o">+</span> <span class="s">&quot; Frame </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">Read</span>
             <span class="k">for</span> <span class="n">dataClass</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataClasses</span><span class="p">:</span>
-                <span class="k">if</span> <span class="s">&quot;label&quot;</span> <span class="ow">in</span> <span class="n">HDU</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
-                    <span class="n">label</span> <span class="o">=</span> <span class="n">HDU</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;label&quot;</span><span class="p">]</span>
-                <span class="k">elif</span> <span class="n">Read</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">label</span> <span class="o">=</span> <span class="n">statename</span> <span class="o">+</span> <span class="s">&quot; Frame </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">Read</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">label</span> <span class="o">=</span> <span class="n">statename</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">Object</span> <span class="o">=</span> <span class="n">dataClass</span><span class="o">.</span><span class="n">__read__</span><span class="p">(</span><span class="n">HDU</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
+                    <span class="n">Object</span><span class="o">.</span><span class="n">__getheader__</span><span class="p">(</span><span class="n">HDU</span><span class="p">)</span>
                 <span class="k">except</span> <span class="ne">NotImplementedError</span> <span class="k">as</span> <span class="n">AE</span><span class="p">:</span>
                     <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Cannot read as </span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dataClass</span><span class="p">,</span><span class="n">AE</span><span class="p">))</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">break</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">Object</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">Object</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="s">&quot;Skipping HDU </span><span class="si">%s</span><span class="s">, cannot save as valid type &quot;</span> <span class="o">%</span> <span class="n">HDU</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">Read</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -870,6 +913,15 @@
         
         <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="s">&quot;Saved states </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">Labels</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Labels</span>
+    </div>
+<div class="viewcode-block" id="BaseObject.fromAtFile"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseObject.fromAtFile">[docs]</a>    <span class="k">def</span> <span class="nf">fromAtFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">atfile</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read an atfile into this object. The name of the atfile can include a starting &quot;@&quot; which is stripped. The file is then loaded, and each line is assumed to contain a single fully-qualified part-name.&quot;&quot;&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">atfile</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s">&quot;@&quot;</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
+                <span class="n">labels</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot; </span><span class="se">\n\t</span><span class="s">&quot;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">labels</span>
       </div>
     <span class="nd">@classmethod</span>  
 <div class="viewcode-block" id="BaseObject.fromFile"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseObject.fromFile">[docs]</a>    <span class="k">def</span> <span class="nf">fromFile</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
@@ -919,7 +971,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.4 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.5-a1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

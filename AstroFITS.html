@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3. Empty FITS HDUs: AstroFITS &mdash; AstroObject 0.4 documentation</title>
+    <title>3. Empty FITS HDUs: AstroFITS &mdash; AstroObject 0.5-a1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.4',
+        VERSION:     '0.5-a1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.4 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.5-a1 documentation" href="index.html" />
     <link rel="next" title="4. Image Objects and Storage AstroImage" href="AstroImage.html" />
     <link rel="prev" title="2. Installation" href="installation.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="installation.html" title="2. Installation"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.4 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5-a1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -56,16 +56,17 @@
             
   <span class="target" id="module-AstroObject.AstroFITS"></span><div class="section" id="empty-fits-hdus-astrofits">
 <h1>3. Empty FITS HDUs: <tt class="xref py py-mod docutils literal"><span class="pre">AstroFITS</span></tt><a class="headerlink" href="#empty-fits-hdus-astrofits" title="Permalink to this headline">¶</a></h1>
-<p>The <a class="reference internal" href="#AstroObject.AstroFITS.FITSObject" title="AstroObject.AstroFITS.FITSObject"><tt class="xref py py-class docutils literal"><span class="pre">FITSObject</span></tt></a> <strong>object</strong> handles <em>empty</em> FITS Header-Data-Units (or HDUs). As such, it can only contain HDUs that do not have data, and should only be used when you need to write a FITS file that has only header information and no actual data. The module does serve as a good demonstration of the use and implementation of the <a class="reference internal" href="AstroObject.html#astroobjectapi"><em>AstroObject API</em></a>.</p>
+<p>The <a class="reference internal" href="#AstroObject.AstroFITS.FITSObject" title="AstroObject.AstroFITS.FITSObject"><tt class="xref py py-class docutils literal"><span class="pre">FITSObject</span></tt></a> <strong>object</strong> handles <em>empty</em> FITS Header-Data-Units (or HDUs). As such, it can only contain HDUs that do not have data, and should only be used when you need to write a FITS file that has only header information and no actual data. The module does serve as a good demonstration of the use and implementation of the <a class="reference internal" href="AstroObject.html#astroobjectapi"><em>AstroObjectBase – AstroObject API</em></a>.</p>
 <p class="graphviz">
-<img src="_images/inheritance-06a5188cf576e6c1c91f547fa44f72aeb54b1dd0.png" alt="Inheritance diagram of AstroObject.AstroFITS.FITSObject, AstroObject.AstroFITS.FITSFrame" usemap="#inheritancea52c3ec571" class="inheritance"/>
+<img src="_images/inheritance-fe6cb3c246115ccce58fd9a2b5e6a1cde6e5f62f.png" alt="Inheritance diagram of AstroObject.AstroFITS.FITSObject, AstroObject.AstroFITS.FITSFrame" usemap="#inheritancea52c3ec571" class="inheritance"/>
 <map id="inheritancea52c3ec571" name="inheritancea52c3ec571">
-<area shape="rect" id="node2" href="#AstroObject.AstroFITS.FITSObject" title="FITSObject" alt="" coords="643,202,733,227"/>
-<area shape="rect" id="node3" href="AstroObject.html#AstroObject.AstroObjectBase.BaseObject" title="BaseObject" alt="" coords="499,202,594,227"/>
-<area shape="rect" id="node5" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="5,5,136,30"/>
-<area shape="rect" id="node11" href="#AstroObject.AstroFITS.FITSFrame" title="FITSFrame" alt="" coords="185,54,274,79"/>
-<area shape="rect" id="node8" href="AstroObject.html#AstroObject.AstroObjectBase.NoDataMixin" title="NoDataMixin" alt="" coords="19,54,122,79"/>
-<area shape="rect" id="node14" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="23,103,118,129"/>
+<area shape="rect" id="node1" href="AstroObject.html#AstroObject.AstroObjectBase.NoDataMixin" title="NoDataMixin" alt="" coords="153,103,255,129"/>
+<area shape="rect" id="node18" href="#AstroObject.AstroFITS.FITSFrame" title="FITSFrame" alt="" coords="337,153,426,178"/>
+<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="12,153,84,178"/>
+<area shape="rect" id="node9" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="157,153,251,178"/>
+<area shape="rect" id="node13" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="139,202,269,227"/>
+<area shape="rect" id="node4" href="#AstroObject.AstroFITS.FITSObject" title="FITSObject" alt="" coords="638,54,727,79"/>
+<area shape="rect" id="node5" href="AstroObject.html#AstroObject.AstroObjectBase.BaseObject" title="BaseObject" alt="" coords="494,54,589,79"/>
 </map>
 </p>
 <div class="section" id="empty-hdu-objects-fitsobject">
@@ -89,6 +90,12 @@
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.AstroFITS.FITSObject.d">
+<tt class="descname">d</tt><a class="headerlink" href="#AstroObject.AstroFITS.FITSObject.d" title="Permalink to this definition">¶</a></dt>
+<dd><p>The data for the selected FITS frame.</p>
 </dd></dl>
 
 <dl class="method">
@@ -152,6 +159,12 @@
 <p class="first admonition-title">Note</p>
 <p class="last">Using frames can be advantageous as you don&#8217;t rely on the Object to guess what type of frame should be used. Most times, the object will guess correctly, but Frames are a more robust way of ensuring type consistency</p>
 </div>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.AstroFITS.FITSObject.fromAtFile">
+<tt class="descname">fromAtFile</tt><big>(</big><em>atfile</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSObject.fromAtFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read an atfile into this object. The name of the atfile can include a starting &#8220;&#64;&#8221; which is stripped. The file is then loaded, and each line is assumed to contain a single fully-qualified part-name.</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -289,7 +302,7 @@
 
 <dl class="method">
 <dt id="AstroObject.AstroFITS.FITSObject.write">
-<tt class="descname">write</tt><big>(</big><em>filename=None</em>, <em>states=None</em>, <em>primaryState=None</em>, <em>clobber=False</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSObject.write" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">write</tt><big>(</big><em>filename=None</em>, <em>states=None</em>, <em>primaryState=None</em>, <em>clobber=False</em>, <em>singleFrame=False</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSObject.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify <tt class="docutils literal"><span class="pre">states</span></tt> then only those states will be used. <tt class="docutils literal"><span class="pre">primaryState</span></tt> should be the state of the front HDU. When not specified, the latest state will be used. It uses the <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> <a class="reference internal" href="#AstroObject.AstroFITS.FITSFrame.__hdu__" title="AstroObject.AstroFITS.FITSFrame.__hdu__"><tt class="xref py py-meth docutils literal"><span class="pre">FITSFrame.__hdu__()</span></tt></a> method to return a valid HDU object for each Frame.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -300,6 +313,7 @@
 <li><strong>states</strong> (<em>list</em>) &#8211; A list of states to include in the file. If <tt class="docutils literal"><span class="pre">None</span></tt>, save all states.</li>
 <li><strong>primaryState</strong> (<em>string</em>) &#8211; The state to become the front of the FITS file. If none, uses <tt class="xref py py-meth docutils literal"><span class="pre">_default_state()</span></tt></li>
 <li><strong>clobber</strong> (<em>bool</em>) &#8211; Whether to overwrite the destination file or not.</li>
+<li><strong>singleFrame</strong> (<em>bool</em>) &#8211; Whether to save only a single frame.</li>
 </ul>
 </td>
 </tr>
@@ -383,38 +397,8 @@ Frames are known as Header Data Units, or HDUs when written to a FITS file.</p>
 
 <dl class="classmethod">
 <dt id="AstroObject.AstroFITS.FITSFrame.__save__">
-<em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>data</em>, <em>label</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSFrame.__save__" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method should retun an instance of the parent class if the given data can be turned into an object of that class. If the data cannot be correctly cast, this method should throw an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>data</strong> &#8211; Data to be saved, in raw form.</li>
-<li><strong>label</strong> &#8211; Name for the newly created frame.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><p class="first"><tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> when this data can&#8217;t be saved.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></p>
-</td>
-</tr>
-</tbody>
-</table>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p>Because the <a class="reference internal" href="#AstroObject.AstroFITS.FITSFrame.__valid__" title="AstroObject.AstroFITS.FITSFrame.__valid__"><tt class="xref py py-meth docutils literal"><span class="pre">__valid__()</span></tt></a> is called when an object is initialized, it is possible to check some aspects of the provided data in this initialization function. However, this would raise an <tt class="xref py py-exc docutils literal"><span class="pre">AssertionError</span></tt> not an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt>. To avoid this problem, it is suggested that you wrap your initialization in a try...except block like:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">try</span><span class="p">:</span>
-    <span class="n">Object</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">HDU</span><span class="o">.</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
-<span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">AE</span><span class="p">:</span>
-    <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> data did not validate: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="n">AE</span><span class="p">)</span>
-    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</pre></div>
-</div>
-<p class="last">This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like <tt class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></tt>) which are diffult to track and diagnose without the code in <a class="reference internal" href="#AstroObject.AstroFITS.FITSFrame.__save__" title="AstroObject.AstroFITS.FITSFrame.__save__"><tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt></a>. See <tt class="xref py py-meth docutils literal"><span class="pre">AstroImage.__save__()</span></tt> for an example <tt class="docutils literal"><span class="pre">__save__</span></tt> function which uses this trick, but also includes some basic data validation.</p>
-</div>
+<em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSFrame.__save__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show no data... NotImplemented</p>
 </dd></dl>
 
 <dl class="classmethod">
@@ -532,7 +516,7 @@ Frames are known as Header Data Units, or HDUs when written to a FITS file.</p>
         <li class="right" >
           <a href="installation.html" title="2. Installation"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.4 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5-a1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
