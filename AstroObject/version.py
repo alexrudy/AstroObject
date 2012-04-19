@@ -24,7 +24,7 @@ minor = 5
 bugfix = None
 patch = None
 dev = True
-cdevstr = ""
+cdevstr = "a1"
 
 
 #everything below here is derived
