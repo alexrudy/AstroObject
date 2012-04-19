@@ -338,7 +338,7 @@ class Stage(object):
                 "result": str(self.complete),
                 "time": datetime.timedelta(seconds=int(self.durTime)),
             }
-        if total == None:
+        if total == None or total == 0:
             keys["timestr"] = "% 12s" % keys["time"]            
         else:
             keys["per"] = ( self.durTime / total ) * 100.0
