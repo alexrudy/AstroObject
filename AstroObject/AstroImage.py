@@ -105,7 +105,9 @@ class ImageFrame(AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame):
         import matplotlib as mpl
         import matplotlib.pyplot as plt
         figure = plt.imshow(self())
+        plt.title(r'\verb-'+self.label+r'-')
         figure.set_cmap('binary_r')
+        plt.colorbar()
         return figure
     
     @classmethod
