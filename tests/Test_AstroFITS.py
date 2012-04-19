@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-28.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.4.0
+#  Version 0.5-a1
 # 
 
 from tests.AstroTest import *
@@ -63,7 +63,7 @@ class test_FITSFrame(equality_FITSFrame,API_NoData_Frame,API_General_Frame):
     
         
 class test_FITSObject(equality_FITSFrame,API_Base_Object):
-    """AstroObjectBase.BaseObject"""
+    """AstroFITS.FITSObject"""
     def setup(self):
         self.files = ["TestFile.fits"]
         self.FRAME = AstroObject.AstroFITS.FITSFrame

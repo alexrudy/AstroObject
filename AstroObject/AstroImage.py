@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-04-28.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.4.0
+#  Version 0.5-a1
 # 
 """
 Image Objects and Storage :mod:`AstroImage`
@@ -105,7 +105,9 @@ class ImageFrame(AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame):
         import matplotlib as mpl
         import matplotlib.pyplot as plt
         figure = plt.imshow(self())
+        plt.title(r'\verb-'+self.label+r'-')
         figure.set_cmap('binary_r')
+        plt.colorbar()
         return figure
     
     @classmethod
