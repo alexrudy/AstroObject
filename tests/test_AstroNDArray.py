@@ -1,21 +1,18 @@
 # -*- coding: utf-8 -*-
 # 
-#  Test_AstroHDU.py
+#  test_AstroNDArray.py
 #  AstroObject
 #  
-#  Created by Alexander Rudy on 2011-11-08.
-#  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-a1
+#  Created by Alexander Rudy on 2012-04-18.
+#  Copyright 2012 Alexander Rudy. All rights reserved.
 # 
+
 
 # Test API Imports
 from tests.AstroTest import *
 
 # Parent Object Imports
-import AstroObject.AstroHDU
-
-# Utility Imports
-from AstroObject.Utilities import npArrayInfo
+import AstroObject.AstroNDArray
 
 # Testing Imports
 import nose.tools as nt
@@ -29,10 +26,11 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimage
 
+
 # Python Imports
 import math, copy, sys, time, logging, os
 
-class equality_HDUFrame(equality_Base):
+class equality_ImageFrame(equality_Base):
     """Equality methods for FITSFrames"""
     
     def data_eq_data(self,data,other):
@@ -47,8 +45,9 @@ class equality_HDUFrame(equality_Base):
         """Return whether this data is the same as the data in this frame."""
         return np.allclose(frame(),data)
 
-class test_HDUFrame(equality_HDUFrame,API_CanBeEmpty_Frame,API_General_Frame):
-    """AstroHDU.HDUFrame"""
+
+class test_NDArrayFrame(equality_ImageFrame,API_General_Frame):
+    """AstroObject.AstroNDArray.NDArrayFrame"""
     
     def setup(self):
         """Sets up the test with some basic image data"""
@@ -61,17 +60,26 @@ class test_HDUFrame(equality_HDUFrame,API_CanBeEmpty_Frame,API_General_Frame):
             self.image = np.int32(np.sum(mpimage.imread(self.testJPG),axis=2))
         
         self.VALID = self.image
-        self.FRAME = AstroObject.AstroHDU.HDUFrame
+        self.FRAME = AstroObject.AstroNDArray.NDArrayFrame
         self.INVALID = 20
-        self.FRAMESTR = "<'HDUFrame' labeled 'Valid'>"
+        self.FRAMESTR = "<'NDArrayFrame' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.image.AxesImage
         self.RKWARGS = {}
-        super(test_HDUFrame,self).setup()
+        super(test_NDArrayFrame,self).setup()            
     
+    def test_read_grayscale_HDU(self):
+        """__read__() an image HDU succeeds"""
+        HDU = self.HDUTYPE(self.image)
+        IFrame = self.FRAME.__read__(HDU,"Hong Kong")
+        assert isinstance(IFrame,self.FRAME)
+        assert IFrame.label == "Hong Kong"
+        assert self.frame_eq_frame(IFrame,self.frame())
+        
+        
 
-class test_HDUObject(equality_HDUFrame,API_Base_Object):
-    """AstroHDU.HDUObject"""
+class test_NDArrayObject(equality_ImageFrame,API_Base_Object):
+    """AstroNDArray.NDArrayObject"""
     
     def setup(self):
         """Fixture for setting up a basic image frame"""
@@ -84,18 +92,18 @@ class test_HDUObject(equality_HDUFrame,API_Base_Object):
         else:
             self.image = np.int32(np.sum(mpimage.imread(self.testJPG),axis=2))
 
-        self.FRAME = AstroObject.AstroHDU.HDUFrame
+        self.FRAME = AstroObject.AstroNDArray.NDArrayFrame
         self.HDU = pf.PrimaryHDU
         self.imHDU = pf.ImageHDU
         self.VALID = self.image
         self.INVALID = 20
         self.OBJECTSTR = None
-        self.FRAMESTR = "<'HDUFrame' labeled 'Valid'>"
+        self.FRAMESTR = "<'ImageFrame' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.image.AxesImage
-        self.OBJECT = AstroObject.AstroHDU.HDUObject
-        super(test_HDUObject, self).setup()
-    
+        self.OBJECT = AstroObject.AstroNDArray.NDArrayObject
+        super(test_NDArrayObject, self).setup()
+        
     def test_double_saving_data_should_not_reference(self):
         """data() should prevent data from referencing each other."""
         AObject = self.OBJECT()
@@ -115,4 +123,38 @@ class test_HDUObject(equality_HDUFrame,API_Base_Object):
         AObject.select("Valid")
         assert AObject.data()[1,1] != -1.0
 
-    
+class btest_AstroImage_Functional(API_Base_Functional):
+    """Functional Tests for AstroImage"""
+    def setUp(self):
+        """Fixture for setting up a basic image frame"""
+        self.testJPG = "Data/Hong-Kong.jpg"
+        if not os.access(self.testJPG,os.R_OK):
+            self.image = np.zeros((1000,1000))
+            self.image[450:550,450:550] = np.ones((100,100))
+        else:
+            self.image = np.int32(np.sum(mpimage.imread(self.testJPG),axis=2))
+        self.FRAMEINST = AN.NDArrayFrame(self.image,"Hong Kong")
+        self.FRAME = AN.NDArrayFrame
+        self.HDU = pf.PrimaryHDU
+        self.imHDU = pf.ImageHDU
+        self.VALID = self.image
+        self.INVALID = 20
+        self.OBJECTSTR = None
+        self.HDUTYPE = pf.ImageHDU
+        self.SHOWTYPE = mpl.image.AxesImage
+        self.OBJECT = AN.NDArrayObject
+        self.FILENAME = "TestFile.fits"
+        
+        def SAMEDATA(first,second):
+            """Return whether these two are the same data"""
+            return not (np.abs(first-second) > 1e-6).any()
+        
+        
+        def SAME(first,second):
+            """Return whether these two are the same"""
+            return SAMEDATA(first,second)
+        
+        self.SAME = SAME
+        self.SAMEDATA = SAMEDATA
+        
+        self.check_constants()

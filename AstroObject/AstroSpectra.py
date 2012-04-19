@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.4.0
+#  Version 0.5-a1
 # 
 """
 Raw Spectrum Management :mod:`AstroSpectra`
@@ -35,6 +35,8 @@ Raw Spectrum **frames**: :class:`SpectraFrame`
     AstroObject.AstroSpectra.SpectraFrame
     :members:
     :special-members:
+    :inherited-members:
+    
 
 """
 
@@ -62,7 +64,7 @@ __version__ = getVersion()
 
 LOG = logging.getLogger(__name__)
 
-class SpectraMixin(object):
+class SpectraMixin(AstroObjectBase.Mixin):
     """Mixin to set the properties of Spectra **frames** and to provide a :meth:`~.AstroObjectBase.BaseFrame.__show__` method. Used for any spectrum **frame** which contains raw data."""
     @property
     def wavelengths(self):
@@ -88,18 +90,7 @@ class SpectraMixin(object):
         plt.axis(expandLim(plt.axis()))
         plt.gca().ticklabel_format(style="sci",scilimits=(3,3))
         return plt.gca()
-    
         
-
-class SpectraFrame(AstroObjectBase.HDUHeaderMixin,SpectraMixin,AstroObjectBase.BaseFrame):
-    """A single frame of a spectrum. This will save the spectrum as an image, with the first row having flux, and second row having the wavelength equivalent. Further rows can accomodate further spectral frames when stored to a FITS image. However, the frame only accepts a single spectrum."""
-    def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
-        self.data = data # The image data
-        self.size = data.size # The size of this image
-        self.shape = data.shape # The shape of this image
-        super(SpectraFrame, self).__init__(label=label, header=header, metadata=metadata, **kwargs)
-        
-    
     def __valid__(self):
         """Validates this spectrum frame to conform to the required data shape. This function is used to determine if a passed numpy data array appears to be a spectrum. It is essentially a helper function."""
         dimensions = 2
@@ -108,8 +99,16 @@ class SpectraFrame(AstroObjectBase.HDUHeaderMixin,SpectraMixin,AstroObjectBase.B
         assert self.shape == self.data.shape, "Members of %s appear to be inconsistent!" % self
         assert self.data.ndim == dimensions , "Data of %s does not appear to be %d-dimensional! Shape: %s" % (self,dimensions,self.shape)
         assert self.shape[0] == rows, "Spectrum for %s appears to be multi-dimensional, expected %d Shape: %s" % (self,rows,self.shape)        
-        return True
-            
+        return super(SpectraMixin, self).__valid__()
+    
+
+class SpectraFrame(AstroObjectBase.HDUHeaderMixin,SpectraMixin,AstroObjectBase.BaseFrame):
+    """A single frame of a spectrum. This will save the spectrum as an image, with the first row having flux, and second row having the wavelength equivalent. Further rows can accomodate further spectral frames when stored to a FITS image. However, the frame only accepts a single spectrum."""
+    def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
+        self.data = data # The image data
+        self.size = data.size # The size of this image
+        self.shape = data.shape # The shape of this image
+        super(SpectraFrame, self).__init__(label=label, header=header, metadata=metadata, **kwargs)
     
     def __call__(self):
         """Returns the data for this frame, which should be a ``numpy.ndarray``. The first row will be the spectral data, the second row the equivalent wavelength for this spectrum."""
@@ -165,7 +164,6 @@ class SpectraFrame(AstroObjectBase.HDUHeaderMixin,SpectraMixin,AstroObjectBase.B
             raise NotImplementedError(msg)    
         try:
             Object = cls(HDU.data,label)
-            Object.__getheader__(HDU)        
         except AssertionError as AE:
             msg = "%s data did not validate: %s" % (cls.__name__,AE)
             raise NotImplementedError(msg)

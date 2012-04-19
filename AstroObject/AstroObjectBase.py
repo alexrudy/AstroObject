@@ -5,13 +5,13 @@
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.4.0
+#  Version 0.5-a1
 # 
-"""
+u"""
 .. _AstroObjectAPI:
 
-AstroObject API
-===============
+:mod:`AstroObjectBase` – AstroObject API
+========================================
 
 The API is the foundation of the :mod:`AstroObject` module. When creating new types of data, you will want to create frames for that type of data. The functions shown below are the functions which must be present in every data frame type, in order to maintain compatibility with enclosing Objects. If your class conforms to this API, then it can easily be used as data for :class:`AstroObjectBase.BaseObject`. 
 
@@ -35,22 +35,24 @@ Module Structure
 ----------------
 
 .. inheritance-diagram::
-	AstroObject.AstroFITS.FITSFrame
-	AstroObject.AstroFITS.FITSObject
-	AstroObject.AstroImage.ImageFrame
-	AstroObject.AstroImage.ImageObject
-	AstroObject.AstroSpectra.SpectraFrame
-	AstroObject.AstroSpectra.SpectraObject
-	AstroObject.AstroHDU.HDUFrame
-	AstroObject.AstroHDU.HDUObject
+    AstroObject.AstroFITS.FITSFrame
+    AstroObject.AstroFITS.FITSObject
+    AstroObject.AstroImage.ImageFrame
+    AstroObject.AstroImage.ImageObject
+    AstroObject.AstroSpectra.SpectraFrame
+    AstroObject.AstroSpectra.SpectraObject
+    AstroObject.AstroHDU.HDUFrame
+    AstroObject.AstroHDU.HDUObject
+    AstroObject.AstroNDArray.NDArrayFrame
+    AstroObject.AstroNDArray.NDArrayObject
     AstroObject.AnalyticSpectra.AnalyticSpectrum
     AstroObject.AnalyticSpectra.CompositeSpectra
     AstroObject.AnalyticSpectra.InterpolatedSpectrum
     AstroObject.AnalyticSpectra.Resolver
     AstroObject.AnalyticSpectra.UnitarySpectrum
-	AstroObject.AnalyticSpectra.FlatSpectrum
-	AstroObject.AnalyticSpectra.GaussianSpectrum
-	AstroObject.AnalyticSpectra.BlackBodySpectrum
+    AstroObject.AnalyticSpectra.FlatSpectrum
+    AstroObject.AnalyticSpectra.GaussianSpectrum
+    AstroObject.AnalyticSpectra.BlackBodySpectrum
     :parts: 1
 
 
@@ -75,33 +77,37 @@ Mixins allow certain classes to operate without all of the features required by 
 
 A summary table is below. The table has classes provided from right to left. Note that :class:`AnalyticMixin` inherits from :class:`NoHDUMixin` and :class:`NoDataMixin`. This means that objects with type :class:`AnalyticMixin` are assumed by the system to be a type of frame, but they do not implement any of the major frame methods.
 
-=============================== ==================== ========================= ====================== ===================== ========================================== ======================================
-Method                           :class:`BaseFrame`   :class:`HDUHeaderMixin`   :class:`NoDataMixin`   :class:`NoHDUMixin`   :class:`AnalyticMixin`                     :class:`~.AstroSpectra.SpectraMixin`
-=============================== ==================== ========================= ====================== ===================== ========================================== ======================================
-Class Inherits From:                                                                                                         :class:`NoHDUMixin` :class:`NoDataMixin`                     
-:meth:`BaseFrame.__call__`       Abstract                                       Skipped                                      Abstract
-:meth:`BaseFrame.__setheader__`  Abstract              Implemented                                     Skipped               *Skipped*
-:meth:`BaseFrame.__getheader__`  Abstract              Implemented                                     Skipped               *Skipped*
-:meth:`BaseFrame.__hdu__`        Abstract                                                              Skipped               *Skipped*
-:meth:`BaseFrame.__show__`       Abstract                                       Skipped                                      *Skipped*                                     Implemented
-:meth:`BaseFrame.__save__`       Abstract                                                                                    Skipped
-:meth:`BaseFrame.__read__`       Abstract                                                              Skipped               *Skipped*
-=============================== ==================== ========================= ====================== ===================== ========================================== ======================================
+================================ ==================== ========================= ====================== ===================== ========================================== ======================================
+Method                            :class:`BaseFrame`   :class:`HDUHeaderMixin`   :class:`NoDataMixin`   :class:`NoHDUMixin`   :class:`AnalyticMixin`                     :class:`~.AstroSpectra.SpectraMixin`
+================================ ==================== ========================= ====================== ===================== ========================================== ======================================
+Class Inherits From:              :class:`Mixin`        :class:`Mixin`           :class:`Mixin`         :class:`Mixin`        :class:`NoHDUMixin` :class:`NoDataMixin`   :class:`Mixin` 
+:meth:`~BaseFrame.__init__`       Implemented           *Abstract*               *Abstract*             *Abstract*            *Abstract*                                 *Abstract*
+:meth:`~BaseFrame.__call__`       Abstract                                       Skipped                                      Abstract
+:meth:`~BaseFrame.__setheader__`  Abstract              Implemented                                     Skipped               *Skipped*
+:meth:`~BaseFrame.__getheader__`  Abstract              Implemented                                     Skipped               *Skipped*
+:meth:`~BaseFrame.__hdu__`        Abstract                                                              Skipped               *Skipped*
+:meth:`~BaseFrame.__show__`       Abstract                                       Skipped                                      *Skipped*                                  Implemented
+:meth:`~BaseFrame.__save__`       Abstract                                                                                    Skipped
+:meth:`~BaseFrame.__read__`       Abstract                                                              Skipped               *Skipped*
+================================ ==================== ========================= ====================== ===================== ========================================== ======================================
 
 .. autoclass::
-	AstroObject.AstroObjectBase.HDUHeaderMixin
+    AstroObject.AstroObjectBase.Mixin
+
+.. autoclass::
+    AstroObject.AstroObjectBase.HDUHeaderMixin
     
 .. autoclass::
-	AstroObject.AstroObjectBase.NoDataMixin
-	
+    AstroObject.AstroObjectBase.NoDataMixin
+    
 .. autoclass::
-	AstroObject.AstroObjectBase.NoHDUMixin
-	
+    AstroObject.AstroObjectBase.NoHDUMixin
+    
 .. autoclass::
-	AstroObject.AstroObjectBase.AnalyticMixin
-	
+    AstroObject.AstroObjectBase.AnalyticMixin
+    
 .. autoclass::
-	AstroObject.AstroSpectra.SpectraMixin
+    AstroObject.AstroSpectra.SpectraMixin
 
 Base Object :class:`BaseObject`
 -------------------------------
@@ -109,8 +115,8 @@ Base Object :class:`BaseObject`
 The base object definition provides the normal object accessor methods. It should be subclassed as shown in :ref:`AstroObjectAPI`
 
 .. autoclass::
-	AstroObject.AstroObjectBase.BaseObject
-	:members:
+    AstroObject.AstroObjectBase.BaseObject
+    :members:
 
 
 """
@@ -130,14 +136,25 @@ from abc import ABCMeta, abstractmethod, abstractproperty
 # Submodules from this system
 from Utilities import *
 
-__all__ = ["BaseObject","BaseFrame","AnalyticMixin","NoHDUMixin","HDUHeaderMixin","NoDataMixin"]
+__all__ = ["BaseObject","BaseFrame","AnalyticMixin","NoHDUMixin","HDUHeaderMixin","NoDataMixin","Mixin"]
 
 __version__ = getVersion()
 
 LOG = logging.getLogger(__name__)
 
+class Mixin(object):
+    """ This is an abstract base class for any class which is a Mixin. All such objects should have the appropriate meta-class, and cannot be instantiated unless they havae thier own :meth:`__init__` method.
+    
+    This prevents Mixin classes from being instantiated as stand-alone entities.
+    """
+    __metaclass__ = ABCMeta
+    
+    @abstractmethod
+    def __init__(self):
+        super(Mixin, self).__init__()
 
-class BaseFrame(object):
+
+class BaseFrame(Mixin):
     """This is the API for frame objects, that is, objects which represnet a single state of data. See :class:`AstroObjectBase.FITSFrame`. This API is generally not called by the end user, but rather is called by the parent :class:`AstroObject.AstroObjectBase.BaseObject`'s function. For an example of a parent object, see :class:`AstroObjectBase.BaseObject`.
     
     :param data: Initalizing data
@@ -214,12 +231,13 @@ class BaseFrame(object):
         """
         return "<\'%s\' labeled \'%s\'>" % (self.__class__.__name__,self.label)
     
+    @abstractmethod
     def __valid__(self):
         """Runs a series of assertions which ensure that the data for this frame is valid
         
         :raises: :exc:`AssertionError` when frame is invalid
-        :returns: ``None``"""
-        assert True
+        :returns: ``True``"""
+        return True
     
     @property
     def valid(self):
@@ -345,8 +363,9 @@ def semiabstractmethod(txt):
         newfunc = make_decorator(func)(raiser)
         return newfunc
     return decorator
+        
 
-class HDUHeaderMixin(object):
+class HDUHeaderMixin(Mixin):
     """Mixin to provide the default :meth:`~BaseFrame.__setheader__` and :meth:`~BaseFrame.__getheader__` functions. These functions are not provided by default in :class:`BaseFrame`.
     
     :meth:`~BaseFrame.__setheader__` applies the **frame** label to the "label" and "object" keywords, then applies all of the existing keywords to the header.
@@ -382,7 +401,7 @@ class HDUHeaderMixin(object):
     
         
 
-class NoDataMixin(object):
+class NoDataMixin(Mixin):
     """Mixin to allow for frames which **cannot** contain data. This mixin allows the developer to not implement :meth:`~BaseFrame.__call__` and :meth:`~BaseFrame.__show__`, both of which are only sensible methods for actual data.
     
     Due to the validity of empty HDUs, it is possible to have an object which doesn't contain data, but can still produce HDUs.
@@ -397,14 +416,23 @@ class NoDataMixin(object):
     def __show__(self):
         """Show no data... NotImplemented"""
         pass
+    
+    @classmethod    
+    @semiabstractmethod("Cannot call %s.%s() as this frame cannot contain data.")
+    def __save__(self):
+        """Show no data... NotImplemented"""
+        pass
+    
         
     def __valid__(self):
         """Require no data"""
         if hasattr(self,'data'):
             assert self.data == None, "The frame %s cannot accept data, found data with type %s" % (self,type(self.data))
+        return super(NoDataMixin,self).__valid__()
+
     
         
-class NoHDUMixin(object):
+class NoHDUMixin(Mixin):
     """Mixin to allow for frames which **cannot** produce FITS Header-Data-Units (HDUs) and as such **cannot** produce FITS files.
     
     This mixin allows the developer to not implement :meth:`~BaseFrame.__getheader__`, :meth:`~BaseFrame.__setheader__`, :meth:`~BaseFrame.__hdu__`, and :meth:`~BaseFrame.__read__`.
@@ -509,6 +537,17 @@ class BaseObject(collections.MutableMapping):
         
         :returns: integer"""
         return len(self.states.keys())
+    
+    @property
+    def d(self):
+        """The data for the selected FITS frame."""
+        return self.data()
+    
+    @property
+    def f(self):
+        """The selected FITS frame. This frame is usually the last modified frame in the system."""
+        return self.frame()
+    
         
     ###############################
     # Basic Object Mode Functions #
@@ -534,7 +573,7 @@ class BaseObject(collections.MutableMapping):
                     LOG.log(2,"Cannot save as %s: %s" % (dataClass,AE))
                 else:
                     break
-            if not Object:
+            if Object is None:
                 raise TypeError("Object to be saved cannot be cast as %s" % self.dataClasses)
         else:
             Object = data.copy(label=statename)
@@ -574,10 +613,7 @@ class BaseObject(collections.MutableMapping):
         else:
             self._key_error(statename)
     
-    @property
-    def f(self):
-        """The selected FITS frame. This frame is usually the last modified frame in the system."""
-        return self.states[self.statename]
+
     
     def frame(self,statename=None):
         """Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.
@@ -716,7 +752,7 @@ class BaseObject(collections.MutableMapping):
                     LOG.info("%s: Not removing state %s as it does not exist" % (self,statename))
                 else:
                     raise IndexError("%s: Object %s does not exist!" % (self,statename))
-            if delete:
+            elif delete:
                 del self.states[statename]
             else:
                 self.states.pop(statename)
@@ -739,13 +775,14 @@ class BaseObject(collections.MutableMapping):
         else:
             self._key_error(statename)
     
-    def write(self,filename=None,states=None,primaryState=None,clobber=False):
+    def write(self,filename=None,states=None,primaryState=None,clobber=False,singleFrame=False):
         """Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify ``states`` then only those states will be used. ``primaryState`` should be the state of the front HDU. When not specified, the latest state will be used. It uses the :attr:`dataClasses` :meth:`FITSFrame.__hdu__` method to return a valid HDU object for each Frame.
         
         :param string filename: the name of the file for saving.
         :param list states: A list of states to include in the file. If ``None``, save all states.
         :param string primaryState: The state to become the front of the FITS file. If none, uses :meth:`_default_state`
         :param bool clobber: Whether to overwrite the destination file or not.
+        :param bool singleFrame: Whether to save only a single frame.
         
         """
         if not states:
@@ -756,6 +793,8 @@ class BaseObject(collections.MutableMapping):
             LOG.log(2,"Set primary statename to default state %s" % primaryState)
         if primaryState in states:
             states.remove(primaryState)
+        if singleFrame:
+            states = []
         if not filename:
             if self.filename == None:
                 filename = primaryState
@@ -763,7 +802,8 @@ class BaseObject(collections.MutableMapping):
             else:
                 filename = self.filename
                 LOG.log(2,"Set filename from Object. Filename: %s" % filename)
-        filename = validate_filename(filename)
+        if isinstance(filename,(str,unicode)):
+            filename = validate_filename(filename)
         PrimaryHDU = self.states[primaryState].hdu(primary=True)
         if len(states) > 0:
             HDUs = [self.states[state].hdu(primary=False) for state in states]
@@ -786,28 +826,31 @@ class BaseObject(collections.MutableMapping):
         """
         if not filename:
             filename = self.filename
-        if statename == None:
-            statename = os.path.basename(filename)
-            LOG.log(2,"Set statename for image from filename: %s" % statename)
+        if statename is None:
+            LOG.log(2,"Set statename for image from filename: %s" % os.path.basename(filename))
         HDUList = pf.open(filename)
         Read = 0
         Labels = []
         for HDU in HDUList:
             Object = None
+            if statename is None and "label" in HDU.header:
+                label = HDU.header["label"]
+            elif statename is None:
+                statename = os.path.basename(filename)
+                label = statename
+            else:
+                label = statename
+            if label in Labels:
+                label = label + " Frame %d" % Read
             for dataClass in self.dataClasses:
-                if "label" in HDU.header:
-                    label = HDU.header["label"]
-                elif Read != 0:
-                    label = statename + " Frame %d" % Read
-                else:
-                    label = statename
                 try:
                     Object = dataClass.__read__(HDU,label)
+                    Object.__getheader__(HDU)
                 except NotImplementedError as AE:
                     LOG.log(2,"Cannot read as %s: %s" % (dataClass,AE))
                 else:
                     break
-            if not Object:
+            if Object == None:
                 LOG.log(8,"Skipping HDU %s, cannot save as valid type " % HDU)
             else:
                 Read += 1
@@ -819,6 +862,15 @@ class BaseObject(collections.MutableMapping):
         
         LOG.log(5,"Saved states %s" % Labels)
         return Labels
+    
+    def fromAtFile(self,atfile):
+        """Read an atfile into this object. The name of the atfile can include a starting "@" which is stripped. The file is then loaded, and each line is assumed to contain a single fully-qualified part-name."""
+        filename = atfile.lstrip("@")
+        labels = []
+        with open(filename,'r') as stream:
+            for line in stream:
+                labels += self.read(line.rstrip(" \n\t"))
+        return labels
       
     @classmethod  
     def fromFile(cls,filename):

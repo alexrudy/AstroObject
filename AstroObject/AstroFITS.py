@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2012-04-17.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.4.0
+#  Version 0.5-a1
 # 
 """
 Empty FITS HDUs: :mod:`AstroFITS`
@@ -70,7 +70,7 @@ from AstroObjectBase import BaseFrame,BaseObject,HDUHeaderMixin,NoDataMixin
 # Submodules from this system
 from Utilities import *
 
-__all__ = ["BaseObject","BaseFrame","AnalyticMixin","NoHDUMixin","HDUHeaderMixin","NoDataMixin"]
+__all__ = ["FITSFrame","FITSObject"]
 
 __version__ = getVersion()
 
@@ -91,8 +91,6 @@ class FITSFrame(HDUHeaderMixin,NoDataMixin,BaseFrame):
     def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
         super(FITSFrame, self).__init__(data=data, label=label, header=header, metadata=metadata,**kwargs)
     
-   
-        
     def __hdu__(self,primary=False):
         """Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.
         
@@ -106,9 +104,6 @@ class FITSFrame(HDUHeaderMixin,NoDataMixin,BaseFrame):
         LOG.log(8,"%s: Generating an Empty %sHDU" % (self,"primary " if primary else ""))
         return HDU
     
-        
-    
-    
     @classmethod
     def __read__(cls,HDU,label):
         """An abstract method for reading empty data HDU Frames.
@@ -118,7 +113,7 @@ class FITSFrame(HDUHeaderMixin,NoDataMixin,BaseFrame):
         :raises: :exc:`NotImplementedError` when this data can't be saved.
         :returns: :class:`FITSFrame`
         """
-        if not isinstance(HDU,pf.PrimaryHDU):
+        if not isinstance(HDU,(pf.PrimaryHDU,pf.ImageHDU)):
             msg = "Must save a %s to a %s, found %s" % (pf.PrimaryHDU.__name__,cls.__name__,HDU.__class__.__name__)
             raise NotImplementedError(msg)
         if not HDU.data == None:

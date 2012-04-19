@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.4.0
+#  Version 0.5-a1
 # 
 
 # Parent Modules
@@ -32,7 +32,16 @@ __all__ = ["BlackBodySpectrum","GaussianSpectrum","FlatSpectrum"]
 __version__ = getVersion()
 
 class BlackBodySpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSpectrum):
-    """An analytic representation of a Blackbody Spectrum at a Kelvin Tempertaure"""
+    """An analytic representation of a Blackbody Spectrum at a Kelvin Tempertaure.
+    
+    :param float temperature: The temperature, in Kelvin, of this black body curve.
+    
+    .. inheritance-diagram::
+        AstroObject.AnalyticSpectra.BlackBodySpectrum
+        :parts: 1
+        
+    
+    """
     def __init__(self, temperature, label=None, **kwargs):
         if label == None:
             label = "Black Body Spectrum at %4.2eK" % temperature
@@ -45,7 +54,18 @@ class BlackBodySpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSp
         
         
 class GaussianSpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSpectrum):
-    """An analytic representation of a gaussian function in spectral form"""
+    """An analytic representation of a gaussian function in spectral form.
+    
+    :param float mean: The center of the Gaussian, in wavelength units.
+    :param float stdev: The standard deviation of the gaussian, in wavelength units.
+    :param float height: The maximum height of the gaussian in flux units.
+    
+    .. inheritance-diagram::
+        AstroObject.AnalyticSpectra.GaussianSpectrum
+        :parts: 1
+        
+    
+    """
     def __init__(self, mean, stdev, height, label=None):
         if label == None:
             label = "Gaussian Spectrum with mean: %4.2e and standard deviation: %4.2e" % (mean,stdev)
@@ -62,7 +82,16 @@ class GaussianSpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSpe
     
 
 class FlatSpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSpectrum):
-    """An analytc form of a flat value at every wavelength"""
+    """An analytc form of a flat value at every wavelength.
+    
+    :param float value: The height of this flat spectrum, in flux units.
+    
+    .. inheritance-diagram::
+        AstroObject.AnalyticSpectra.FlatSpectrum
+        :parts: 1
+        
+    
+    """
     def __init__(self, value, label=None):
         if label == None:
             label = "Flat spectrum with value %3f" % value

@@ -5,11 +5,11 @@
 #  
 #  Created by Alexander Rudy on 2011-11-08.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.4.0
+#  Version 0.5-a1
 # 
 """
-HDU Objects and Storage :mod:`AstroFITS`
-****************************************
+HDU Objects and Storage :mod:`AstroHDU`
+=======================================
 
 
 Objects for manipulating and managing HDUs directly.
@@ -17,12 +17,12 @@ Objects for manipulating and managing HDUs directly.
 .. warning:: There are some problems in this feature at the moment. Right now, HDU generation and reading does not happen correctly, as only data and headers are extracted and included. This will be corrected shortly.
 
 .. autoclass::
-    AstroObject.AstroFITS.HDUObject
+    AstroObject.AstroHDU.HDUObject
     :members:
     :inherited-members:
 
 .. autoclass::
-    AstroObject.AstroFITS.HDUFrame
+    AstroObject.AstroHDU.HDUFrame
     :members:
     :special-members:
     
@@ -62,6 +62,7 @@ class HDUFrame(AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame,pf.Image
     
     """
     __metaclass__ = classmaker()
+    
     def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
         self.data = data
         super(HDUFrame, self).__init__(data=None, label=label, header=header, metadata=metadata, **kwargs)
@@ -81,8 +82,8 @@ class HDUFrame(AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame,pf.Image
     def __valid__(self):
         """Runs a series of assertions which ensure that the data for this frame is valid"""
         assert (isinstance(self.data,np.ndarray) or self.data==None), "Frame data is not correct type: %s" % type(self.data)
+        return super(HDUFrame, self).__valid__()
         
-    
     def __hdu__(self,primary=False):
         """Retruns an HDU which represents this frame. HDUs are either ``pyfits.PrimaryHDU`` or ``pyfits.ImageHDU`` depending on the *primary* keyword."""
         if primary and isinstance(self,pf.ImageHDU):

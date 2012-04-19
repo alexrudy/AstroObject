@@ -11,7 +11,7 @@
 EXE=$0
 
 SELECTREGEX="[0-9a-zA-Z\.\+\-]+"
-SPLITREGEX="([0-9]+)\.([0-9]+)(\.([0-9]+))?(-p([0-9]+))?($SELECTREGEX)?"
+SPLITREGEX="([0-9]+)\.([0-9]+)(\.([0-9]+))?(-p([0-9]+))?(\-)?($SELECTREGEX)?"
 VERSIONFILE="AstroObject/version.py"
 
 VERSION=`python $VERSIONFILE`
@@ -53,28 +53,33 @@ MAJOR=`echo $NEWVERSION | grep -E "$SPLITREGEX" | sed -Ee "s/$SPLITREGEX/\1/"`
 MINOR=`echo $NEWVERSION | grep -E "$SPLITREGEX" | sed -Ee "s/$SPLITREGEX/\2/"`
 BUGFIX=`echo $NEWVERSION | grep -E "$SPLITREGEX" | sed -Ee "s/$SPLITREGEX/\4/"`
 PATCH=`echo $NEWVERSION | grep -E "$SPLITREGEX" | sed -Ee "s/$SPLITREGEX/\6/"`
+DEVSTR=`echo $NEWVERSION | grep -E "$SPLITREGEX" | sed -Ee "s/$SPLITREGEX/\8/"`
 
 if [ "$MAJOR" == '' ] || [ "$MINOR" == '' ]; then
     echo "Cannot parse version: \"$NEWVERSION\""
-    echo "  Found: major=$MAJOR minor=$MINOR bugfix=$BUGFIX patch=$PATCH"
+    echo "  Found: major=$MAJOR minor=$MINOR bugfix=$BUGFIX patch=$PATCH devstr=$DEVSTR"
     exit
 fi
 
 echo "Version is currently $VERSION, changing to $NEWVERSION"
-echo " extracted as major=$MAJOR minor=$MINOR bugfix=$BUGFIX patch=$PATCH"
+echo " extracted as major=$MAJOR minor=$MINOR bugfix=$BUGFIX patch=$PATCH devstr=$DEVSTR"
 
-if [ "$BUGFIX" == '' ]
-then
+if [ "$BUGFIX" == '' ]; then
     BUGFIX='None'
 fi
 
 
-if [ "$PATCH" == '' ]
-then
+if [ "$PATCH" == '' ]; then
     PATCH='None'
 fi
 
-echo " entered as major=$MAJOR minor=$MINOR bugfix=$BUGFIX patch=$PATCH"
+if [ "$DEVSTR" == '' ]; then
+	DEVSTR='None'
+else
+	DEVSTR="\"$DEVSTR\""
+fi
+
+echo " entered as major=$MAJOR minor=$MINOR bugfix=$BUGFIX patch=$PATCH devstr=$DEVSTR"
 
 if [ "$1" == "-t" ]; then
     exit
@@ -107,7 +112,8 @@ sed -i '' -Ee "s/major += +$SELECTREGEX/major = $MAJOR/" $VERSIONFILE
 sed -i '' -Ee "s/minor += +$SELECTREGEX/minor = $MINOR/" $VERSIONFILE
 sed -i '' -Ee "s/bugfix += +$SELECTREGEX/bugfix = $BUGFIX/" $VERSIONFILE
 sed -i '' -Ee "s/patch += +$SELECTREGEX/patch = $PATCH/" $VERSIONFILE
-echo "   Version variables set to major=$MAJOR minor=$MINOR bugfix=$BUGFIX patch=$PATCH"
+sed -i '' -Ee "s/cdevstr += +\\\"?$SELECTREGEX\\\"?/cdevstr = $DEVSTR/" $VERSIONFILE
+echo "   Version variables set to major=$MAJOR minor=$MINOR bugfix=$BUGFIX patch=$PATCH devstr=$DEVSTR"
 
 
 

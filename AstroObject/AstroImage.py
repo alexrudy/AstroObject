@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-04-28.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.4.0
+#  Version 0.5-a1
 # 
 """
 Image Objects and Storage :mod:`AstroImage`
@@ -82,6 +82,7 @@ class ImageFrame(AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame):
         assert isinstance(self.data,np.ndarray), "Frame data is not correct type: %s" % type(self.data)
         if len(self.data.shape) != 2:
             LOG.warning("The data appears to be %d dimensional. This object expects 2 dimensional data." % len(self.data.shape))
+        return super(ImageFrame, self).__valid__()
         
     
     def __hdu__(self,primary=False):
@@ -104,7 +105,9 @@ class ImageFrame(AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame):
         import matplotlib as mpl
         import matplotlib.pyplot as plt
         figure = plt.imshow(self())
+        plt.title(r'\verb-'+self.label+r'-')
         figure.set_cmap('binary_r')
+        plt.colorbar()
         return figure
     
     @classmethod
@@ -137,7 +140,6 @@ class ImageFrame(AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame):
             raise NotImplementedError(msg)
         try:
             Object = cls(HDU.data,label)
-            Object.__getheader__(HDU)
         except AttributeError as AE:
             msg = "%s data did not validate: %s" % (cls.__name__,AE)
             raise NotImplementedError(msg)

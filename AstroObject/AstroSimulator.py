@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-14.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.4.0
+#  Version 0.5-a1
 # 
 """
 Simulator :mod:`AstroSimulator`
@@ -338,7 +338,7 @@ class Stage(object):
                 "result": str(self.complete),
                 "time": datetime.timedelta(seconds=int(self.durTime)),
             }
-        if total == None:
+        if total == None or total == 0:
             keys["timestr"] = "% 12s" % keys["time"]            
         else:
             keys["per"] = ( self.durTime / total ) * 100.0
@@ -837,7 +837,7 @@ class Simulator(object):
     def show_profile(self):
         """Show the profile of the simulation"""
         
-        total = sum([ self.stages[stage].durTime for stage in self.ran])
+        total = sum([ self.stages[stage].durTime for stage in self.aran])
         
         text = "Simulation profile:\n"
         text += Stage.table_head() + "\n"

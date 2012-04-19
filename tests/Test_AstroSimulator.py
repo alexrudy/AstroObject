@@ -5,11 +5,11 @@
 #  
 #  Created by Alexander Rudy on 2012-01-11.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.4.0
+#  Version 0.5-a1
 # 
 
 
-from tests.Test_AstroObjectAPI import *
+from tests.AstroTest import *
 import AstroObject.AstroSimulator as AS
 from AstroObject.AstroCache import *
 import nose.tools as nt
@@ -27,10 +27,11 @@ class test_Simulator(API_Base):
     """AstroObject.AstroSimulator"""
     attributes = ["SIMULATOR"]
     
-    def setUp(self):
+    def setup(self):
         """Set up the simulator"""
         self.SIMULATOR = AS.Simulator("Tester")
-        self.doSetUp()
+        super(test_Simulator, self).setup()
+        
     
     def test_registerStage(self):
         """registerStage()"""
