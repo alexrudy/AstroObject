@@ -266,14 +266,15 @@ class IrafTools(object):
             statename = self.object.statename
         filename = self.set.filename(extension=extension,prefix=statename)
         self.object.write(states=[statename],filename=filename,clobber=True)
-        self.object.save(FITSFrame(data=None,label=newstatename))
+        if newstatename not in self.object:
+            self.object.save(FITSFrame(data=None,label=newstatename))
         LOG.log(2,"Created modfile for state %s named %s" % (statename,filename))
         self._collect[newstatename] = filename
         return filename
         
     def _atfile(self,*statenames,**kwargs):
         """Generic atfile creation routine"""
-        if len(statenames) > 1:
+        if len(statenames) < 1:
             statenames = self.object.list()
         atlist = self.set.filename(extension='.list')
 
