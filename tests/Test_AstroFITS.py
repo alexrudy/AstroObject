@@ -63,7 +63,7 @@ class test_FITSFrame(equality_FITSFrame,API_NoData_Frame,API_General_Frame):
     
         
 class test_FITSObject(equality_FITSFrame,API_Base_Object):
-    """AstroObjectBase.BaseObject"""
+    """AstroFITS.FITSObject"""
     def setup(self):
         self.files = ["TestFile.fits"]
         self.FRAME = AstroObject.AstroFITS.FITSFrame
