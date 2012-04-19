@@ -775,13 +775,14 @@ class BaseObject(collections.MutableMapping):
         else:
             self._key_error(statename)
     
-    def write(self,filename=None,states=None,primaryState=None,clobber=False):
+    def write(self,filename=None,states=None,primaryState=None,clobber=False,singleFrame=False):
         """Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify ``states`` then only those states will be used. ``primaryState`` should be the state of the front HDU. When not specified, the latest state will be used. It uses the :attr:`dataClasses` :meth:`FITSFrame.__hdu__` method to return a valid HDU object for each Frame.
         
         :param string filename: the name of the file for saving.
         :param list states: A list of states to include in the file. If ``None``, save all states.
         :param string primaryState: The state to become the front of the FITS file. If none, uses :meth:`_default_state`
         :param bool clobber: Whether to overwrite the destination file or not.
+        :param bool singleFrame: Whether to save only a single frame.
         
         """
         if not states:
@@ -792,6 +793,8 @@ class BaseObject(collections.MutableMapping):
             LOG.log(2,"Set primary statename to default state %s" % primaryState)
         if primaryState in states:
             states.remove(primaryState)
+        if singleFrame:
+            states = []
         if not filename:
             if self.filename == None:
                 filename = primaryState
@@ -859,6 +862,15 @@ class BaseObject(collections.MutableMapping):
         
         LOG.log(5,"Saved states %s" % Labels)
         return Labels
+    
+    def fromAtFile(self,atfile):
+        """Read an atfile into this object. The name of the atfile can include a starting "@" which is stripped. The file is then loaded, and each line is assumed to contain a single fully-qualified part-name."""
+        filename = atfile.lstrip("@")
+        labels = []
+        with open(filename,'r') as stream:
+            for line in stream:
+                labels += self.read(line.rstrip(" \n\t"))
+        return labels
       
     @classmethod  
     def fromFile(cls,filename):
