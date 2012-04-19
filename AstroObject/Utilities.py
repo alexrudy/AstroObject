@@ -115,16 +115,14 @@ def Gaussian(x,mean,stdev,height):
     """Rertun a gaussian at postion x, whith mean, stdev, and height"""
     return height*np.exp(-(x-mean)**2.0/(2.0*stdev**2.0))
 
-def validate_filename(string,extension=".fits"):
+def validate_filename(resourcename,extension=".fits"):
     """Validates a string as an acceptable filename, stripping path components,etc.
     
     ..warning:: This function isn't very good. I wouldn't use it in its current state."""
-    dirname,filename = os.path.split(string)
-    if len(filename) < len(extension):
-        filename = filename
-    elif filename[-len(extension):] == extension:
-        filename = filename[:-len(extension)]
-    return os.path.join(dirname,filename+extension)
+    dirname,filename = os.path.split(resourcename)
+    if not filename.endswith(extension):
+        filename += extension
+    return os.path.join(dirname,filename)
 
 def update(d, u):
     """A deep update command for dictionaries.

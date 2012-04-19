@@ -7,11 +7,11 @@
 #  Copyright 2011 Alexander Rudy. All rights reserved.
 #  Version 0.4.0
 # 
-"""
+u"""
 .. _AstroObjectAPI:
 
-AstroObject API
-===============
+:mod:`AstroObjectBase` – AstroObject API
+========================================
 
 The API is the foundation of the :mod:`AstroObject` module. When creating new types of data, you will want to create frames for that type of data. The functions shown below are the functions which must be present in every data frame type, in order to maintain compatibility with enclosing Objects. If your class conforms to this API, then it can easily be used as data for :class:`AstroObjectBase.BaseObject`. 
 
@@ -752,7 +752,7 @@ class BaseObject(collections.MutableMapping):
                     LOG.info("%s: Not removing state %s as it does not exist" % (self,statename))
                 else:
                     raise IndexError("%s: Object %s does not exist!" % (self,statename))
-            if delete:
+            elif delete:
                 del self.states[statename]
             else:
                 self.states.pop(statename)
@@ -775,13 +775,14 @@ class BaseObject(collections.MutableMapping):
         else:
             self._key_error(statename)
     
-    def write(self,filename=None,states=None,primaryState=None,clobber=False):
+    def write(self,filename=None,states=None,primaryState=None,clobber=False,singleFrame=False):
         """Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify ``states`` then only those states will be used. ``primaryState`` should be the state of the front HDU. When not specified, the latest state will be used. It uses the :attr:`dataClasses` :meth:`FITSFrame.__hdu__` method to return a valid HDU object for each Frame.
         
         :param string filename: the name of the file for saving.
         :param list states: A list of states to include in the file. If ``None``, save all states.
         :param string primaryState: The state to become the front of the FITS file. If none, uses :meth:`_default_state`
         :param bool clobber: Whether to overwrite the destination file or not.
+        :param bool singleFrame: Whether to save only a single frame.
         
         """
         if not states:
@@ -792,6 +793,8 @@ class BaseObject(collections.MutableMapping):
             LOG.log(2,"Set primary statename to default state %s" % primaryState)
         if primaryState in states:
             states.remove(primaryState)
+        if singleFrame:
+            states = []
         if not filename:
             if self.filename == None:
                 filename = primaryState
@@ -799,7 +802,8 @@ class BaseObject(collections.MutableMapping):
             else:
                 filename = self.filename
                 LOG.log(2,"Set filename from Object. Filename: %s" % filename)
-        filename = validate_filename(filename)
+        if isinstance(filename,(str,unicode)):
+            filename = validate_filename(filename)
         PrimaryHDU = self.states[primaryState].hdu(primary=True)
         if len(states) > 0:
             HDUs = [self.states[state].hdu(primary=False) for state in states]
@@ -822,20 +826,22 @@ class BaseObject(collections.MutableMapping):
         """
         if not filename:
             filename = self.filename
-        if statename == None:
-            statename = os.path.basename(filename)
-            LOG.log(2,"Set statename for image from filename: %s" % statename)
+        if statename is None:
+            LOG.log(2,"Set statename for image from filename: %s" % os.path.basename(filename))
         HDUList = pf.open(filename)
         Read = 0
         Labels = []
         for HDU in HDUList:
             Object = None
-            if "label" in HDU.header:
+            if statename is None and "label" in HDU.header:
                 label = HDU.header["label"]
-            elif Read != 0:
-                label = statename + " Frame %d" % Read
+            elif statename is None:
+                statename = os.path.basename(filename)
+                label = statename
             else:
                 label = statename
+            if label in Labels:
+                label = label + " Frame %d" % Read
             for dataClass in self.dataClasses:
                 try:
                     Object = dataClass.__read__(HDU,label)
@@ -856,6 +862,15 @@ class BaseObject(collections.MutableMapping):
         
         LOG.log(5,"Saved states %s" % Labels)
         return Labels
+    
+    def fromAtFile(self,atfile):
+        """Read an atfile into this object. The name of the atfile can include a starting "@" which is stripped. The file is then loaded, and each line is assumed to contain a single fully-qualified part-name."""
+        filename = atfile.lstrip("@")
+        labels = []
+        with open(filename,'r') as stream:
+            for line in stream:
+                labels += self.read(line.rstrip(" \n\t"))
+        return labels
       
     @classmethod  
     def fromFile(cls,filename):

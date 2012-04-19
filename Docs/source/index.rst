@@ -28,6 +28,7 @@ About AstroObject
     AnalyticSpectra
     AstroNDArray
     AstroHDU
+    iraftools
     AstroObject
     AstroSimulator
     AstroConfig
