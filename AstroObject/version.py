@@ -20,10 +20,11 @@ from __future__ import division,with_statement
 
 #these components can be changed for new versions
 major = 0
-minor = 4
-bugfix = 0
+minor = 5
+bugfix = None
 patch = None
 dev = True
+cdevstr = ""
 
 
 #everything below here is derived
@@ -169,9 +170,9 @@ def _get_git_devstr(sha=False):
     if release:
         raise ValueError('revsion devstring not valid for a release version')
 
+
     currdir = path.abspath(path.split(__file__)[0])
 #    gitdir = path.join(currdir,'.git')
-
 #    while not path.exists(gitdir):
 #        currdir = path.split(currdir)[0]
 #        gitdir = path.join(currdir,'.git')
@@ -201,9 +202,13 @@ def _get_git_devstr(sha=False):
         nrev = stdout.count('\n')
         return  'dev-r%i'%nrev
     
-dev = _get_git_devstatus()
-release = not dev
-_get_devstr = _get_git_devstr
+if cdevstr is None:    
+    dev = _get_git_devstatus()
+    release = not dev
+    _get_devstr = _get_git_devstr
+else:
+    _get_devstr = lambda b : cdevstr 
+
     
 version = str(major)+'.' +\
           str(minor) +\
