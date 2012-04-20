@@ -38,10 +38,15 @@ About AstroObject
     future
     rnotes
 
+Examples
+========
+
 .. toctree::
-    :hidden:
     
-    SimulatorExample
+    examples/simulator
+    examples/iraftools
+    examples/spectra
+    
 
 Testing and Development Features
 ================================

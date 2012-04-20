@@ -8,28 +8,28 @@
 #  Version 0.5-a1
 # 
 """
-Raw Spectrum Management :mod:`AstroSpectra`
-===========================================
+:mod:`AstroSpectra` — Raw Spectrum Management 
+=============================================
 
-An **object** and **frame** class which can handle raw spectrum data. This module only handles raw spectra. These spectra are simply data held in image-like **frames**. This class allows a spectrum to be consistently read and written to a FITS file, using image rows as data arrays. The spectra functions contained in this module are bland. For more sophisitcated spectral analysis, see the :mod:`AnalyticSpectra` module, which contians classes which can re-sample a raw spectrum and interpolate correctly across a spectrum to provide an analytic interface to otherwise discrete spectra.
+An **stack** and **frame** class which can handle raw spectrum data. This module only handles raw spectra. These spectra are simply data held in image-like **frames**. This class allows a spectrum to be consistently read and written to a FITS file, using image rows as data arrays. The spectra functions contained in this module are bland. For more sophisitcated spectral analysis, see the :mod:`AnalyticSpectra` module, which contians classes which can re-sample a raw spectrum and interpolate correctly across a spectrum to provide an analytic interface to otherwise discrete spectra.
 
 .. warning:: The class implemented here does not yet use a sophisticated enough method for saving FITS header data etc. As such, it will not preserve state names etc. The development of this class should bring it inline with the STSCI spectra classes in the future.
 
 .. inheritance-diagram::
-    AstroObject.AstroSpectra.SpectraObject
+    AstroObject.AstroSpectra.SpectraStrack
     AstroObject.AstroSpectra.SpectraFrame
     :parts: 1
 
-Raw Spectrum **objects**: :class:`SpectraObject`
+:class:`SpectraStrack` – Raw Spectrum **stacks**
 ------------------------------------------------
 
 .. autoclass::
-    AstroObject.AstroSpectra.SpectraObject
+    AstroObject.AstroSpectra.SpectraStrack
     :members:
     :inherited-members:
 
-Raw Spectrum **frames**: :class:`SpectraFrame`
-----------------------------------------------
+:class:`SpectraFrame` – Raw Spectrum **frames**
+-----------------------------------------------
 
 .. autoclass::
     AstroObject.AstroSpectra.SpectraFrame
@@ -58,7 +58,7 @@ import math, copy, sys, time, logging, os
 # Submodules from this system
 from Utilities import *
 
-__all__ = ["SpectraMixin","SpectraFrame","SpectraObject"]
+__all__ = ["SpectraMixin","SpectraFrame","SpectraStrack"]
 
 __version__ = getVersion()
 
@@ -174,10 +174,10 @@ class SpectraFrame(AstroObjectBase.HDUHeaderMixin,SpectraMixin,AstroObjectBase.B
     
 
 
-class SpectraObject(AstroObjectBase.BaseObject):
-    """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`SpectraFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately."""
+class SpectraStrack(AstroObjectBase.BaseStack):
+    """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`SpectraFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately."""
     def __init__(self,dataClasses=[SpectraFrame],**kwargs):
-        super(SpectraObject, self).__init__(dataClasses=dataClasses,**kwargs)
+        super(SpectraStrack, self).__init__(dataClasses=dataClasses,**kwargs)
 
     def load(self,filename=None,statename=None):
         """Loads spectral data from a data file which contains two columns, one for wavelenght, and one for flux."""

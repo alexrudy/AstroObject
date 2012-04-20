@@ -47,15 +47,15 @@ class equality_ImageFrame(equality_Base):
 
 
 class test_NDArrayFrame(equality_ImageFrame,API_General_Frame):
-    """AstroObject.AstroNDArray.NDArrayFrame"""
+    """AstroNDArray.NDArrayFrame"""
     
     def setup(self):
         """Sets up the test with some basic image data"""
         self.testJPG = "Hong-Kong.jpg"
         self.data = [self.testJPG]
         if not os.access(self.testJPG,os.R_OK):
-            self.image = np.zeros((1000,1000))
-            self.image[450:550,450:550] = np.ones((100,100))
+            self.image = np.zeros((100,100))
+            self.image[45:55,45:55] = np.ones((10,10))
         else:
             self.image = np.int32(np.sum(mpimage.imread(self.testJPG),axis=2))
         
@@ -78,8 +78,8 @@ class test_NDArrayFrame(equality_ImageFrame,API_General_Frame):
         
         
 
-class test_NDArrayObject(equality_ImageFrame,API_Base_Object):
-    """AstroNDArray.NDArrayObject"""
+class test_NDArrayStack(equality_ImageFrame,API_Base_Object):
+    """AstroNDArray.NDArrayStack"""
     
     def setup(self):
         """Fixture for setting up a basic image frame"""
@@ -87,10 +87,11 @@ class test_NDArrayObject(equality_ImageFrame,API_Base_Object):
         self.data = [self.testJPG]
         self.files = ["TestFile.fits"]
         if not os.access(self.testJPG,os.R_OK):
-            self.image = np.zeros((1000,1000))
-            self.image[450:550,450:550] = np.ones((100,100))
+            self.image = np.zeros((100,100))
+            self.image[45:55,45:55] = np.ones((10,10))
         else:
             self.image = np.int32(np.sum(mpimage.imread(self.testJPG),axis=2))
+
 
         self.FRAME = AstroObject.AstroNDArray.NDArrayFrame
         self.HDU = pf.PrimaryHDU
@@ -101,8 +102,8 @@ class test_NDArrayObject(equality_ImageFrame,API_Base_Object):
         self.FRAMESTR = "<'ImageFrame' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.image.AxesImage
-        self.OBJECT = AstroObject.AstroNDArray.NDArrayObject
-        super(test_NDArrayObject, self).setup()
+        self.OBJECT = AstroObject.AstroNDArray.NDArrayStack
+        super(test_NDArrayStack, self).setup()
         
     def test_double_saving_data_should_not_reference(self):
         """data() should prevent data from referencing each other."""
@@ -142,7 +143,7 @@ class btest_AstroImage_Functional(API_Base_Functional):
         self.OBJECTSTR = None
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.image.AxesImage
-        self.OBJECT = AN.NDArrayObject
+        self.OBJECT = AN.NDArrayStack
         self.FILENAME = "TestFile.fits"
         
         def SAMEDATA(first,second):

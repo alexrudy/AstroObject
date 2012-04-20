@@ -8,8 +8,8 @@
 #  Version 0.5-a1
 # 
 """
-Analytic Spectra and Interpolation :mod:`AnalyticSpectra`
-=========================================================
+:mod:`AnalyticSpectra` – Analytic Spectra and Interpolation
+===========================================================
 
 Objects for manipulating and managing spectra which are inherently analytic (i.e. you want interpolation, or your spectrum to be defined by a single function). The classes provided in this module are *FRAMES* not *OBJECTS*, i.e. they are individual representations of spectra etc.
 

@@ -8,8 +8,8 @@
 #  Version 0.5-a1
 # 
 """
-YAML-based Configuration Dictionaries: :mod:`AstroConfig`
-=========================================================
+:mod:`AstroConfig` — YAML-based Configuration Dictionaries
+==========================================================
 
 This module provides structured, YAML based, deep dictionary configuration objects. The objects have a built-in deep-update function and use deep-update behavior by default. They act otherwise like dictionaries, and handle thier internal operation using a storage dictionary. The objects also provide a YAML configuration file reading and writing interface.
 

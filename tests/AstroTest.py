@@ -23,13 +23,13 @@ This module has test frameworks for all modules
     tests.AstroTest.API_General_Frame
     tests.AstroTest.API_Base_Object
     tests.Test_AstroFITS.test_FITSFrame
-    tests.Test_AstroFITS.test_FITSObject
+    tests.Test_AstroFITS.test_FITSStack
     tests.test_AstroHDU.test_HDUFrame
-    tests.test_AstroHDU.test_HDUObject
+    tests.test_AstroHDU.test_HDUStack
     tests.Test_AstroImage.test_ImageFrame
-    tests.Test_AstroImage.test_ImageObject
+    tests.Test_AstroImage.test_ImageStack
     tests.Test_AstroSpectra.test_SpectraFrame
-    tests.Test_AstroSpectra.test_SpectraObject
+    tests.Test_AstroSpectra.test_SpectraStrack
     :parts: 1
 
 """
@@ -516,7 +516,7 @@ class API_General_Frame(API_HDUHeader_Frame,API_NotEmpty_Frame,API_Base_Frame):
     
 
 class API_Base_Object(API_Base):
-    """API for AstroObjectBase.BaseObject"""
+    """API for AstroObjectBase.BaseStack"""
     
     attributes = ['FRAME','VALID','INVALID','SHOWTYPE','HDUTYPE','OBJECTSTR','OBJECT','FRAMESTR']
     methods = ['frame_eq_frame','data_eq_data','data_eq_frame','frame']

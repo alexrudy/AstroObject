@@ -8,8 +8,8 @@
 #  Version 0.5-a1
 # 
 """
-Simulator :mod:`AstroSimulator`
-===============================
+:mod:`AstroSimulator` — Complex Task Management 
+===============================================
 
 The Simulator is designed to provide a high level, command-line useful interface to large computational tasks. As the name suggests, Simulators often do a lot of programming work, and do so across many distinct "stages", whcih can be configured in any way the user desires. All of the abilities in this program are simply object abstraction techniques to provide a complex program with a command line interface and better control and reporting on the activities carreid out to successfully complete the program. It allows for the configuration of simple test cases and "macros" from within the program, eliminating the need to provide small wrapper scripts and test handlers.
 

@@ -13,19 +13,19 @@ u"""
 :mod:`AstroObjectBase` – AstroObject API
 ========================================
 
-The API is the foundation of the :mod:`AstroObject` module. When creating new types of data, you will want to create frames for that type of data. The functions shown below are the functions which must be present in every data frame type, in order to maintain compatibility with enclosing Objects. If your class conforms to this API, then it can easily be used as data for :class:`AstroObjectBase.BaseObject`. 
+The API is the foundation of the :mod:`AstroObject` module. When creating new types of data, you will want to create frames for that type of data. The functions shown below are the functions which must be present in every data frame type, in order to maintain compatibility with enclosing Objects. If your class conforms to this API, then it can easily be used as data for :class:`AstroObjectBase.BaseStack`. 
 
 
-To see how easy this will make objects, examine the following code for a custom Object class which accepts :class:`FooFrame`. To create the custom :class:`AstroObjectBase.BaseObject` which accepts your new data type :class:`FooFrame`, simply use::
+To see how easy this will make objects, examine the following code for a custom Object class which accepts :class:`FooFrame`. To create the custom :class:`AstroObjectBase.BaseStack` which accepts your new data type :class:`FooFrame`, simply use::
     
-    class FooObject(AstroObjectBase.BaseObject):
+    class FooObject(AstroObjectBase.BaseStack):
         \"""A container for tracking FooFrames\"""
         def __init__(self, dataClasses=[FooFrame]):
-            super(ImageObject, self).__init__(dataClasses = dataClasses)
+            super(ImageStack, self).__init__(dataClasses = dataClasses)
             
         
     
-This object will then have all of the functions provided by :class:`AstroObjectBase.BaseObject`, but will only accept and handle data of type :class:`FooFrame`. :class:`FooFrame` should then implement all of the functions described in the API below.
+This object will then have all of the functions provided by :class:`AstroObjectBase.BaseStack`, but will only accept and handle data of type :class:`FooFrame`. :class:`FooFrame` should then implement all of the functions described in the API below.
 
 To use this API, it is recommended that you sub-class :class:`AstroObjectBase.BaseFrame`. This template class is an abstract base which will ensure that you implement all of the required methods.
 
@@ -36,15 +36,15 @@ Module Structure
 
 .. inheritance-diagram::
     AstroObject.AstroFITS.FITSFrame
-    AstroObject.AstroFITS.FITSObject
+    AstroObject.AstroFITS.FITSStack
     AstroObject.AstroImage.ImageFrame
-    AstroObject.AstroImage.ImageObject
+    AstroObject.AstroImage.ImageStack
     AstroObject.AstroSpectra.SpectraFrame
-    AstroObject.AstroSpectra.SpectraObject
+    AstroObject.AstroSpectra.SpectraStrack
     AstroObject.AstroHDU.HDUFrame
-    AstroObject.AstroHDU.HDUObject
+    AstroObject.AstroHDU.HDUStack
     AstroObject.AstroNDArray.NDArrayFrame
-    AstroObject.AstroNDArray.NDArrayObject
+    AstroObject.AstroNDArray.NDArrayStack
     AstroObject.AnalyticSpectra.AnalyticSpectrum
     AstroObject.AnalyticSpectra.CompositeSpectra
     AstroObject.AnalyticSpectra.InterpolatedSpectrum
@@ -56,10 +56,10 @@ Module Structure
     :parts: 1
 
 
-Base Frame :class:`BaseFrame`
------------------------------
+:class:`BaseFrame` — Base Frame and Frame API Definition
+--------------------------------------------------------
 
-The :class:`BaseFrame` class provides abstract methods for all of the required frame methods. If you subclass from :class:`BaseFrame`, you will ensure that your subclass is interoperable with all of the frame and object features of this module.
+The :class:`BaseFrame` class provides abstract methods for all of the required frame methods. If you subclass from :class:`BaseFrame`, you will ensure that your subclass is interoperable with all of the frame and object features of this module. The :class:`BaseFrame` serves as the primary definition of the API for frames.
 
 .. autoclass:: 
     AstroObject.AstroObjectBase.BaseFrame
@@ -70,8 +70,6 @@ The :class:`BaseFrame` class provides abstract methods for all of the required f
 
 Mixins in :mod:`AstroObjectBase`
 --------------------------------
-
-.. currentmodule:: AstroObject.AstroObjectBase
 
 Mixins allow certain classes to operate without all of the features required by :class:`BaseFrame`. Each class below implements certain methods and skips others. 
 
@@ -109,13 +107,13 @@ Class Inherits From:              :class:`Mixin`        :class:`Mixin`          
 .. autoclass::
     AstroObject.AstroSpectra.SpectraMixin
 
-Base Object :class:`BaseObject`
--------------------------------
+:class:`BaseStack` — Base Stack and Stack API Definition 
+--------------------------------------------------------
 
-The base object definition provides the normal object accessor methods. It should be subclassed as shown in :ref:`AstroObjectAPI`
+The base **stack** definition provides the normal object accessor methods. It should be subclassed as shown in :ref:`AstroObjectAPI`. The API methods defined in this class should be the final methods, and no re-implementation is necessary, so long as the data frames obey the Frame API as defined by :class:`BaseFrame`.
 
 .. autoclass::
-    AstroObject.AstroObjectBase.BaseObject
+    AstroObject.AstroObjectBase.BaseStack
     :members:
 
 
@@ -136,7 +134,7 @@ from abc import ABCMeta, abstractmethod, abstractproperty
 # Submodules from this system
 from Utilities import *
 
-__all__ = ["BaseObject","BaseFrame","AnalyticMixin","NoHDUMixin","HDUHeaderMixin","NoDataMixin","Mixin"]
+__all__ = ["BaseStack","BaseFrame","AnalyticMixin","NoHDUMixin","HDUHeaderMixin","NoDataMixin","Mixin"]
 
 __version__ = getVersion()
 
@@ -155,7 +153,7 @@ class Mixin(object):
 
 
 class BaseFrame(Mixin):
-    """This is the API for frame objects, that is, objects which represnet a single state of data. See :class:`AstroObjectBase.FITSFrame`. This API is generally not called by the end user, but rather is called by the parent :class:`AstroObject.AstroObjectBase.BaseObject`'s function. For an example of a parent object, see :class:`AstroObjectBase.BaseObject`.
+    """This is the API for frame objects, that is, objects which represnet a single state of data. See :class:`AstroObjectBase.FITSFrame`. This API is generally not called by the end user, but rather is called by the parent :class:`AstroObject.AstroObjectBase.BaseStack`'s function. For an example of a parent object, see :class:`AstroObjectBase.BaseStack`.
     
     :param data: Initalizing data
     :param label: string label
@@ -471,7 +469,7 @@ class AnalyticMixin(NoHDUMixin,NoDataMixin):
         pass
     
 
-class BaseObject(collections.MutableMapping):
+class BaseStack(collections.MutableMapping):
     """This object tracks a number of data frames. The :attr:`Filename` is the default filename to use when reading and writing, and the :attr:`dataClass` argument accepts a list of new data classes to be used with this object. New data classes should conform to the data class standard.
     
     :param filename: String name of default file for reading and writing with :meth:`read` and :meth:`write`.
@@ -481,7 +479,7 @@ class BaseObject(collections.MutableMapping):
         This is object only contains Abstract data objects. In order to use this class properly, you should set the dataClasses keyword for use when storing data.
     """
     def __init__(self,filename=None,dataClasses=None,**kwargs):
-        super(BaseObject, self).__init__(**kwargs)
+        super(BaseStack, self).__init__(**kwargs)
         # Image data variables.
         self.states = {}            # Storage for all of the images
         self.statename = None       # The active state name
@@ -505,7 +503,7 @@ class BaseObject(collections.MutableMapping):
         if self.name:
             return "<\'%s\' labeled \'%s\'>" % (self.__class__.__name__,self.name)
         else:
-            return super(BaseObject, self).__repr__()
+            return super(BaseStack, self).__repr__()
     
     def __str__(self):
         """String label for this object."""
@@ -622,9 +620,9 @@ class BaseObject(collections.MutableMapping):
         :returns: dataClass instance for this object
         
         .. Warning::
-            Unlike with the :meth:`BaseObject.data` call, the object returned here should be treated as roughly immutable. That is, it is not advisable to re-use the data frame here, as Python has returned a reference to all examples of this data frame in your code::
+            Unlike with the :meth:`BaseStack.data` call, the object returned here should be treated as roughly immutable. That is, it is not advisable to re-use the data frame here, as Python has returned a reference to all examples of this data frame in your code::
                 
-                >>> obj = BaseObject()
+                >>> obj = BaseStack()
                 >>> obj.save(FITSFrame(None,"Label"))
                 >>> Frame = obj.frame()
                 >>> Frame.label = "Other"
@@ -818,7 +816,7 @@ class BaseObject(collections.MutableMapping):
         
         ::
             
-            >>> obj = BaseObject()
+            >>> obj = BaseStack()
             >>> obj.read("SomeImage.fits")
             >>> obj.list()
             ["SomeImage","SomeImage Frame 1","SomeImage Frame 2"]
@@ -878,7 +876,7 @@ class BaseObject(collections.MutableMapping):
         
         ::
             
-            >>> obj = BaseObject.fromFile("SomeImage.fits")
+            >>> obj = BaseStack.fromFile("SomeImage.fits")
             >>> obj.list()
             ["SomeImage","SomeImage Frame 1","SomeImage Frame 2"]
             

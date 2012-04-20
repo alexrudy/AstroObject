@@ -5,7 +5,7 @@ An Example Simulator
 
 Example Program
 
-.. literalinclude:: /../../Examples/simulator_example.py
+.. literalinclude:: /../../Examples/simulator.py
 
 Example Configuration::
     

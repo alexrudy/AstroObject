@@ -8,29 +8,28 @@
 #  Version 0.5-a1
 # 
 """
-Image Objects and Storage :mod:`AstroImage`
-===========================================
+:mod:`AstroImage` — Image Stacks and Storage 
+============================================
 
-**Objects** and **frames** for manipulating and managing images. Images are simply defined as a two-dimensional numpy array. Image **objects** have two special methods, :meth:`ImageObject.loadFromFile` and :meth:`ImageObject.show3D`.
+**Stacks** and **frames** for manipulating and managing images. Images are simply defined as a two-dimensional numpy array. Image **stacks** have two special methods, :meth:`ImageStack.loadFromFile` and :meth:`ImageStack.show3D`.
 
-Right now, there are no facilities for integrating this module with pyraf, but such integration is planned for a future edition. The integration will work by writing and removing temporary FITS files.
+To understand IRAF integration of this module, see the methods provided by :mod:`~.iraftools`, including :func:`~.iraftools.UseIRAFTools`.
 
 .. inheritance-diagram::
-    AstroObject.AstroImage.ImageObject
+    AstroObject.AstroImage.ImageStack
     AstroObject.AstroImage.ImageFrame
     :parts: 1
 
-
-Image **objects**: :class:`ImageObject`
----------------------------------------
+:class:`ImageStack` — Image **stacks**
+--------------------------------------
 
 .. autoclass::
-    AstroObject.AstroImage.ImageObject
+    AstroObject.AstroImage.ImageStack
     :members:
     :inherited-members:
 
-Image **frames**: :class:`ImageFrame`
--------------------------------------
+:class:`ImageFrame` — Image **frames**
+--------------------------------------
 
 .. autoclass::
     AstroObject.AstroImage.ImageFrame
@@ -52,7 +51,7 @@ import math, copy, sys, time, logging, os
 # Module Utilites
 from Utilities import *
 
-__all__ = ["ImageFrame","ImageObject"]
+__all__ = ["ImageFrame","ImageStack"]
 
 __version__ = getVersion()
 
@@ -148,11 +147,11 @@ class ImageFrame(AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame):
     
 
 
-class ImageObject(AstroObjectBase.BaseObject):
-    """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`ImageFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.
+class ImageStack(AstroObjectBase.BaseStack):
+    """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`ImageFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.
     """
     def __init__(self, array=None,dataClasses=[ImageFrame], **kwargs):
-        super(ImageObject, self).__init__(dataClasses=dataClasses,**kwargs)
+        super(ImageStack, self).__init__(dataClasses=dataClasses,**kwargs)
         if array != None:
             raise NotImplemented("Cannot initialize with data")        # Save the initializing data
             
@@ -189,8 +188,8 @@ class ImageObject(AstroObjectBase.BaseObject):
             raise KeyError("Object not instantiated with any data...")
 
 
-class OLDImageObject(AstroObjectBase.BaseObject):
-    """docstring for ImageObject"""
+class OLDImageStack(AstroObjectBase.BaseStack):
+    """docstring for ImageStack"""
     
     ##########################
     # File Writing Functions #

@@ -77,8 +77,8 @@ class test_ImageFrame(equality_ImageFrame,API_General_Frame):
         
         
 
-class test_ImageObject(equality_ImageFrame,API_Base_Object):
-    """AstroImage.ImageObject"""
+class test_ImageStack(equality_ImageFrame,API_Base_Object):
+    """AstroImage.ImageStack"""
     
     def setup(self):
         """Fixture for setting up a basic image frame"""
@@ -100,8 +100,8 @@ class test_ImageObject(equality_ImageFrame,API_Base_Object):
         self.FRAMESTR = "<'ImageFrame' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.image.AxesImage
-        self.OBJECT = AstroObject.AstroImage.ImageObject
-        super(test_ImageObject, self).setup()
+        self.OBJECT = AstroObject.AstroImage.ImageStack
+        super(test_ImageStack, self).setup()
         
     
     def test_read_from_image_file(self):
@@ -157,7 +157,7 @@ class btest_AstroImage_Functional(API_Base_Functional):
         self.OBJECTSTR = None
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.image.AxesImage
-        self.OBJECT = AI.ImageObject
+        self.OBJECT = AI.ImageStack
         self.FILENAME = "TestFile.fits"
         
         def SAMEDATA(first,second):

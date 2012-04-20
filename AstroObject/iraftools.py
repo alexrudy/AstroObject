@@ -11,16 +11,42 @@ u"""
 :mod:`iraftools` – IRAF integration facility
 ============================================
 
-This module provides an interface for using :mod:`AstroObject` with PyIRAF
+This module provides an interface for using :mod:`AstroObject` with PyIRAF. For documentation of the individual methods provided by this module, see :class:`IRAFToolsMixin`. The next two sections will provide a brief overview of the use of :mod:`iraftools`.
 
-:class:`IRAFObject` – Intefrace to :class:`IrafTools`
------------------------------------------------------
+.. _IRAFTools_Filetypes:
 
-.. class::
-    AstroObject.iraftools.IRAFObject
-    This is an example class which has used :func:`UseIRAFTools`
+File types in :mod:`iraftools`
+------------------------------
+
+There are three types of FITS files provided by :mod:`iraftools`:
+
+- ``in`` files are FITS files which are used as input to an ``iraf`` fucntion. They are created immediately, and will exist untill the :mod:`~AstroObject.iraftools` cleanup stage (:meth:`iraf.done <AstroObject.iraftools.IRAFTools.done>`).
+- ``out`` files are FITS files which will be output targets for ``iraf``. As such, the filename returned does not point to an existing FITS file. Instead, the filename points to a potential file which will be re-read by the parent **stack** during the cleanup stage (:meth:`iraf.done <AstroObject.iraftools.IRAFTools.done>`).
+- ``mod`` files are FITS files which will be modified in-place by ``iraf``. These files are created immediately, just like ``in`` files, and are re-loaded automatically during the cleanup stage (:meth:`iraf.done <AstroObject.iraftools.IRAFTools.done>`). To prevent these **frames** from overwriting their original content, use the ``append=`` keyword to append a string to the new **frame** name. You could also make a copy of the original **frame** using
+    ::
+	
+    	Data["newname"] = Data["oldname"]
+	
+    Since **frame** labels are required to be unique, this will copy the old **frame**.
+
+These file types can be generated individually, or as @lists using functions provided by :class:`IRAFToolsMixin`.
+
+Example use of :mod:`iraftools`
+-------------------------------
+
+The best way to understand how :mod:`iraftools` works is to check out the walkthrough example. The example goes a few of the commonly used :mod:`iraftools` methods, and explains their basic operation. The example is explained in detail in :ref:`IRAFToolsWalkthough`.
+
+.. literalinclude:: /../../Examples/iraf-simple.py
+
+A full examle program can be seen in :ref:`IRAFToolsExample`.
+
+:class:`IRAFToolsMixin` – Intefrace to :class:`IRAFTools`
+---------------------------------------------------------
+
+.. autoclass::
+    AstroObject.iraftools.IRAFToolsMixin
     
-    .. method:: iin(statename=None,extension='.fits')
+    .. method:: iraf.infile(statename=None,extension='.fits')
         
         Returns a filename for a ``fits`` file from the given statename which can be used as input for IRAF tasks. This method should be used for files which will not be modified, as modifications will not be captured by the system. For files which are input, but will be modified, use :meth:`imod`.
         
@@ -28,16 +54,16 @@ This module provides an interface for using :mod:`AstroObject` with PyIRAF
         :param extension: The file extension to use.
         :returns: Filename for use with PyRAF
     
-    .. method:: iout(statename=None,extension='.fits',append=None)
+    .. method:: iraf.outfile(statename=None,extension='.fits',append=None)
         
-        Returns a filename for a ``fits`` file from the given statename which can be used for output for IRAF tasks. The file is not created, but will be read back into this **object** when :meth:`idone` is called.
+        Returns a filename for a ``fits`` file from the given statename which can be used for output for IRAF tasks. The file is not created, but will be read back into this **stack** when :meth:`idone` is called.
         
         :param statename: The name of the **frame** to use for output.
         :param extension: The file extension to use.
         :param append: A string to append to the state names
         :returns: Filename for use with PyRAF
     
-    .. method:: imod(statename=None,newstatename=None,extension='.fits',append=None)
+    .. method:: iraf.modfile(statename=None,newstatename=None,extension='.fits',append=None)
     
         Returns a filename for a ``fits`` file from the given statename which can be used as input for IRAF tasks which modify a file in-place. The file will be reloaded when :meth:`idone` is called.
         
@@ -47,7 +73,7 @@ This module provides an interface for using :mod:`AstroObject` with PyIRAF
         :param append: A string to be appended tp the new state name.
         :returns: Filename for use with PyRAF
         
-    .. method:: iinat(*statenames,extension='.fits')
+    .. method:: iraf.inatfile(*statenames,extension='.fits')
     
         Returns a filename for an "@"-list. The "@"-list lists fits files for each frame provided. These fitsfiles are created automatically. The "@"-list should not be used for in-place modification, for that, use :meth:`imodat`.
         
@@ -55,7 +81,7 @@ This module provides an interface for using :mod:`AstroObject` with PyIRAF
         :param extension: The file extension to use.
         :retunrs: Filename of the "@"-list
         
-    .. method:: ioutat(*statenames,append=None,extension='.fits')
+    .. method:: iraf.outatfile(*statenames,append=None,extension='.fits')
         
         Returns a filename for an "@"-list. The "@"-list lists fits files for each frame provided. These fits-files will be output destinations. They will be re-read into the object when :meth:`idone` is called.
         
@@ -64,7 +90,7 @@ This module provides an interface for using :mod:`AstroObject` with PyIRAF
         :param append: A string to append to the state names
         :retunrs: Filename of the "@"-list
         
-    .. method:: imodat(*statenames,append=None,extension='.fits')
+    .. method:: iraf.modatfile(*statenames,append=None,extension='.fits')
         
         Returns a filename for an "@"-list. The "@"-list lists fits files for each frame provided. These fits-files will be in-place modification destinations. They will be re-read into the object when :meth:`idone` is called.
         
@@ -73,15 +99,29 @@ This module provides an interface for using :mod:`AstroObject` with PyIRAF
         :param append: A string to append to the state names
         :retunrs: Filename of the "@"-list
         
-    .. method:: idone()
+    .. method:: iraf.done()
     
         Cleans up the temporary files, reloading any files which need reloading. Should be called after the IRAF command has completed, before attempting to re-use the stage.
 
-:class:`IrafTools` – Implementation of IRAF Tools
--------------------------------------------------
+.. _IRAFTools_Shortcuts:
+
+Shortcuts for :class:`IRAFToolsMixin`
+-------------------------------------
+
+The following shortcuts are bound directly to the **stack** object by the :meth:`IRAFToolsMixin.set_instance_methods`
+
+- :meth:`iraf.infile <IRAFToolsMixin.iraf.infile>` = :meth:`iin`
+- :meth:`iraf.outfile <IRAFToolsMixin.iraf.outfile>` = :meth:`iout`
+- :meth:`iraf.modfile <IRAFToolsMixin.iraf.modfile>` = :meth:`imod`
+- :meth:`iraf.inatfile <IRAFToolsMixin.iraf.inatfile>` = :meth:`iinat`
+- :meth:`iraf.outatfile <IRAFToolsMixin.iraf.outatfile>` = :meth:`ioutat`
+- :meth:`iraf.modatfile <IRAFToolsMixin.iraf.modatfile>` = :meth:`imodat`
+
+:class:`IRAFTools` – API Implementation of IRAF Tools
+-----------------------------------------------------
 
 .. autoclass::
-    AstroObject.iraftools.IrafTools
+    AstroObject.iraftools.IRAFTools
     :members:
 
 """
@@ -103,7 +143,7 @@ import shutil
 
 # Submodules from this system
 from .Utilities import *
-from .AstroObjectBase import BaseObject
+from .AstroObjectBase import BaseStack, Mixin
 from .AstroFITS import FITSFrame
 
 __version__ = getVersion()
@@ -160,12 +200,12 @@ class IRAFFileSet(object):
         return filename
         
 
-class IrafTools(object):
+class IRAFTools(object):
     """A class for managing interaction with IRAF"""
     def __init__(self,Object):
-        super(IrafTools, self).__init__()
-        if not isinstance(Object,BaseObject):
-            raise ValueError("Object must be an instance of %r" % BaseObject.__class__.__name__)
+        super(IRAFTools, self).__init__()
+        if not isinstance(Object,BaseStack):
+            raise ValueError("Object must be an instance of %r" % BaseStack.__class__.__name__)
         self.object = Object
         self.module = __module__
         self.IRAFFileSet = self.module.IRAFFileSet
@@ -173,6 +213,12 @@ class IrafTools(object):
         self._collect = {}
         if FITSFrame not in self.object.dataClasses:
             self.object.dataClasses += [FITSFrame]
+    
+    def __del__(self):
+        """Remove the reference to object, to prevent circularity"""
+        del self.object
+        del self.module
+        del self.IRAFFileSet
     
     @property
     def active(self):
@@ -228,7 +274,7 @@ class IrafTools(object):
         
     def outfile(self,statename=None,append=None,extension='.fits',**kwargs):
         """
-        Returns a filename for a ``fits`` file from the given statename which can be used for output for IRAF tasks. The file is not created, but will be read back into this **object** when :meth:`done` is called.
+        Returns a filename for a ``fits`` file from the given statename which can be used for output for IRAF tasks. The file is not created, but will be read back into this **stack** when :meth:`done` is called.
         
         :param statename: The name of the **frame** to use for output.
         :param extension: The file extension to use.
@@ -328,15 +374,38 @@ class IrafTools(object):
         self.object.idir = self.directory
         self.object.i = self.wrap
 
+class IRAFToolsMixin(Mixin):
+    """This mixin class enables IRAFTools. By default, tools are only enabled in the ``class.iraf`` namespace, so to call :meth:`~iraf.infile`, use :meth:`iraf.infile <IRAFToolsMixin.iraf.infile>`. To use the IRAFTools shortcuts (documented in :ref:`IRAFTools_Shortcuts`), pass ``shortcuts=True`` to any constructor form for each object, or explicitly call :meth:`iraf.set_instance_methods`."""
+    def __init__(self, *args, **kwargs):
+        shortcuts = kwargs.pop('shortcuts',False)
+        super(IRAFToolsMixin, self).__init__(*args,**kwargs)
+        self.iraf = IRAFTools(self)
+        if shortcuts:
+            self.iraf.set_instance_methods()
+    
+    def __new__(cls,*args,**kwargs):
+        obj = cls.__new__(*args,**kwargs)
+        if not hasattr(obj,'iraf'):
+            obj.iraf = IRAFTools(obj)
+            if kwargs.pop('shortcuts',False):
+                obj.iraf.set_instance_methods()
+        return obj
+        
+    def __array_finalize__(self,obj):
+        """NDArray Finalization function"""
+        super(IRAFToolsMixin, self).__array_finalize__(obj)
+        self.iraf = IRAFTools(self)
+            
+        
 
 def UseIRAFTools(objclass):
     """Class wrapper which allows classes to use IRAF tools."""
-    assert issubclass(objclass,BaseObject)
+    assert issubclass(objclass,BaseStack)
     class _IRAFClass(objclass):
         """An object which contains the IRAF Tools"""
         def __new__(cls,*args,**kwargs):
             obj = objclass(*args,**kwargs)
-            obj.iraf = IrafTools(obj)
+            obj.iraf = IRAFTools(obj)
             obj.iraf.set_instance_methods()
             return obj
     return _IRAFClass

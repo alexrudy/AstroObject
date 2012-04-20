@@ -8,30 +8,30 @@
 #  Version 0.5-a1
 # 
 """
-Empty FITS HDUs: :mod:`AstroFITS`
-=================================
+:mod:`AstroFITS` – Empty FITS HDUs
+==================================
 
-The :class:`FITSObject` **object** handles *empty* FITS Header-Data-Units (or HDUs). As such, it can only contain HDUs that do not have data, and should only be used when you need to write a FITS file that has only header information and no actual data. The module does serve as a good demonstration of the use and implementation of the :ref:`AstroObjectAPI`.
+The :class:`FITSStack` **stack** handles *empty* FITS Header-Data-Units (or HDUs). As such, it can only contain HDUs that do not have data, and should only be used when you need to write a FITS file that has only header information and no actual data. The module does serve as a good demonstration of the use and implementation of the :ref:`AstroObjectAPI`.
 
 
 .. inheritance-diagram::
-    AstroObject.AstroFITS.FITSObject
+    AstroObject.AstroFITS.FITSStack
     AstroObject.AstroFITS.FITSFrame
     :parts: 1
 
 
-Empty HDU **objects**: :class:`FITSObject`
+:class:`FITSStack` — Empty HDU **stacks**
 ------------------------------------------
 
 .. autoclass::
-    AstroObject.AstroFITS.FITSObject
+    AstroObject.AstroFITS.FITSStack
     :members:
     :inherited-members:
     :show-inheritance:
     
 
-Empty HDU **frames** :class:`FITSFrame`
----------------------------------------
+:class:`FITSFrame` — Empty HDU **frames**
+-----------------------------------------
 
 Our first example frame is the :class:`FITSFrame`. This class is a data frame which can only contain empty HDUs. As such, it does not implement all of the methods of the API, and instead uses the :class:`NoDataMixin` class.
 
@@ -65,12 +65,12 @@ import math, logging, os, time
 import copy
 import collections
 
-from AstroObjectBase import BaseFrame,BaseObject,HDUHeaderMixin,NoDataMixin
+from AstroObjectBase import BaseFrame,BaseStack,HDUHeaderMixin,NoDataMixin
 
 # Submodules from this system
 from Utilities import *
 
-__all__ = ["FITSFrame","FITSObject"]
+__all__ = ["FITSFrame","FITSStack"]
 
 __version__ = getVersion()
 
@@ -123,8 +123,8 @@ class FITSFrame(HDUHeaderMixin,NoDataMixin,BaseFrame):
         LOG.log(2,"%s: Created %s" % (cls,Object))
         return Object
 
-class FITSObject(BaseObject):
-    """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseObject` and usese all of the special methods implemented in that base class. This object sets up an **object** class which uses only the :class:`FITSFrame` class for data. As such, it can only contain objects which are classes (or subclassses of) :class:`FITSFrame`.
+class FITSStack(BaseStack):
+    """This **stack** tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an **stack** class which uses only the :class:`FITSFrame` class for data. As such, it can only contain objects which are classes (or subclassses of) :class:`FITSFrame`.
     """
     def __init__(self,dataClasses=[FITSFrame],**kwargs):
-        super(FITSObject, self).__init__(dataClasses=dataClasses,**kwargs)
+        super(FITSStack, self).__init__(dataClasses=dataClasses,**kwargs)

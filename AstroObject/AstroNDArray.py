@@ -11,24 +11,24 @@ u"""
 :mod:`AstroNDArray` – Numpy Array Frames
 ========================================
 
-This module implements a **frame** as a subclass of NDArray. This eliminates the difference between the :attr:`~AstroOBject.AstroObjectBase.BaseObject.d` attribute and the :attr:`~AstroOBject.AstroObjectBase.BaseObject.f`.
+This module implements a **frame** as a subclass of NDArray. This eliminates the difference between the :attr:`~AstroOBject.AstroObjectBase.BaseStack.d` attribute and the :attr:`~AstroOBject.AstroObjectBase.BaseStack.f`.
 
 .. inheritance-diagram::
-    AstroObject.AstroNDArray.NDArrayObject
+    AstroObject.AstroNDArray.NDArrayStack
     AstroObject.AstroNDArray.NDArrayFrame
     :parts: 1
 
-:class:`NDArrayObject` – Numpy Array objects
---------------------------------------------
+:class:`NDArrayStack` – Numpy Array **Stacks**
+----------------------------------------------
 
 .. autoclass::
-    AstroObject.AstroNDArray.NDArrayObject
+    AstroObject.AstroNDArray.NDArrayStack
     :members:
-    :special-members:
+    :inherited-members:
 
 
-:class:`NDArrayFrame` – Numpy Array frames
-------------------------------------------
+:class:`NDArrayFrame` – Numpy Array **Frames**
+----------------------------------------------
 
 .. autoclass::
     AstroObject.AstroNDArray.NDArrayFrame
@@ -47,12 +47,12 @@ import math, logging, os, time
 import copy
 import collections
 
-from AstroObjectBase import BaseFrame,BaseObject,HDUHeaderMixin
+from AstroObjectBase import BaseFrame,BaseStack,HDUHeaderMixin
 
 # Submodules from this system
 from Utilities import *
 
-__all__ = ["BaseObject","BaseFrame","AnalyticMixin","NoHDUMixin","HDUHeaderMixin","NoDataMixin"]
+__all__ = ["BaseStack","BaseFrame","AnalyticMixin","NoHDUMixin","HDUHeaderMixin","NoDataMixin"]
 
 __version__ = getVersion()
 
@@ -96,7 +96,7 @@ class NDArrayFrame(HDUHeaderMixin,BaseFrame,np.ndarray):
             for key,value in _header.iteritems():
                 self.header.update(key,value)
         elif not isinstance(self.header,pf.core.Header):
-            assert header == None, "%s doesn't understand the header, %s, type %s" % (self,header,type(header))
+            assert self.header == None, "%s doesn't understand the header, %s, type %s" % (self,self.header,type(self.header))
         try:
             self.__valid__()
         except AssertionError as e:
@@ -177,8 +177,8 @@ class NDArrayFrame(HDUHeaderMixin,BaseFrame,np.ndarray):
         LOG.log(2,"Created %s" % Object)
         return Object
 
-class NDArrayObject(BaseObject):
-    """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`NDArrayFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.
+class NDArrayStack(BaseStack):
+    """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`NDArrayFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.
     """
     def __init__(self,dataClasses=[NDArrayFrame],**kwargs):
-        super(NDArrayObject, self).__init__(dataClasses=dataClasses,**kwargs)
+        super(NDArrayStack, self).__init__(dataClasses=dataClasses,**kwargs)

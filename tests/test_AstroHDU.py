@@ -70,8 +70,8 @@ class test_HDUFrame(equality_HDUFrame,API_CanBeEmpty_Frame,API_General_Frame):
         super(test_HDUFrame,self).setup()
     
 
-class test_HDUObject(equality_HDUFrame,API_Base_Object):
-    """AstroHDU.HDUObject"""
+class test_HDUStack(equality_HDUFrame,API_Base_Object):
+    """AstroHDU.HDUStack"""
     
     def setup(self):
         """Fixture for setting up a basic image frame"""
@@ -93,8 +93,8 @@ class test_HDUObject(equality_HDUFrame,API_Base_Object):
         self.FRAMESTR = "<'HDUFrame' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.image.AxesImage
-        self.OBJECT = AstroObject.AstroHDU.HDUObject
-        super(test_HDUObject, self).setup()
+        self.OBJECT = AstroObject.AstroHDU.HDUStack
+        super(test_HDUStack, self).setup()
     
     def test_double_saving_data_should_not_reference(self):
         """data() should prevent data from referencing each other."""
