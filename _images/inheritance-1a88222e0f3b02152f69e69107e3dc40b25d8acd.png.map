@@ -1,7 +1,0 @@
-<map id="inheritance0de59e42e3" name="inheritance0de59e42e3">
-<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="5,5,136,30"/>
-<area shape="rect" id="node10" href="#AstroObject.AstroImage.ImageFrame" title="ImageFrame" alt="" coords="185,30,287,55"/>
-<area shape="rect" id="node5" href="AstroObject.html#AstroObject.AstroObjectBase.BaseObject" title="BaseObject" alt="" coords="513,153,607,178"/>
-<area shape="rect" id="node8" href="#AstroObject.AstroImage.ImageObject" title="ImageObject" alt="" coords="657,153,759,178"/>
-<area shape="rect" id="node12" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="23,54,118,79"/>
-</map>

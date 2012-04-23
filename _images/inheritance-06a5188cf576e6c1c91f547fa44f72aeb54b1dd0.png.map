@@ -1,8 +1,0 @@
-<map id="inheritancea52c3ec571" name="inheritancea52c3ec571">
-<area shape="rect" id="node2" href="#AstroObject.AstroFITS.FITSObject" title="FITSObject" alt="" coords="643,202,733,227"/>
-<area shape="rect" id="node3" href="AstroObject.html#AstroObject.AstroObjectBase.BaseObject" title="BaseObject" alt="" coords="499,202,594,227"/>
-<area shape="rect" id="node5" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="5,5,136,30"/>
-<area shape="rect" id="node11" href="#AstroObject.AstroFITS.FITSFrame" title="FITSFrame" alt="" coords="185,54,274,79"/>
-<area shape="rect" id="node8" href="AstroObject.html#AstroObject.AstroObjectBase.NoDataMixin" title="NoDataMixin" alt="" coords="19,54,122,79"/>
-<area shape="rect" id="node14" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="23,103,118,129"/>
-</map>
