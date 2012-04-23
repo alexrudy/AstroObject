@@ -13,7 +13,7 @@ Often, when doing data reduction, you end up manipulating the same image or spec
 
 It just so happens that the FITS data format supports this understanding as well, by way of FITS extensions. As such, you can store your beautifully reduced science image in the front of a FITS image, but include a full history of that image in subsequent FITS extension frames. Of course, this might make for rather large FITS files, so this library makes no assumptions about how you write FITS files at the end of the day.
 
-.. Note:: The terms **Stack** and **Frame** are used throughout the documentation here. Unfortunately, *object* has a different meaning in python. In this documentation, when I refer to a python-style *object*, I will use *italics*, and when I refer to an AstroObject style **stack**, I will use **bold**. For clarity and emphasis sake, I will also try to use **bold** when refering to AstroObject-style **frames**
+.. Note:: The terms **Stack** and **Frame** are used throughout the documentation here. When I refer to an AstroObject style **stack**, I will use **bold**. I will also use **bold** when refering to AstroObject-style **frames**
 
 **Frames**
 ----------

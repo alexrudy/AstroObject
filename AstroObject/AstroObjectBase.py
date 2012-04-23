@@ -536,14 +536,34 @@ class BaseStack(collections.MutableMapping):
         :returns: integer"""
         return len(self.states.keys())
     
+    def s(self):
+        """Current frame name::
+            
+            >>> Stack.statename
+            
+        """
+        return self.statename
+    
     @property
     def d(self):
-        """The data for the selected FITS frame."""
+        """The data for the selected FITS frame. Equivalent to::
+            
+            >>> Stack.data()
+            
+        """
         return self.data()
     
     @property
     def f(self):
-        """The selected FITS frame. This frame is usually the last modified frame in the system."""
+        """The selected FITS frame. This frame is usually the last modified frame in the system. Equivalent to::
+        
+            >>> Stack.frame()
+            
+        or::
+            
+            >>> Stack.frame(statename=Stack.s)
+            
+        """
         return self.frame()
     
         

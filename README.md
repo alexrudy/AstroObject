@@ -4,7 +4,7 @@ AstroObject is a paradigm for manipulating Astronomical data in an object-orient
 
 Documentation is hosted by GitHub Pages <http://alexrudy.github.com/AstroObject/>
 
-## Frames and Objects
+## Frames and Stacks
 
 The primary structure of Object-Oriented astronomy data is the concept of **Frames** and **Stacks**. **Frames** are single pieces of data. **Stacks** are collections of **frames** which have a dictionary-like interface.
 
