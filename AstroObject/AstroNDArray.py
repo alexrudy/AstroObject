@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2012-04-18.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.5-a1
+#  Version 0.5-a2
 # 
 u"""
 :mod:`AstroNDArray` – Numpy Array Frames

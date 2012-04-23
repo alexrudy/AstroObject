@@ -75,8 +75,10 @@ fi
 
 if [ "$DEVSTR" == '' ]; then
 	DEVSTR='None'
+	ISDEV='False'
 else
 	DEVSTR="\"$DEVSTR\""
+	ISDEV='True'
 fi
 
 echo " entered as major=$MAJOR minor=$MINOR bugfix=$BUGFIX patch=$PATCH devstr=$DEVSTR"
@@ -114,8 +116,12 @@ sed -i '' -Ee "s/bugfix += +$SELECTREGEX/bugfix = $BUGFIX/" $VERSIONFILE
 sed -i '' -Ee "s/patch += +$SELECTREGEX/patch = $PATCH/" $VERSIONFILE
 sed -i '' -Ee "s/^\s.devstr += +\\\"?$SELECTREGEX\\\"?/devstr = $DEVSTR/" $VERSIONFILE
 echo "   Version variables set to major=$MAJOR minor=$MINOR bugfix=$BUGFIX patch=$PATCH devstr=$DEVSTR"
-
-
+echo "Version Settings:"
+echo "  major  = $MAJOR"
+echo "  minor  = $MINOR"
+echo "  bugfix = $BUGFIX"
+echo "  patch  = $PATCH"
+echo "  devstr = $DEVSTR"
 
 
 echo "Done."
