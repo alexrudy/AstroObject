@@ -4,7 +4,7 @@
 # You can set these variables from the command line.
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build-2.7
-PAPER         =
+PAPER         = a4
 BUILDDIR      = build
 OTHERREPO     = ../../ObjectModelDoc
 COPYCMD       = rsync -rv --progress
@@ -48,15 +48,20 @@ clean:
 
 gh-pages: html
 	@echo
+	rm -r $(OTHERREPO)/_images/
+	rm -r $(OTHERREPO)/*.html
 	cp -r $(BUILDDIR)/html/ $(OTHERREPO)
+	@echo "git add -A"
 	@cd $(OTHERREPO) && git add -A
+	@echo "git commit"
 	@cd $(OTHERREPO) && git commit
+	@echo "git push origin gh-pages"
 	@cd $(OTHERREPO) && git push origin gh-pages
 	@echo
 	@echo "Build finished. The HTML pages have been stored in the gh-pages branch of this repo."
 	@echo "  Note that switching to gh-pages could be bad, as that branch does not contain any of the non-tracked files."
 
-open: html
+open:
 	open $(BUILDDIR)/html/index.html
 
 html:

@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-a1
+#  Version 0.5-a2
 #
 """
 AstroObject :mod:`Utilities`

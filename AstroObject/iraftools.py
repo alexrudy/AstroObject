@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2012-04-19.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.5-a1
+#  Version 0.5-a2
 # 
 u"""
 :mod:`iraftools` – IRAF integration facility
