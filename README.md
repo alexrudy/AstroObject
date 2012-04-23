@@ -6,15 +6,15 @@ Documentation is hosted by GitHub Pages <http://alexrudy.github.com/AstroObject/
 
 ## Frames and Objects
 
-The primary structure of Object-Oriented astronomy data is the concept of **Frames** and **Objects**. **Frames** are single pieces of data. **Objects** are collections of **frames** which have a dictionary-like interface.
+The primary structure of Object-Oriented astronomy data is the concept of **Frames** and **Stacks**. **Frames** are single pieces of data. **Stacks** are collections of **frames** which have a dictionary-like interface.
 
 The concept is that you might have a single image, say ``Data.fits`` that you want to use for a lot of reduction. At the end of that work, you want to have the final result, and still have access to all of the intermediate states of that object. Normally, you might write numerous different FITS files to a diretory with names like ``flat_Data.fits`` or ``flatdarkbias_Data.fits``. This paradigm is a little silly. In ``AstroObject``, you would accomplish the same thing with:
 
 ```python
-from AstroObject.AstroImage import ImageObject
-Data = ImageObject(filename="Data.fits")
-Data.read()
-Data["Biased"] = Data.d - BiasValue # Data.d gets the data from the latest state. Here, that is the raw data.
+from AstroObject.AstroImage import ImageStack
+Data = ImageStack(filename="Data.fits")
+Data.read() # This will read "Data.fits", and save the data to frames with the name "Data".
+Data["Biased"] = Data.d - BiasValue # Data.d gets the data from the latest state. Here, that is the raw data from "Data.fits"
 Data["Flattened"] = Data.d / FlatValue # Data.d will get Data["Biased"] here, the most recent state.
 Data["Scaled"] = numpy.sqrt(Data.d)
 Data.write(clobber=True) # Makes a file Data.fits, which uses FITS extensions to store all of this inforamtion.
@@ -30,9 +30,11 @@ The AstroObject module also has a simulator framework. The simulator is designed
 
 # Release Notes
 
+* 0.5-a1,a2
+	- Alpha releases for testing the integration of IRAF tools
 
 * 0.5.0
-	- IRAF Tools
+	- IRAF Tools and documentation thereof
 * 0.4.0
 	- Inheritance structure improved, now with abstract classes and mixins.
 	- Documentation improved wildly, now everything except AstroCache is documented.
