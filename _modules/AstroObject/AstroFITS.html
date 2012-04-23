@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObject.AstroFITS &mdash; AstroObject 0.5-a1 documentation</title>
+    <title>AstroObject.AstroFITS &mdash; AstroObject 0.5-a2 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5-a1',
+        VERSION:     '0.5-a2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5-a1 documentation" href="../../index.html" />
+    <link rel="top" title="AstroObject 0.5-a2 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.5-a1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.5-a2 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -56,33 +56,33 @@
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2012-04-17.</span>
 <span class="c">#  Copyright 2012 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.5-a1</span>
+<span class="c">#  Version 0.5-a2</span>
 <span class="c"># </span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Empty FITS HDUs: :mod:`AstroFITS`</span>
-<span class="sd">=================================</span>
+<span class="sd">:mod:`AstroFITS` – Empty FITS HDUs</span>
+<span class="sd">==================================</span>
 
-<span class="sd">The :class:`FITSObject` **object** handles *empty* FITS Header-Data-Units (or HDUs). As such, it can only contain HDUs that do not have data, and should only be used when you need to write a FITS file that has only header information and no actual data. The module does serve as a good demonstration of the use and implementation of the :ref:`AstroObjectAPI`.</span>
+<span class="sd">The :class:`FITSStack` **stack** handles *empty* FITS Header-Data-Units (or HDUs). As such, it can only contain HDUs that do not have data, and should only be used when you need to write a FITS file that has only header information and no actual data. The module does serve as a good demonstration of the use and implementation of the :ref:`AstroObjectAPI`.</span>
 
 
 <span class="sd">.. inheritance-diagram::</span>
-<span class="sd">    AstroObject.AstroFITS.FITSObject</span>
+<span class="sd">    AstroObject.AstroFITS.FITSStack</span>
 <span class="sd">    AstroObject.AstroFITS.FITSFrame</span>
 <span class="sd">    :parts: 1</span>
 
 
-<span class="sd">Empty HDU **objects**: :class:`FITSObject`</span>
+<span class="sd">:class:`FITSStack` — Empty HDU **stacks**</span>
 <span class="sd">------------------------------------------</span>
 
 <span class="sd">.. autoclass::</span>
-<span class="sd">    AstroObject.AstroFITS.FITSObject</span>
+<span class="sd">    AstroObject.AstroFITS.FITSStack</span>
 <span class="sd">    :members:</span>
 <span class="sd">    :inherited-members:</span>
 <span class="sd">    :show-inheritance:</span>
 <span class="sd">    </span>
 
-<span class="sd">Empty HDU **frames** :class:`FITSFrame`</span>
-<span class="sd">---------------------------------------</span>
+<span class="sd">:class:`FITSFrame` — Empty HDU **frames**</span>
+<span class="sd">-----------------------------------------</span>
 
 <span class="sd">Our first example frame is the :class:`FITSFrame`. This class is a data frame which can only contain empty HDUs. As such, it does not implement all of the methods of the API, and instead uses the :class:`NoDataMixin` class.</span>
 
@@ -116,12 +116,12 @@
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">collections</span>
 
-<span class="kn">from</span> <span class="nn">AstroObjectBase</span> <span class="kn">import</span> <span class="n">BaseFrame</span><span class="p">,</span><span class="n">BaseObject</span><span class="p">,</span><span class="n">HDUHeaderMixin</span><span class="p">,</span><span class="n">NoDataMixin</span>
+<span class="kn">from</span> <span class="nn">AstroObjectBase</span> <span class="kn">import</span> <span class="n">BaseFrame</span><span class="p">,</span><span class="n">BaseStack</span><span class="p">,</span><span class="n">HDUHeaderMixin</span><span class="p">,</span><span class="n">NoDataMixin</span>
 
 <span class="c"># Submodules from this system</span>
 <span class="kn">from</span> <span class="nn">Utilities</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;FITSFrame&quot;</span><span class="p">,</span><span class="s">&quot;FITSObject&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;FITSFrame&quot;</span><span class="p">,</span><span class="s">&quot;FITSStack&quot;</span><span class="p">]</span>
 
 <span class="n">__version__</span> <span class="o">=</span> <span class="n">getVersion</span><span class="p">()</span>
 
@@ -174,11 +174,11 @@
         <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Created </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="n">Object</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">Object</span>
 </div></div>
-<div class="viewcode-block" id="FITSObject"><a class="viewcode-back" href="../../AstroFITS.html#AstroObject.AstroFITS.FITSObject">[docs]</a><span class="k">class</span> <span class="nc">FITSObject</span><span class="p">(</span><span class="n">BaseObject</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseObject` and usese all of the special methods implemented in that base class. This object sets up an **object** class which uses only the :class:`FITSFrame` class for data. As such, it can only contain objects which are classes (or subclassses of) :class:`FITSFrame`.</span>
+<div class="viewcode-block" id="FITSStack"><a class="viewcode-back" href="../../AstroFITS.html#AstroObject.AstroFITS.FITSStack">[docs]</a><span class="k">class</span> <span class="nc">FITSStack</span><span class="p">(</span><span class="n">BaseStack</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This **stack** tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an **stack** class which uses only the :class:`FITSFrame` class for data. As such, it can only contain objects which are classes (or subclassses of) :class:`FITSFrame`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dataClasses</span><span class="o">=</span><span class="p">[</span><span class="n">FITSFrame</span><span class="p">],</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">FITSObject</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">dataClasses</span><span class="o">=</span><span class="n">dataClasses</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FITSStack</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">dataClasses</span><span class="o">=</span><span class="n">dataClasses</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -212,7 +212,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.5-a1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.5-a2 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

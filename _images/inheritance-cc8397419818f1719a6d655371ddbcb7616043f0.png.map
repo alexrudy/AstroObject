@@ -1,0 +1,8 @@
+<map id="inheritancee51921036d" name="inheritancee51921036d">
+<area shape="rect" id="node1" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="130,5,225,30"/>
+<area shape="rect" id="node8" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="278,5,413,30"/>
+<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="5,54,77,79"/>
+<area shape="rect" id="node4" href="AstroObject.html#AstroObject.AstroObjectBase.NoDataMixin" title="NoDataMixin" alt="" coords="126,54,229,79"/>
+<area shape="rect" id="node6" href="AstroObject.html#AstroObject.AstroObjectBase.NoHDUMixin" title="NoHDUMixin" alt="" coords="126,103,229,129"/>
+<area shape="rect" id="node11" href="AstroObject.html#AstroObject.AstroObjectBase.AnalyticMixin" title="AnalyticMixin" alt="" coords="293,54,397,79"/>
+</map>

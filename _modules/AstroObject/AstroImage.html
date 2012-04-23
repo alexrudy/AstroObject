@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObject.AstroImage &mdash; AstroObject 0.5-a1 documentation</title>
+    <title>AstroObject.AstroImage &mdash; AstroObject 0.5-a2 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5-a1',
+        VERSION:     '0.5-a2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5-a1 documentation" href="../../index.html" />
+    <link rel="top" title="AstroObject 0.5-a2 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.5-a1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.5-a2 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -56,32 +56,31 @@
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2011-04-28.</span>
 <span class="c">#  Copyright 2011 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.5-a1</span>
+<span class="c">#  Version 0.5-a2</span>
 <span class="c"># </span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Image Objects and Storage :mod:`AstroImage`</span>
-<span class="sd">===========================================</span>
+<span class="sd">:mod:`AstroImage` — Image Stacks and Storage </span>
+<span class="sd">============================================</span>
 
-<span class="sd">**Objects** and **frames** for manipulating and managing images. Images are simply defined as a two-dimensional numpy array. Image **objects** have two special methods, :meth:`ImageObject.loadFromFile` and :meth:`ImageObject.show3D`.</span>
+<span class="sd">**Stacks** and **frames** for manipulating and managing images. Images are simply defined as a two-dimensional numpy array. Image **stacks** have two special methods, :meth:`ImageStack.loadFromFile` and :meth:`ImageStack.show3D`.</span>
 
-<span class="sd">Right now, there are no facilities for integrating this module with pyraf, but such integration is planned for a future edition. The integration will work by writing and removing temporary FITS files.</span>
+<span class="sd">To understand IRAF integration of this module, see the methods provided by :mod:`~.iraftools`, including :func:`~.iraftools.UseIRAFTools`.</span>
 
 <span class="sd">.. inheritance-diagram::</span>
-<span class="sd">    AstroObject.AstroImage.ImageObject</span>
+<span class="sd">    AstroObject.AstroImage.ImageStack</span>
 <span class="sd">    AstroObject.AstroImage.ImageFrame</span>
 <span class="sd">    :parts: 1</span>
 
-
-<span class="sd">Image **objects**: :class:`ImageObject`</span>
-<span class="sd">---------------------------------------</span>
+<span class="sd">:class:`ImageStack` — Image **stacks**</span>
+<span class="sd">--------------------------------------</span>
 
 <span class="sd">.. autoclass::</span>
-<span class="sd">    AstroObject.AstroImage.ImageObject</span>
+<span class="sd">    AstroObject.AstroImage.ImageStack</span>
 <span class="sd">    :members:</span>
 <span class="sd">    :inherited-members:</span>
 
-<span class="sd">Image **frames**: :class:`ImageFrame`</span>
-<span class="sd">-------------------------------------</span>
+<span class="sd">:class:`ImageFrame` — Image **frames**</span>
+<span class="sd">--------------------------------------</span>
 
 <span class="sd">.. autoclass::</span>
 <span class="sd">    AstroObject.AstroImage.ImageFrame</span>
@@ -103,7 +102,7 @@
 <span class="c"># Module Utilites</span>
 <span class="kn">from</span> <span class="nn">Utilities</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;ImageFrame&quot;</span><span class="p">,</span><span class="s">&quot;ImageObject&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;ImageFrame&quot;</span><span class="p">,</span><span class="s">&quot;ImageStack&quot;</span><span class="p">]</span>
 
 <span class="n">__version__</span> <span class="o">=</span> <span class="n">getVersion</span><span class="p">()</span>
 
@@ -199,15 +198,15 @@
     
 
 </div></div>
-<div class="viewcode-block" id="ImageObject"><a class="viewcode-back" href="../../AstroImage.html#AstroObject.AstroImage.ImageObject">[docs]</a><span class="k">class</span> <span class="nc">ImageObject</span><span class="p">(</span><span class="n">AstroObjectBase</span><span class="o">.</span><span class="n">BaseObject</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`ImageFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.</span>
+<div class="viewcode-block" id="ImageStack"><a class="viewcode-back" href="../../AstroImage.html#AstroObject.AstroImage.ImageStack">[docs]</a><span class="k">class</span> <span class="nc">ImageStack</span><span class="p">(</span><span class="n">AstroObjectBase</span><span class="o">.</span><span class="n">BaseStack</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`ImageFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">dataClasses</span><span class="o">=</span><span class="p">[</span><span class="n">ImageFrame</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">ImageObject</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">dataClasses</span><span class="o">=</span><span class="n">dataClasses</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ImageStack</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">dataClasses</span><span class="o">=</span><span class="n">dataClasses</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">array</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">(</span><span class="s">&quot;Cannot initialize with data&quot;</span><span class="p">)</span>        <span class="c"># Save the initializing data</span>
             
-<div class="viewcode-block" id="ImageObject.loadFromFile"><a class="viewcode-back" href="../../AstroImage.html#AstroObject.AstroImage.ImageObject.loadFromFile">[docs]</a>    <span class="k">def</span> <span class="nf">loadFromFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageStack.loadFromFile"><a class="viewcode-back" href="../../AstroImage.html#AstroObject.AstroImage.ImageStack.loadFromFile">[docs]</a>    <span class="k">def</span> <span class="nf">loadFromFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;This function can be used to load an image file (but not a FITS file) into this image frame. Image files should be formats accepatble to the Python Image Library, but that generally applies to most common image formats, such as .png and .jpg .</span>
 <span class="sd">        This method takes a *filename* and a *statename* parameter. If either is not given, they will be generated using sensible defaults.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
@@ -219,7 +218,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">mpimage</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span><span class="n">statename</span><span class="p">)</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="s">&quot;Loaded Image from file: &quot;</span><span class="o">+</span><span class="n">filename</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="ImageObject.show3D"><a class="viewcode-back" href="../../AstroImage.html#AstroObject.AstroImage.ImageObject.show3D">[docs]</a>    <span class="k">def</span> <span class="nf">show3D</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ImageStack.show3D"><a class="viewcode-back" href="../../AstroImage.html#AstroObject.AstroImage.ImageStack.show3D">[docs]</a>    <span class="k">def</span> <span class="nf">show3D</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Shows a 3D contour of the image&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">statename</span><span class="p">:</span>
             <span class="n">statename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_state</span><span class="p">()</span>
@@ -240,8 +239,8 @@
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&quot;Object not instantiated with any data...&quot;</span><span class="p">)</span>
 
 </div></div>
-<span class="k">class</span> <span class="nc">OLDImageObject</span><span class="p">(</span><span class="n">AstroObjectBase</span><span class="o">.</span><span class="n">BaseObject</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;docstring for ImageObject&quot;&quot;&quot;</span>
+<span class="k">class</span> <span class="nc">OLDImageStack</span><span class="p">(</span><span class="n">AstroObjectBase</span><span class="o">.</span><span class="n">BaseStack</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;docstring for ImageStack&quot;&quot;&quot;</span>
     
     <span class="c">##########################</span>
     <span class="c"># File Writing Functions #</span>
@@ -399,7 +398,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.5-a1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.5-a2 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

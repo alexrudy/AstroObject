@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObject.AstroNDArray &mdash; AstroObject 0.5-a1 documentation</title>
+    <title>AstroObject.AstroNDArray &mdash; AstroObject 0.5-a2 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5-a1',
+        VERSION:     '0.5-a2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5-a1 documentation" href="../../index.html" />
+    <link rel="top" title="AstroObject 0.5-a2 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.5-a1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.5-a2 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -56,30 +56,30 @@
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2012-04-18.</span>
 <span class="c">#  Copyright 2012 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.5-a1</span>
+<span class="c">#  Version 0.5-a2</span>
 <span class="c"># </span>
 <span class="sd">u&quot;&quot;&quot;</span>
 <span class="sd">:mod:`AstroNDArray` – Numpy Array Frames</span>
 <span class="sd">========================================</span>
 
-<span class="sd">This module implements a **frame** as a subclass of NDArray. This eliminates the difference between the :attr:`~AstroOBject.AstroObjectBase.BaseObject.d` attribute and the :attr:`~AstroOBject.AstroObjectBase.BaseObject.f`.</span>
+<span class="sd">This module implements a **frame** as a subclass of NDArray. This eliminates the difference between the :attr:`~AstroOBject.AstroObjectBase.BaseStack.d` attribute and the :attr:`~AstroOBject.AstroObjectBase.BaseStack.f`.</span>
 
 <span class="sd">.. inheritance-diagram::</span>
-<span class="sd">    AstroObject.AstroNDArray.NDArrayObject</span>
+<span class="sd">    AstroObject.AstroNDArray.NDArrayStack</span>
 <span class="sd">    AstroObject.AstroNDArray.NDArrayFrame</span>
 <span class="sd">    :parts: 1</span>
 
-<span class="sd">:class:`NDArrayObject` – Numpy Array objects</span>
-<span class="sd">--------------------------------------------</span>
+<span class="sd">:class:`NDArrayStack` – Numpy Array **Stacks**</span>
+<span class="sd">----------------------------------------------</span>
 
 <span class="sd">.. autoclass::</span>
-<span class="sd">    AstroObject.AstroNDArray.NDArrayObject</span>
+<span class="sd">    AstroObject.AstroNDArray.NDArrayStack</span>
 <span class="sd">    :members:</span>
-<span class="sd">    :special-members:</span>
+<span class="sd">    :inherited-members:</span>
 
 
-<span class="sd">:class:`NDArrayFrame` – Numpy Array frames</span>
-<span class="sd">------------------------------------------</span>
+<span class="sd">:class:`NDArrayFrame` – Numpy Array **Frames**</span>
+<span class="sd">----------------------------------------------</span>
 
 <span class="sd">.. autoclass::</span>
 <span class="sd">    AstroObject.AstroNDArray.NDArrayFrame</span>
@@ -98,12 +98,12 @@
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">collections</span>
 
-<span class="kn">from</span> <span class="nn">AstroObjectBase</span> <span class="kn">import</span> <span class="n">BaseFrame</span><span class="p">,</span><span class="n">BaseObject</span><span class="p">,</span><span class="n">HDUHeaderMixin</span>
+<span class="kn">from</span> <span class="nn">AstroObjectBase</span> <span class="kn">import</span> <span class="n">BaseFrame</span><span class="p">,</span><span class="n">BaseStack</span><span class="p">,</span><span class="n">HDUHeaderMixin</span>
 
 <span class="c"># Submodules from this system</span>
 <span class="kn">from</span> <span class="nn">Utilities</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;BaseObject&quot;</span><span class="p">,</span><span class="s">&quot;BaseFrame&quot;</span><span class="p">,</span><span class="s">&quot;AnalyticMixin&quot;</span><span class="p">,</span><span class="s">&quot;NoHDUMixin&quot;</span><span class="p">,</span><span class="s">&quot;HDUHeaderMixin&quot;</span><span class="p">,</span><span class="s">&quot;NoDataMixin&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;BaseStack&quot;</span><span class="p">,</span><span class="s">&quot;BaseFrame&quot;</span><span class="p">,</span><span class="s">&quot;AnalyticMixin&quot;</span><span class="p">,</span><span class="s">&quot;NoHDUMixin&quot;</span><span class="p">,</span><span class="s">&quot;HDUHeaderMixin&quot;</span><span class="p">,</span><span class="s">&quot;NoDataMixin&quot;</span><span class="p">]</span>
 
 <span class="n">__version__</span> <span class="o">=</span> <span class="n">getVersion</span><span class="p">()</span>
 
@@ -147,7 +147,7 @@
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="n">_header</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
         <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">,</span><span class="n">pf</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Header</span><span class="p">):</span>
-            <span class="k">assert</span> <span class="n">header</span> <span class="o">==</span> <span class="bp">None</span><span class="p">,</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> doesn&#39;t understand the header, </span><span class="si">%s</span><span class="s">, type </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">header</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">header</span><span class="p">))</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">==</span> <span class="bp">None</span><span class="p">,</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> doesn&#39;t understand the header, </span><span class="si">%s</span><span class="s">, type </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">))</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__valid__</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -228,11 +228,11 @@
         <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Created </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">Object</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Object</span>
 </div></div>
-<div class="viewcode-block" id="NDArrayObject"><a class="viewcode-back" href="../../AstroNDArray.html#AstroObject.AstroNDArray.NDArrayObject">[docs]</a><span class="k">class</span> <span class="nc">NDArrayObject</span><span class="p">(</span><span class="n">BaseObject</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`NDArrayFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.</span>
+<div class="viewcode-block" id="NDArrayStack"><a class="viewcode-back" href="../../AstroNDArray.html#AstroObject.AstroNDArray.NDArrayStack">[docs]</a><span class="k">class</span> <span class="nc">NDArrayStack</span><span class="p">(</span><span class="n">BaseStack</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`NDArrayFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dataClasses</span><span class="o">=</span><span class="p">[</span><span class="n">NDArrayFrame</span><span class="p">],</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">NDArrayObject</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">dataClasses</span><span class="o">=</span><span class="n">dataClasses</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">(</span><span class="n">NDArrayStack</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">dataClasses</span><span class="o">=</span><span class="n">dataClasses</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -266,7 +266,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.5-a1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.5-a2 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

@@ -1,0 +1,311 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Walkthrough of a basic iraftools script &mdash; AstroObject 0.5-a2 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.5-a2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="AstroObject 0.5-a2 documentation" href="../index.html" />
+    <link rel="next" title="Example Spectral Data Script" href="spectra.html" />
+    <link rel="prev" title="An Example Simulator" href="simulator.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="spectra.html" title="Example Spectral Data Script"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="simulator.html" title="An Example Simulator"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">AstroObject 0.5-a2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="walkthrough-of-a-basic-iraftools-script">
+<span id="iraftoolswalkthough"></span><h1>Walkthrough of a basic <a class="reference internal" href="../iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a> script<a class="headerlink" href="#walkthrough-of-a-basic-iraftools-script" title="Permalink to this headline">¶</a></h1>
+<p>The full script we will use is shown below. This example will walk through every part of the script, line by line, to demonstrate the use of <a class="reference internal" href="../iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a> with <a class="reference internal" href="../intro.html#module-AstroObject" title="AstroObject"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject</span></tt></a>. In order for this example to make sense, we must assume that certain data files exist:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">data.fits</span></tt>: This is our data file. It should be a pretty picture.</li>
+<li><tt class="docutils literal"><span class="pre">bias.fits</span></tt>: The bias measurement. The header <tt class="docutils literal"><span class="pre">IMAGETYP</span></tt> should be <tt class="docutils literal"><span class="pre">zero</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">dark.fits</span></tt>: The dark current measurement. The header <tt class="docutils literal"><span class="pre">IMAGETYP</span></tt> should be <tt class="docutils literal"><span class="pre">dark</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">flat.fits</span></tt>: The flat field. The header <tt class="docutils literal"><span class="pre">IMAGETYP</span></tt> should be <tt class="docutils literal"><span class="pre">flat</span></tt>.</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c"># This example assumes that the following files exist:</span>
+<span class="c">#  - data.fits</span>
+<span class="c">#  - bias.fits (IMAGTYP=zero)</span>
+<span class="c">#  - dark.fits (IMAGTYP=dark)</span>
+<span class="c">#  - flat.fits (IMAGTYP=flat)</span>
+<span class="kn">from</span> <span class="nn">AstroObject.AstroImage</span> <span class="kn">import</span> <span class="n">ImageStack</span>
+<span class="kn">from</span> <span class="nn">AstroObject.iraftools</span> <span class="kn">import</span> <span class="n">UseIRAFTools</span>
+<span class="n">ImageStack</span> <span class="o">=</span> <span class="n">UseIRAFTools</span><span class="p">(</span><span class="n">ImageStack</span><span class="p">)</span> <span class="c"># Enable IRAFTools</span>
+<span class="kn">from</span> <span class="nn">pyraf</span> <span class="kn">import</span> <span class="n">iraf</span>
+<span class="kn">from</span> <span class="nn">pyraf.iraf</span> <span class="kn">import</span> <span class="n">imred</span><span class="p">,</span> <span class="n">ccdred</span>
+<span class="n">Data</span> <span class="o">=</span> <span class="n">ImageStack</span><span class="o">.</span><span class="n">fromFile</span><span class="p">(</span><span class="s">&quot;data.fits&quot;</span><span class="p">)</span>
+<span class="n">Data</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&quot;bias.fits&quot;</span><span class="p">)</span>
+<span class="n">Data</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&quot;dark.fits&quot;</span><span class="p">)</span>
+<span class="n">Data</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&quot;flat.fits&quot;</span><span class="p">)</span>
+<span class="n">Data</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s">&quot;data&quot;</span><span class="p">)</span>
+<span class="n">iraf</span><span class="o">.</span><span class="n">ccdproc</span><span class="p">(</span>
+    <span class="n">Data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">modatfile</span><span class="p">(</span><span class="s">&quot;data&quot;</span><span class="p">,</span><span class="n">append</span><span class="o">=</span><span class="s">&quot;-reduced&quot;</span><span class="p">),</span>
+    <span class="n">flat</span> <span class="o">=</span> <span class="n">Data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">infile</span><span class="p">(</span><span class="s">&quot;flat&quot;</span><span class="p">),</span>
+    <span class="n">dark</span> <span class="o">=</span> <span class="n">Data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">infile</span><span class="p">(</span><span class="s">&quot;dark&quot;</span><span class="p">),</span>
+    <span class="n">zero</span> <span class="o">=</span> <span class="n">Data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">infile</span><span class="p">(</span><span class="s">&quot;bias&quot;</span><span class="p">),</span>
+    <span class="n">ccdtype</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">fixpix</span> <span class="o">=</span> <span class="s">&quot;no&quot;</span><span class="p">,</span>
+    <span class="n">overscan</span> <span class="o">=</span> <span class="s">&quot;no&quot;</span><span class="p">,</span>
+    <span class="n">trim</span> <span class="o">=</span> <span class="s">&quot;no&quot;</span><span class="p">,</span>
+    <span class="n">zerocor</span> <span class="o">=</span> <span class="s">&quot;yes&quot;</span><span class="p">,</span>
+    <span class="n">darkcor</span> <span class="o">=</span> <span class="s">&quot;yes&quot;</span><span class="p">,</span>
+    <span class="n">flatcor</span> <span class="o">=</span> <span class="s">&quot;yes&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">Data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
+<span class="n">Data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">states</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;data-reduced&quot;</span><span class="p">],</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;final.fits&quot;</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To start the program, we import our <strong>stack</strong> of choice. If you need help understanding <strong>stacks</strong> and <strong>frames</strong>, the basic units for <a class="reference internal" href="../intro.html#module-AstroObject" title="AstroObject"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject</span></tt></a>, see <a class="reference internal" href="../intro.html#introduction"><em>Introduction to AstroObject</em></a>. Immediately after importing <a class="reference internal" href="../AstroImage.html#module-AstroObject.AstroImage" title="AstroObject.AstroImage"><tt class="xref py py-mod docutils literal"><span class="pre">AstroImage</span></tt></a>, we import <tt class="xref py py-func docutils literal"><span class="pre">UseIRAFTools()</span></tt> from <a class="reference internal" href="../iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a>. This helper function takes a single argument, a <strong>stack</strong> class, and returns a copy of that <strong>stack</strong> class which can be used with <a class="reference internal" href="../iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a>. To use <a class="reference internal" href="../iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a>, we call <tt class="xref py py-func docutils literal"><span class="pre">UseIRAFTools()</span></tt> on our <a class="reference internal" href="../AstroImage.html#AstroObject.AstroImage.ImageStack" title="AstroObject.AstroImage.ImageStack"><tt class="xref py py-class docutils literal"><span class="pre">ImageStack</span></tt></a>. This function returns a new class for us to use, which for clarity&#8217;s sake, we will call <a class="reference internal" href="../AstroImage.html#AstroObject.AstroImage.ImageStack" title="AstroObject.AstroImage.ImageStack"><tt class="xref py py-class docutils literal"><span class="pre">ImageStack</span></tt></a>, so that we can&#8217;t use the non-<a class="reference internal" href="../iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a> <a class="reference internal" href="../AstroImage.html#AstroObject.AstroImage.ImageStack" title="AstroObject.AstroImage.ImageStack"><tt class="xref py py-class docutils literal"><span class="pre">ImageStack</span></tt></a>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">AstroObject.AstroImage</span> <span class="kn">import</span> <span class="n">ImageStack</span>
+<span class="kn">from</span> <span class="nn">AstroObject.iraftools</span> <span class="kn">import</span> <span class="n">UseIRAFTools</span>
+<span class="n">ImageStack</span> <span class="o">=</span> <span class="n">UseIRAFTools</span><span class="p">(</span><span class="n">ImageStack</span><span class="p">)</span> <span class="c"># Enable IRAFTools</span>
+</pre></div>
+</div>
+<p>Next, we import the desired IRAF modules that we want to work with. In this case, we are reducing CCD data, so <tt class="docutils literal"><span class="pre">imred</span></tt> and <tt class="docutils literal"><span class="pre">ccdred</span></tt> are appropriate.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">pyraf</span> <span class="kn">import</span> <span class="n">iraf</span>
+<span class="kn">from</span> <span class="nn">pyraf.iraf</span> <span class="kn">import</span> <span class="n">imred</span><span class="p">,</span> <span class="n">ccdred</span>
+</pre></div>
+</div>
+<p>Now our environment is all set up. It is time to load some data. We get our data from the FITS files described in the first paragraph. Each one is loaded into the same <strong>stack</strong>. This is fine, since a single stack can hold many <strong>frames</strong>, where each <strong>frame</strong> is a different image.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">Data</span> <span class="o">=</span> <span class="n">ImageStack</span><span class="o">.</span><span class="n">fromFile</span><span class="p">(</span><span class="s">&quot;data.fits&quot;</span><span class="p">)</span>
+<span class="n">Data</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&quot;bias.fits&quot;</span><span class="p">)</span>
+<span class="n">Data</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&quot;dark.fits&quot;</span><span class="p">)</span>
+<span class="n">Data</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&quot;flat.fits&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The first call, to <a class="reference internal" href="../AstroImage.html#AstroObject.AstroImage.ImageStack.fromFile" title="AstroObject.AstroImage.ImageStack.fromFile"><tt class="xref py py-meth docutils literal"><span class="pre">ImageStack.fromFile</span></tt></a>, simply uses a factory function to replace initializing our <a class="reference internal" href="../AstroImage.html#AstroObject.AstroImage.ImageStack" title="AstroObject.AstroImage.ImageStack"><tt class="xref py py-class docutils literal"><span class="pre">ImageStack</span></tt></a>. This call is the same as:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">Data</span> <span class="o">=</span> <span class="n">ImageStack</span><span class="p">()</span>
+<span class="n">Data</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&quot;data.fits&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>After loading our data, we want to select the <strong>frame</strong> that we are most likely to use, so that it becomes the frame used by default.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">Data</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s">&quot;data&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Notice that when we select the frame, we use <tt class="docutils literal"><span class="pre">&quot;data&quot;</span></tt>. The <a class="reference internal" href="../AstroImage.html#AstroObject.AstroImage.ImageStack" title="AstroObject.AstroImage.ImageStack"><tt class="xref py py-class docutils literal"><span class="pre">ImageStack</span></tt></a> class will automtacially remove the <tt class="docutils literal"><span class="pre">&quot;.fits&quot;</span></tt> extension, and use the base of the filename as the statename for imported frames. We could have specified a name for this <strong>frame</strong> using the <tt class="docutils literal"><span class="pre">statename</span></tt> keyword argument to read.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">Data</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&quot;data.fits&quot;</span><span class="p">,</span><span class="n">stataename</span><span class="o">=</span><span class="s">&quot;another name&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now we are ready to make our <tt class="docutils literal"><span class="pre">iraf</span></tt> call. In interactive mode, we would have used <tt class="docutils literal"><span class="pre">epar</span></tt> to set parameters for each <tt class="docutils literal"><span class="pre">iraf</span></tt> call, then made the call. In <tt class="docutils literal"><span class="pre">pyraf</span></tt>, we use keyword arguments to set the parameters of the IRAF call.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">iraf</span><span class="o">.</span><span class="n">ccdproc</span><span class="p">(</span>
+    <span class="n">Data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">modatfile</span><span class="p">(</span><span class="s">&quot;data&quot;</span><span class="p">,</span><span class="n">append</span><span class="o">=</span><span class="s">&quot;-reduced&quot;</span><span class="p">),</span>
+    <span class="n">flat</span> <span class="o">=</span> <span class="n">Data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">infile</span><span class="p">(</span><span class="s">&quot;flat&quot;</span><span class="p">),</span>
+    <span class="n">dark</span> <span class="o">=</span> <span class="n">Data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">infile</span><span class="p">(</span><span class="s">&quot;dark&quot;</span><span class="p">),</span>
+    <span class="n">zero</span> <span class="o">=</span> <span class="n">Data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">infile</span><span class="p">(</span><span class="s">&quot;bias&quot;</span><span class="p">),</span>
+    <span class="n">ccdtype</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">fixpix</span> <span class="o">=</span> <span class="s">&quot;no&quot;</span><span class="p">,</span>
+    <span class="n">overscan</span> <span class="o">=</span> <span class="s">&quot;no&quot;</span><span class="p">,</span>
+    <span class="n">trim</span> <span class="o">=</span> <span class="s">&quot;no&quot;</span><span class="p">,</span>
+    <span class="n">zerocor</span> <span class="o">=</span> <span class="s">&quot;yes&quot;</span><span class="p">,</span>
+    <span class="n">darkcor</span> <span class="o">=</span> <span class="s">&quot;yes&quot;</span><span class="p">,</span>
+    <span class="n">flatcor</span> <span class="o">=</span> <span class="s">&quot;yes&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Many of these keyword arguments we have specified explicitly on the command line. However, we can&#8217;t specify the names of FITS files on the command line, as we don&#8217;t want to use actual filse, we want to use the data we loaded into our program. First, we needed an &#64;list as input to the <tt class="docutils literal"><span class="pre">ccdproc</span></tt> function. An &#64;list is a file which has a filename on each line. <tt class="docutils literal"><span class="pre">iraf</span></tt> then reads the &#64;list and runs the command on each file in the list (or sometimes all files in the list at once). Since we don&#8217;t want to write out a new list file every time we work with &#64;lists, <a class="reference internal" href="../iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a> provides a simple interface to creating &#64;lists from data <strong>stacks</strong>. Lets examine this call closely.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">Data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">modatfile</span><span class="p">(</span><span class="s">&quot;data&quot;</span><span class="p">,</span><span class="n">append</span><span class="o">=</span><span class="s">&quot;-reduced&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The function <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFTools.modatfile" title="AstroObject.iraftools.IRAFTools.modatfile"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.modatfile</span></tt></a> creates an &#64;-list which points to FITS files for each of the included states. You can list as many states as you wish as the first arguments to <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFToolsMixin.iraf.modatfile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.modatfile"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.modatfile</span></tt></a>. Providing no states will generate an &#64;-list which points to all avaialbe states. This is similar to the way <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFToolsMixin.iraf.inatfile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.inatfile"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.inatfile</span></tt></a> works. Once you call this function, temporary FITS files are generated for each state (in this case, just the <tt class="docutils literal"><span class="pre">data</span></tt> <strong>frame</strong>) requested. A list of these filenames is then placed in an &#64;list, and the name of that &#64;list is returned from the fucntion, with the &#8220;&#64;&#8221; already appended to the beginning of the name, making it suitable input for <tt class="docutils literal"><span class="pre">iraf</span></tt>.</p>
+<p>Behind the scenes, the call:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">Data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">modatfile</span><span class="p">(</span><span class="s">&quot;data&quot;</span><span class="p">,</span><span class="n">append</span><span class="o">=</span><span class="s">&quot;-reduced&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>created the following files (each filename begins with a temporary directory that looks something like <tt class="docutils literal"><span class="pre">/var/folders/7c/_l4kwbx519980p4pdl0q76vc0000gq/T/</span></tt>, but is your operating-system&#8217;s temporary file directory. I&#8217;ll abbreviate that as <tt class="docutils literal"><span class="pre">/tmp/</span></tt>. As well, each time <a class="reference internal" href="../iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a> provides a file set, it uses a new temporary directory, yours will be different from the example <tt class="docutils literal"><span class="pre">tmpa5sRZc</span></tt>):</p>
+<ul>
+<li><p class="first"><tt class="docutils literal"><span class="pre">/tmp/tmpa5sRZc/dataf9T55J.fits</span></tt> which is the FITS file for your data. Notice that the filename begins with your <strong>frame</strong> label, <tt class="docutils literal"><span class="pre">data</span></tt>, and ends with <tt class="docutils literal"><span class="pre">.fits</span></tt>, but has some random characters in it, as well as being placed in a random directory. The <tt class="xref py py-mod docutils literal"><span class="pre">tempfile</span></tt> mechanism provided by python ensures that these files will never collide.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">/tmp/tmpa5sRZc/tmpxP5JTy.list</span></tt> which is a list of the FITS files that it just created. In this case, the file will contain one line:</p>
+<div class="highlight-python"><pre>/tmp/tmpa5sRZc/dataf9T55J.fits</pre>
+</div>
+</li>
+</ul>
+<p>When you call <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFToolsMixin.iraf.done" title="AstroObject.iraftools.IRAFToolsMixin.iraf.done"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.done</span></tt></a>, <a class="reference internal" href="../iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a> knows to reload <tt class="docutils literal"><span class="pre">/tmp/tmpa5sRZc/dataf9T55J.fits</span></tt> into the <tt class="docutils literal"><span class="pre">Data</span></tt> <strong>stack</strong>, and to append the name <tt class="docutils literal"><span class="pre">-reduced</span></tt> to the label <tt class="docutils literal"><span class="pre">data</span></tt>, so that the new label becomes <tt class="docutils literal"><span class="pre">data-reduced</span></tt>. The FITS file (and, in fact, the whole directory) will be removed at the end of the cleanup process.</p>
+<p>There are three styles of file that can be created from <a class="reference internal" href="../iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a>, input (or <tt class="docutils literal"><span class="pre">in</span></tt>) files, output (or <tt class="docutils literal"><span class="pre">out</span></tt>) files, and modify-in-place, or <tt class="docutils literal"><span class="pre">mod</span></tt> files. These files can be created individually, or in &#64;lists using various <a class="reference internal" href="../iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a> methods. These types are documented at <a class="reference internal" href="../iraftools.html#iraftools-filetypes"><em>File types in iraftools</em></a>.</p>
+<p>Along with our &#64;list, created by <tt class="docutils literal"><span class="pre">Data.iraf.modatfile(&quot;data&quot;,append=&quot;-reduced&quot;)</span></tt>, we need to provide a flat, dark and bias file as input to the <tt class="docutils literal"><span class="pre">ccdproc</span></tt> function. These three files we will make with the <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFToolsMixin.iraf.infile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.infile"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.infile</span></tt></a>. Input files are written instantly, and cleaned up automatically by <a class="reference internal" href="../iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a>, but changes made to these files are not reloaded into the data <strong>stack</strong>. We use these functions to set the appropriate keyword arguments for <tt class="docutils literal"><span class="pre">iraf</span></tt>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">flat</span> <span class="o">=</span> <span class="n">Data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">infile</span><span class="p">(</span><span class="s">&quot;flat&quot;</span><span class="p">),</span>
+<span class="n">dark</span> <span class="o">=</span> <span class="n">Data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">infile</span><span class="p">(</span><span class="s">&quot;dark&quot;</span><span class="p">),</span>
+<span class="n">zero</span> <span class="o">=</span> <span class="n">Data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">infile</span><span class="p">(</span><span class="s">&quot;bias&quot;</span><span class="p">),</span>
+</pre></div>
+</div>
+<p>Just like <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFToolsMixin.iraf.modatfile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.modatfile"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.modatfile</span></tt></a> created temporary FITS files, <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFToolsMixin.iraf.infile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.infile"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.infile</span></tt></a> will create a temporary FITS file for each of those frames. That temporary FITS file will be removed (along with the temporary directory).</p>
+<p>The remaining keyword arguments that we provided to <tt class="docutils literal"><span class="pre">ccdproc</span></tt> are standard <tt class="docutils literal"><span class="pre">iraf</span></tt> keywords. They obviously depend on what you want to get done with this system.</p>
+<p>Once we finish with the <tt class="docutils literal"><span class="pre">ccdproc</span></tt> command, we need to tell <a class="reference internal" href="../iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a> that we are done calling <tt class="docutils literal"><span class="pre">iraf</span></tt> and using these temporary files. Calling <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFToolsMixin.iraf.done" title="AstroObject.iraftools.IRAFToolsMixin.iraf.done"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.done</span></tt></a> does just that. Specifically, <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFToolsMixin.iraf.done" title="AstroObject.iraftools.IRAFToolsMixin.iraf.done"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.done</span></tt></a> does the following:</p>
+<ul class="simple">
+<li>Reloads any modified files (as created by <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFToolsMixin.iraf.modfile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.modfile"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.modfile</span></tt></a> and <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFToolsMixin.iraf.modatfile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.modatfile"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.modatfile</span></tt></a>).</li>
+<li>Loads any created output files (as set up by <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFToolsMixin.iraf.outfile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.outfile"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.outfile</span></tt></a> and <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFToolsMixin.iraf.outatfile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.outatfile"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.outatfile</span></tt></a>)</li>
+<li>Deletes all of the temporary FITS files that we created.</li>
+</ul>
+<p>So the last call in our <tt class="docutils literal"><span class="pre">iraf</span></tt> command is:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">Data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Finally, we want to write our newly-reduced image to a FITS file. <a class="reference internal" href="../AstroImage.html#module-AstroObject.AstroImage" title="AstroObject.AstroImage"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroImage</span></tt></a> makes this easy:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">Data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">states</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;data-reduced&quot;</span><span class="p">],</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;final.fits&quot;</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">states=[&quot;data-reduced&quot;]</span></tt> keyword provides a list of the states that we want to use when writing the FITS file. In this case, we want only the reduced data, so we provide a one-element list of just that <strong>frame</strong> name. <tt class="docutils literal"><span class="pre">clobber=True</span></tt> tells the module that it is okay to over-write the <tt class="docutils literal"><span class="pre">final.fits</span></tt> file. By default, trying to overwrite a file will cause an IOError.</p>
+</div>
+<div class="section" id="an-example-iraftools-program">
+<span id="iraftoolsexample"></span><h1>An Example <a class="reference internal" href="../iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a> program<a class="headerlink" href="#an-example-iraftools-program" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c"># </span>
+<span class="c">#  iraftools.py</span>
+<span class="c">#  AstroObject</span>
+<span class="c">#  </span>
+<span class="c">#  Created by Alexander Rudy on 2012-04-19.</span>
+<span class="c">#  Copyright 2012 Alexander Rudy. All rights reserved.</span>
+<span class="c"># </span>
+
+<span class="kn">from</span> <span class="nn">AstroObject.AstroObjectLogging</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">AstroObject.AstroImage</span> <span class="kn">import</span> <span class="n">ImageStack</span>
+<span class="kn">from</span> <span class="nn">AstroObject.iraftools</span> <span class="kn">import</span> <span class="n">UseIRAFTools</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">pyraf</span> <span class="kn">import</span> <span class="n">iraf</span>
+<span class="kn">from</span> <span class="nn">pyraf.iraf</span> <span class="kn">import</span> <span class="n">imred</span><span class="p">,</span> <span class="n">ccdred</span>
+
+<span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;AstroObject&#39;</span><span class="p">)</span>
+<span class="n">LOG</span><span class="o">.</span><span class="n">configure</span><span class="p">()</span>
+<span class="n">LOG</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+
+<span class="n">ImageStack</span> <span class="o">=</span> <span class="n">UseIRAFTools</span><span class="p">(</span><span class="n">ImageStack</span><span class="p">)</span>
+
+<span class="n">Data</span> <span class="o">=</span> <span class="n">ImageStack</span><span class="p">()</span>
+
+<span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1000</span><span class="p">))</span>
+<span class="n">image</span><span class="p">[</span><span class="mi">450</span><span class="p">:</span><span class="mi">550</span><span class="p">,</span><span class="mi">450</span><span class="p">:</span><span class="mi">550</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span>
+<span class="n">flat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1000</span><span class="p">))</span>
+<span class="n">flat</span> <span class="p">[</span><span class="mi">490</span><span class="p">:</span><span class="mi">510</span><span class="p">,</span><span class="mi">490</span><span class="p">:</span><span class="mi">510</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">))</span> <span class="o">*</span> <span class="mf">0.5</span>
+
+<span class="n">Data</span><span class="p">[</span><span class="s">&quot;Basic&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">image</span>
+<span class="n">Data</span><span class="p">[</span><span class="s">&quot;Other&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">image</span>
+<span class="n">Data</span><span class="p">[</span><span class="s">&quot;Flat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flat</span>
+
+<span class="n">iraf</span><span class="o">.</span><span class="n">ccdproc</span><span class="p">(</span>
+    <span class="n">Data</span><span class="o">.</span><span class="n">imodat</span><span class="p">(</span><span class="s">&quot;Basic&quot;</span><span class="p">,</span><span class="s">&quot;Other&quot;</span><span class="p">,</span><span class="n">append</span> <span class="o">=</span> <span class="s">&quot;_flat&quot;</span><span class="p">),</span> 
+    <span class="n">ccdtype</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">fixpix</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">overscan</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">trim</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
+    <span class="n">zerocor</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">darkcor</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">flatcor</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> 
+    <span class="n">flat</span> <span class="o">=</span> <span class="n">Data</span><span class="o">.</span><span class="n">iin</span><span class="p">(</span><span class="s">&quot;Flat&quot;</span><span class="p">))</span>
+<span class="n">Data</span><span class="o">.</span><span class="n">idone</span><span class="p">()</span>
+
+<span class="n">Data</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s">&quot;Basic&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">Data</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s">&quot;Flat&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">Data</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s">&quot;Basic_flat&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">Data</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s">&quot;Other_flat&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Walkthrough of a basic <tt class="docutils literal"><span class="pre">iraftools</span></tt> script</a></li>
+<li><a class="reference internal" href="#an-example-iraftools-program">An Example <tt class="docutils literal"><span class="pre">iraftools</span></tt> program</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="simulator.html"
+                        title="previous chapter">An Example Simulator</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="spectra.html"
+                        title="next chapter">Example Spectral Data Script</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/examples/iraftools.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="spectra.html" title="Example Spectral Data Script"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="simulator.html" title="An Example Simulator"
+             >previous</a> |</li>
+        <li><a href="../index.html">AstroObject 0.5-a2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Alexander Rudy.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObject.AstroSpectra &mdash; AstroObject 0.5-a1 documentation</title>
+    <title>AstroObject.AstroSpectra &mdash; AstroObject 0.5-a2 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5-a1',
+        VERSION:     '0.5-a2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5-a1 documentation" href="../../index.html" />
+    <link rel="top" title="AstroObject 0.5-a2 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.5-a1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.5-a2 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -56,31 +56,31 @@
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2011-10-07.</span>
 <span class="c">#  Copyright 2011 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.5-a1</span>
+<span class="c">#  Version 0.5-a2</span>
 <span class="c"># </span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Raw Spectrum Management :mod:`AstroSpectra`</span>
-<span class="sd">===========================================</span>
+<span class="sd">:mod:`AstroSpectra` — Raw Spectrum Management </span>
+<span class="sd">=============================================</span>
 
-<span class="sd">An **object** and **frame** class which can handle raw spectrum data. This module only handles raw spectra. These spectra are simply data held in image-like **frames**. This class allows a spectrum to be consistently read and written to a FITS file, using image rows as data arrays. The spectra functions contained in this module are bland. For more sophisitcated spectral analysis, see the :mod:`AnalyticSpectra` module, which contians classes which can re-sample a raw spectrum and interpolate correctly across a spectrum to provide an analytic interface to otherwise discrete spectra.</span>
+<span class="sd">An **stack** and **frame** class which can handle raw spectrum data. This module only handles raw spectra. These spectra are simply data held in image-like **frames**. This class allows a spectrum to be consistently read and written to a FITS file, using image rows as data arrays. The spectra functions contained in this module are bland. For more sophisitcated spectral analysis, see the :mod:`AnalyticSpectra` module, which contians classes which can re-sample a raw spectrum and interpolate correctly across a spectrum to provide an analytic interface to otherwise discrete spectra.</span>
 
 <span class="sd">.. warning:: The class implemented here does not yet use a sophisticated enough method for saving FITS header data etc. As such, it will not preserve state names etc. The development of this class should bring it inline with the STSCI spectra classes in the future.</span>
 
 <span class="sd">.. inheritance-diagram::</span>
-<span class="sd">    AstroObject.AstroSpectra.SpectraObject</span>
+<span class="sd">    AstroObject.AstroSpectra.SpectraStrack</span>
 <span class="sd">    AstroObject.AstroSpectra.SpectraFrame</span>
 <span class="sd">    :parts: 1</span>
 
-<span class="sd">Raw Spectrum **objects**: :class:`SpectraObject`</span>
+<span class="sd">:class:`SpectraStrack` – Raw Spectrum **stacks**</span>
 <span class="sd">------------------------------------------------</span>
 
 <span class="sd">.. autoclass::</span>
-<span class="sd">    AstroObject.AstroSpectra.SpectraObject</span>
+<span class="sd">    AstroObject.AstroSpectra.SpectraStrack</span>
 <span class="sd">    :members:</span>
 <span class="sd">    :inherited-members:</span>
 
-<span class="sd">Raw Spectrum **frames**: :class:`SpectraFrame`</span>
-<span class="sd">----------------------------------------------</span>
+<span class="sd">:class:`SpectraFrame` – Raw Spectrum **frames**</span>
+<span class="sd">-----------------------------------------------</span>
 
 <span class="sd">.. autoclass::</span>
 <span class="sd">    AstroObject.AstroSpectra.SpectraFrame</span>
@@ -109,7 +109,7 @@
 <span class="c"># Submodules from this system</span>
 <span class="kn">from</span> <span class="nn">Utilities</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;SpectraMixin&quot;</span><span class="p">,</span><span class="s">&quot;SpectraFrame&quot;</span><span class="p">,</span><span class="s">&quot;SpectraObject&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;SpectraMixin&quot;</span><span class="p">,</span><span class="s">&quot;SpectraFrame&quot;</span><span class="p">,</span><span class="s">&quot;SpectraStrack&quot;</span><span class="p">]</span>
 
 <span class="n">__version__</span> <span class="o">=</span> <span class="n">getVersion</span><span class="p">()</span>
 
@@ -225,12 +225,12 @@
     
 
 </div></div>
-<div class="viewcode-block" id="SpectraObject"><a class="viewcode-back" href="../../AstroSpectra.html#AstroObject.AstroSpectra.SpectraObject">[docs]</a><span class="k">class</span> <span class="nc">SpectraObject</span><span class="p">(</span><span class="n">AstroObjectBase</span><span class="o">.</span><span class="n">BaseObject</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseObject` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`SpectraFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="SpectraStrack"><a class="viewcode-back" href="../../AstroSpectra.html#AstroObject.AstroSpectra.SpectraStrack">[docs]</a><span class="k">class</span> <span class="nc">SpectraStrack</span><span class="p">(</span><span class="n">AstroObjectBase</span><span class="o">.</span><span class="n">BaseStack</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`SpectraFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dataClasses</span><span class="o">=</span><span class="p">[</span><span class="n">SpectraFrame</span><span class="p">],</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">SpectraObject</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">dataClasses</span><span class="o">=</span><span class="n">dataClasses</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SpectraStrack</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">dataClasses</span><span class="o">=</span><span class="n">dataClasses</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<div class="viewcode-block" id="SpectraObject.load"><a class="viewcode-back" href="../../AstroSpectra.html#AstroObject.AstroSpectra.SpectraObject.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="SpectraStrack.load"><a class="viewcode-back" href="../../AstroSpectra.html#AstroObject.AstroSpectra.SpectraStrack.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Loads spectral data from a data file which contains two columns, one for wavelenght, and one for flux.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
@@ -242,7 +242,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">unpack</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">comments</span><span class="o">=</span><span class="s">&quot;#&quot;</span><span class="p">),</span><span class="n">statename</span><span class="p">)</span>
             </div>
-<div class="viewcode-block" id="SpectraObject.unload"><a class="viewcode-back" href="../../AstroSpectra.html#AstroObject.AstroSpectra.SpectraObject.unload">[docs]</a>    <span class="k">def</span> <span class="nf">unload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="SpectraStrack.unload"><a class="viewcode-back" href="../../AstroSpectra.html#AstroObject.AstroSpectra.SpectraStrack.unload">[docs]</a>    <span class="k">def</span> <span class="nf">unload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;docstring for unload&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
@@ -294,7 +294,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.5-a1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.5-a2 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

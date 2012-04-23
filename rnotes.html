@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>16. Release Notes &mdash; AstroObject 0.5-a1 documentation</title>
+    <title>16. Release Notes &mdash; AstroObject 0.5-a2 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5-a1',
+        VERSION:     '0.5-a2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5-a1 documentation" href="index.html" />
-    <link rel="next" title="An Example Simulator" href="SimulatorExample.html" />
+    <link rel="top" title="AstroObject 0.5-a2 documentation" href="index.html" />
+    <link rel="next" title="An Example Simulator" href="examples/simulator.html" />
     <link rel="prev" title="15. Development Plans" href="future.html" /> 
   </head>
   <body>
@@ -40,12 +40,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="SimulatorExample.html" title="An Example Simulator"
+          <a href="examples/simulator.html" title="An Example Simulator"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="future.html" title="15. Development Plans"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-a1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5-a2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -108,9 +108,9 @@
 <dt>0.3.2</dt>
 <dd><ul class="first last simple">
 <li>Documentation, Documentation, Documentation.</li>
-<li>Added a <tt class="docutils literal"><span class="pre">select</span></tt> parameter to the save() function to allow the user to prevent automatic selection. See <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseObject" title="AstroObject.AstroObjectBase.BaseObject"><tt class="xref py py-class docutils literal"><span class="pre">AstroObject.AstroObjectBase.BaseObject</span></tt></a></li>
-<li>Pass <tt class="docutils literal"><span class="pre">**kwargs</span></tt> through a <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseObject.data" title="AstroObject.AstroObjectBase.BaseObject.data"><tt class="xref py py-meth docutils literal"><span class="pre">data()</span></tt></a> call to <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame.__call__" title="AstroObject.AstroObjectBase.BaseFrame.__call__"><tt class="xref py py-meth docutils literal"><span class="pre">__call__()</span></tt></a>. See <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseObject.data" title="AstroObject.AstroObjectBase.BaseObject.data"><tt class="xref py py-meth docutils literal"><span class="pre">AstroObject.AstroObjectBase.BaseObject.data()</span></tt></a></li>
-<li>Uniform <tt class="docutils literal"><span class="pre">KeyError</span></tt> formatting support. See <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseObject" title="AstroObject.AstroObjectBase.BaseObject"><tt class="xref py py-class docutils literal"><span class="pre">AstroObject.AstroObjectBase.BaseObject</span></tt></a></li>
+<li>Added a <tt class="docutils literal"><span class="pre">select</span></tt> parameter to the save() function to allow the user to prevent automatic selection. See <tt class="xref py py-class docutils literal"><span class="pre">AstroObject.AstroObjectBase.BaseObject</span></tt></li>
+<li>Pass <tt class="docutils literal"><span class="pre">**kwargs</span></tt> through a <tt class="xref py py-meth docutils literal"><span class="pre">data()</span></tt> call to <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame.__call__" title="AstroObject.AstroObjectBase.BaseFrame.__call__"><tt class="xref py py-meth docutils literal"><span class="pre">__call__()</span></tt></a>. See <tt class="xref py py-meth docutils literal"><span class="pre">AstroObject.AstroObjectBase.BaseObject.data()</span></tt></li>
+<li>Uniform <tt class="docutils literal"><span class="pre">KeyError</span></tt> formatting support. See <tt class="xref py py-class docutils literal"><span class="pre">AstroObject.AstroObjectBase.BaseObject</span></tt></li>
 <li>Simulator differentiates between stages which have been satisfied (<tt class="docutils literal"><span class="pre">complete</span></tt>) and stages which have actually run (<tt class="docutils literal"><span class="pre">done</span></tt>). See <a class="reference internal" href="AstroSimulator.html#module-AstroObject.AstroSimulator" title="AstroObject.AstroSimulator"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSimulator</span></tt></a></li>
 <li>Simulator stage dependents will always run in simulator-registration order. See <a class="reference internal" href="AstroSimulator.html#module-AstroObject.AstroSimulator" title="AstroObject.AstroSimulator"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSimulator</span></tt></a></li>
 </ul>
@@ -120,7 +120,7 @@
 <li><dl class="first docutils">
 <dt>0.3.1</dt>
 <dd><ul class="first last simple">
-<li>Dictionary methods for AstroObject (do things like <tt class="docutils literal"><span class="pre">AstroObject[&quot;Label&quot;]</span> <span class="pre">=</span> <span class="pre">Frame</span></tt>). See <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseObject" title="AstroObject.AstroObjectBase.BaseObject"><tt class="xref py py-class docutils literal"><span class="pre">AstroObject.AstroObjectBase.BaseObject</span></tt></a>.</li>
+<li>Dictionary methods for AstroObject (do things like <tt class="docutils literal"><span class="pre">AstroObject[&quot;Label&quot;]</span> <span class="pre">=</span> <span class="pre">Frame</span></tt>). See <tt class="xref py py-class docutils literal"><span class="pre">AstroObject.AstroObjectBase.BaseObject</span></tt>.</li>
 <li>Unified InterpolatedSpectrum model with various methods. See <tt class="xref py py-class docutils literal"><span class="pre">AstroObject.AnalyticSpectrum.InterpolatedSpectrum</span></tt>.</li>
 <li>Simulator has better options controls (for configuration and arbitrary functions). See <a class="reference internal" href="AstroSimulator.html#module-AstroObject.AstroSimulator" title="AstroObject.AstroSimulator"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSimulator</span></tt></a>.</li>
 <li>Cache module has been re-written. Now has a dict-like interface.</li>
@@ -359,7 +359,7 @@
   <p class="topless"><a href="future.html"
                         title="previous chapter">15. Development Plans</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="SimulatorExample.html"
+  <p class="topless"><a href="examples/simulator.html"
                         title="next chapter">An Example Simulator</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
@@ -393,12 +393,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="SimulatorExample.html" title="An Example Simulator"
+          <a href="examples/simulator.html" title="An Example Simulator"
              >next</a> |</li>
         <li class="right" >
           <a href="future.html" title="15. Development Plans"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-a1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5-a2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
