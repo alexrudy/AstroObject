@@ -112,7 +112,7 @@ sed -i '' -Ee "s/major += +$SELECTREGEX/major = $MAJOR/" $VERSIONFILE
 sed -i '' -Ee "s/minor += +$SELECTREGEX/minor = $MINOR/" $VERSIONFILE
 sed -i '' -Ee "s/bugfix += +$SELECTREGEX/bugfix = $BUGFIX/" $VERSIONFILE
 sed -i '' -Ee "s/patch += +$SELECTREGEX/patch = $PATCH/" $VERSIONFILE
-sed -i '' -Ee "s/cdevstr += +\\\"?$SELECTREGEX\\\"?/cdevstr = $DEVSTR/" $VERSIONFILE
+sed -i '' -Ee "s/^\s.devstr += +\\\"?$SELECTREGEX\\\"?/devstr = $DEVSTR/" $VERSIONFILE
 echo "   Version variables set to major=$MAJOR minor=$MINOR bugfix=$BUGFIX patch=$PATCH devstr=$DEVSTR"
 
 
