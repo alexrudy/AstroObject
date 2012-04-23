@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-28.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-a1
+#  Version 0.5-a2
 # 
 
 from tests.AstroTest import *
@@ -62,12 +62,12 @@ class test_FITSFrame(equality_FITSFrame,API_NoData_Frame,API_General_Frame):
         super(test_FITSFrame, self).setup()
     
         
-class test_FITSObject(equality_FITSFrame,API_Base_Object):
-    """AstroFITS.FITSObject"""
+class test_FITSStack(equality_FITSFrame,API_Base_Object):
+    """AstroFITS.FITSStack"""
     def setup(self):
         self.files = ["TestFile.fits"]
         self.FRAME = AstroObject.AstroFITS.FITSFrame
-        self.OBJECT = AstroObject.AstroFITS.FITSObject
+        self.OBJECT = AstroObject.AstroFITS.FITSStack
         self.FRAMESTR = "<'FITSFrame' labeled 'Valid'>"
         self.VALID = None
         self.INVALID = np.array([1,2,3]).astype(np.int16)

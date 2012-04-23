@@ -9,7 +9,7 @@
 # 
 
 from AstroObject.AstroObjectLogging import *
-from AstroObject.AstroImage import ImageObject
+from AstroObject.AstroImage import ImageStack
 from AstroObject.iraftools import UseIRAFTools
 
 import numpy as np
@@ -22,9 +22,9 @@ LOG.configure()
 LOG.start()
 
 
-ImageObject = UseIRAFTools(ImageObject)
+ImageStack = UseIRAFTools(ImageStack)
 
-Data = ImageObject()
+Data = ImageStack()
 
 image = np.zeros((1000,1000))
 image[450:550,450:550] = np.ones((100,100))
@@ -35,12 +35,11 @@ Data["Basic"] = image
 Data["Other"] = image
 Data["Flat"] = flat
 
-Data.read("Something.fits","Basic")
-
 iraf.ccdproc(
-    Data.imodat("Basic","Other",append="_flat"), 
-    ccdtype="", fixpix="no", overscan="no", trim ="no", zerocor="no", darkcor="no", flatcor ="yes", 
-    flat=Data.iin("Flat"))
+    Data.imodat("Basic","Other",append = "_flat"), 
+    ccdtype = "", fixpix = False, overscan = False, trim = False,
+    zerocor = False, darkcor = False, flatcor = True, 
+    flat = Data.iin("Flat"))
 Data.idone()
 
 Data.show("Basic")

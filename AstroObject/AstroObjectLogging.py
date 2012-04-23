@@ -5,11 +5,11 @@
 #  
 #  Created by Alexander Rudy on 2011-12-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-a1
+#  Version 0.5-a2
 #
 """
-Easy Logging :mod:`AstroObjectLogging`
-======================================
+:mod:`AstroObjectLogging` — Structured Configuration Logging 
+============================================================
 
 This module provides basic access to logging functions. It elimiates much of the variablity in logging, replacing it with the simple logging configuration options that AstroObject is constantly using. It is, however, built on the normal logging module, and so shouldn't break any other logging schemes. <http://docs.python.org/library/logging.html>
 

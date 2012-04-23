@@ -11,6 +11,8 @@ AstroObject is a library for Object-Oriented Astronomy. Currently under developm
 .. Warning::
     This module is under development. The version number |version| is very low, indicating that much of this module may be unreliable. The behavior in specific instances is not guaranteed nor should it be trusted. For more information about the development of this module, see :doc:`installation`.
 
+.. _Main_TOC:
+
 About AstroObject
 =================
 
@@ -38,10 +40,17 @@ About AstroObject
     future
     rnotes
 
+.. _Examples_TOC:
+
+Examples
+========
+
 .. toctree::
-    :hidden:
     
-    SimulatorExample
+    examples/simulator
+    examples/iraftools
+    examples/spectra
+    
 
 Testing and Development Features
 ================================
