@@ -10,7 +10,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Index &mdash; AstroObject 0.5-a2 documentation</title>
+    <title>Index &mdash; AstroObject 0.5-b1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5-a2',
+        VERSION:     '0.5-b1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5-a2 documentation" href="index.html" /> 
+    <link rel="top" title="AstroObject 0.5-b1 documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-a2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5-b1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -619,7 +619,7 @@
   </dt>
 
         
-  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStrack.clear">(AstroObject.AstroSpectra.SpectraStrack method)</a>
+  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStack.clear">(AstroObject.AstroSpectra.SpectraStack method)</a>
   </dt>
 
       </dl></dd>
@@ -637,12 +637,12 @@
   <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.CompositeSpectra">CompositeSpectra (class in AstroObject.AnalyticSpectra)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="AstroConfig.html#AstroObject.AstroConfig.Configuration">Configuration (class in AstroObject.AstroConfig)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="AstroObjectLogging.html#AstroObject.AstroObjectLogging.LogManager.configure">configure() (AstroObject.AstroObjectLogging.LogManager method)</a>
   </dt>
@@ -681,6 +681,10 @@
   </dt>
 
       </dl></dd>
+      
+  <dt><a href="AstroImage.html#AstroObject.AstroImage.ImageStack.crop">crop() (AstroObject.AstroImage.ImageStack method)</a>
+  </dt>
+
   </dl></td>
 </tr></table>
 
@@ -709,7 +713,7 @@
   </dt>
 
         
-  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStrack.d">(AstroObject.AstroSpectra.SpectraStrack attribute)</a>
+  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStack.d">(AstroObject.AstroSpectra.SpectraStack attribute)</a>
   </dt>
 
       </dl></dd>
@@ -735,7 +739,7 @@
   </dt>
 
         
-  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStrack.data">(AstroObject.AstroSpectra.SpectraStrack method)</a>
+  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStack.data">(AstroObject.AstroSpectra.SpectraStack method)</a>
   </dt>
 
       </dl></dd>
@@ -841,7 +845,7 @@
   </dt>
 
         
-  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStrack.f">(AstroObject.AstroSpectra.SpectraStrack attribute)</a>
+  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStack.f">(AstroObject.AstroSpectra.SpectraStack attribute)</a>
   </dt>
 
       </dl></dd>
@@ -857,8 +861,6 @@
   <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.FlatSpectrum">FlatSpectrum (class in AstroObject.AnalyticSpectra)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.InterpolatedSpectrum.flux">flux (AstroObject.AnalyticSpectra.InterpolatedSpectrum attribute)</a>
   </dt>
@@ -869,6 +871,8 @@
   </dt>
 
       </dl></dd>
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="AstroFITS.html#AstroObject.AstroFITS.FITSStack.frame">frame() (AstroObject.AstroFITS.FITSStack method)</a>
   </dt>
@@ -891,7 +895,33 @@
   </dt>
 
         
-  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStrack.frame">(AstroObject.AstroSpectra.SpectraStrack method)</a>
+  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStack.frame">(AstroObject.AstroSpectra.SpectraStack method)</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="AstroFITS.html#AstroObject.AstroFITS.FITSStack.framename">framename (AstroObject.AstroFITS.FITSStack attribute)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="AstroHDU.html#AstroObject.AstroHDU.HDUStack.framename">(AstroObject.AstroHDU.HDUStack attribute)</a>
+  </dt>
+
+        
+  <dt><a href="AstroImage.html#AstroObject.AstroImage.ImageStack.framename">(AstroObject.AstroImage.ImageStack attribute)</a>
+  </dt>
+
+        
+  <dt><a href="AstroNDArray.html#AstroObject.AstroNDArray.NDArrayStack.framename">(AstroObject.AstroNDArray.NDArrayStack attribute)</a>
+  </dt>
+
+        
+  <dt><a href="AstroObject.html#AstroObject.AstroObjectBase.BaseStack.framename">(AstroObject.AstroObjectBase.BaseStack attribute)</a>
+  </dt>
+
+        
+  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStack.framename">(AstroObject.AstroSpectra.SpectraStack attribute)</a>
   </dt>
 
       </dl></dd>
@@ -917,7 +947,7 @@
   </dt>
 
         
-  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStrack.fromAtFile">(AstroObject.AstroSpectra.SpectraStrack method)</a>
+  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStack.fromAtFile">(AstroObject.AstroSpectra.SpectraStack method)</a>
   </dt>
 
       </dl></dd>
@@ -943,7 +973,7 @@
   </dt>
 
         
-  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStrack.fromFile">(AstroObject.AstroSpectra.SpectraStrack class method)</a>
+  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStack.fromFile">(AstroObject.AstroSpectra.SpectraStack class method)</a>
   </dt>
 
       </dl></dd>
@@ -1125,7 +1155,7 @@
   </dt>
 
         
-  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStrack.keep">(AstroObject.AstroSpectra.SpectraStrack method)</a>
+  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStack.keep">(AstroObject.AstroSpectra.SpectraStack method)</a>
   </dt>
 
       </dl></dd>
@@ -1157,7 +1187,7 @@
   </dt>
 
         
-  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStrack.list">(AstroObject.AstroSpectra.SpectraStrack method)</a>
+  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStack.list">(AstroObject.AstroSpectra.SpectraStack method)</a>
   </dt>
 
       </dl></dd>
@@ -1171,7 +1201,7 @@
   </dt>
 
         
-  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStrack.load">(AstroObject.AstroSpectra.SpectraStrack method)</a>
+  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStack.load">(AstroObject.AstroSpectra.SpectraStack method)</a>
   </dt>
 
       </dl></dd>
@@ -1197,6 +1227,10 @@
 
       
   <dt><a href="AstroSimulator.html#AstroObject.AstroSimulator.Simulator.map_over_collection">map_over_collection() (AstroObject.AstroSimulator.Simulator method)</a>
+  </dt>
+
+      
+  <dt><a href="AstroImage.html#AstroObject.AstroImage.ImageStack.mask">mask() (AstroObject.AstroImage.ImageStack method)</a>
   </dt>
 
       
@@ -1341,7 +1375,7 @@
   </dt>
 
         
-  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStrack.read">(AstroObject.AstroSpectra.SpectraStrack method)</a>
+  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStack.read">(AstroObject.AstroSpectra.SpectraStack method)</a>
   </dt>
 
       </dl></dd>
@@ -1379,7 +1413,7 @@
   </dt>
 
         
-  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStrack.remove">(AstroObject.AstroSpectra.SpectraStrack method)</a>
+  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStack.remove">(AstroObject.AstroSpectra.SpectraStack method)</a>
   </dt>
 
       </dl></dd>
@@ -1449,7 +1483,7 @@
   </dt>
 
         
-  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStrack.save">(AstroObject.AstroSpectra.SpectraStrack method)</a>
+  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStack.save">(AstroObject.AstroSpectra.SpectraStack method)</a>
   </dt>
 
       </dl></dd>
@@ -1475,7 +1509,7 @@
   </dt>
 
         
-  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStrack.select">(AstroObject.AstroSpectra.SpectraStrack method)</a>
+  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStack.select">(AstroObject.AstroSpectra.SpectraStack method)</a>
   </dt>
 
       </dl></dd>
@@ -1513,7 +1547,7 @@
   </dt>
 
         
-  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStrack.show">(AstroObject.AstroSpectra.SpectraStrack method)</a>
+  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStack.show">(AstroObject.AstroSpectra.SpectraStack method)</a>
   </dt>
 
       </dl></dd>
@@ -1571,7 +1605,7 @@
   </dt>
 
       
-  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStrack">SpectraStrack (class in AstroObject.AstroSpectra)</a>
+  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStack">SpectraStack (class in AstroObject.AstroSpectra)</a>
   </dt>
 
       
@@ -1621,11 +1655,9 @@
   </dt>
 
       
-  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStrack.unload">unload() (AstroObject.AstroSpectra.SpectraStrack method)</a>
+  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStack.unload">unload() (AstroObject.AstroSpectra.SpectraStack method)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="AstroConfig.html#AstroObject.AstroConfig.Configuration.update">update() (AstroObject.AstroConfig.Configuration method)</a>
   </dt>
@@ -1636,8 +1668,14 @@
   </dt>
 
       </dl></dd>
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="AstroObjectLogging.html#AstroObject.AstroObjectLogging.LogManager.useConsole">useConsole() (AstroObject.AstroObjectLogging.LogManager method)</a>
+  </dt>
+
+      
+  <dt><a href="iraftools.html#AstroObject.iraftools.UseIRAFTools">UseIRAFTools() (in module AstroObject.iraftools)</a>
   </dt>
 
   </dl></td>
@@ -1724,7 +1762,7 @@
   </dt>
 
         
-  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStrack.write">(AstroObject.AstroSpectra.SpectraStrack method)</a>
+  <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStack.write">(AstroObject.AstroSpectra.SpectraStack method)</a>
   </dt>
 
       </dl></dd>
@@ -1767,7 +1805,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-a2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5-b1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

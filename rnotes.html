@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>16. Release Notes &mdash; AstroObject 0.5-a2 documentation</title>
+    <title>16. Release Notes &mdash; AstroObject 0.5-b1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5-a2',
+        VERSION:     '0.5-b1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5-a2 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.5-b1 documentation" href="index.html" />
     <link rel="next" title="An Example Simulator" href="examples/simulator.html" />
     <link rel="prev" title="15. Development Plans" href="future.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="future.html" title="15. Development Plans"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-a2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5-b1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -57,6 +57,16 @@
   <div class="section" id="release-notes">
 <h1>16. Release Notes<a class="headerlink" href="#release-notes" title="Permalink to this headline">¶</a></h1>
 <ul>
+<li><dl class="first docutils">
+<dt>0.5.0</dt>
+<dd><ul class="first last simple">
+<li>Consistent vocabulary is now in force: Two object types, <strong>stacks</strong> and <strong>frames</strong>. See <a class="reference internal" href="intro.html#stacks"><em>**stacks**</em></a> and <a class="reference internal" href="intro.html#frames"><em>**frames**</em></a>.</li>
+<li><a class="reference internal" href="iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a> is included to provide access to writing and reading IRAF FITS files in a python-centric routine.</li>
+<li>Testing is vastly improved.</li>
+</ul>
+</dd>
+</dl>
+</li>
 <li><dl class="first docutils">
 <dt>0.4.0</dt>
 <dd><ul class="first last simple">
@@ -209,11 +219,11 @@
 </li>
 <li><p class="first">Added the HDU-based frame and object system. The HDU system allows more direct manipulaton of HDUs. I&#8217;m still not confident in HDU&#8217;s ability to preserve data during reads and writes. (Specifically writes, but I&#8217;m unsure about reads as well...)</p>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">_default_state(self,states=None)</span></tt> allows the user to filter states that you will use for the default collection</p>
+<li><p class="first"><tt class="docutils literal"><span class="pre">_default_frame(self,frames=None)</span></tt> allows the user to filter frames that you will use for the default collection</p>
 </li>
-<li><p class="first">Prevented object <cite>write()</cite> function from taking the primary state from outside of the set of written states.</p>
+<li><p class="first">Prevented object <cite>write()</cite> function from taking the primary frame from outside of the set of written frames.</p>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">write()</span></tt> now uses the HDU header &#8220;LABEL&#8221; in order to set the state label</p>
+<li><p class="first"><tt class="docutils literal"><span class="pre">write()</span></tt> now uses the HDU header &#8220;LABEL&#8221; in order to set the frame label</p>
 </li>
 <li><p class="first">Removed initilaizng frame data from object initialization.</p>
 </li>
@@ -254,7 +264,7 @@
 <li>AstroObject now has a <tt class="docutils literal"><span class="pre">clobber</span></tt> mode which allows <tt class="docutils literal"><span class="pre">.save()</span></tt> to overwrite data</li>
 <li>AstroObject now has a <tt class="docutils literal"><span class="pre">.clear()</span></tt> method to delete all data.</li>
 <li>Fixed a bug which might crop up when saving only a single frame to a FITS file in AstroObject.</li>
-<li>AstroObject more consistently uses the <tt class="docutils literal"><span class="pre">._default_state()</span></tt> call to set statename.</li>
+<li>AstroObject more consistently uses the <tt class="docutils literal"><span class="pre">._default_frame()</span></tt> call to set framename.</li>
 <li>Made a temporary fix for data copying bugs</li>
 <li>Documentation of API</li>
 <li>Documentation of AnalyticSpectra</li>
@@ -282,7 +292,7 @@
 <li><dl class="first docutils">
 <dt>0.2.1</dt>
 <dd><ul class="first last simple">
-<li><tt class="docutils literal"><span class="pre">object.keep()</span></tt> only keeps the specified states</li>
+<li><tt class="docutils literal"><span class="pre">object.keep()</span></tt> only keeps the specified frames</li>
 <li><tt class="docutils literal"><span class="pre">object.keep()</span></tt> and <tt class="docutils literal"><span class="pre">object.remove()</span></tt> both accept arbitrary numbers of arguments</li>
 <li>derived classes now have a <tt class="docutils literal"><span class="pre">__valid__()</span></tt> method</li>
 <li><tt class="docutils literal"><span class="pre">object.object()</span></tt> has become <tt class="docutils literal"><span class="pre">object.frame()</span></tt> for more naming consistency. NOTE: <tt class="docutils literal"><span class="pre">object.object()</span></tt> will be depreciated.</li>
@@ -398,7 +408,7 @@
         <li class="right" >
           <a href="future.html" title="15. Development Plans"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-a2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5-b1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

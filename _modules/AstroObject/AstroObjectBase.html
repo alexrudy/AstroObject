@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObject.AstroObjectBase &mdash; AstroObject 0.5-a2 documentation</title>
+    <title>AstroObject.AstroObjectBase &mdash; AstroObject 0.5-b1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5-a2',
+        VERSION:     '0.5-b1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5-a2 documentation" href="../../index.html" />
+    <link rel="top" title="AstroObject 0.5-b1 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.5-a2 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.5-b1 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -56,7 +56,7 @@
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2011-10-12.</span>
 <span class="c">#  Copyright 2011 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.5-a2</span>
+<span class="c">#  Version 0.5-b1</span>
 <span class="c"># </span>
 <span class="sd">u&quot;&quot;&quot;</span>
 <span class="sd">.. _AstroObjectAPI:</span>
@@ -85,13 +85,17 @@
 <span class="s">Module Structure</span>
 <span class="s">----------------</span>
 
+<span class="s">The module generally uses **stacks** and **frames** as the base structures. **Stacks** are easily implemented (as above), and **frames** are single data instances which provide all of the required methods from :class:`BaseFrame`. The structure for **Stacks** is quite simple, as there is little variance among different stacks. **Frames** each are required to implement all of the methods in :class:`BaseFrame`, with only a few of those methods implmeneted by default, and most of these require re-implementation.</span>
+
+<span class="s">The Mixin classes are provided to make the creation of certain basic methods easier, and to remove the requirement that other basic methods be implemented. See :ref:`Mixins` for more information.</span>
+
 <span class="s">.. inheritance-diagram::</span>
 <span class="s">    AstroObject.AstroFITS.FITSFrame</span>
 <span class="s">    AstroObject.AstroFITS.FITSStack</span>
 <span class="s">    AstroObject.AstroImage.ImageFrame</span>
 <span class="s">    AstroObject.AstroImage.ImageStack</span>
 <span class="s">    AstroObject.AstroSpectra.SpectraFrame</span>
-<span class="s">    AstroObject.AstroSpectra.SpectraStrack</span>
+<span class="s">    AstroObject.AstroSpectra.SpectraStack</span>
 <span class="s">    AstroObject.AstroHDU.HDUFrame</span>
 <span class="s">    AstroObject.AstroHDU.HDUStack</span>
 <span class="s">    AstroObject.AstroNDArray.NDArrayFrame</span>
@@ -433,8 +437,6 @@
         <span class="n">HDU</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s">&#39;object&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">,</span><span class="n">collections</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
             <span class="n">headeri</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">headeri</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">ascardlist</span><span class="p">()</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="n">headeri</span><span class="p">:</span>
             <span class="n">HDU</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">HDU</span>
@@ -532,8 +534,8 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">dataClasses</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">BaseStack</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="c"># Image data variables.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">states</span> <span class="o">=</span> <span class="p">{}</span>            <span class="c"># Storage for all of the images</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">statename</span> <span class="o">=</span> <span class="bp">None</span>       <span class="c"># The active state name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span> <span class="o">=</span> <span class="p">{}</span>            <span class="c"># Storage for all of the images</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_framename</span> <span class="o">=</span> <span class="bp">None</span>       <span class="c"># The active frame name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>    <span class="c"># The filename to use for file loading and writing</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clobber</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="bp">False</span>
@@ -575,39 +577,60 @@
         
     <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Dictionary iterator call.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">()</span>
         
     <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">item</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Dictionary contain testing&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span>
+        <span class="k">return</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span>
         
     <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Dictionary length.</span>
 <span class="sd">        </span>
 <span class="sd">        :returns: integer&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
     
     <span class="nd">@property</span>
+<div class="viewcode-block" id="BaseStack.framename"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.framename">[docs]</a>    <span class="k">def</span> <span class="nf">framename</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Current frame name::</span>
+<span class="sd">            </span>
+<span class="sd">            &gt;&gt;&gt; Stack.framename</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_frame</span><span class="p">()</span>
+    </div>
+    <span class="nd">@property</span>
 <div class="viewcode-block" id="BaseStack.d"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.d">[docs]</a>    <span class="k">def</span> <span class="nf">d</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The data for the selected FITS frame.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;The data for the selected FITS frame. Equivalent to::</span>
+<span class="sd">            </span>
+<span class="sd">            &gt;&gt;&gt; Stack.data()</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
     </div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="BaseStack.f"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.f">[docs]</a>    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;The selected FITS frame. This frame is usually the last modified frame in the system.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;The selected FITS frame. This frame is usually the last modified frame in the system. Equivalent to::</span>
+<span class="sd">        </span>
+<span class="sd">            &gt;&gt;&gt; Stack.frame()</span>
+<span class="sd">            </span>
+<span class="sd">        or::</span>
+<span class="sd">            </span>
+<span class="sd">            &gt;&gt;&gt; Stack.frame(framename=Stack.s)</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">()</span>
     
         
     <span class="c">###############################</span>
     <span class="c"># Basic Object Mode Functions #</span>
     <span class="c">###############################</span></div>
-<div class="viewcode-block" id="BaseStack.save"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">select</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseStack.save"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">framename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">select</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Saves the given data to this object. If the data is an instance of one of the acceptable :attr:`dataClasses` then this method will simply save the data. Otherwise, it will attempt to cast the data into one of the acceptable :attr:`dataClasses` using their :meth:`__save__` mehtod.</span>
 <span class="sd">        </span>
 <span class="sd">        :param data: Data, typed like one of the data classes, or data which could initialize one of those classes.</span>
-<span class="sd">        :param string statename: The label name to use for this data.</span>
+<span class="sd">        :param string framename: The label name to use for this data.</span>
 <span class="sd">        :param bool clobber: Whether to overwrite the destination label or raise an error.</span>
-<span class="sd">        :param bool select: Select this state as the default reading state.</span>
+<span class="sd">        :param bool select: Select this frame as the default reading frame.</span>
 <span class="sd">        :raises: :exc:`TypeError` when the data cannot be cast as any dataClass</span>
 <span class="sd">        :raises: :exc:`KeyError` when the data would overwrite an existing frame.</span>
 <span class="sd">        </span>
@@ -617,57 +640,59 @@
             <span class="n">Object</span> <span class="o">=</span> <span class="bp">None</span>
             <span class="k">for</span> <span class="n">dataClass</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataClasses</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">Object</span> <span class="o">=</span> <span class="n">dataClass</span><span class="o">.</span><span class="n">__save__</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">statename</span><span class="p">)</span>
+                    <span class="n">Object</span> <span class="o">=</span> <span class="n">dataClass</span><span class="o">.</span><span class="n">__save__</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">framename</span><span class="p">)</span>
                 <span class="k">except</span> <span class="ne">NotImplementedError</span> <span class="k">as</span> <span class="n">AE</span><span class="p">:</span>
                     <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Cannot save as </span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dataClass</span><span class="p">,</span><span class="n">AE</span><span class="p">))</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">break</span>
             <span class="k">if</span> <span class="n">Object</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Object to be saved cannot be cast as </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataClasses</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">framename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">Object</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">framename</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">Object</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">statename</span><span class="p">)</span>
+            <span class="n">Object</span> <span class="o">=</span> <span class="n">data</span>
             
-        <span class="k">if</span> <span class="n">statename</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">statename</span> <span class="o">=</span> <span class="n">Object</span><span class="o">.</span><span class="n">label</span>
+        <span class="k">if</span> <span class="n">framename</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">framename</span> <span class="o">=</span> <span class="n">Object</span><span class="o">.</span><span class="n">label</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">Object</span><span class="o">.</span><span class="n">label</span> <span class="o">==</span> <span class="n">statename</span><span class="p">,</span> <span class="s">&quot;Object label improperly set by constructor&quot;</span>
+            <span class="k">assert</span> <span class="n">Object</span><span class="o">.</span><span class="n">label</span> <span class="o">==</span> <span class="n">framename</span><span class="p">,</span> <span class="s">&quot;Object label improperly set by constructor&quot;</span>
             
-        <span class="k">if</span> <span class="n">statename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">clobber</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">clobber</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&quot;Cannot Duplicate State Name: </span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s"> Use this.remove(</span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s">) or clobber=True&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">statename</span><span class="p">,</span><span class="n">statename</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">statename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Overwiting the frame </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">statename</span><span class="p">)</span>
-        <span class="c"># Save the actual state</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">statename</span><span class="p">]</span> <span class="o">=</span> <span class="n">Object</span>
+        <span class="k">if</span> <span class="n">framename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">clobber</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">clobber</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&quot;Cannot Duplicate State Name: </span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s"> Use this.remove(</span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s">) or clobber=True&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">framename</span><span class="p">,</span><span class="n">framename</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">framename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">:</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Overwiting the frame </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">framename</span><span class="p">)</span>
+        <span class="c"># Save the actual frame</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">[</span><span class="n">framename</span><span class="p">]</span> <span class="o">=</span> <span class="n">Object</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="s">&quot;Saved frame </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">Object</span><span class="p">)</span>
-        <span class="c"># Activate the saved state as the current state</span>
+        <span class="c"># Activate the saved frame as the current frame</span>
         <span class="k">if</span> <span class="n">select</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">statename</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">statename</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">framename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">framename</span>
     </div>
-<div class="viewcode-block" id="BaseStack.data"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the raw data for the current state. This is done through the :meth:`FITSFrame.__call__` method, which should return basic data in as raw a form as possible. The purpose of this call is to allow the user get at the most recent piece of data as easily as possible.</span>
+<div class="viewcode-block" id="BaseStack.data"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">framename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the raw data for the current frame. This is done through the :meth:`FITSFrame.__call__` method, which should return basic data in as raw a form as possible. The purpose of this call is to allow the user get at the most recent piece of data as easily as possible.</span>
 <span class="sd">        </span>
-<span class="sd">        :param string statename: the name of the state to be retrieved.</span>
+<span class="sd">        :param string framename: the name of the frame to be retrieved.</span>
 <span class="sd">        :param kwargs: arguments to be passed to the data call.</span>
 <span class="sd">        :returns: np.array of called data</span>
 <span class="sd">        </span>
 <span class="sd">        .. Warning::</span>
-<span class="sd">            I have not finished examining some issues with referencing vs. copying data that comes out of this call. Be aware that manipulating some objects produced here may actually manipulate the version saved in the Object. The current implementation which protects this call relies on the numpy copy command, ``np.copy(state())``, which might fail when used with data objects that do not return numpy arrays.</span>
+<span class="sd">            I have not finished examining some issues with referencing vs. copying data that comes out of this call. Be aware that manipulating some objects produced here may actually manipulate the version saved in the Object. The current implementation which protects this call relies on the numpy copy command, ``np.copy(frame())``, which might fail when used with data objects that do not return numpy arrays.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c"># Load the current stat if no state provided</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">statename</span><span class="p">:</span>
-            <span class="n">statename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statename</span>
-        <span class="k">if</span> <span class="n">statename</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">statename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">statename</span><span class="p">](</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="c"># Load the current stat if no frame provided</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">framename</span><span class="p">:</span>
+            <span class="n">framename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">framename</span>
+        <span class="k">if</span> <span class="n">framename</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">framename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">[</span><span class="n">framename</span><span class="p">](</span><span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_key_error</span><span class="p">(</span><span class="n">statename</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_key_error</span><span class="p">(</span><span class="n">framename</span><span class="p">)</span>
     
 
     </div>
-<div class="viewcode-block" id="BaseStack.frame"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.frame">[docs]</a>    <span class="k">def</span> <span class="nf">frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseStack.frame"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.frame">[docs]</a>    <span class="k">def</span> <span class="nf">frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">framename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.</span>
 <span class="sd">        </span>
-<span class="sd">        :param string statename: the name of the state to be retrieved.</span>
+<span class="sd">        :param string framename: the name of the frame to be retrieved.</span>
 <span class="sd">        :returns: dataClass instance for this object</span>
 <span class="sd">        </span>
 <span class="sd">        .. Warning::</span>
@@ -683,28 +708,34 @@
 <span class="sd">        </span>
 <span class="sd">        .. Note:: </span>
 <span class="sd">            Using frames can be advantageous as you don&#39;t rely on the Object to guess what type of frame should be used. Most times, the object will guess correctly, but Frames are a more robust way of ensuring type consistency&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">statename</span><span class="p">:</span>
-            <span class="n">statename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statename</span>
-        <span class="k">if</span> <span class="n">statename</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">statename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">statename</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">framename</span><span class="p">:</span>
+            <span class="n">framename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">framename</span>
+        <span class="k">if</span> <span class="n">framename</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">framename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">[</span><span class="n">framename</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_key_error</span><span class="p">(</span><span class="n">statename</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_key_error</span><span class="p">(</span><span class="n">framename</span><span class="p">)</span>
     </div>
-    <span class="k">def</span> <span class="nf">object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">framename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="s">&quot;Method </span><span class="se">\&quot;</span><span class="s">.object()</span><span class="se">\&quot;</span><span class="s"> on </span><span class="si">%s</span><span class="s"> has been depreciated. Please use </span><span class="se">\&quot;</span><span class="s">.frame()</span><span class="se">\&quot;</span><span class="s"> instead.&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">statename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">framename</span><span class="p">)</span>
         
-<div class="viewcode-block" id="BaseStack.select"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.select">[docs]</a>    <span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Sets the default frame to the given statename. Normally, the default frame is the one that was last saved.</span>
+<div class="viewcode-block" id="BaseStack.select"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.select">[docs]</a>    <span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">framename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets the default frame to the given framename. Normally, the default frame is the one that was last saved.</span>
 <span class="sd">        </span>
-<span class="sd">        :param string statename: the name of the state to be selected.</span>
+<span class="sd">        :param string framename: the name of the frame to be selected.</span>
+<span class="sd">        </span>
+<span class="sd">        If ``framename=None``, then this method will select the most recently modified frame.</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">statename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_key_error</span><span class="p">(</span><span class="n">statename</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">statename</span> <span class="o">=</span> <span class="n">statename</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="s">&quot;Selected state </span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">statename</span><span class="p">)</span>
-        <span class="k">return</span>
+        <span class="k">if</span> <span class="n">framename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_framename</span> <span class="o">=</span> <span class="bp">None</span> <span class="c"># Unselect frame</span>
+            <span class="n">framename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_frame</span><span class="p">()</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Setting frame by cancelling selection and asking for default frame.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">framename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_key_error</span><span class="p">(</span><span class="n">framename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_framename</span> <span class="o">=</span> <span class="n">framename</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="s">&quot;Selected frame </span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">framename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">framename</span>
     </div>
 <div class="viewcode-block" id="BaseStack.list"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.list">[docs]</a>    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Provides a list of the available frames, by label.</span>
@@ -712,157 +743,151 @@
 <span class="sd">        :returns: list</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
     </div>
-    <span class="k">def</span> <span class="nf">_key_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Throw a keyError for the given statename.&quot;&quot;&quot;</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: State </span><span class="si">%s</span><span class="s"> does not exist.</span><span class="se">\n</span><span class="s">States: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">())</span>
+    <span class="k">def</span> <span class="nf">_key_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">framename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Throw a keyError for the given framename.&quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">: State </span><span class="si">%s</span><span class="s"> does not exist.</span><span class="se">\n</span><span class="s">States: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">framename</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">())</span>
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     
-    <span class="k">def</span> <span class="nf">_default_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">states</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the default state name. If the currently selected state exists, it&#39;s state name will return. If not, the system will search for the newest state.</span>
+    <span class="k">def</span> <span class="nf">_default_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">frames</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the default frame name. If the currently selected frame exists, it&#39;s frame name will return. If not, the system will search for the newest frame. If no frames exist, this function will return None.</span>
 <span class="sd">        </span>
-<span class="sd">        :param tuple states: Tuple of state names from which to select the default. If not given, will use all states.</span>
-<span class="sd">        :returns: string statename</span>
+<span class="sd">        :param tuple frames: Tuple of frame names from which to select the default. If not given, will use all frames.</span>
+<span class="sd">        :returns: string framename</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">states</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">statename</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">statename</span>
-        <span class="k">if</span> <span class="p">[]</span> <span class="o">==</span> <span class="n">states</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">frames</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_framename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_framename</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_framename</span>
+        <span class="k">if</span> <span class="p">[]</span> <span class="o">==</span> <span class="n">frames</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">None</span>
-        <span class="n">Ages</span> <span class="o">=</span> <span class="p">[</span> <span class="n">time</span><span class="o">.</span><span class="n">clock</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">time</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">states</span> <span class="p">]</span>
-        <span class="n">youngest</span> <span class="o">=</span> <span class="n">states</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">Ages</span><span class="p">)]</span>
+        <span class="n">Ages</span> <span class="o">=</span> <span class="p">[</span> <span class="n">time</span><span class="o">.</span><span class="n">clock</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">time</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">frames</span> <span class="p">]</span>
+        <span class="n">youngest</span> <span class="o">=</span> <span class="n">frames</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">Ages</span><span class="p">)]</span>
         <span class="k">return</span> <span class="n">youngest</span>
     
 <div class="viewcode-block" id="BaseStack.clear"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">delete</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Clears all states from this object. Returns an empty list representing the currently known states.</span>
+        <span class="sd">&quot;&quot;&quot;Clears all frames from this object. Returns an empty list representing the currently known frames.</span>
 <span class="sd">        </span>
-<span class="sd">        :param bool delete: whether to explicitly delete states or just stop referencing dictionary.</span>
-<span class="sd">        :returns: list of states remaining</span>
+<span class="sd">        :param bool delete: whether to explicitly delete frames or just stop referencing dictionary.</span>
+<span class="sd">        :returns: list of frames remaining</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">delete</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">states</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">statename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_state</span><span class="p">()</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Cleared all states. Remaining: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()))</span>
+            <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">[</span><span class="n">frame</span><span class="p">]</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_framename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_frame</span><span class="p">()</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Cleared all frames. Remaining: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()))</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
     
     </div>
-<div class="viewcode-block" id="BaseStack.keep"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.keep">[docs]</a>    <span class="k">def</span> <span class="nf">keep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">statenames</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Removes all states except the specified frame(s) in the object.</span>
+<div class="viewcode-block" id="BaseStack.keep"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.keep">[docs]</a>    <span class="k">def</span> <span class="nf">keep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">framenames</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Removes all frames except the specified frame(s) in the object.</span>
 <span class="sd">        </span>
-<span class="sd">        :param statenames: the statenames to be kept.</span>
+<span class="sd">        :param framenames: the framenames to be kept.</span>
 <span class="sd">        :param bool delete: whether to explicitly delete stages.</span>
-<span class="sd">        :returns: list of states remaining.</span>
+<span class="sd">        :returns: list of frames remaining.</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">oldStates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span>
+        <span class="n">oldStates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span>
         <span class="n">newStates</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">statename</span> <span class="ow">in</span> <span class="n">statenames</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">statename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: State </span><span class="si">%s</span><span class="s"> does not exist!&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">))</span>
-            <span class="n">newStates</span><span class="p">[</span><span class="n">statename</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldStates</span><span class="p">[</span><span class="n">statename</span><span class="p">]</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Kept states </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="nb">list</span><span class="p">(</span><span class="n">statenames</span><span class="p">)))</span>
-        <span class="k">if</span> <span class="s">&quot;delete&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&quot;delete&quot;</span><span class="p">]:</span>
-            <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">statenames</span><span class="p">:</span>
-                    <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span>
-            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">states</span> <span class="o">=</span> <span class="n">newStates</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">statename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_state</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">framename</span> <span class="ow">in</span> <span class="n">framenames</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">framename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: State </span><span class="si">%s</span><span class="s"> does not exist!&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">framename</span><span class="p">))</span>
+            <span class="n">newStates</span><span class="p">[</span><span class="n">framename</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldStates</span><span class="p">[</span><span class="n">framename</span><span class="p">]</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Kept frames </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="nb">list</span><span class="p">(</span><span class="n">framenames</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;delete&quot;</span><span class="p">,</span><span class="bp">False</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">frame</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">framenames</span><span class="p">:</span>
+                    <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">[</span><span class="n">frame</span><span class="p">]</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span> <span class="o">=</span> <span class="n">newStates</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_framename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_frame</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
     </div>
-<div class="viewcode-block" id="BaseStack.remove"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">statenames</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseStack.remove"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">framenames</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Removes the specified frame(s) from the object.</span>
 <span class="sd">        </span>
-<span class="sd">        :param statenames: the statenames to be deleted.</span>
+<span class="sd">        :param framenames: the framenames to be deleted.</span>
 <span class="sd">        :param bool delete: whether to explicitly delete stages.</span>
-<span class="sd">        :returns: list of states remaining.</span>
+<span class="sd">        :returns: list of frames remaining.</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="s">&quot;clobber&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&quot;clobber&quot;</span><span class="p">]:</span>
-            <span class="n">clobber</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">clobber</span> <span class="o">=</span> <span class="bp">False</span>
-        <span class="k">if</span> <span class="s">&quot;delete&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&quot;delete&quot;</span><span class="p">]:</span>
-            <span class="n">delete</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">delete</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="n">removed</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Requested remove </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statenames</span><span class="p">))</span>
-        <span class="k">for</span> <span class="n">statename</span> <span class="ow">in</span> <span class="n">statenames</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">statename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">clobber</span><span class="p">:</span>
-                    <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Not removing state </span><span class="si">%s</span><span class="s"> as it does not exist&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">))</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Requested remove </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">framenames</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">framename</span> <span class="ow">in</span> <span class="n">framenames</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">framename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;clobber&quot;</span><span class="p">,</span><span class="bp">False</span><span class="p">):</span>
+                    <span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Not removing frame </span><span class="si">%s</span><span class="s"> as it does not exist&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">framename</span><span class="p">))</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Object </span><span class="si">%s</span><span class="s"> does not exist!&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">))</span>
-            <span class="k">elif</span> <span class="n">delete</span><span class="p">:</span>
-                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">statename</span><span class="p">]</span>
+                    <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Object </span><span class="si">%s</span><span class="s"> does not exist!&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">framename</span><span class="p">))</span>
+            <span class="k">elif</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;delete&quot;</span><span class="p">,</span><span class="bp">False</span><span class="p">):</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">[</span><span class="n">framename</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">statename</span><span class="p">)</span>
-            <span class="n">removed</span> <span class="o">+=</span> <span class="p">[</span><span class="n">statename</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">statename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_state</span><span class="p">()</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Removed states </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">removed</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">framename</span><span class="p">)</span>
+            <span class="n">removed</span> <span class="o">+=</span> <span class="p">[</span><span class="n">framename</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_framename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_frame</span><span class="p">()</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">: Removed frames </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">removed</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
     </div>
-<div class="viewcode-block" id="BaseStack.show"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the (rendered) matplotlib plot for this object. This is a quick way to view your current data state without doing any serious plotting work. This aims for the sensible defaults philosophy, if you don&#39;t like what you get, write a new method that uses the :meth:`data` call and plots that.</span>
+<div class="viewcode-block" id="BaseStack.show"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">framename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the (rendered) matplotlib plot for this object. This is a quick way to view your current data frame without doing any serious plotting work. This aims for the sensible defaults philosophy, if you don&#39;t like what you get, write a new method that uses the :meth:`data` call and plots that.</span>
 <span class="sd">        </span>
-<span class="sd">        :param string statename: the name of the state to be retrieved.</span>
+<span class="sd">        :param string framename: the name of the frame to be retrieved.</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c"># Load the current stat if no state provided</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">statename</span><span class="p">:</span>
-            <span class="n">statename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_state</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">statename</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">statename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">statename</span><span class="p">]</span><span class="o">.</span><span class="n">__show__</span><span class="p">()</span>
+        <span class="c"># Load the current stat if no frame provided</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">framename</span><span class="p">:</span>
+            <span class="n">framename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_frame</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">framename</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">framename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">[</span><span class="n">framename</span><span class="p">]</span><span class="o">.</span><span class="n">__show__</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_key_error</span><span class="p">(</span><span class="n">statename</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_key_error</span><span class="p">(</span><span class="n">framename</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="BaseStack.write"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">states</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">primaryState</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">singleFrame</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify ``states`` then only those states will be used. ``primaryState`` should be the state of the front HDU. When not specified, the latest state will be used. It uses the :attr:`dataClasses` :meth:`FITSFrame.__hdu__` method to return a valid HDU object for each Frame.</span>
+<div class="viewcode-block" id="BaseStack.write"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">frames</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">primaryFrame</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">singleFrame</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify ``frames`` then only those frames will be used. ``primaryFrame`` should be the frame of the front HDU. When not specified, the latest frame will be used. It uses the :attr:`dataClasses` :meth:`FITSFrame.__hdu__` method to return a valid HDU object for each Frame.</span>
 <span class="sd">        </span>
 <span class="sd">        :param string filename: the name of the file for saving.</span>
-<span class="sd">        :param list states: A list of states to include in the file. If ``None``, save all states.</span>
-<span class="sd">        :param string primaryState: The state to become the front of the FITS file. If none, uses :meth:`_default_state`</span>
+<span class="sd">        :param list frames: A list of frames to include in the file. If ``None``, save all frames.</span>
+<span class="sd">        :param string primaryFrame: The frame to become the front of the FITS file. If none, uses :meth:`_default_frame`</span>
 <span class="sd">        :param bool clobber: Whether to overwrite the destination file or not.</span>
 <span class="sd">        :param bool singleFrame: Whether to save only a single frame.</span>
+<span class="sd">        :returns: Tuple of (PrimaryFrame, Frames, Filename)</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">states</span><span class="p">:</span>
-            <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Saving all states: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">states</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">primaryState</span><span class="p">:</span>
-            <span class="n">primaryState</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_state</span><span class="p">(</span><span class="n">states</span><span class="p">)</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Set primary statename to default state </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">primaryState</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">primaryState</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
-            <span class="n">states</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">primaryState</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">frames</span><span class="p">:</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Saving all frames: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">frames</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">primaryFrame</span><span class="p">:</span>
+            <span class="n">primaryFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_frame</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Set primary framename to default frame </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">primaryFrame</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">primaryFrame</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">:</span>
+            <span class="n">frames</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">primaryFrame</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">singleFrame</span><span class="p">:</span>
-            <span class="n">states</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">filename</span> <span class="o">=</span> <span class="n">primaryState</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">primaryFrame</span>
                 <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Set Filename from Primary State. Filename: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
                 <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Set filename from Object. Filename: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,(</span><span class="nb">str</span><span class="p">,</span><span class="nb">unicode</span><span class="p">)):</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="n">validate_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="n">PrimaryHDU</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">primaryState</span><span class="p">]</span><span class="o">.</span><span class="n">hdu</span><span class="p">(</span><span class="n">primary</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">states</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">HDUs</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">hdu</span><span class="p">(</span><span class="n">primary</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">]</span>
+        <span class="n">PrimaryHDU</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">[</span><span class="n">primaryFrame</span><span class="p">]</span><span class="o">.</span><span class="n">hdu</span><span class="p">(</span><span class="n">primary</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">HDUs</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_frames</span><span class="p">[</span><span class="n">frame</span><span class="p">]</span><span class="o">.</span><span class="n">hdu</span><span class="p">(</span><span class="n">primary</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">]</span>
             <span class="n">HDUList</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">HDUList</span><span class="p">([</span><span class="n">PrimaryHDU</span><span class="p">]</span><span class="o">+</span><span class="n">HDUs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">HDUList</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">HDUList</span><span class="p">([</span><span class="n">PrimaryHDU</span><span class="p">])</span>
         <span class="n">HDUList</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="n">clobber</span><span class="p">)</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="s">&quot;Wrote state </span><span class="si">%s</span><span class="s"> (primary) and states </span><span class="si">%s</span><span class="s"> to FITS file </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">primaryState</span><span class="p">,</span><span class="n">states</span><span class="p">,</span><span class="n">filename</span><span class="p">))</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="s">&quot;Wrote frame </span><span class="si">%s</span><span class="s"> (primary) and frames </span><span class="si">%s</span><span class="s"> to FITS file </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">primaryFrame</span><span class="p">,</span><span class="n">frames</span><span class="p">,</span><span class="n">filename</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">primaryFrame</span><span class="p">,</span><span class="n">frames</span><span class="p">,</span><span class="n">filename</span>
     </div>
-<div class="viewcode-block" id="BaseStack.read"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseStack.read"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">framename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;This reader takes a FITS file, and trys to render each HDU within that FITS file as a frame in this Object. As such, it might read multiple frames. This method will return a list of Frames that it read. It uses the :attr:`dataClasses` :meth:`FITSFrame.__read__` method to return a valid Frame object for each HDU.</span>
 <span class="sd">        </span>
 <span class="sd">        ::</span>
@@ -870,27 +895,31 @@
 <span class="sd">            &gt;&gt;&gt; obj = BaseStack()</span>
 <span class="sd">            &gt;&gt;&gt; obj.read(&quot;SomeImage.fits&quot;)</span>
 <span class="sd">            &gt;&gt;&gt; obj.list()</span>
-<span class="sd">            [&quot;SomeImage&quot;,&quot;SomeImage Frame 1&quot;,&quot;SomeImage Frame 2&quot;]</span>
+<span class="sd">            [&quot;SomeImage&quot;,&quot;SomeImage-1&quot;,&quot;SomeImage-2&quot;]</span>
 <span class="sd">            </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
-        <span class="k">if</span> <span class="n">statename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Set statename for image from filename: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span>
         <span class="n">HDUList</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="n">Read</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">Labels</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">HDU</span> <span class="ow">in</span> <span class="n">HDUList</span><span class="p">:</span>
-            <span class="n">Object</span> <span class="o">=</span> <span class="bp">None</span>
-            <span class="k">if</span> <span class="n">statename</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="s">&quot;label&quot;</span> <span class="ow">in</span> <span class="n">HDU</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
-                <span class="n">label</span> <span class="o">=</span> <span class="n">HDU</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;label&quot;</span><span class="p">]</span>
-            <span class="k">elif</span> <span class="n">statename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">statename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-                <span class="n">label</span> <span class="o">=</span> <span class="n">statename</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">label</span> <span class="o">=</span> <span class="n">statename</span>
+        <span class="k">for</span> <span class="n">HDU</span> <span class="ow">in</span> <span class="n">HDUList</span><span class="p">:</span>    
+            <span class="n">Object</span> <span class="o">=</span> <span class="bp">None</span> <span class="c"># Target variable</span>
+            <span class="k">if</span> <span class="n">framename</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="s">&quot;label&quot;</span> <span class="ow">in</span> <span class="n">HDU</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
+                <span class="c"># We take from the &quot;label&quot; HDU when we aren&#39;t given explicit framenames</span>
+                <span class="n">framename</span> <span class="o">=</span> <span class="n">HDU</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&quot;label&quot;</span><span class="p">]</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Set label for image from HDU Header: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">framename</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">framename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="c"># We default the framename to be the basename of the file</span>
+                <span class="n">framename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Set label for image from filename: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">framename</span><span class="p">)</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="n">framename</span>
             <span class="k">if</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">Labels</span><span class="p">:</span>
-                <span class="n">label</span> <span class="o">=</span> <span class="n">label</span> <span class="o">+</span> <span class="s">&quot; Frame </span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">Read</span>
+                <span class="c"># We don&#39;t allow repeat loading of labels</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="n">framename</span> <span class="o">+</span> <span class="s">&quot;-</span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">Read</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Incrementing label for multi-frame images: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">label</span><span class="p">)</span>
+            
+            <span class="c"># Iterate through our potential data classes</span>
             <span class="k">for</span> <span class="n">dataClass</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataClasses</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">Object</span> <span class="o">=</span> <span class="n">dataClass</span><span class="o">.</span><span class="n">__read__</span><span class="p">(</span><span class="n">HDU</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
@@ -904,12 +933,12 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">Read</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="n">Labels</span> <span class="o">+=</span> <span class="p">[</span><span class="n">label</span><span class="p">]</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">Object</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">Object</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="n">clobber</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">Read</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;No HDUs were saved from FITS file </span><span class="si">%s</span><span class="s"> to </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         
-        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="s">&quot;Saved states </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">Labels</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="s">&quot;Saved frames </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">Labels</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Labels</span>
     </div>
 <div class="viewcode-block" id="BaseStack.fromAtFile"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.fromAtFile">[docs]</a>    <span class="k">def</span> <span class="nf">fromAtFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">atfile</span><span class="p">):</span>
@@ -929,14 +958,23 @@
 <span class="sd">            </span>
 <span class="sd">            &gt;&gt;&gt; obj = BaseStack.fromFile(&quot;SomeImage.fits&quot;)</span>
 <span class="sd">            &gt;&gt;&gt; obj.list()</span>
-<span class="sd">            [&quot;SomeImage&quot;,&quot;SomeImage Frame 1&quot;,&quot;SomeImage Frame 2&quot;]</span>
+<span class="sd">            [&quot;SomeImage&quot;,&quot;SomeImage-1&quot;,&quot;SomeImage-2&quot;]</span>
 <span class="sd">            </span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Object</span> <span class="o">=</span> <span class="n">cls</span><span class="p">()</span>
         <span class="n">Object</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Object</span>
-</pre></div></div></div>
+</div></div>
+<span class="k">class</span> <span class="nc">FrameStack</span><span class="p">(</span><span class="n">BaseStack</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This stack accepts any type of frame, and overrides data-saving style save methods by calling the BaseFrame save method by default, which will fail because it isn&#39;t implemented.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FrameStack</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataClasses</span> <span class="o">=</span> <span class="p">[</span><span class="n">BaseFrame</span><span class="p">]</span>
+        
+    
+        
+</pre></div>
 
           </div>
         </div>
@@ -969,7 +1007,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.5-a2 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.5-b1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

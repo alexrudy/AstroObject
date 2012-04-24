@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>9. iraftools – IRAF integration facility &mdash; AstroObject 0.5-a2 documentation</title>
+    <title>9. iraftools – IRAF integration facility &mdash; AstroObject 0.5-b1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5-a2',
+        VERSION:     '0.5-b1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5-a2 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.5-b1 documentation" href="index.html" />
     <link rel="next" title="10. AstroObjectBase – AstroObject API" href="AstroObject.html" />
     <link rel="prev" title="8. AstroHDU – HDU Objects and Storage" href="AstroHDU.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="AstroHDU.html" title="8. AstroHDU – HDU Objects and Storage"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-a2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5-b1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -57,24 +57,55 @@
   <span class="target" id="module-AstroObject.iraftools"></span><div class="section" id="iraftools-iraf-integration-facility">
 <h1>9. <tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt> – IRAF integration facility<a class="headerlink" href="#iraftools-iraf-integration-facility" title="Permalink to this headline">¶</a></h1>
 <p>This module provides an interface for using <a class="reference internal" href="intro.html#module-AstroObject" title="AstroObject"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject</span></tt></a> with PyIRAF. For documentation of the individual methods provided by this module, see <a class="reference internal" href="#AstroObject.iraftools.IRAFToolsMixin" title="AstroObject.iraftools.IRAFToolsMixin"><tt class="xref py py-class docutils literal"><span class="pre">IRAFToolsMixin</span></tt></a>. The next two sections will provide a brief overview of the use of <tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt>.</p>
+<p>To use <tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt>, use the <a class="reference internal" href="#AstroObject.iraftools.UseIRAFTools" title="AstroObject.iraftools.UseIRAFTools"><tt class="xref py py-func docutils literal"><span class="pre">UseIRAFTools()</span></tt></a> function.</p>
+<dl class="function">
+<dt id="AstroObject.iraftools.UseIRAFTools">
+<tt class="descclassname">AstroObject.iraftools.</tt><tt class="descname">UseIRAFTools</tt><big>(</big><em>klass</em><big>)</big><a class="reference internal" href="_modules/AstroObject/iraftools.html#UseIRAFTools"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.iraftools.UseIRAFTools" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class wrapper which allows classes to use IRAF tools. Takes a single parameter, the class name which should have IRAF tools, and creates a dummy class which activates IRAF tools during initialization.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>klass</strong> &#8211; The class to apply <tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt> to.</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">AstroObject.iraftools</span> <span class="kn">import</span> <span class="n">UseIRAFTools</span>
+<span class="kn">from</span> <span class="nn">AstroObject.AstroImage</span> <span class="kn">import</span> <span class="n">ImageStack</span>
+<span class="n">ImageStack</span> <span class="o">=</span> <span class="n">UseIRAFTools</span><span class="p">(</span><span class="n">ImageStack</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <div class="section" id="file-types-in-iraftools">
 <span id="iraftools-filetypes"></span><h2>9.1. File types in <tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt><a class="headerlink" href="#file-types-in-iraftools" title="Permalink to this headline">¶</a></h2>
 <p>There are three types of FITS files provided by <tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt>:</p>
-<ul>
-<li><p class="first"><tt class="docutils literal"><span class="pre">in</span></tt> files are FITS files which are used as input to an <tt class="docutils literal"><span class="pre">iraf</span></tt> fucntion. They are created immediately, and will exist untill the <a class="reference internal" href="#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a> cleanup stage (<a class="reference internal" href="#AstroObject.iraftools.IRAFTools.done" title="AstroObject.iraftools.IRAFTools.done"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.done</span></tt></a>).</p>
-</li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">out</span></tt> files are FITS files which will be output targets for <tt class="docutils literal"><span class="pre">iraf</span></tt>. As such, the filename returned does not point to an existing FITS file. Instead, the filename points to a potential file which will be re-read by the parent <strong>stack</strong> during the cleanup stage (<a class="reference internal" href="#AstroObject.iraftools.IRAFTools.done" title="AstroObject.iraftools.IRAFTools.done"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.done</span></tt></a>).</p>
-</li>
-<li><dl class="first docutils">
-<dt><tt class="docutils literal"><span class="pre">mod</span></tt> files are FITS files which will be modified in-place by <tt class="docutils literal"><span class="pre">iraf</span></tt>. These files are created immediately, just like <tt class="docutils literal"><span class="pre">in</span></tt> files, and are re-loaded automatically during the cleanup stage (<a class="reference internal" href="#AstroObject.iraftools.IRAFTools.done" title="AstroObject.iraftools.IRAFTools.done"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.done</span></tt></a>). To prevent these <strong>frames</strong> from overwriting their original content, use the <tt class="docutils literal"><span class="pre">append=</span></tt> keyword to append a string to the new <strong>frame</strong> name. You could also make a copy of the original <strong>frame</strong> using</dt>
-<dd><div class="first highlight-python"><div class="highlight"><pre><span class="n">Data</span><span class="p">[</span><span class="s">&quot;newname&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Data</span><span class="p">[</span><span class="s">&quot;oldname&quot;</span><span class="p">]</span>
+<dl class="describe">
+<dt>
+<tt class="descname">in-file</tt></dt>
+<dd><p><a class="reference internal" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.infile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.infile"><tt class="xref py py-meth docutils literal"><span class="pre">infile</span></tt></a> and <a class="reference internal" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.inatfile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.inatfile"><tt class="xref py py-meth docutils literal"><span class="pre">inatfile</span></tt></a></p>
+<p><tt class="docutils literal"><span class="pre">in</span></tt> files are FITS files which are used as input to an <tt class="docutils literal"><span class="pre">iraf</span></tt> fucntion. They are created immediately, and will exist untill the <a class="reference internal" href="#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a> cleanup stage (<a class="reference internal" href="#AstroObject.iraftools.IRAFTools.done" title="AstroObject.iraftools.IRAFTools.done"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.done</span></tt></a>).</p>
+</dd></dl>
+
+<dl class="describe">
+<dt>
+<tt class="descname">out-file</tt></dt>
+<dd><p><a class="reference internal" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.infile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.infile"><tt class="xref py py-meth docutils literal"><span class="pre">outfile</span></tt></a> and <a class="reference internal" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.outatfile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.outatfile"><tt class="xref py py-meth docutils literal"><span class="pre">outatfile</span></tt></a></p>
+<p><tt class="docutils literal"><span class="pre">out</span></tt> files are FITS files which will be output targets for <tt class="docutils literal"><span class="pre">iraf</span></tt>. As such, the filename returned does not point to an existing FITS file. Instead, the filename points to a potential file which will be re-read by the parent <strong>stack</strong> during the cleanup stage (<a class="reference internal" href="#AstroObject.iraftools.IRAFTools.done" title="AstroObject.iraftools.IRAFTools.done"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.done</span></tt></a>).</p>
+</dd></dl>
+
+<dl class="describe">
+<dt>
+<tt class="descname">mod-file</tt></dt>
+<dd><p><a class="reference internal" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.modfile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.modfile"><tt class="xref py py-meth docutils literal"><span class="pre">modfile</span></tt></a> and <a class="reference internal" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.modatfile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.modatfile"><tt class="xref py py-meth docutils literal"><span class="pre">modatfile</span></tt></a></p>
+<p><tt class="docutils literal"><span class="pre">mod</span></tt> files are FITS files which will be modified in-place by <tt class="docutils literal"><span class="pre">iraf</span></tt>. These files are created immediately, just like <tt class="docutils literal"><span class="pre">in</span></tt> files, and are re-loaded automatically during the cleanup stage (<a class="reference internal" href="#AstroObject.iraftools.IRAFTools.done" title="AstroObject.iraftools.IRAFTools.done"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.done</span></tt></a>). To prevent these <strong>frames</strong> from overwriting their original content, use the <tt class="docutils literal"><span class="pre">append=</span></tt> keyword to append a string to the new <strong>frame</strong> name. You could also make a copy of the original <strong>frame</strong> using</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">Data</span><span class="p">[</span><span class="s">&quot;newname&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Data</span><span class="p">[</span><span class="s">&quot;oldname&quot;</span><span class="p">]</span>
 </pre></div>
 </div>
-<p class="last">Since <strong>frame</strong> labels are required to be unique, this will copy the old <strong>frame</strong>.</p>
-</dd>
-</dl>
-</li>
-</ul>
+<p>Since <strong>frame</strong> labels are required to be unique, this will copy the old <strong>frame</strong>.</p>
+</dd></dl>
+
 <p>These file types can be generated individually, or as &#64;lists using functions provided by <a class="reference internal" href="#AstroObject.iraftools.IRAFToolsMixin" title="AstroObject.iraftools.IRAFToolsMixin"><tt class="xref py py-class docutils literal"><span class="pre">IRAFToolsMixin</span></tt></a>.</p>
 </div>
 <div class="section" id="example-use-of-iraftools">
@@ -110,7 +141,7 @@
     <span class="n">flatcor</span> <span class="o">=</span> <span class="s">&quot;yes&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">Data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
-<span class="n">Data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">states</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;data-reduced&quot;</span><span class="p">],</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;final.fits&quot;</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">Data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">frames</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;data-reduced&quot;</span><span class="p">],</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;final.fits&quot;</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>A full examle program can be seen in <a class="reference internal" href="examples/iraftools.html#iraftoolsexample"><em>An Example iraftools program</em></a>.</p>
@@ -123,14 +154,14 @@
 <dd><p>This mixin class enables IRAFTools. By default, tools are only enabled in the <tt class="docutils literal"><span class="pre">class.iraf</span></tt> namespace, so to call <a class="reference internal" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.infile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.infile"><tt class="xref py py-meth docutils literal"><span class="pre">infile()</span></tt></a>, use <a class="reference internal" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.infile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.infile"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.infile</span></tt></a>. To use the IRAFTools shortcuts (documented in <a class="reference internal" href="#iraftools-shortcuts"><em>Shortcuts for IRAFToolsMixin</em></a>), pass <tt class="docutils literal"><span class="pre">shortcuts=True</span></tt> to any constructor form for each object, or explicitly call <tt class="xref py py-meth docutils literal"><span class="pre">iraf.set_instance_methods()</span></tt>.</p>
 <dl class="method">
 <dt id="AstroObject.iraftools.IRAFToolsMixin.iraf.infile">
-<tt class="descclassname">iraf.</tt><tt class="descname">infile</tt><big>(</big><em>statename=None</em>, <em>extension='.fits'</em><big>)</big><a class="headerlink" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.infile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a filename for a <tt class="docutils literal"><span class="pre">fits</span></tt> file from the given statename which can be used as input for IRAF tasks. This method should be used for files which will not be modified, as modifications will not be captured by the system. For files which are input, but will be modified, use <tt class="xref py py-meth docutils literal"><span class="pre">imod()</span></tt>.</p>
+<tt class="descclassname">iraf.</tt><tt class="descname">infile</tt><big>(</big><em>framename=None</em>, <em>extension='.fits'</em><big>)</big><a class="headerlink" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.infile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a filename for a <tt class="docutils literal"><span class="pre">fits</span></tt> file from the given framename which can be used as input for IRAF tasks. This method should be used for files which will not be modified, as modifications will not be captured by the system. For files which are input, but will be modified, use <tt class="xref py py-meth docutils literal"><span class="pre">imod()</span></tt>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>statename</strong> &#8211; The name of the <strong>frame</strong> to use for input.</li>
+<li><strong>framename</strong> &#8211; The name of the <strong>frame</strong> to use for input.</li>
 <li><strong>extension</strong> &#8211; The file extension to use.</li>
 </ul>
 </td>
@@ -144,16 +175,16 @@
 
 <dl class="method">
 <dt id="AstroObject.iraftools.IRAFToolsMixin.iraf.outfile">
-<tt class="descclassname">iraf.</tt><tt class="descname">outfile</tt><big>(</big><em>statename=None</em>, <em>extension='.fits'</em>, <em>append=None</em><big>)</big><a class="headerlink" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.outfile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a filename for a <tt class="docutils literal"><span class="pre">fits</span></tt> file from the given statename which can be used for output for IRAF tasks. The file is not created, but will be read back into this <strong>stack</strong> when <tt class="xref py py-meth docutils literal"><span class="pre">idone()</span></tt> is called.</p>
+<tt class="descclassname">iraf.</tt><tt class="descname">outfile</tt><big>(</big><em>framename=None</em>, <em>extension='.fits'</em>, <em>append=None</em><big>)</big><a class="headerlink" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.outfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a filename for a <tt class="docutils literal"><span class="pre">fits</span></tt> file from the given framename which can be used for output for IRAF tasks. The file is not created, but will be read back into this <strong>stack</strong> when <tt class="xref py py-meth docutils literal"><span class="pre">idone()</span></tt> is called.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>statename</strong> &#8211; The name of the <strong>frame</strong> to use for output.</li>
+<li><strong>framename</strong> &#8211; The name of the <strong>frame</strong> to use for output.</li>
 <li><strong>extension</strong> &#8211; The file extension to use.</li>
-<li><strong>append</strong> &#8211; A string to append to the state names</li>
+<li><strong>append</strong> &#8211; A string to append to the frame names</li>
 </ul>
 </td>
 </tr>
@@ -166,17 +197,17 @@
 
 <dl class="method">
 <dt id="AstroObject.iraftools.IRAFToolsMixin.iraf.modfile">
-<tt class="descclassname">iraf.</tt><tt class="descname">modfile</tt><big>(</big><em>statename=None</em>, <em>newstatename=None</em>, <em>extension='.fits'</em>, <em>append=None</em><big>)</big><a class="headerlink" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.modfile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a filename for a <tt class="docutils literal"><span class="pre">fits</span></tt> file from the given statename which can be used as input for IRAF tasks which modify a file in-place. The file will be reloaded when <tt class="xref py py-meth docutils literal"><span class="pre">idone()</span></tt> is called.</p>
+<tt class="descclassname">iraf.</tt><tt class="descname">modfile</tt><big>(</big><em>framename=None</em>, <em>newframename=None</em>, <em>extension='.fits'</em>, <em>append=None</em><big>)</big><a class="headerlink" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.modfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a filename for a <tt class="docutils literal"><span class="pre">fits</span></tt> file from the given framename which can be used as input for IRAF tasks which modify a file in-place. The file will be reloaded when <tt class="xref py py-meth docutils literal"><span class="pre">idone()</span></tt> is called.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>statename</strong> &#8211; The name of the <strong>frame</strong> to use for input.</li>
-<li><strong>newstatename</strong> &#8211; The name of the <strong>frame</strong> to use fo the output. If <tt class="docutils literal"><span class="pre">None</span></tt>, uses <tt class="docutils literal"><span class="pre">statename</span></tt></li>
+<li><strong>framename</strong> &#8211; The name of the <strong>frame</strong> to use for input.</li>
+<li><strong>newframename</strong> &#8211; The name of the <strong>frame</strong> to use fo the output. If <tt class="docutils literal"><span class="pre">None</span></tt>, uses <tt class="docutils literal"><span class="pre">framename</span></tt></li>
 <li><strong>extension</strong> &#8211; The file extension to use.</li>
-<li><strong>append</strong> &#8211; A string to be appended tp the new state name.</li>
+<li><strong>append</strong> &#8211; A string to be appended tp the new frame name.</li>
 </ul>
 </td>
 </tr>
@@ -189,14 +220,14 @@
 
 <dl class="method">
 <dt id="AstroObject.iraftools.IRAFToolsMixin.iraf.inatfile">
-<tt class="descclassname">iraf.</tt><tt class="descname">inatfile</tt><big>(</big><em>*statenames</em>, <em>extension='.fits'</em><big>)</big><a class="headerlink" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.inatfile" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">iraf.</tt><tt class="descname">inatfile</tt><big>(</big><em>*framenames</em>, <em>extension='.fits'</em><big>)</big><a class="headerlink" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.inatfile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a filename for an &#8220;&#64;&#8221;-list. The &#8220;&#64;&#8221;-list lists fits files for each frame provided. These fitsfiles are created automatically. The &#8220;&#64;&#8221;-list should not be used for in-place modification, for that, use <tt class="xref py py-meth docutils literal"><span class="pre">imodat()</span></tt>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>statenames</strong> &#8211; Names of states to be included in the &#8220;&#64;&#8221;-list.</li>
+<li><strong>framenames</strong> &#8211; Names of frames to be included in the &#8220;&#64;&#8221;-list.</li>
 <li><strong>extension</strong> &#8211; The file extension to use.</li>
 </ul>
 </td>
@@ -210,16 +241,16 @@
 
 <dl class="method">
 <dt id="AstroObject.iraftools.IRAFToolsMixin.iraf.outatfile">
-<tt class="descclassname">iraf.</tt><tt class="descname">outatfile</tt><big>(</big><em>*statenames</em>, <em>append=None</em>, <em>extension='.fits'</em><big>)</big><a class="headerlink" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.outatfile" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">iraf.</tt><tt class="descname">outatfile</tt><big>(</big><em>*framenames</em>, <em>append=None</em>, <em>extension='.fits'</em><big>)</big><a class="headerlink" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.outatfile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a filename for an &#8220;&#64;&#8221;-list. The &#8220;&#64;&#8221;-list lists fits files for each frame provided. These fits-files will be output destinations. They will be re-read into the object when <tt class="xref py py-meth docutils literal"><span class="pre">idone()</span></tt> is called.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>statenames</strong> &#8211; Names of states to be included in the &#8220;&#64;&#8221;-list.</li>
+<li><strong>framenames</strong> &#8211; Names of frames to be included in the &#8220;&#64;&#8221;-list.</li>
 <li><strong>extension</strong> &#8211; The file extension to use.</li>
-<li><strong>append</strong> &#8211; A string to append to the state names</li>
+<li><strong>append</strong> &#8211; A string to append to the frame names</li>
 </ul>
 </td>
 </tr>
@@ -232,16 +263,16 @@
 
 <dl class="method">
 <dt id="AstroObject.iraftools.IRAFToolsMixin.iraf.modatfile">
-<tt class="descclassname">iraf.</tt><tt class="descname">modatfile</tt><big>(</big><em>*statenames</em>, <em>append=None</em>, <em>extension='.fits'</em><big>)</big><a class="headerlink" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.modatfile" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">iraf.</tt><tt class="descname">modatfile</tt><big>(</big><em>*framenames</em>, <em>append=None</em>, <em>extension='.fits'</em><big>)</big><a class="headerlink" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.modatfile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a filename for an &#8220;&#64;&#8221;-list. The &#8220;&#64;&#8221;-list lists fits files for each frame provided. These fits-files will be in-place modification destinations. They will be re-read into the object when <tt class="xref py py-meth docutils literal"><span class="pre">idone()</span></tt> is called.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>statenames</strong> &#8211; Names of states to be included in the &#8220;&#64;&#8221;-list.</li>
+<li><strong>framenames</strong> &#8211; Names of frames to be included in the &#8220;&#64;&#8221;-list.</li>
 <li><strong>extension</strong> &#8211; The file extension to use.</li>
-<li><strong>append</strong> &#8211; A string to append to the state names</li>
+<li><strong>append</strong> &#8211; A string to append to the frame names</li>
 </ul>
 </td>
 </tr>
@@ -305,14 +336,14 @@
 
 <dl class="method">
 <dt id="AstroObject.iraftools.IRAFTools.infile">
-<tt class="descname">infile</tt><big>(</big><em>statename=None</em>, <em>extension='.fits'</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/iraftools.html#IRAFTools.infile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.iraftools.IRAFTools.infile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a filename for a <tt class="docutils literal"><span class="pre">fits</span></tt> file from the given statename which can be used as input for IRAF tasks. This method should be used for files which will not be modified, as modifications will not be captured by the system. For files which are input, but will be modified, use <a class="reference internal" href="#AstroObject.iraftools.IRAFTools.modfile" title="AstroObject.iraftools.IRAFTools.modfile"><tt class="xref py py-meth docutils literal"><span class="pre">modfile()</span></tt></a>.</p>
+<tt class="descname">infile</tt><big>(</big><em>framename=None</em>, <em>extension='.fits'</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/iraftools.html#IRAFTools.infile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.iraftools.IRAFTools.infile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a filename for a <tt class="docutils literal"><span class="pre">fits</span></tt> file from the given framename which can be used as input for IRAF tasks. This method should be used for files which will not be modified, as modifications will not be captured by the system. For files which are input, but will be modified, use <a class="reference internal" href="#AstroObject.iraftools.IRAFTools.modfile" title="AstroObject.iraftools.IRAFTools.modfile"><tt class="xref py py-meth docutils literal"><span class="pre">modfile()</span></tt></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>statename</strong> &#8211; The name of the <strong>frame</strong> to use for input.</li>
+<li><strong>framename</strong> &#8211; The name of the <strong>frame</strong> to use for input.</li>
 <li><strong>extension</strong> &#8211; The file extension to use.</li>
 </ul>
 </td>
@@ -326,16 +357,16 @@
 
 <dl class="method">
 <dt id="AstroObject.iraftools.IRAFTools.outfile">
-<tt class="descname">outfile</tt><big>(</big><em>statename=None</em>, <em>append=None</em>, <em>extension='.fits'</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/iraftools.html#IRAFTools.outfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.iraftools.IRAFTools.outfile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a filename for a <tt class="docutils literal"><span class="pre">fits</span></tt> file from the given statename which can be used for output for IRAF tasks. The file is not created, but will be read back into this <strong>stack</strong> when <a class="reference internal" href="#AstroObject.iraftools.IRAFTools.done" title="AstroObject.iraftools.IRAFTools.done"><tt class="xref py py-meth docutils literal"><span class="pre">done()</span></tt></a> is called.</p>
+<tt class="descname">outfile</tt><big>(</big><em>framename=None</em>, <em>append=None</em>, <em>extension='.fits'</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/iraftools.html#IRAFTools.outfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.iraftools.IRAFTools.outfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a filename for a <tt class="docutils literal"><span class="pre">fits</span></tt> file from the given framename which can be used for output for IRAF tasks. The file is not created, but will be read back into this <strong>stack</strong> when <a class="reference internal" href="#AstroObject.iraftools.IRAFTools.done" title="AstroObject.iraftools.IRAFTools.done"><tt class="xref py py-meth docutils literal"><span class="pre">done()</span></tt></a> is called.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>statename</strong> &#8211; The name of the <strong>frame</strong> to use for output.</li>
+<li><strong>framename</strong> &#8211; The name of the <strong>frame</strong> to use for output.</li>
 <li><strong>extension</strong> &#8211; The file extension to use.</li>
-<li><strong>append</strong> &#8211; A string to append to the state names</li>
+<li><strong>append</strong> &#8211; A string to append to the frame names</li>
 </ul>
 </td>
 </tr>
@@ -348,17 +379,17 @@
 
 <dl class="method">
 <dt id="AstroObject.iraftools.IRAFTools.modfile">
-<tt class="descname">modfile</tt><big>(</big><em>statename</em>, <em>newstatename=None</em>, <em>append=None</em>, <em>extension='.fits'</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/iraftools.html#IRAFTools.modfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.iraftools.IRAFTools.modfile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a filename for a <tt class="docutils literal"><span class="pre">fits</span></tt> file from the given statename which can be used as input for IRAF tasks which modify a file in-place. The file will be reloaded when <a class="reference internal" href="#AstroObject.iraftools.IRAFTools.done" title="AstroObject.iraftools.IRAFTools.done"><tt class="xref py py-meth docutils literal"><span class="pre">done()</span></tt></a> is called.</p>
+<tt class="descname">modfile</tt><big>(</big><em>framename</em>, <em>newframename=None</em>, <em>append=None</em>, <em>extension='.fits'</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/iraftools.html#IRAFTools.modfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.iraftools.IRAFTools.modfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a filename for a <tt class="docutils literal"><span class="pre">fits</span></tt> file from the given framename which can be used as input for IRAF tasks which modify a file in-place. The file will be reloaded when <a class="reference internal" href="#AstroObject.iraftools.IRAFTools.done" title="AstroObject.iraftools.IRAFTools.done"><tt class="xref py py-meth docutils literal"><span class="pre">done()</span></tt></a> is called.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>statename</strong> &#8211; The name of the <strong>frame</strong> to use for input.</li>
-<li><strong>newstatename</strong> &#8211; The name of the <strong>frame</strong> to use fo the output. If <tt class="docutils literal"><span class="pre">None</span></tt>, uses <tt class="docutils literal"><span class="pre">statename</span></tt></li>
+<li><strong>framename</strong> &#8211; The name of the <strong>frame</strong> to use for input.</li>
+<li><strong>newframename</strong> &#8211; The name of the <strong>frame</strong> to use fo the output. If <tt class="docutils literal"><span class="pre">None</span></tt>, uses <tt class="docutils literal"><span class="pre">framename</span></tt></li>
 <li><strong>extension</strong> &#8211; The file extension to use.</li>
-<li><strong>append</strong> &#8211; A string to be appended tp the new state name.</li>
+<li><strong>append</strong> &#8211; A string to be appended tp the new frame name.</li>
 </ul>
 </td>
 </tr>
@@ -371,26 +402,26 @@
 
 <dl class="method">
 <dt id="AstroObject.iraftools.IRAFTools.modatfile">
-<tt class="descname">modatfile</tt><big>(</big><em>*statenames</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/iraftools.html#IRAFTools.modatfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.iraftools.IRAFTools.modatfile" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">modatfile</tt><big>(</big><em>*framenames</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/iraftools.html#IRAFTools.modatfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.iraftools.IRAFTools.modatfile" title="Permalink to this definition">¶</a></dt>
 <dd><p>File list for modification</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="AstroObject.iraftools.IRAFTools.inatfile">
-<tt class="descname">inatfile</tt><big>(</big><em>*statenames</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/iraftools.html#IRAFTools.inatfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.iraftools.IRAFTools.inatfile" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">inatfile</tt><big>(</big><em>*framenames</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/iraftools.html#IRAFTools.inatfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.iraftools.IRAFTools.inatfile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a filename with &#64; appended, for a file which lists a series of fitsfiles.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="AstroObject.iraftools.IRAFTools.outatfile">
-<tt class="descname">outatfile</tt><big>(</big><em>*statenames</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/iraftools.html#IRAFTools.outatfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.iraftools.IRAFTools.outatfile" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">outatfile</tt><big>(</big><em>*framenames</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/iraftools.html#IRAFTools.outatfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.iraftools.IRAFTools.outatfile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a filename with &#64; appended, for a file which lists a series of fitsfiles</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="AstroObject.iraftools.IRAFTools.done">
 <tt class="descname">done</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/iraftools.html#IRAFTools.done"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.iraftools.IRAFTools.done" title="Permalink to this definition">¶</a></dt>
-<dd><p>Finish the IRAF statename.</p>
+<dd><p>Finish the IRAF framename.</p>
 </dd></dl>
 
 <dl class="method">
@@ -465,7 +496,7 @@
         <li class="right" >
           <a href="AstroHDU.html" title="8. AstroHDU – HDU Objects and Storage"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-a2 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5-b1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

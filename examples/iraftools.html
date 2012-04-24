@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Walkthrough of a basic iraftools script &mdash; AstroObject 0.5-a2 documentation</title>
+    <title>Walkthrough of a basic iraftools script &mdash; AstroObject 0.5-b1 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.5-a2',
+        VERSION:     '0.5-b1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5-a2 documentation" href="../index.html" />
+    <link rel="top" title="AstroObject 0.5-b1 documentation" href="../index.html" />
     <link rel="next" title="Example Spectral Data Script" href="spectra.html" />
     <link rel="prev" title="An Example Simulator" href="simulator.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="simulator.html" title="An Example Simulator"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">AstroObject 0.5-a2 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">AstroObject 0.5-b1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -93,7 +93,7 @@
     <span class="n">flatcor</span> <span class="o">=</span> <span class="s">&quot;yes&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">Data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
-<span class="n">Data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">states</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;data-reduced&quot;</span><span class="p">],</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;final.fits&quot;</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">Data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">frames</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;data-reduced&quot;</span><span class="p">],</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;final.fits&quot;</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>To start the program, we import our <strong>stack</strong> of choice. If you need help understanding <strong>stacks</strong> and <strong>frames</strong>, the basic units for <a class="reference internal" href="../intro.html#module-AstroObject" title="AstroObject"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject</span></tt></a>, see <a class="reference internal" href="../intro.html#introduction"><em>Introduction to AstroObject</em></a>. Immediately after importing <a class="reference internal" href="../AstroImage.html#module-AstroObject.AstroImage" title="AstroObject.AstroImage"><tt class="xref py py-mod docutils literal"><span class="pre">AstroImage</span></tt></a>, we import <tt class="xref py py-func docutils literal"><span class="pre">UseIRAFTools()</span></tt> from <a class="reference internal" href="../iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a>. This helper function takes a single argument, a <strong>stack</strong> class, and returns a copy of that <strong>stack</strong> class which can be used with <a class="reference internal" href="../iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a>. To use <a class="reference internal" href="../iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a>, we call <tt class="xref py py-func docutils literal"><span class="pre">UseIRAFTools()</span></tt> on our <a class="reference internal" href="../AstroImage.html#AstroObject.AstroImage.ImageStack" title="AstroObject.AstroImage.ImageStack"><tt class="xref py py-class docutils literal"><span class="pre">ImageStack</span></tt></a>. This function returns a new class for us to use, which for clarity&#8217;s sake, we will call <a class="reference internal" href="../AstroImage.html#AstroObject.AstroImage.ImageStack" title="AstroObject.AstroImage.ImageStack"><tt class="xref py py-class docutils literal"><span class="pre">ImageStack</span></tt></a>, so that we can&#8217;t use the non-<a class="reference internal" href="../iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a> <a class="reference internal" href="../AstroImage.html#AstroObject.AstroImage.ImageStack" title="AstroObject.AstroImage.ImageStack"><tt class="xref py py-class docutils literal"><span class="pre">ImageStack</span></tt></a>.</p>
@@ -123,7 +123,7 @@
 <div class="highlight-python"><div class="highlight"><pre><span class="n">Data</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s">&quot;data&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Notice that when we select the frame, we use <tt class="docutils literal"><span class="pre">&quot;data&quot;</span></tt>. The <a class="reference internal" href="../AstroImage.html#AstroObject.AstroImage.ImageStack" title="AstroObject.AstroImage.ImageStack"><tt class="xref py py-class docutils literal"><span class="pre">ImageStack</span></tt></a> class will automtacially remove the <tt class="docutils literal"><span class="pre">&quot;.fits&quot;</span></tt> extension, and use the base of the filename as the statename for imported frames. We could have specified a name for this <strong>frame</strong> using the <tt class="docutils literal"><span class="pre">statename</span></tt> keyword argument to read.</p>
+<p>Notice that when we select the frame, we use <tt class="docutils literal"><span class="pre">&quot;data&quot;</span></tt>. The <a class="reference internal" href="../AstroImage.html#AstroObject.AstroImage.ImageStack" title="AstroObject.AstroImage.ImageStack"><tt class="xref py py-class docutils literal"><span class="pre">ImageStack</span></tt></a> class will automtacially remove the <tt class="docutils literal"><span class="pre">&quot;.fits&quot;</span></tt> extension, and use the base of the filename as the framename for imported frames. We could have specified a name for this <strong>frame</strong> using the <tt class="docutils literal"><span class="pre">framename</span></tt> keyword argument to read.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">Data</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&quot;data.fits&quot;</span><span class="p">,</span><span class="n">stataename</span><span class="o">=</span><span class="s">&quot;another name&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -147,7 +147,7 @@
 <div class="highlight-python"><div class="highlight"><pre><span class="n">Data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">modatfile</span><span class="p">(</span><span class="s">&quot;data&quot;</span><span class="p">,</span><span class="n">append</span><span class="o">=</span><span class="s">&quot;-reduced&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The function <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFTools.modatfile" title="AstroObject.iraftools.IRAFTools.modatfile"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.modatfile</span></tt></a> creates an &#64;-list which points to FITS files for each of the included states. You can list as many states as you wish as the first arguments to <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFToolsMixin.iraf.modatfile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.modatfile"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.modatfile</span></tt></a>. Providing no states will generate an &#64;-list which points to all avaialbe states. This is similar to the way <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFToolsMixin.iraf.inatfile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.inatfile"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.inatfile</span></tt></a> works. Once you call this function, temporary FITS files are generated for each state (in this case, just the <tt class="docutils literal"><span class="pre">data</span></tt> <strong>frame</strong>) requested. A list of these filenames is then placed in an &#64;list, and the name of that &#64;list is returned from the fucntion, with the &#8220;&#64;&#8221; already appended to the beginning of the name, making it suitable input for <tt class="docutils literal"><span class="pre">iraf</span></tt>.</p>
+<p>The function <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFTools.modatfile" title="AstroObject.iraftools.IRAFTools.modatfile"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.modatfile</span></tt></a> creates an &#64;-list which points to FITS files for each of the included frames. You can list as many frames as you wish as the first arguments to <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFToolsMixin.iraf.modatfile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.modatfile"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.modatfile</span></tt></a>. Providing no frames will generate an &#64;-list which points to all avaialbe frames. This is similar to the way <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFToolsMixin.iraf.inatfile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.inatfile"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.inatfile</span></tt></a> works. Once you call this function, temporary FITS files are generated for each frame (in this case, just the <tt class="docutils literal"><span class="pre">data</span></tt> <strong>frame</strong>) requested. A list of these filenames is then placed in an &#64;list, and the name of that &#64;list is returned from the fucntion, with the &#8220;&#64;&#8221; already appended to the beginning of the name, making it suitable input for <tt class="docutils literal"><span class="pre">iraf</span></tt>.</p>
 <p>Behind the scenes, the call:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">Data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">modatfile</span><span class="p">(</span><span class="s">&quot;data&quot;</span><span class="p">,</span><span class="n">append</span><span class="o">=</span><span class="s">&quot;-reduced&quot;</span><span class="p">)</span>
 </pre></div>
@@ -182,10 +182,10 @@
 </pre></div>
 </div>
 <p>Finally, we want to write our newly-reduced image to a FITS file. <a class="reference internal" href="../AstroImage.html#module-AstroObject.AstroImage" title="AstroObject.AstroImage"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroImage</span></tt></a> makes this easy:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">Data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">states</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;data-reduced&quot;</span><span class="p">],</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;final.fits&quot;</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">Data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">frames</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;data-reduced&quot;</span><span class="p">],</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;final.fits&quot;</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The <tt class="docutils literal"><span class="pre">states=[&quot;data-reduced&quot;]</span></tt> keyword provides a list of the states that we want to use when writing the FITS file. In this case, we want only the reduced data, so we provide a one-element list of just that <strong>frame</strong> name. <tt class="docutils literal"><span class="pre">clobber=True</span></tt> tells the module that it is okay to over-write the <tt class="docutils literal"><span class="pre">final.fits</span></tt> file. By default, trying to overwrite a file will cause an IOError.</p>
+<p>The <tt class="docutils literal"><span class="pre">frames=[&quot;data-reduced&quot;]</span></tt> keyword provides a list of the frames that we want to use when writing the FITS file. In this case, we want only the reduced data, so we provide a one-element list of just that <strong>frame</strong> name. <tt class="docutils literal"><span class="pre">clobber=True</span></tt> tells the module that it is okay to over-write the <tt class="docutils literal"><span class="pre">final.fits</span></tt> file. By default, trying to overwrite a file will cause an IOError.</p>
 </div>
 <div class="section" id="an-example-iraftools-program">
 <span id="iraftoolsexample"></span><h1>An Example <a class="reference internal" href="../iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a> program<a class="headerlink" href="#an-example-iraftools-program" title="Permalink to this headline">¶</a></h1>
@@ -300,7 +300,7 @@
         <li class="right" >
           <a href="simulator.html" title="An Example Simulator"
              >previous</a> |</li>
-        <li><a href="../index.html">AstroObject 0.5-a2 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">AstroObject 0.5-b1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

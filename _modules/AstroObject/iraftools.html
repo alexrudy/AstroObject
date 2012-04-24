@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObject.iraftools &mdash; AstroObject 0.5-a2 documentation</title>
+    <title>AstroObject.iraftools &mdash; AstroObject 0.5-b1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5-a2',
+        VERSION:     '0.5-b1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5-a2 documentation" href="../../index.html" />
+    <link rel="top" title="AstroObject 0.5-b1 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.5-a2 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.5-b1 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -56,13 +56,18 @@
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2012-04-19.</span>
 <span class="c">#  Copyright 2012 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.5-a2</span>
+<span class="c">#  Version 0.5-b1</span>
 <span class="c"># </span>
 <span class="sd">u&quot;&quot;&quot;</span>
 <span class="sd">:mod:`iraftools` – IRAF integration facility</span>
 <span class="sd">============================================</span>
 
 <span class="sd">This module provides an interface for using :mod:`AstroObject` with PyIRAF. For documentation of the individual methods provided by this module, see :class:`IRAFToolsMixin`. The next two sections will provide a brief overview of the use of :mod:`iraftools`.</span>
+
+<span class="sd">To use :mod:`iraftools`, use the :func:`UseIRAFTools` function.</span>
+
+<span class="sd">.. autofunction::</span>
+<span class="sd">    AstroObject.iraftools.UseIRAFTools</span>
 
 <span class="sd">.. _IRAFTools_Filetypes:</span>
 
@@ -71,9 +76,23 @@
 
 <span class="sd">There are three types of FITS files provided by :mod:`iraftools`:</span>
 
-<span class="sd">- ``in`` files are FITS files which are used as input to an ``iraf`` fucntion. They are created immediately, and will exist untill the :mod:`~AstroObject.iraftools` cleanup stage (:meth:`iraf.done &lt;AstroObject.iraftools.IRAFTools.done&gt;`).</span>
-<span class="sd">- ``out`` files are FITS files which will be output targets for ``iraf``. As such, the filename returned does not point to an existing FITS file. Instead, the filename points to a potential file which will be re-read by the parent **stack** during the cleanup stage (:meth:`iraf.done &lt;AstroObject.iraftools.IRAFTools.done&gt;`).</span>
-<span class="sd">- ``mod`` files are FITS files which will be modified in-place by ``iraf``. These files are created immediately, just like ``in`` files, and are re-loaded automatically during the cleanup stage (:meth:`iraf.done &lt;AstroObject.iraftools.IRAFTools.done&gt;`). To prevent these **frames** from overwriting their original content, use the ``append=`` keyword to append a string to the new **frame** name. You could also make a copy of the original **frame** using</span>
+<span class="sd">.. describe:: in-file</span>
+<span class="sd">    </span>
+<span class="sd">    :meth:`infile &lt;IRAFToolsMixin.iraf.infile&gt;` and :meth:`inatfile &lt;IRAFToolsMixin.iraf.inatfile&gt;`</span>
+<span class="sd">    </span>
+<span class="sd">    ``in`` files are FITS files which are used as input to an ``iraf`` fucntion. They are created immediately, and will exist untill the :mod:`~AstroObject.iraftools` cleanup stage (:meth:`iraf.done &lt;AstroObject.iraftools.IRAFTools.done&gt;`).</span>
+
+<span class="sd">.. describe:: out-file</span>
+<span class="sd">    </span>
+<span class="sd">    :meth:`outfile &lt;IRAFToolsMixin.iraf.infile&gt;` and :meth:`outatfile &lt;IRAFToolsMixin.iraf.outatfile&gt;`</span>
+<span class="sd">    </span>
+<span class="sd">    ``out`` files are FITS files which will be output targets for ``iraf``. As such, the filename returned does not point to an existing FITS file. Instead, the filename points to a potential file which will be re-read by the parent **stack** during the cleanup stage (:meth:`iraf.done &lt;AstroObject.iraftools.IRAFTools.done&gt;`).</span>
+
+<span class="sd">.. describe:: mod-file</span>
+<span class="sd">    </span>
+<span class="sd">    :meth:`modfile &lt;IRAFToolsMixin.iraf.modfile&gt;` and :meth:`modatfile &lt;IRAFToolsMixin.iraf.modatfile&gt;`</span>
+<span class="sd">    </span>
+<span class="sd">    ``mod`` files are FITS files which will be modified in-place by ``iraf``. These files are created immediately, just like ``in`` files, and are re-loaded automatically during the cleanup stage (:meth:`iraf.done &lt;AstroObject.iraftools.IRAFTools.done&gt;`). To prevent these **frames** from overwriting their original content, use the ``append=`` keyword to append a string to the new **frame** name. You could also make a copy of the original **frame** using</span>
 <span class="sd">    ::</span>
 <span class="sd">	</span>
 <span class="sd">    	Data[&quot;newname&quot;] = Data[&quot;oldname&quot;]</span>
@@ -97,57 +116,57 @@
 <span class="sd">.. autoclass::</span>
 <span class="sd">    AstroObject.iraftools.IRAFToolsMixin</span>
 <span class="sd">    </span>
-<span class="sd">    .. method:: iraf.infile(statename=None,extension=&#39;.fits&#39;)</span>
+<span class="sd">    .. method:: iraf.infile(framename=None,extension=&#39;.fits&#39;)</span>
 <span class="sd">        </span>
-<span class="sd">        Returns a filename for a ``fits`` file from the given statename which can be used as input for IRAF tasks. This method should be used for files which will not be modified, as modifications will not be captured by the system. For files which are input, but will be modified, use :meth:`imod`.</span>
+<span class="sd">        Returns a filename for a ``fits`` file from the given framename which can be used as input for IRAF tasks. This method should be used for files which will not be modified, as modifications will not be captured by the system. For files which are input, but will be modified, use :meth:`imod`.</span>
 <span class="sd">        </span>
-<span class="sd">        :param statename: The name of the **frame** to use for input.</span>
+<span class="sd">        :param framename: The name of the **frame** to use for input.</span>
 <span class="sd">        :param extension: The file extension to use.</span>
 <span class="sd">        :returns: Filename for use with PyRAF</span>
 <span class="sd">    </span>
-<span class="sd">    .. method:: iraf.outfile(statename=None,extension=&#39;.fits&#39;,append=None)</span>
+<span class="sd">    .. method:: iraf.outfile(framename=None,extension=&#39;.fits&#39;,append=None)</span>
 <span class="sd">        </span>
-<span class="sd">        Returns a filename for a ``fits`` file from the given statename which can be used for output for IRAF tasks. The file is not created, but will be read back into this **stack** when :meth:`idone` is called.</span>
+<span class="sd">        Returns a filename for a ``fits`` file from the given framename which can be used for output for IRAF tasks. The file is not created, but will be read back into this **stack** when :meth:`idone` is called.</span>
 <span class="sd">        </span>
-<span class="sd">        :param statename: The name of the **frame** to use for output.</span>
+<span class="sd">        :param framename: The name of the **frame** to use for output.</span>
 <span class="sd">        :param extension: The file extension to use.</span>
-<span class="sd">        :param append: A string to append to the state names</span>
+<span class="sd">        :param append: A string to append to the frame names</span>
 <span class="sd">        :returns: Filename for use with PyRAF</span>
 <span class="sd">    </span>
-<span class="sd">    .. method:: iraf.modfile(statename=None,newstatename=None,extension=&#39;.fits&#39;,append=None)</span>
+<span class="sd">    .. method:: iraf.modfile(framename=None,newframename=None,extension=&#39;.fits&#39;,append=None)</span>
 <span class="sd">    </span>
-<span class="sd">        Returns a filename for a ``fits`` file from the given statename which can be used as input for IRAF tasks which modify a file in-place. The file will be reloaded when :meth:`idone` is called.</span>
+<span class="sd">        Returns a filename for a ``fits`` file from the given framename which can be used as input for IRAF tasks which modify a file in-place. The file will be reloaded when :meth:`idone` is called.</span>
 <span class="sd">        </span>
-<span class="sd">        :param statename: The name of the **frame** to use for input.</span>
-<span class="sd">        :param newstatename: The name of the **frame** to use fo the output. If ``None``, uses ``statename``</span>
+<span class="sd">        :param framename: The name of the **frame** to use for input.</span>
+<span class="sd">        :param newframename: The name of the **frame** to use fo the output. If ``None``, uses ``framename``</span>
 <span class="sd">        :param extension: The file extension to use.</span>
-<span class="sd">        :param append: A string to be appended tp the new state name.</span>
+<span class="sd">        :param append: A string to be appended tp the new frame name.</span>
 <span class="sd">        :returns: Filename for use with PyRAF</span>
 <span class="sd">        </span>
-<span class="sd">    .. method:: iraf.inatfile(*statenames,extension=&#39;.fits&#39;)</span>
+<span class="sd">    .. method:: iraf.inatfile(*framenames,extension=&#39;.fits&#39;)</span>
 <span class="sd">    </span>
 <span class="sd">        Returns a filename for an &quot;@&quot;-list. The &quot;@&quot;-list lists fits files for each frame provided. These fitsfiles are created automatically. The &quot;@&quot;-list should not be used for in-place modification, for that, use :meth:`imodat`.</span>
 <span class="sd">        </span>
-<span class="sd">        :param statenames: Names of states to be included in the &quot;@&quot;-list.</span>
+<span class="sd">        :param framenames: Names of frames to be included in the &quot;@&quot;-list.</span>
 <span class="sd">        :param extension: The file extension to use.</span>
 <span class="sd">        :retunrs: Filename of the &quot;@&quot;-list</span>
 <span class="sd">        </span>
-<span class="sd">    .. method:: iraf.outatfile(*statenames,append=None,extension=&#39;.fits&#39;)</span>
+<span class="sd">    .. method:: iraf.outatfile(*framenames,append=None,extension=&#39;.fits&#39;)</span>
 <span class="sd">        </span>
 <span class="sd">        Returns a filename for an &quot;@&quot;-list. The &quot;@&quot;-list lists fits files for each frame provided. These fits-files will be output destinations. They will be re-read into the object when :meth:`idone` is called.</span>
 <span class="sd">        </span>
-<span class="sd">        :param statenames: Names of states to be included in the &quot;@&quot;-list.</span>
+<span class="sd">        :param framenames: Names of frames to be included in the &quot;@&quot;-list.</span>
 <span class="sd">        :param extension: The file extension to use.</span>
-<span class="sd">        :param append: A string to append to the state names</span>
+<span class="sd">        :param append: A string to append to the frame names</span>
 <span class="sd">        :retunrs: Filename of the &quot;@&quot;-list</span>
 <span class="sd">        </span>
-<span class="sd">    .. method:: iraf.modatfile(*statenames,append=None,extension=&#39;.fits&#39;)</span>
+<span class="sd">    .. method:: iraf.modatfile(*framenames,append=None,extension=&#39;.fits&#39;)</span>
 <span class="sd">        </span>
 <span class="sd">        Returns a filename for an &quot;@&quot;-list. The &quot;@&quot;-list lists fits files for each frame provided. These fits-files will be in-place modification destinations. They will be re-read into the object when :meth:`idone` is called.</span>
 <span class="sd">        </span>
-<span class="sd">        :param statenames: Names of states to be included in the &quot;@&quot;-list.</span>
+<span class="sd">        :param framenames: Names of frames to be included in the &quot;@&quot;-list.</span>
 <span class="sd">        :param extension: The file extension to use.</span>
-<span class="sd">        :param append: A string to append to the state names</span>
+<span class="sd">        :param append: A string to append to the frame names</span>
 <span class="sd">        :retunrs: Filename of the &quot;@&quot;-list</span>
 <span class="sd">        </span>
 <span class="sd">    .. method:: iraf.done()</span>
@@ -308,71 +327,71 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_directory</span> <span class="o">=</span> <span class="bp">None</span>
         </div>
-<div class="viewcode-block" id="IRAFTools.infile"><a class="viewcode-back" href="../../iraftools.html#AstroObject.iraftools.IRAFTools.infile">[docs]</a>    <span class="k">def</span> <span class="nf">infile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">extension</span><span class="o">=</span><span class="s">&#39;.fits&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns a filename for a ``fits`` file from the given statename which can be used as input for IRAF tasks. This method should be used for files which will not be modified, as modifications will not be captured by the system. For files which are input, but will be modified, use :meth:`modfile`.</span>
+<div class="viewcode-block" id="IRAFTools.infile"><a class="viewcode-back" href="../../iraftools.html#AstroObject.iraftools.IRAFTools.infile">[docs]</a>    <span class="k">def</span> <span class="nf">infile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">framename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">extension</span><span class="o">=</span><span class="s">&#39;.fits&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a filename for a ``fits`` file from the given framename which can be used as input for IRAF tasks. This method should be used for files which will not be modified, as modifications will not be captured by the system. For files which are input, but will be modified, use :meth:`modfile`.</span>
 <span class="sd">        </span>
-<span class="sd">        :param statename: The name of the **frame** to use for input.</span>
+<span class="sd">        :param framename: The name of the **frame** to use for input.</span>
 <span class="sd">        :param extension: The file extension to use.</span>
 <span class="sd">        :returns: Filename for use with PyRAF</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">statename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">statename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">statename</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="o">.</span><span class="n">filename</span><span class="p">(</span><span class="n">extension</span><span class="o">=</span><span class="n">extension</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="n">statename</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">states</span><span class="o">=</span><span class="p">[</span><span class="n">statename</span><span class="p">],</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Created infile for state </span><span class="si">%s</span><span class="s"> named </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">statename</span><span class="p">,</span><span class="n">filename</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">framename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">framename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">framename</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="o">.</span><span class="n">filename</span><span class="p">(</span><span class="n">extension</span><span class="o">=</span><span class="n">extension</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="n">framename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">frames</span><span class="o">=</span><span class="p">[</span><span class="n">framename</span><span class="p">],</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Created infile for frame </span><span class="si">%s</span><span class="s"> named </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">framename</span><span class="p">,</span><span class="n">filename</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">filename</span>
         </div>
-<div class="viewcode-block" id="IRAFTools.outfile"><a class="viewcode-back" href="../../iraftools.html#AstroObject.iraftools.IRAFTools.outfile">[docs]</a>    <span class="k">def</span> <span class="nf">outfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">append</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">extension</span><span class="o">=</span><span class="s">&#39;.fits&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="IRAFTools.outfile"><a class="viewcode-back" href="../../iraftools.html#AstroObject.iraftools.IRAFTools.outfile">[docs]</a>    <span class="k">def</span> <span class="nf">outfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">framename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">append</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">extension</span><span class="o">=</span><span class="s">&#39;.fits&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a filename for a ``fits`` file from the given statename which can be used for output for IRAF tasks. The file is not created, but will be read back into this **stack** when :meth:`done` is called.</span>
+<span class="sd">        Returns a filename for a ``fits`` file from the given framename which can be used for output for IRAF tasks. The file is not created, but will be read back into this **stack** when :meth:`done` is called.</span>
 <span class="sd">        </span>
-<span class="sd">        :param statename: The name of the **frame** to use for output.</span>
+<span class="sd">        :param framename: The name of the **frame** to use for output.</span>
 <span class="sd">        :param extension: The file extension to use.</span>
-<span class="sd">        :param append: A string to append to the state names</span>
+<span class="sd">        :param append: A string to append to the frame names</span>
 <span class="sd">        :returns: Filename for use with PyRAF</span>
 <span class="sd">    </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">statename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">statename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">statename</span> <span class="o">+</span> <span class="s">&quot;-iraf&quot;</span>
+        <span class="k">if</span> <span class="n">framename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">framename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">framename</span> <span class="o">+</span> <span class="s">&quot;-iraf&quot;</span>
         <span class="k">if</span> <span class="n">append</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">statename</span> <span class="o">+=</span> <span class="n">append</span>
-        <span class="k">if</span> <span class="n">statename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&quot;Cannot register state </span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s"> for output, state already exists in </span><span class="si">%s</span><span class="s">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">statename</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="p">))</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="o">.</span><span class="n">filename</span><span class="p">(</span><span class="n">extension</span><span class="o">=</span><span class="n">extension</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="n">statename</span><span class="p">)</span>
+            <span class="n">framename</span> <span class="o">+=</span> <span class="n">append</span>
+        <span class="k">if</span> <span class="n">framename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&quot;Cannot register frame </span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s"> for output, frame already exists in </span><span class="si">%s</span><span class="s">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">framename</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="p">))</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="o">.</span><span class="n">filename</span><span class="p">(</span><span class="n">extension</span><span class="o">=</span><span class="n">extension</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="n">framename</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">FITSFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">statename</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_collect</span><span class="p">[</span><span class="n">statename</span><span class="p">]</span> <span class="o">=</span> <span class="n">filename</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Created outfile for state </span><span class="si">%s</span><span class="s"> named </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">statename</span><span class="p">,</span><span class="n">filename</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">FITSFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">framename</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_collect</span><span class="p">[</span><span class="n">framename</span><span class="p">]</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Created outfile for frame </span><span class="si">%s</span><span class="s"> named </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">framename</span><span class="p">,</span><span class="n">filename</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">filename</span>
         </div>
-<div class="viewcode-block" id="IRAFTools.modfile"><a class="viewcode-back" href="../../iraftools.html#AstroObject.iraftools.IRAFTools.modfile">[docs]</a>    <span class="k">def</span> <span class="nf">modfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">statename</span><span class="p">,</span><span class="n">newstatename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">append</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">extension</span><span class="o">=</span><span class="s">&#39;.fits&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns a filename for a ``fits`` file from the given statename which can be used as input for IRAF tasks which modify a file in-place. The file will be reloaded when :meth:`done` is called.</span>
+<div class="viewcode-block" id="IRAFTools.modfile"><a class="viewcode-back" href="../../iraftools.html#AstroObject.iraftools.IRAFTools.modfile">[docs]</a>    <span class="k">def</span> <span class="nf">modfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">framename</span><span class="p">,</span><span class="n">newframename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">append</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">extension</span><span class="o">=</span><span class="s">&#39;.fits&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a filename for a ``fits`` file from the given framename which can be used as input for IRAF tasks which modify a file in-place. The file will be reloaded when :meth:`done` is called.</span>
 <span class="sd">        </span>
-<span class="sd">        :param statename: The name of the **frame** to use for input.</span>
-<span class="sd">        :param newstatename: The name of the **frame** to use fo the output. If ``None``, uses ``statename``</span>
+<span class="sd">        :param framename: The name of the **frame** to use for input.</span>
+<span class="sd">        :param newframename: The name of the **frame** to use fo the output. If ``None``, uses ``framename``</span>
 <span class="sd">        :param extension: The file extension to use.</span>
-<span class="sd">        :param append: A string to be appended tp the new state name.</span>
+<span class="sd">        :param append: A string to be appended tp the new frame name.</span>
 <span class="sd">        :returns: Filename for use with PyRAF</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">newstatename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">newstatename</span> <span class="o">=</span> <span class="n">statename</span>
+        <span class="k">if</span> <span class="n">newframename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">newframename</span> <span class="o">=</span> <span class="n">framename</span>
         <span class="k">if</span> <span class="n">append</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">newstatename</span> <span class="o">+=</span> <span class="n">append</span>
-        <span class="k">if</span> <span class="n">statename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">statename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">statename</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="o">.</span><span class="n">filename</span><span class="p">(</span><span class="n">extension</span><span class="o">=</span><span class="n">extension</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="n">statename</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">states</span><span class="o">=</span><span class="p">[</span><span class="n">statename</span><span class="p">],</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">newstatename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">FITSFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">newstatename</span><span class="p">))</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Created modfile for state </span><span class="si">%s</span><span class="s"> named </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">statename</span><span class="p">,</span><span class="n">filename</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_collect</span><span class="p">[</span><span class="n">newstatename</span><span class="p">]</span> <span class="o">=</span> <span class="n">filename</span>
+            <span class="n">newframename</span> <span class="o">+=</span> <span class="n">append</span>
+        <span class="k">if</span> <span class="n">framename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">framename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">framename</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="o">.</span><span class="n">filename</span><span class="p">(</span><span class="n">extension</span><span class="o">=</span><span class="n">extension</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="n">framename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">frames</span><span class="o">=</span><span class="p">[</span><span class="n">framename</span><span class="p">],</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">newframename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">FITSFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">newframename</span><span class="p">))</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Created modfile for frame </span><span class="si">%s</span><span class="s"> named </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">framename</span><span class="p">,</span><span class="n">filename</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_collect</span><span class="p">[</span><span class="n">newframename</span><span class="p">]</span> <span class="o">=</span> <span class="n">filename</span>
         <span class="k">return</span> <span class="n">filename</span>
         </div>
-    <span class="k">def</span> <span class="nf">_atfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">statenames</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_atfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">framenames</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Generic atfile creation routine&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">statenames</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">statenames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">framenames</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">framenames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
         <span class="n">atlist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="o">.</span><span class="n">filename</span><span class="p">(</span><span class="n">extension</span><span class="o">=</span><span class="s">&#39;.list&#39;</span><span class="p">)</span>
 
         <span class="n">function</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;function&#39;</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
@@ -380,36 +399,35 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Must provide a filename creation function&quot;</span><span class="p">)</span>
         
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">atlist</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">statename</span> <span class="ow">in</span> <span class="n">statenames</span><span class="p">:</span>
-                <span class="n">filename</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">statename</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">framename</span> <span class="ow">in</span> <span class="n">framenames</span><span class="p">:</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">framename</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
                 <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
-        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Created atlist for states </span><span class="si">%s</span><span class="s"> named </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">statenames</span><span class="p">,</span><span class="n">atlist</span><span class="p">))</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Created atlist for frames </span><span class="si">%s</span><span class="s"> named </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">framenames</span><span class="p">,</span><span class="n">atlist</span><span class="p">))</span>
         <span class="k">return</span> <span class="s">&quot;@&quot;</span> <span class="o">+</span> <span class="n">atlist</span>
 
-<div class="viewcode-block" id="IRAFTools.modatfile"><a class="viewcode-back" href="../../iraftools.html#AstroObject.iraftools.IRAFTools.modatfile">[docs]</a>    <span class="k">def</span> <span class="nf">modatfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">statenames</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="IRAFTools.modatfile"><a class="viewcode-back" href="../../iraftools.html#AstroObject.iraftools.IRAFTools.modatfile">[docs]</a>    <span class="k">def</span> <span class="nf">modatfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">framenames</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;File list for modification&quot;&quot;&quot;</span>
         <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;function&quot;</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atfile</span><span class="p">(</span><span class="o">*</span><span class="n">statenames</span><span class="p">,</span><span class="n">function</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">modfile</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atfile</span><span class="p">(</span><span class="o">*</span><span class="n">framenames</span><span class="p">,</span><span class="n">function</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">modfile</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="IRAFTools.inatfile"><a class="viewcode-back" href="../../iraftools.html#AstroObject.iraftools.IRAFTools.inatfile">[docs]</a>    <span class="k">def</span> <span class="nf">inatfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">statenames</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="IRAFTools.inatfile"><a class="viewcode-back" href="../../iraftools.html#AstroObject.iraftools.IRAFTools.inatfile">[docs]</a>    <span class="k">def</span> <span class="nf">inatfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">framenames</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a filename with @ appended, for a file which lists a series of fitsfiles.&quot;&quot;&quot;</span>
         <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;function&quot;</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atfile</span><span class="p">(</span><span class="o">*</span><span class="n">statenames</span><span class="p">,</span><span class="n">function</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">infile</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atfile</span><span class="p">(</span><span class="o">*</span><span class="n">framenames</span><span class="p">,</span><span class="n">function</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">infile</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="IRAFTools.outatfile"><a class="viewcode-back" href="../../iraftools.html#AstroObject.iraftools.IRAFTools.outatfile">[docs]</a>    <span class="k">def</span> <span class="nf">outatfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">statenames</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="IRAFTools.outatfile"><a class="viewcode-back" href="../../iraftools.html#AstroObject.iraftools.IRAFTools.outatfile">[docs]</a>    <span class="k">def</span> <span class="nf">outatfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">framenames</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a filename with @ appended, for a file which lists a series of fitsfiles&quot;&quot;&quot;</span>
         <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;function&quot;</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atfile</span><span class="p">(</span><span class="o">*</span><span class="n">statenames</span><span class="p">,</span><span class="n">function</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">outfile</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atfile</span><span class="p">(</span><span class="o">*</span><span class="n">framenames</span><span class="p">,</span><span class="n">function</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">outfile</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         </div>
 <div class="viewcode-block" id="IRAFTools.done"><a class="viewcode-back" href="../../iraftools.html#AstroObject.iraftools.IRAFTools.done">[docs]</a>    <span class="k">def</span> <span class="nf">done</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Finish the IRAF statename.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Finish the IRAF framename.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
             <span class="k">return</span>
-        <span class="k">for</span> <span class="n">statename</span><span class="p">,</span><span class="n">filename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collect</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">statename</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-            <span class="n">states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span><span class="n">statename</span><span class="o">=</span><span class="n">statename</span><span class="p">)</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Collected file for state </span><span class="si">%s</span><span class="s"> named </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">statename</span><span class="p">,</span><span class="n">filename</span><span class="p">))</span>
-            <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;States created: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">states</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">framename</span><span class="p">,</span><span class="n">filename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collect</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span><span class="n">framename</span><span class="o">=</span><span class="n">framename</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Collected file for frame </span><span class="si">%s</span><span class="s"> named </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">framename</span><span class="p">,</span><span class="n">filename</span><span class="p">))</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;States created: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">frames</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_collect</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </div>
@@ -449,17 +467,27 @@
             
         
 </div>
-<span class="k">def</span> <span class="nf">UseIRAFTools</span><span class="p">(</span><span class="n">objclass</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class wrapper which allows classes to use IRAF tools.&quot;&quot;&quot;</span>
-    <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">objclass</span><span class="p">,</span><span class="n">BaseStack</span><span class="p">)</span>
-    <span class="k">class</span> <span class="nc">_IRAFClass</span><span class="p">(</span><span class="n">objclass</span><span class="p">):</span>
+<div class="viewcode-block" id="UseIRAFTools"><a class="viewcode-back" href="../../iraftools.html#AstroObject.iraftools.UseIRAFTools">[docs]</a><span class="k">def</span> <span class="nf">UseIRAFTools</span><span class="p">(</span><span class="n">klass</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class wrapper which allows classes to use IRAF tools. Takes a single parameter, the class name which should have IRAF tools, and creates a dummy class which activates IRAF tools during initialization.</span>
+<span class="sd">    </span>
+<span class="sd">    :param klass: The class to apply :mod:`iraftools` to.</span>
+<span class="sd">    </span>
+<span class="sd">    Example::</span>
+<span class="sd">        </span>
+<span class="sd">        from AstroObject.iraftools import UseIRAFTools</span>
+<span class="sd">        from AstroObject.AstroImage import ImageStack</span>
+<span class="sd">        ImageStack = UseIRAFTools(ImageStack)</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">klass</span><span class="p">,</span><span class="n">BaseStack</span><span class="p">)</span>
+    <span class="k">class</span> <span class="nc">_IRAFClass</span><span class="p">(</span><span class="n">klass</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;An object which contains the IRAF Tools&quot;&quot;&quot;</span>
         <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-            <span class="n">obj</span> <span class="o">=</span> <span class="n">objclass</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">klass</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="n">obj</span><span class="o">.</span><span class="n">iraf</span> <span class="o">=</span> <span class="n">IRAFTools</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
             <span class="n">obj</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">set_instance_methods</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">obj</span>
-    <span class="k">return</span> <span class="n">_IRAFClass</span>
+    <span class="k">return</span> <span class="n">_IRAFClass</span></div>
 </pre></div>
 
           </div>
@@ -493,7 +521,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.5-a2 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.5-b1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>

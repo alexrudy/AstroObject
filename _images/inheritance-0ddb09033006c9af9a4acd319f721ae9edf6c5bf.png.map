@@ -1,0 +1,25 @@
+<map id="inheritance9023f7c43f" name="inheritance9023f7c43f">
+<area shape="rect" id="node1" href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.Resolver" title="Resolver" alt="" coords="709,307,764,325"/>
+<area shape="rect" id="node2" href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.InterpolatedSpectrum" title="InterpolatedSpectrum" alt="" coords="557,307,674,325"/>
+<area shape="rect" id="node4" href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStack" title="SpectraStack" alt="" coords="576,4,654,23"/>
+<area shape="rect" id="node5" href="#AstroObject.AstroObjectBase.BaseStack" title="BaseStack" alt="" coords="420,75,485,94"/>
+<area shape="rect" id="node8" href="AstroHDU.html#AstroObject.AstroHDU.HDUStack" title="HDUStack" alt="" coords="584,40,647,58"/>
+<area shape="rect" id="node14" href="AstroImage.html#AstroObject.AstroImage.ImageStack" title="ImageStack" alt="" coords="580,75,651,94"/>
+<area shape="rect" id="node16" href="AstroNDArray.html#AstroObject.AstroNDArray.NDArrayStack" title="NDArrayStack" alt="" coords="575,111,656,129"/>
+<area shape="rect" id="node71" href="AstroFITS.html#AstroObject.AstroFITS.FITSStack" title="FITSStack" alt="" coords="585,146,646,165"/>
+<area shape="rect" id="node7" href="#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="19,217,71,236"/>
+<area shape="rect" id="node11" href="#AstroObject.AstroObjectBase.NoDataMixin" title="NoDataMixin" alt="" coords="131,146,205,165"/>
+<area shape="rect" id="node19" href="#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="121,217,215,236"/>
+<area shape="rect" id="node21" href="#AstroObject.AstroSpectra.SpectraMixin" title="SpectraMixin" alt="" coords="131,288,205,307"/>
+<area shape="rect" id="node23" href="#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="134,253,202,271"/>
+<area shape="rect" id="node28" href="#AstroObject.AstroObjectBase.NoHDUMixin" title="NoHDUMixin" alt="" coords="131,111,205,129"/>
+<area shape="rect" id="node32" href="#AstroObject.AstroObjectBase.AnalyticMixin" title="AnalyticMixin" alt="" coords="261,111,336,129"/>
+<area shape="rect" id="node50" href="AstroFITS.html#AstroObject.AstroFITS.FITSFrame" title="FITSFrame" alt="" coords="266,146,331,165"/>
+<area shape="rect" id="node18" href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraFrame" title="SpectraFrame" alt="" coords="258,288,339,307"/>
+<area shape="rect" id="node54" href="AstroImage.html#AstroObject.AstroImage.ImageFrame" title="ImageFrame" alt="" coords="262,217,336,236"/>
+<area shape="rect" id="node57" href="AstroNDArray.html#AstroObject.AstroNDArray.NDArrayFrame" title="NDArrayFrame" alt="" coords="256,182,341,200"/>
+<area shape="rect" id="node79" href="AstroHDU.html#AstroObject.AstroHDU.HDUFrame" title="HDUFrame" alt="" coords="265,324,332,342"/>
+<area shape="rect" id="node34" href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="250,253,347,271"/>
+<area shape="rect" id="node47" href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.CompositeSpectra" title="CompositeSpectra" alt="" coords="401,167,503,185"/>
+<area shape="rect" id="node40" href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.UnitarySpectrum" title="UnitarySpectrum" alt="" coords="568,352,662,370"/>
+</map>
