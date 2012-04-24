@@ -13,7 +13,9 @@ Often, when doing data reduction, you end up manipulating the same image or spec
 
 It just so happens that the FITS data format supports this understanding as well, by way of FITS extensions. As such, you can store your beautifully reduced science image in the front of a FITS image, but include a full history of that image in subsequent FITS extension frames. Of course, this might make for rather large FITS files, so this library makes no assumptions about how you write FITS files at the end of the day.
 
-.. Note:: The terms **Stack** and **Frame** are used throughout the documentation here. When I refer to an AstroObject style **stack**, I will use **bold**. I will also use **bold** when refering to AstroObject-style **frames**
+.. Note:: The terms **Stack** and **Frame** are used throughout the documentation here. I will try to always use **bold** for these terms to clarify that I am discussing the AstroObject-term **stack** or **frame**.
+
+.. _Frames:
 
 **Frames**
 ----------
@@ -23,6 +25,8 @@ A **frame** is a single instance of data. It doesn't have to be image data, it c
 The format of data in a **frame** depends on what type of **frame** you want to use. For the simple :mod:`AstroObject.AstroImage` implementation, a **frame** is a two-dimensional array of numpy data (along with a stack of other meta-data that it gets to carry around). You should really only write to a **frame** once (although sometimes you may need a place to put an image temporarily, and then wish to over-write it or delete it later... that is perfectly fine), and then that **frame** will preserve the image data for you.
 
 The :mod:`AstroObject` module comes with a variety of **frames**, and it is easy to create your own. The required functions for each **frame** are documented in :ref:`AstroObjectAPI`, and a template class is provided in :class:`AstroObjectBase.BaseFrame`. However, if you want to work with images, you can use **frames** from :mod:`AstroObject.AstroImage`, and if you want to work with spectra, you can use **frames** from :mod:`AstroObject.AstroSpectra` and :mod:`AstroObject.AnalyticSpectra`.
+
+.. _Stacks:
 
 **Stacks**
 ----------
