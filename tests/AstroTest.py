@@ -34,7 +34,7 @@ This module has test frameworks for all modules. The baisc hierarchy of testing 
 
 """
 # Parent Imports
-import AstroObject.AstroObjectBase as AOB
+from AstroObject.iraftools import UseIRAFTools
 
 # Testing Imports
 import nose.tools as nt
@@ -538,6 +538,16 @@ class API_BaseStack(API_Base):
     def test_init_with_no_dataClasses(self):
         """__init__() with no data classes"""
         self.OBJECT(dataClasses=[])
+        
+    def test_init_with_iraftools(self):
+        """__init__() works in IRAFTools mode."""
+        NEWOBJECT = UseIRAFTools(self.OBJECT)
+        AObject = NEWOBJECT()
+        AObject.save(self.frame())
+        assert hasattr(AObject,'iraf')
+        AObject.iraf.infile()
+        AObject.iraf.done()
+        
         
     def test_save_with_data(self):
         """save() works with valid data"""

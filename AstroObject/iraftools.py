@@ -13,6 +13,11 @@ u"""
 
 This module provides an interface for using :mod:`AstroObject` with PyIRAF. For documentation of the individual methods provided by this module, see :class:`IRAFToolsMixin`. The next two sections will provide a brief overview of the use of :mod:`iraftools`.
 
+To use :mod:`iraftools`, use the :func:`UseIRAFTools` function.
+
+.. autofunction::
+    AstroObject.iraftools.UseIRAFTools
+
 .. _IRAFTools_Filetypes:
 
 File types in :mod:`iraftools`
@@ -20,9 +25,23 @@ File types in :mod:`iraftools`
 
 There are three types of FITS files provided by :mod:`iraftools`:
 
-- ``in`` files are FITS files which are used as input to an ``iraf`` fucntion. They are created immediately, and will exist untill the :mod:`~AstroObject.iraftools` cleanup stage (:meth:`iraf.done <AstroObject.iraftools.IRAFTools.done>`).
-- ``out`` files are FITS files which will be output targets for ``iraf``. As such, the filename returned does not point to an existing FITS file. Instead, the filename points to a potential file which will be re-read by the parent **stack** during the cleanup stage (:meth:`iraf.done <AstroObject.iraftools.IRAFTools.done>`).
-- ``mod`` files are FITS files which will be modified in-place by ``iraf``. These files are created immediately, just like ``in`` files, and are re-loaded automatically during the cleanup stage (:meth:`iraf.done <AstroObject.iraftools.IRAFTools.done>`). To prevent these **frames** from overwriting their original content, use the ``append=`` keyword to append a string to the new **frame** name. You could also make a copy of the original **frame** using
+.. describe:: in-file
+    
+    :meth:`infile <IRAFToolsMixin.iraf.infile>` and :meth:`inatfile <IRAFToolsMixin.iraf.inatfile>`
+    
+    ``in`` files are FITS files which are used as input to an ``iraf`` fucntion. They are created immediately, and will exist untill the :mod:`~AstroObject.iraftools` cleanup stage (:meth:`iraf.done <AstroObject.iraftools.IRAFTools.done>`).
+
+.. describe:: out-file
+    
+    :meth:`outfile <IRAFToolsMixin.iraf.infile>` and :meth:`outatfile <IRAFToolsMixin.iraf.outatfile>`
+    
+    ``out`` files are FITS files which will be output targets for ``iraf``. As such, the filename returned does not point to an existing FITS file. Instead, the filename points to a potential file which will be re-read by the parent **stack** during the cleanup stage (:meth:`iraf.done <AstroObject.iraftools.IRAFTools.done>`).
+
+.. describe:: mod-file
+    
+    :meth:`modfile <IRAFToolsMixin.iraf.modfile>` and :meth:`modatfile <IRAFToolsMixin.iraf.modatfile>`
+    
+    ``mod`` files are FITS files which will be modified in-place by ``iraf``. These files are created immediately, just like ``in`` files, and are re-loaded automatically during the cleanup stage (:meth:`iraf.done <AstroObject.iraftools.IRAFTools.done>`). To prevent these **frames** from overwriting their original content, use the ``append=`` keyword to append a string to the new **frame** name. You could also make a copy of the original **frame** using
     ::
 	
     	Data["newname"] = Data["oldname"]
@@ -397,13 +416,23 @@ class IRAFToolsMixin(Mixin):
             
         
 
-def UseIRAFTools(objclass):
-    """Class wrapper which allows classes to use IRAF tools."""
-    assert issubclass(objclass,BaseStack)
-    class _IRAFClass(objclass):
+def UseIRAFTools(klass):
+    """Class wrapper which allows classes to use IRAF tools. Takes a single parameter, the class name which should have IRAF tools, and creates a dummy class which activates IRAF tools during initialization.
+    
+    :param klass: The class to apply :mod:`iraftools` to.
+    
+    Example::
+        
+        from AstroObject.iraftools import UseIRAFTools
+        from AstroObject.AstroImage import ImageStack
+        ImageStack = UseIRAFTools(ImageStack)
+        
+    """
+    assert issubclass(klass,BaseStack)
+    class _IRAFClass(klass):
         """An object which contains the IRAF Tools"""
         def __new__(cls,*args,**kwargs):
-            obj = objclass(*args,**kwargs)
+            obj = klass(*args,**kwargs)
             obj.iraf = IRAFTools(obj)
             obj.iraf.set_instance_methods()
             return obj

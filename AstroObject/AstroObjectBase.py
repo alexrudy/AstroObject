@@ -34,6 +34,10 @@ The API also provides a number of Mixin classes for special cases. These mixins 
 Module Structure
 ----------------
 
+The module generally uses **stacks** and **frames** as the base structures. **Stacks** are easily implemented (as above), and **frames** are single data instances which provide all of the required methods from :class:`BaseFrame`. The structure for **Stacks** is quite simple, as there is little variance among different stacks. **Frames** each are required to implement all of the methods in :class:`BaseFrame`, with only a few of those methods implmeneted by default, and most of these require re-implementation.
+
+The Mixin classes are provided to make the creation of certain basic methods easier, and to remove the requirement that other basic methods be implemented. See :ref:`Mixins` for more information.
+
 .. inheritance-diagram::
     AstroObject.AstroFITS.FITSFrame
     AstroObject.AstroFITS.FITSStack

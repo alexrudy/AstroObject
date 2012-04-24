@@ -191,7 +191,16 @@ class ImageStack(AstroObjectBase.BaseStack):
     # Manipulating Functions #
     ##########################
     def mask(self, left, top, right=None, bottom=None, label=None, clobber=True):
-        """Masks the image by the distances provided"""
+        """Masks the image by the distances provided. This function masks the current frame. Use :meth:`select` to change which frame this method acts on. Masks cut out the edges of images by the specified width.
+        
+        :param float left: Size to mask off of the left of the image.
+        :param float top: Size to mask off the top of the image.
+        :param float right: Size to mask off the right of the image. If no size is given, will use ``left``.
+        :param float bottom: Size to mask off the bottom of the image. If no size is given, will use ``right``.
+        :keyword label: The label to use for saving this masked image.
+        :keyword bool clobber: Whether to overwrite the named frame in this stack.
+        
+        """
         if not right:
             right = left
         if not bottom:
@@ -204,7 +213,16 @@ class ImageStack(AstroObjectBase.BaseStack):
         self.save(masked,label,clobber=clobber)
         
     def crop(self,x,y,xsize,ysize=None,label=None,clobber=True):
-        """Crops the provided image to twice the specified size, centered around the x and y coordinates provided."""
+        """Crops the provided image to twice the specified size, centered around the x and y coordinates provided.
+        
+        :param int x: The x position of the desired center.
+        :param int y: The y position of the desired center.
+        :param int xsize: The size of the x direction. This results in indexing like [x-xsize:x+xsize].
+        :param int ysize: The size of the y direction. If ``None``, will use ``xsize``.
+        :keyword label: The label to use for saving this cropped image.
+        :keyword clobber: Whether to overwrite the named frame in this stack.
+        
+        """
         if not ysize:
             ysize = xsize
         cropped = self.d[x-xsize:x+xsize,y-ysize:y+ysize]
