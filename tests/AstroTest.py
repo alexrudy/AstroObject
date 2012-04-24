@@ -11,7 +11,7 @@
 :mod:`AstroTest` for nosetests
 ==============================
 
-This module has test frameworks for all modules
+This module has test frameworks for all modules. The baisc hierarchy of testing frameworks is designed to mimic the basic hierarchy of the :mod:`AstroObject` module in general. There are appropriate test class mixins for all of the built-in Frame and Stack classes.
 
 .. inheritance-diagram::
     tests.AstroTest.API_Base_Frame
@@ -21,7 +21,7 @@ This module has test frameworks for all modules
     tests.AstroTest.API_NotEmpty_Frame
     tests.AstroTest.API_AnalyticMixin
     tests.AstroTest.API_General_Frame
-    tests.AstroTest.API_Base_Object
+    tests.AstroTest.API_BaseStack
     tests.Test_AstroFITS.test_FITSFrame
     tests.Test_AstroFITS.test_FITSStack
     tests.test_AstroHDU.test_HDUFrame
@@ -29,7 +29,7 @@ This module has test frameworks for all modules
     tests.Test_AstroImage.test_ImageFrame
     tests.Test_AstroImage.test_ImageStack
     tests.Test_AstroSpectra.test_SpectraFrame
-    tests.Test_AstroSpectra.test_SpectraStrack
+    tests.Test_AstroSpectra.test_SpectraStack
     :parts: 1
 
 """
@@ -136,11 +136,20 @@ class API_Base_Frame(API_Base):
         return self.FRAME(data=self.VALID,label="Valid")
     
     def test_init_data(self):
-        """__init__() succeds with None (Valid) data"""
-        self.FRAME(data=self.VALID,label="Invalid")
-        assert self.data_eq_data(AFrame(**self.RKWARGS),self.VALID)
+        """__init__() succeds with valid data"""
+        AFrame = self.FRAME(data=self.VALID,label="Valid",metadata={"A":"Abba"},header={"testvar":"avalue"})
+        assert AFrame.valid
+        assert AFrame.header['testvar'] == "avalue", "Header value save failure"
+        assert AFrame.metadata["A"] == "Abba", "Metadata save failure"
         
-    
+    def test_init_pyfits_header(self):
+        """__init__() with PyFITS header succeeds."""
+        header = pf.core.Header()
+        header.update('testvar','avalue')
+        AFrame = self.FRAME(data=self.VALID,label="Valid",header=header)
+        assert AFrame.valid
+        assert AFrame.header['testvar'] == "avalue", "Header value save failure"
+        
     def test_init_empty(self):
         """__init__() abstract frame works without data"""
         AFrame = self.FRAME(data=None,label="Valid")
@@ -427,11 +436,6 @@ class API_NotEmpty_Frame(API_Base):
 class API_General_Frame(API_HDUHeader_Frame,API_NotEmpty_Frame,API_Base_Frame):
     """API for general, API-compliant objects"""
     
-    def test_init_data(self):
-        """__init__() succeeds with valid data"""
-        AFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert AFrame.label == "Valid"
-    
     def test_save_data(self):
         """__save__() valid data"""
         AFrame = self.FRAME.__save__(self.VALID,"Valid")
@@ -515,7 +519,7 @@ class API_General_Frame(API_HDUHeader_Frame,API_NotEmpty_Frame,API_Base_Frame):
         assert isinstance(figure,self.SHOWTYPE), "Found type %s" % type(figure)
     
 
-class API_Base_Object(API_Base):
+class API_BaseStack(API_Base):
     """API for AstroObjectBase.BaseStack"""
     
     attributes = ['FRAME','VALID','INVALID','SHOWTYPE','HDUTYPE','OBJECTSTR','OBJECT','FRAMESTR']
@@ -525,10 +529,42 @@ class API_Base_Object(API_Base):
         """Returns a valid frame"""
         return self.FRAME(data=self.VALID,label="Valid")
         
+    @nt.raises(AttributeError)
+    def test_init_with_bad_class(self):
+        """__init__() with invalid data classes"""
+        self.OBJECT(dataClasses=10)
+        
+    @nt.raises(NotImplementedError)
+    def test_init_with_no_dataClasses(self):
+        """__init__() with no data classes"""
+        self.OBJECT(dataClasses=[])
+        
     def test_save_with_data(self):
         """save() works with valid data"""
         AObject = self.OBJECT()
         AObject.save(self.VALID,"Valid")
+    
+    def test_save_overwrite(self):
+        """save() can clobber from parent or save()"""
+        AObject = self.OBJECT()
+        AObject.save(self.VALID,"Valid")
+        AObject.save(self.VALID,"Valid",clobber=True)
+        AObject = self.OBJECT()
+        AObject.clobber = True
+        AObject.save(self.VALID,"Valid")
+        AObject.save(self.VALID,"Valid")
+        
+    @nt.raises(KeyError)
+    def test_save_no_overwrite(self):
+        """save failes when trying to inadvertently clobber"""
+        AObject = self.OBJECT()
+        AObject.save(self.VALID,"Valid")
+        AObject.save(self.VALID,"Valid",clobber=False)
+        AObject = self.OBJECT()
+        AObject.clobber = False
+        AObject.save(self.VALID,"Valid")
+        AObject.save(self.VALID,"Valid")
+        
     
     def test_set_with_data(self):
         """[] works with valid data"""
@@ -551,21 +587,21 @@ class API_Base_Object(API_Base):
         """save() succeeds with a frame"""
         AObject = self.OBJECT()
         AObject.save(self.frame())
-        assert AObject.statename == "Valid"
+        assert AObject.framename == "Valid"
         assert isinstance(AObject.frame(),self.FRAME)
     
     def test_set_frame_with_label(self):
         """[] with a new label changes the frame's label"""
         AObject = self.OBJECT()
         AObject["Other"] = self.frame()
-        assert AObject.statename == "Other"
+        assert AObject.framename == "Other"
         assert AObject.frame().label == "Other"
     
     def test_save_frame_with_label(self):
         """save() with a new label changes the frame's label"""
         AObject = self.OBJECT()
         AObject.save(self.frame(),"Other")
-        assert AObject.statename == "Other"
+        assert AObject.framename == "Other"
         assert AObject.frame().label == "Other"
     
     def test_double_saving_frame_should_reference(self):
@@ -573,14 +609,14 @@ class API_Base_Object(API_Base):
         AObject = self.OBJECT()
         AObject.save(self.frame())
         AObject.save(self.frame(),"Other")
-        assert AObject.statename == "Other"
+        assert AObject.framename == "Other"
         assert AObject.frame().label == "Other"
         try:
             AObject.select("Valid")
-            assert AObject.statename == "Valid"
+            assert AObject.framename == "Valid"
             assert AObject.frame().label == "Valid"
             AObject.select("Other")
-            assert AObject.statename == "Other"
+            assert AObject.framename == "Other"
             assert AObject.frame().label == "Other"
         except AssertionError as e:
             raise SkipTest("This is a bug, should be fixed in a later version. %s" % e)
@@ -590,14 +626,14 @@ class API_Base_Object(API_Base):
         AObject = self.OBJECT()
         AObject.save(self.frame())
         AObject.save(AObject.data(),"Other")
-        assert AObject.statename == "Other"
+        assert AObject.framename == "Other"
         assert AObject.frame().label == "Other"
         try:
             AObject.select("Valid")
-            assert AObject.statename == "Valid"
+            assert AObject.framename == "Valid"
             assert AObject.frame().label == "Valid"
             AObject.select("Other")
-            assert AObject.statename == "Other"
+            assert AObject.framename == "Other"
             assert AObject.frame().label == "Other"
         except AssertionError as e:
             raise SkipTest("This is a bug, should be fixed in a later version. %s" % e)
@@ -608,12 +644,64 @@ class API_Base_Object(API_Base):
         AObject = self.OBJECT()
         AObject.read(self.files[0])
     
+    @nt.raises(KeyError)
+    def test_read_from_file_single_frame(self):
+        """read() fails on a single frame file when trying to clobber"""
+        AObject = self.OBJECT()
+        AObject.save(self.frame())
+        AObject.write(self.files[0])
+        AObject.read(self.files[0])
+        
+        
+    def test_read_from_file_single_frame_framename(self):
+        """read() succeeds with an explicit framename"""
+        AObject = self.OBJECT()
+        AObject.save(self.frame())
+        AObject.write(self.files[0])
+        AObject.read(self.files[0],framename="Other")
+    
+    def test_read_from_file_single_frame_clobber(self):
+        """read() succeeds on overwrite with clobber=True"""
+        AObject = self.OBJECT()
+        AObject.save(self.frame())
+        AObject.write(self.files[0])
+        AObject.read(self.files[0],clobber=True)
+    
+    def test_read_from_implicit_filename(self):
+        """read() succeeds with implicit filename"""
+        AObject = self.OBJECT(filename=self.files[0])
+        AObject.save(self.frame())
+        AObject.write()
+        AObject.read(clobber=True)
+          
+    def test_write_to_multiframe_file(self):
+        """write() can create multiframe files"""
+        AObject = self.OBJECT()
+        AObject.save(self.frame())
+        AObject["Other"] = self.frame()
+        PF,Fs,FN = AObject.write(self.files[0])
+        assert Fs == ["Valid"]
+        assert PF == "Other"
+        
+    def test_write_to_singleframe_file(self):
+        """write(singleFrame=True) creates single framed FITS files."""
+        AObject = self.OBJECT()
+        AObject.save(self.frame())
+        AObject["Other"] = self.frame()
+        PF,Fs,FN = AObject.write(self.files[0],singleFrame=True)
+        assert Fs == []
+        assert PF == "Other"
+        
+    
     def test_write_clobbers_file(self):
         """write() can clobber existing files"""
         AObject = self.OBJECT()
         AObject.save(self.frame())
         AObject.write(self.files[0])
-        AObject.write(self.files[0],clobber=True)
+        PF,Fs,FN = AObject.write(self.files[0],clobber=True)
+        assert Fs == []
+        assert PF == "Valid"
+        
     
     @nt.raises(IOError)
     def test_write_does_not_clobber_file(self):
@@ -624,21 +712,38 @@ class API_Base_Object(API_Base):
         AObject.write(self.files[0])
     
     def test_select(self):
-        """select() changes to correct state"""
+        """select() changes to correct frame"""
         Label = "Other"
         Frame = self.FRAME(self.VALID,Label)
         AObject = self.OBJECT()
         AObject.save(self.frame())
         AObject.save(Frame,Label)
-        assert AObject.statename == Label
+        assert AObject.framename == Label
         assert AObject.frame().label == Label
         AObject.select("Valid")
-        assert AObject.statename == "Valid"
+        assert AObject.framename == "Valid"
         assert AObject.frame().label == "Valid"
     
+    def test_select(self):
+        """select(None) changes to default frame"""
+        Frame = self.FRAME(self.VALID,"Other")
+        AObject = self.OBJECT()
+        AObject.save(self.frame())
+        AObject.save(Frame)
+        assert AObject.framename == "Other"
+        assert AObject.frame().label == "Other"
+        AObject.select("Valid")
+        assert AObject.framename == "Valid"
+        assert AObject.frame().label == "Valid"
+        AObject.select(None)
+        assert AObject.framename == "Valid"
+        assert AObject.frame().label == "Valid"
+        
+    
+    
     @nt.raises(KeyError)
-    def test_select_unknown_state(self):
-        """select() cannont select non-existant states"""
+    def test_select_unknown_frame(self):
+        """select() cannont select non-existant frames"""
         AObject = self.OBJECT()
         AObject.select("Valid")
 
@@ -647,6 +752,13 @@ class API_Base_Object(API_Base):
         AObject = self.OBJECT()
         AObject.save(self.frame())
         data = AObject.data()
+        assert self.data_eq_data(data,self.VALID)
+        
+    def test_d(self):
+        """.d returns data object"""
+        AObject = self.OBJECT()
+        AObject.save(self.frame())
+        data = AObject.d
         assert self.data_eq_data(data,self.VALID)
     
     @nt.raises(KeyError)
@@ -662,10 +774,17 @@ class API_Base_Object(API_Base):
         AObject.frame()
     
     def test_frame(self):
-        """frame() returns data object"""
+        """frame() returns frame object"""
         AObject = self.OBJECT()
         AObject.save(self.frame())
         frame = AObject.frame()
+        assert self.frame_eq_frame(frame,self.frame())
+        
+    def test_frame(self):
+        """.f returns frame object"""
+        AObject = self.OBJECT()
+        AObject.save(self.frame())
+        frame = AObject.f
         assert self.frame_eq_frame(frame,self.frame())
     
     def test_get(self):
@@ -675,16 +794,15 @@ class API_Base_Object(API_Base):
         frame = AObject[self.frame().label]
         assert self.frame_eq_frame(frame,self.frame())
     
-    
     @nt.raises(KeyError)
-    def test_duplicate_state_name(self):
-        """save() should not allow duplication of state name"""
+    def test_duplicate_frame_name(self):
+        """save() should not allow duplication of frame name"""
         AObject = self.OBJECT()
         AObject.save(self.frame())
         AObject.save(self.frame())
     
-    def test_list_statenames(self):
-        """list() should show all statenames"""
+    def test_list_framenames(self):
+        """list() should show all framenames"""
         AObject = self.OBJECT()
         AObject.save(self.frame(),"A")
         AObject.save(self.frame(),"B")
@@ -696,17 +814,17 @@ class API_Base_Object(API_Base):
         assert [] == AObject.list()
     
     def test_keep(self):
-        """keep() only retains given state"""
+        """keep() only retains given frame"""
         AObject = self.OBJECT()
         AObject.save(self.frame(),"A")
         AObject.save(self.frame(),"B")
         assert ["A","B"] == sorted(AObject.list()) , "List: %s" % AObject.list()
         AObject.keep("A")
         assert ["A"] == sorted(AObject.list()) , "List: %s" % AObject.list()
-        assert "B" not in AObject.states, "States: %s" % AObject.states
+        assert "B" not in AObject.list(), "States: %s" % AObject.list()
     
     def test_keep_multiple(self):
-        """keep() only retains given states"""
+        """keep() only retains given frames"""
         AObject = self.OBJECT()
         AObject.save(self.frame(),"A")
         AObject.save(self.frame(),"B")
@@ -714,11 +832,22 @@ class API_Base_Object(API_Base):
         assert ["A","B","C"] == sorted(AObject.list()) , "List: %s" % AObject.list()
         AObject.keep("A","C")
         assert ["A","C"] == sorted(AObject.list()) , "List: %s" % AObject.list()
-        assert "B" not in AObject.states, "States: %s" % AObject.states
+        assert "B" not in AObject.list(), "States: %s" % AObject.list()
+        
+    def test_keep_multiple_delete(self):
+        """keep() only retains given frames"""
+        AObject = self.OBJECT()
+        AObject.save(self.frame(),"A")
+        AObject.save(self.frame(),"B")
+        AObject.save(self.frame(),"C")
+        assert ["A","B","C"] == sorted(AObject.list()) , "List: %s" % AObject.list()
+        AObject.keep("A","C",delete=True)
+        assert ["A","C"] == sorted(AObject.list()) , "List: %s" % AObject.list()
+        assert "B" not in AObject.list(), "States: %s" % AObject.list()
     
     @nt.raises(IndexError)
-    def test_keep_non_existant_state(self):
-        """keep() fails with non-existent state"""
+    def test_keep_non_existant_frame(self):
+        """keep() fails with non-existent frame"""
         AObject = self.OBJECT()
         AObject.save(self.frame(),"A")
         AObject.save(self.frame(),"B")
@@ -731,8 +860,8 @@ class API_Base_Object(API_Base):
         AObject = self.OBJECT()
         AObject.keep("B")
     
-    def test_keep_valid_state(self):
-        """keep() leaves the object with a valid selected state"""
+    def test_keep_valid_frame(self):
+        """keep() leaves the object with a valid selected frame"""
         AObject = self.OBJECT()
         AObject.save(self.frame(),"A")
         AObject.save(self.frame(),"B")
@@ -741,18 +870,65 @@ class API_Base_Object(API_Base):
         AObject.keep("A")
         AObject.frame()
     
+    def test_del(self):
+        """del [] deletes data"""
+        AObject = self.OBJECT()
+        AObject.save(self.frame(),"A")
+        AObject.save(self.frame(),"B")
+        assert ["A","B"] == sorted(AObject.list())
+        del AObject["A"]
+        assert ["B"] == sorted(AObject.list())
+        assert "A" not in AObject.list(), "States: %s" % AObject.list()
+    
+    
+    def test_clear_delete(self):
+        """clear(delete=True) explicitly deletes all frames"""
+        AObject = self.OBJECT()
+        AObject.save(self.frame(),"A")
+        AObject.save(self.frame(),"B")
+        AObject.save(self.frame(),"C")
+        assert ["A","B","C"] == sorted(AObject.list())
+        AObject.clear(delete=True)
+        assert len(AObject) == 0
+        assert "A" not in AObject.list(), "States: %s" % AObject.list()
+    
+    
+    def test_clear(self):
+        """clear() deletes all frames"""
+        AObject = self.OBJECT()
+        AObject.save(self.frame(),"A")
+        AObject.save(self.frame(),"B")
+        AObject.save(self.frame(),"C")
+        assert ["A","B","C"] == sorted(AObject.list())
+        AObject.clear()
+        assert len(AObject) == 0
+        assert "A" not in AObject.list(), "States: %s" % AObject.list()
+    
+    
     def test_remove(self):
-        """remove() deletes given state"""
+        """remove() deletes given frame"""
         AObject = self.OBJECT()
         AObject.save(self.frame(),"A")
         AObject.save(self.frame(),"B")
         assert ["A","B"] == sorted(AObject.list())
         AObject.remove("A")
         assert ["B"] == sorted(AObject.list())
-        assert "A" not in AObject.states, "States: %s" % AObject.states
+        assert "A" not in AObject.list(), "States: %s" % AObject.list()
+
+    
+    def test_remove_delete(self):
+        """remove() deletes given frames explicitly"""
+        AObject = self.OBJECT()
+        AObject.save(self.frame(),"A")
+        AObject.save(self.frame(),"B")
+        AObject.save(self.frame(),"C")
+        assert ["A","B","C"] == sorted(AObject.list())
+        AObject.remove("A","C",delete=True)
+        assert ["B"] == sorted(AObject.list())
+        assert "A" not in AObject.list(), "States: %s" % AObject.list()
     
     def test_remove_multiple(self):
-        """remove() deletes given states"""
+        """remove() deletes given frames"""
         AObject = self.OBJECT()
         AObject.save(self.frame(),"A")
         AObject.save(self.frame(),"B")
@@ -760,10 +936,10 @@ class API_Base_Object(API_Base):
         assert ["A","B","C"] == sorted(AObject.list())
         AObject.remove("A","C")
         assert ["B"] == sorted(AObject.list())
-        assert "A" not in AObject.states, "States: %s" % AObject.states
+        assert "A" not in AObject.list(), "States: %s" % AObject.list()
     
-    def test_remove_valid_state(self):
-        """remove() leaves the object with a valid selected state"""
+    def test_remove_valid_frame(self):
+        """remove() leaves the object with a valid selected frame"""
         BObject = self.OBJECT()
         BObject.save(self.frame(),"A")
         BObject.save(self.frame(),"B")
@@ -772,9 +948,17 @@ class API_Base_Object(API_Base):
         BObject.remove("A")
         BObject.frame()
     
+    def test_remove_non_existant_frame_clobber(self):
+        """remove(clobber=True) succeeds with non-existent frame"""
+        AObject = self.OBJECT()
+        AObject.save(self.frame(),"A")
+        AObject.remove("B",clobber=True)
+        assert "A" in AObject
+    
+    
     @nt.raises(IndexError)
-    def test_remove_non_existant_state(self):
-        """remove() fails with non-existent state"""
+    def test_remove_non_existant_frame(self):
+        """remove() fails with non-existent frame"""
         AObject = self.OBJECT()
         AObject.save(self.frame(),"A")
         AObject.remove("B")
@@ -799,8 +983,8 @@ class API_Base_Object(API_Base):
         assert isinstance(figure,self.SHOWTYPE), "Returned type %s" % type(figure)
     
     @nt.raises(KeyError)
-    def test_show_non_existant_state(self):
-        """show() raises KeyError for a non-existent state name"""
+    def test_show_non_existant_frame(self):
+        """show() raises KeyError for a non-existent frame name"""
         AObject = self.OBJECT()
         AObject.save(self.frame())
         AObject.show("Valid" + "JUNK...")
@@ -811,6 +995,42 @@ class API_Base_Object(API_Base):
         BObject.save(self.frame())
         assert self.frame_eq_frame(BObject.object(),BObject.frame())
 
+    
+    def test_iter(self):
+        """__iter__() iterates"""
+        AObject = self.OBJECT()
+        AObject.save(self.frame(),"A")
+        AObject.save(self.frame(),"B")
+        AObject.save(self.frame(),"C")
+        assert ["A","B","C"] == sorted(AObject.list())
+        AList = [ A for A in AObject ]
+        assert ["A","B","C"] == sorted(AList)
+        
+    def test_contains(self):
+        """__contains__() finds containing items"""
+        AObject = self.OBJECT()
+        AObject.save(self.frame(),"A")
+        AObject.save(self.frame(),"B")
+        assert ["A","B"] == sorted(AObject.list())
+        assert "A" in AObject
+        assert "B" in AObject
+        AObject.remove("A")
+        assert ["B"] == sorted(AObject.list())
+        assert "A" not in AObject
+        assert "B" in AObject
+        assert "A" not in AObject.list(), "States: %s" % AObject.list()
+        
+    def test_length(self):
+        """__len__ gets length"""
+        AObject = self.OBJECT()
+        AObject.save(self.frame(),"A")
+        assert len(AObject) == 1
+        AObject.save(self.frame(),"B")
+        assert len(AObject) == 2
+        AObject.save(self.frame(),"C")
+        assert len(AObject) == 3
+        assert ["A","B","C"] == sorted(AObject.list())
+        
         
     @nt.raises(TypeError)
     def test_save_with_none(self):

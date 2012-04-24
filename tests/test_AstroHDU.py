@@ -70,7 +70,7 @@ class test_HDUFrame(equality_HDUFrame,API_CanBeEmpty_Frame,API_General_Frame):
         super(test_HDUFrame,self).setup()
     
 
-class test_HDUStack(equality_HDUFrame,API_Base_Object):
+class test_HDUStack(equality_HDUFrame,API_BaseStack):
     """AstroHDU.HDUStack"""
     
     def setup(self):
@@ -101,13 +101,13 @@ class test_HDUStack(equality_HDUFrame,API_Base_Object):
         AObject = self.OBJECT()
         AObject.save(self.frame())
         AObject.save(AObject.data(),"Other")
-        assert AObject.statename == "Other"
+        assert AObject.framename == "Other"
         assert AObject.frame().label == "Other"
         AObject.select("Valid")
-        assert AObject.statename == "Valid"
+        assert AObject.framename == "Valid"
         assert AObject.frame().label == "Valid"
         AObject.select("Other")
-        assert AObject.statename == "Other"
+        assert AObject.framename == "Other"
         assert AObject.frame().label == "Other"
         data = AObject.data()
         data[1,1] = -1.0
