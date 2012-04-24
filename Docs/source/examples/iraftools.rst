@@ -44,7 +44,7 @@ After loading our data, we want to select the **frame** that we are most likely 
 	
 	Data.select("data")
 	
-Notice that when we select the frame, we use ``"data"``. The :class:`~AstroObject.AstroImage.ImageStack` class will automtacially remove the ``".fits"`` extension, and use the base of the filename as the statename for imported frames. We could have specified a name for this **frame** using the ``statename`` keyword argument to read.
+Notice that when we select the frame, we use ``"data"``. The :class:`~AstroObject.AstroImage.ImageStack` class will automtacially remove the ``".fits"`` extension, and use the base of the filename as the framename for imported frames. We could have specified a name for this **frame** using the ``framename`` keyword argument to read.
 ::
 	
 	Data.read("data.fits",stataename="another name")
@@ -72,7 +72,7 @@ Many of these keyword arguments we have specified explicitly on the command line
   Data.iraf.modatfile("data",append="-reduced")
 	
 
-The function :meth:`iraf.modatfile <AstroObject.iraftools.IRAFTools.modatfile>` creates an @-list which points to FITS files for each of the included states. You can list as many states as you wish as the first arguments to :meth:`iraf.modatfile <AstroObject.iraftools.IRAFToolsMixin.iraf.modatfile>`. Providing no states will generate an @-list which points to all avaialbe states. This is similar to the way :meth:`iraf.inatfile <AstroObject.iraftools.IRAFToolsMixin.iraf.inatfile>` works. Once you call this function, temporary FITS files are generated for each state (in this case, just the ``data`` **frame**) requested. A list of these filenames is then placed in an @list, and the name of that @list is returned from the fucntion, with the "@" already appended to the beginning of the name, making it suitable input for ``iraf``.
+The function :meth:`iraf.modatfile <AstroObject.iraftools.IRAFTools.modatfile>` creates an @-list which points to FITS files for each of the included frames. You can list as many frames as you wish as the first arguments to :meth:`iraf.modatfile <AstroObject.iraftools.IRAFToolsMixin.iraf.modatfile>`. Providing no frames will generate an @-list which points to all avaialbe frames. This is similar to the way :meth:`iraf.inatfile <AstroObject.iraftools.IRAFToolsMixin.iraf.inatfile>` works. Once you call this function, temporary FITS files are generated for each frame (in this case, just the ``data`` **frame**) requested. A list of these filenames is then placed in an @list, and the name of that @list is returned from the fucntion, with the "@" already appended to the beginning of the name, making it suitable input for ``iraf``.
 
 Behind the scenes, the call::
   
@@ -115,10 +115,10 @@ So the last call in our ``iraf`` command is::
 
 Finally, we want to write our newly-reduced image to a FITS file. :mod:`AstroObject.AstroImage` makes this easy::
   
-  Data.write(states=["data-reduced"],filename="final.fits",clobber=True)
+  Data.write(frames=["data-reduced"],filename="final.fits",clobber=True)
   
 
-The ``states=["data-reduced"]`` keyword provides a list of the states that we want to use when writing the FITS file. In this case, we want only the reduced data, so we provide a one-element list of just that **frame** name. ``clobber=True`` tells the module that it is okay to over-write the ``final.fits`` file. By default, trying to overwrite a file will cause an IOError.  
+The ``frames=["data-reduced"]`` keyword provides a list of the frames that we want to use when writing the FITS file. In this case, we want only the reduced data, so we provide a one-element list of just that **frame** name. ``clobber=True`` tells the module that it is okay to over-write the ``final.fits`` file. By default, trying to overwrite a file will cause an IOError.  
 
 .. _IRAFToolsExample:
 

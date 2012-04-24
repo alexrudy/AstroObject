@@ -9,7 +9,7 @@ Welcome to AstroObject, a library for managing Astronomical Data. The idea behin
 
 With that in mind, it is good to know that this module is based around two concepts, **Stacks** and **Frames**. 
 
-Often, when doing data reduction, you end up manipulating the same image or spectra many times. This process (in my experience) has led me to litter my directories with numerous FITS files, always prepending or appending ``b`` or some other character to indicate the current state of the image. This module allows you to think of each of those states of the same image as a **frame**, all belonging to the same image **stack**.
+Often, when doing data reduction, you end up manipulating the same image or spectra many times. This process (in my experience) has led me to litter my directories with numerous FITS files, always prepending or appending ``b`` or some other character to indicate the current frame of the image. This module allows you to think of each of those frames of the same image as a **frame**, all belonging to the same image **stack**.
 
 It just so happens that the FITS data format supports this understanding as well, by way of FITS extensions. As such, you can store your beautifully reduced science image in the front of a FITS image, but include a full history of that image in subsequent FITS extension frames. Of course, this might make for rather large FITS files, so this library makes no assumptions about how you write FITS files at the end of the day.
 
@@ -64,7 +64,7 @@ Example
 
 Here is a simple example use for this module::
     
-    >>> obj = ImageObject()
+    >>> obj = ImageStack()
     >>> obj.loadFromFile("Picture.jpg")
     >>> obj.show()
     # Matplotlib Image Plot

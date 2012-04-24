@@ -16,15 +16,15 @@ An **stack** and **frame** class which can handle raw spectrum data. This module
 .. warning:: The class implemented here does not yet use a sophisticated enough method for saving FITS header data etc. As such, it will not preserve state names etc. The development of this class should bring it inline with the STSCI spectra classes in the future.
 
 .. inheritance-diagram::
-    AstroObject.AstroSpectra.SpectraStrack
+    AstroObject.AstroSpectra.SpectraStack
     AstroObject.AstroSpectra.SpectraFrame
     :parts: 1
 
-:class:`SpectraStrack` – Raw Spectrum **stacks**
-------------------------------------------------
+:class:`SpectraStack` – Raw Spectrum **stacks**
+-----------------------------------------------
 
 .. autoclass::
-    AstroObject.AstroSpectra.SpectraStrack
+    AstroObject.AstroSpectra.SpectraStack
     :members:
     :inherited-members:
 
@@ -58,7 +58,7 @@ import math, copy, sys, time, logging, os
 # Submodules from this system
 from Utilities import *
 
-__all__ = ["SpectraMixin","SpectraFrame","SpectraStrack"]
+__all__ = ["SpectraMixin","SpectraFrame","SpectraStack"]
 
 __version__ = getVersion()
 
@@ -174,34 +174,34 @@ class SpectraFrame(AstroObjectBase.HDUHeaderMixin,SpectraMixin,AstroObjectBase.B
     
 
 
-class SpectraStrack(AstroObjectBase.BaseStack):
+class SpectraStack(AstroObjectBase.BaseStack):
     """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`SpectraFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately."""
     def __init__(self,dataClasses=[SpectraFrame],**kwargs):
-        super(SpectraStrack, self).__init__(dataClasses=dataClasses,**kwargs)
+        super(SpectraStack, self).__init__(dataClasses=dataClasses,**kwargs)
 
-    def load(self,filename=None,statename=None):
+    def load(self,filename=None,framename=None):
         """Loads spectral data from a data file which contains two columns, one for wavelenght, and one for flux."""
         if not filename:
             filename = self.filename
-        if statename == None:
-            statename = os.path.basename(filename)
-            LOG.log(2,"Set statename for image from filename: %s" % statename)
+        if framename == None:
+            framename = os.path.basename(filename)
+            LOG.log(2,"Set framename for image from filename: %s" % framename)
         if filename.lower().endswith(".fits") or filename.lower().endswith(".fit"):
-            self.read(filename,statename)
+            self.read(filename,framename)
         else:
-            self.save(np.genfromtxt(filename,unpack=True,comments="#"),statename)
+            self.save(np.genfromtxt(filename,unpack=True,comments="#"),framename)
             
-    def unload(self,filename=None,statename=None,clobber=False):
+    def unload(self,filename=None,framename=None,clobber=False):
         """docstring for unload"""
         if not filename:
             filename = self.filename
-        if statename == None:
-            statename = self.statename
+        if framename == None:
+            framename = self.framename
         
         if filename.lower().endswith(".fits") or filename.lower().endswith(".fit"):
-            self.write(filename,statename,clobber=clobber)
+            self.write(filename,framename,clobber=clobber)
         else:
-            np.savetxt(filename,self.frame(statename).data.T,header="State %s raw data" % statename,comments="#")
+            np.savetxt(filename,self.frame(framename).data.T,header="State %s raw data" % framename,comments="#")
         
     
         
