@@ -55,11 +55,11 @@ class ao_build_py(du_build_py):
     def get_version_py(self):
         import datetime
         from AstroObject.version import _frozen_version_py_template
-        from AstroObject.version import version,major,minor,bugfix,dev
+        from AstroObject.version import version,major,minor,bugfix,isdev,devstr
         
         
         timestamp = str(datetime.datetime.now())
-        t = (timestamp,version,major,minor,bugfix,dev)
+        t = (timestamp,version,major,minor,bugfix,isdev,devstr)
         return _frozen_version_py_template%t
         
 

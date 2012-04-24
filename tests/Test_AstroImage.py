@@ -5,7 +5,7 @@
 #
 #  Created by Alexander Rudy on 2011-10-31.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-a2
+#  Version 0.5-b1
 #
 
 # Test API Imports

@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-04-28.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-a2
+#  Version 0.5-b1
 # 
 """
 :mod:`AstroImage` — Image Stacks and Storage 
