@@ -28,4 +28,4 @@ iraf.ccdproc(
     flatcor = "yes",
 )
 Data.iraf.done()
-Data.write(states=["data-reduced"],filename="final.fits",clobber=True)
+Data.write(frames=["data-reduced"],filename="final.fits",clobber=True)
