@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-28.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-a2
+#  Version 0.5-b1
 # 
 
 from tests.AstroTest import *
@@ -62,7 +62,7 @@ class test_FITSFrame(equality_FITSFrame,API_NoData_Frame,API_General_Frame):
         super(test_FITSFrame, self).setup()
     
         
-class test_FITSStack(equality_FITSFrame,API_Base_Object):
+class test_FITSStack(equality_FITSFrame,API_BaseStack):
     """AstroFITS.FITSStack"""
     def setup(self):
         self.files = ["TestFile.fits"]
@@ -82,6 +82,29 @@ class test_FITSStack(equality_FITSFrame,API_Base_Object):
         AObject.save(self.VALID)
         
     @nt.raises(TypeError)
+    def test_save_overwrite(self):
+        """save() can clobber from parent or save()"""
+        AObject = self.OBJECT()
+        AObject.save(self.VALID,"Valid")
+        AObject.save(self.VALID,"Valid",clobber=True)
+        AObject = self.OBJECT()
+        AObject.clobber = True
+        AObject.save(self.VALID,"Valid")
+        AObject.save(self.VALID,"Valid")
+        
+    @nt.raises(TypeError)
+    def test_save_no_overwrite(self):
+        """save failes when trying to inadvertently clobber"""
+        AObject = self.OBJECT()
+        AObject.save(self.VALID,"Valid")
+        AObject.save(self.VALID,"Valid",clobber=False)
+        AObject = self.OBJECT()
+        AObject.clobber = False
+        AObject.save(self.VALID,"Valid")
+        AObject.save(self.VALID,"Valid")
+    
+        
+    @nt.raises(TypeError)
     def test_set_with_data(self):
         """[] fails with valid data"""
         AObject = self.OBJECT()
@@ -98,6 +121,14 @@ class test_FITSStack(equality_FITSFrame,API_Base_Object):
         BObject.save(self.frame())
         BObject.data()
         
+    
+    @nt.raises(NotImplementedError)
+    def test_d(self):
+        """.d raises an abstract error for an abstract frame"""
+        BObject = self.OBJECT()
+        BObject.save(self.frame())
+        BObject.d
+    
     
     @nt.raises(NotImplementedError)
     def test_show(self):

@@ -4,7 +4,7 @@ AstroObject is a paradigm for manipulating Astronomical data in an object-orient
 
 Documentation is hosted by GitHub Pages <http://alexrudy.github.com/AstroObject/>
 
-## Frames and Objects
+## Frames and Stacks
 
 The primary structure of Object-Oriented astronomy data is the concept of **Frames** and **Stacks**. **Frames** are single pieces of data. **Stacks** are collections of **frames** which have a dictionary-like interface.
 
@@ -30,9 +30,11 @@ The AstroObject module also has a simulator framework. The simulator is designed
 
 # Release Notes
 
-* 0.5-a1,a2
-	- Alpha releases for testing the integration of IRAF tools
-
+* 0.5-b1
+	- Beta Release for testing IRAF Tools
+	- Naming schemes have changed: e.g. **stacks** and **frames** are more consistently used. Keyword arguments that used to be **statename** are now **framename** for more consistency. There is NO depreciation provided.
+	- Internal properties of **stacks** have been made private.
+	- There is a new crop and mask method for AstroImage.ImageStack
 * 0.5.0
 	- IRAF Tools and documentation thereof
 * 0.4.0

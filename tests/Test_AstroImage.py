@@ -5,7 +5,7 @@
 #
 #  Created by Alexander Rudy on 2011-10-31.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-a2
+#  Version 0.5-b1
 #
 
 # Test API Imports
@@ -66,6 +66,9 @@ class test_ImageFrame(equality_ImageFrame,API_General_Frame):
         self.RKWARGS = {}
         super(test_ImageFrame,self).setup()
     
+    def test_init_manydim(self):
+        """__init__() works with many dimensional data."""
+        self.FRAME(data=np.ones((100,100,100)),label="3D!")
     
     def test_read_grayscale_HDU(self):
         """__read__() an image HDU succeeds"""
@@ -77,7 +80,7 @@ class test_ImageFrame(equality_ImageFrame,API_General_Frame):
         
         
 
-class test_ImageStack(equality_ImageFrame,API_Base_Object):
+class test_ImageStack(equality_ImageFrame,API_BaseStack):
     """AstroImage.ImageStack"""
     
     def setup(self):
@@ -110,8 +113,19 @@ class test_ImageStack(equality_ImageFrame,API_Base_Object):
             raise SkipTest
         IObject = self.OBJECT()
         IObject.loadFromFile(self.data[0],"TestJPG")
-        assert IObject.statename == "TestJPG"
-    
+        assert IObject.framename == "TestJPG"
+        
+    def test_mask(self):
+        """mask() works to clip info off of side of image."""
+        AObject = self.OBJECT()
+        AObject.save(self.frame())
+        AObject.mask(10,10)
+        
+    def test_crop(self):
+        """crop() works to centered crop"""
+        AObject = self.OBJECT()
+        AObject.save(self.frame())
+        AObject.crop(500,500,40)
     
     @nt.raises(IOError)
     def test_read_from_nonexistant_file(self):
@@ -124,13 +138,13 @@ class test_ImageStack(equality_ImageFrame,API_Base_Object):
         AObject = self.OBJECT()
         AObject.save(self.frame())
         AObject.save(AObject.data(),"Other")
-        assert AObject.statename == "Other"
+        assert AObject.framename == "Other"
         assert AObject.frame().label == "Other"
         AObject.select("Valid")
-        assert AObject.statename == "Valid"
+        assert AObject.framename == "Valid"
         assert AObject.frame().label == "Valid"
         AObject.select("Other")
-        assert AObject.statename == "Other"
+        assert AObject.framename == "Other"
         assert AObject.frame().label == "Other"
         data = AObject.data()
         data[1,1] = -1.0

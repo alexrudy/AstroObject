@@ -1,6 +1,9 @@
 Release Notes
 =============
-
+* 0.5.0
+	- Consistent vocabulary is now in force: Two object types, **stacks** and **frames**. See :ref:`**stacks** <Stacks>` and :ref:`**frames** <Frames>`.
+	- :mod:`~AstroObject.iraftools` is included to provide access to writing and reading IRAF FITS files in a python-centric routine.
+	- Testing is vastly improved.
 * 0.4.0
     - Inheritance structure improved, now with abstract classes and mixins. See :ref:`AstroObjectAPI`
     - Documentation improved wildly, now everything except AstroCache is documented. See :doc:`index`.
@@ -61,9 +64,9 @@ Release Notes
         - Added a warning if you are resampling a spectrum to a higher resolution than the original source. The warning will not affect operation, but will message stdout
         - Now we clip zeros out of the flux, so that the resampled spectra will never return zero. The resulting value just won't be in the array.
     - Added the HDU-based frame and object system. The HDU system allows more direct manipulaton of HDUs. I'm still not confident in HDU's ability to preserve data during reads and writes. (Specifically writes, but I'm unsure about reads as well...)
-    - ``_default_state(self,states=None)`` allows the user to filter states that you will use for the default collection
-    - Prevented object `write()` function from taking the primary state from outside of the set of written states.
-    - ``write()`` now uses the HDU header "LABEL" in order to set the state label
+    - ``_default_frame(self,frames=None)`` allows the user to filter frames that you will use for the default collection
+    - Prevented object `write()` function from taking the primary frame from outside of the set of written frames.
+    - ``write()`` now uses the HDU header "LABEL" in order to set the frame label
     - Removed initilaizng frame data from object initialization.
     - Added the ``__version__`` variable to all module components
     - ``__all__`` filtering for Utilities (and other modules)
@@ -84,7 +87,7 @@ Release Notes
     - AstroObject now has a ``clobber`` mode which allows ``.save()`` to overwrite data
     - AstroObject now has a ``.clear()`` method to delete all data.
     - Fixed a bug which might crop up when saving only a single frame to a FITS file in AstroObject.
-    - AstroObject more consistently uses the ``._default_state()`` call to set statename.
+    - AstroObject more consistently uses the ``._default_frame()`` call to set framename.
     - Made a temporary fix for data copying bugs
     - Documentation of API
     - Documentation of AnalyticSpectra
@@ -100,7 +103,7 @@ Release Notes
 * 0.2.2
     - Hotfix to include updated notes in the README and to update documentation
 * 0.2.1 
-    - ``object.keep()`` only keeps the specified states
+    - ``object.keep()`` only keeps the specified frames
     - ``object.keep()`` and ``object.remove()`` both accept arbitrary numbers of arguments
     - derived classes now have a ``__valid__()`` method
     - ``object.object()`` has become ``object.frame()`` for more naming consistency. NOTE: ``object.object()`` will be depreciated.

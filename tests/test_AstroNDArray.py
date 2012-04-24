@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2012-04-18.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.5-a2
+#  Version 0.5-b1
 # 
 
 
@@ -79,7 +79,7 @@ class test_NDArrayFrame(equality_ImageFrame,API_General_Frame):
         
         
 
-class test_NDArrayStack(equality_ImageFrame,API_Base_Object):
+class test_NDArrayStack(equality_ImageFrame,API_BaseStack):
     """AstroNDArray.NDArrayStack"""
     
     def setup(self):
@@ -111,13 +111,13 @@ class test_NDArrayStack(equality_ImageFrame,API_Base_Object):
         AObject = self.OBJECT()
         AObject.save(self.frame())
         AObject.save(AObject.data(),"Other")
-        assert AObject.statename == "Other"
+        assert AObject.framename == "Other"
         assert AObject.frame().label == "Other"
         AObject.select("Valid")
-        assert AObject.statename == "Valid"
+        assert AObject.framename == "Valid"
         assert AObject.frame().label == "Valid"
         AObject.select("Other")
-        assert AObject.statename == "Other"
+        assert AObject.framename == "Other"
         assert AObject.frame().label == "Other"
         data = AObject.data()
         data[1,1] = -1.0

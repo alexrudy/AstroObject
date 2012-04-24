@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-a2
+#  Version 0.5-b1
 # 
 u"""
 .. _AstroObjectAPI:
@@ -34,13 +34,17 @@ The API also provides a number of Mixin classes for special cases. These mixins 
 Module Structure
 ----------------
 
+The module generally uses **stacks** and **frames** as the base structures. **Stacks** are easily implemented (as above), and **frames** are single data instances which provide all of the required methods from :class:`BaseFrame`. The structure for **Stacks** is quite simple, as there is little variance among different stacks. **Frames** each are required to implement all of the methods in :class:`BaseFrame`, with only a few of those methods implmeneted by default, and most of these require re-implementation.
+
+The Mixin classes are provided to make the creation of certain basic methods easier, and to remove the requirement that other basic methods be implemented. See :ref:`Mixins` for more information.
+
 .. inheritance-diagram::
     AstroObject.AstroFITS.FITSFrame
     AstroObject.AstroFITS.FITSStack
     AstroObject.AstroImage.ImageFrame
     AstroObject.AstroImage.ImageStack
     AstroObject.AstroSpectra.SpectraFrame
-    AstroObject.AstroSpectra.SpectraStrack
+    AstroObject.AstroSpectra.SpectraStack
     AstroObject.AstroHDU.HDUFrame
     AstroObject.AstroHDU.HDUStack
     AstroObject.AstroNDArray.NDArrayFrame
@@ -382,8 +386,6 @@ class HDUHeaderMixin(Mixin):
         HDU.header.update('object',self.label)
         if isinstance(self.header,collections.Mapping):
             headeri = self.header.iteritems()
-        else:
-            headeri = self.header.ascardlist().iteritems()
         for key,value in headeri:
             HDU.header.update(key,value)
         return HDU
@@ -481,8 +483,8 @@ class BaseStack(collections.MutableMapping):
     def __init__(self,filename=None,dataClasses=None,**kwargs):
         super(BaseStack, self).__init__(**kwargs)
         # Image data variables.
-        self.states = {}            # Storage for all of the images
-        self.statename = None       # The active state name
+        self._frames = {}            # Storage for all of the images
+        self._framename = None       # The active frame name
         self.filename = filename    # The filename to use for file loading and writing
         self.clobber = False
         self.name = False
@@ -524,39 +526,60 @@ class BaseStack(collections.MutableMapping):
         
     def __iter__(self):
         """Dictionary iterator call."""
-        return self.states.iterkeys()
+        return self._frames.iterkeys()
         
     def __contains__(self,item):
         """Dictionary contain testing"""
-        return item in self.states
+        return item in self._frames
         
     def __len__(self):
         """Dictionary length.
         
         :returns: integer"""
-        return len(self.states.keys())
+        return len(self._frames.keys())
+    
+    @property
+    def framename(self):
+        """Current frame name::
+            
+            >>> Stack.framename
+            
+        """
+        return self._default_frame()
     
     @property
     def d(self):
-        """The data for the selected FITS frame."""
+        """The data for the selected FITS frame. Equivalent to::
+            
+            >>> Stack.data()
+            
+        """
         return self.data()
     
     @property
     def f(self):
-        """The selected FITS frame. This frame is usually the last modified frame in the system."""
+        """The selected FITS frame. This frame is usually the last modified frame in the system. Equivalent to::
+        
+            >>> Stack.frame()
+            
+        or::
+            
+            >>> Stack.frame(framename=Stack.s)
+            
+        """
         return self.frame()
     
         
     ###############################
     # Basic Object Mode Functions #
     ###############################
-    def save(self,data,statename=None,clobber=False,select=True):
+    def save(self,data,framename=None,clobber=False,select=True):
         """Saves the given data to this object. If the data is an instance of one of the acceptable :attr:`dataClasses` then this method will simply save the data. Otherwise, it will attempt to cast the data into one of the acceptable :attr:`dataClasses` using their :meth:`__save__` mehtod.
         
         :param data: Data, typed like one of the data classes, or data which could initialize one of those classes.
-        :param string statename: The label name to use for this data.
+        :param string framename: The label name to use for this data.
         :param bool clobber: Whether to overwrite the destination label or raise an error.
-        :param bool select: Select this state as the default reading state.
+        :param bool select: Select this frame as the default reading frame.
         :raises: :exc:`TypeError` when the data cannot be cast as any dataClass
         :raises: :exc:`KeyError` when the data would overwrite an existing frame.
         
@@ -566,57 +589,59 @@ class BaseStack(collections.MutableMapping):
             Object = None
             for dataClass in self.dataClasses:
                 try:
-                    Object = dataClass.__save__(data,statename)
+                    Object = dataClass.__save__(data,framename)
                 except NotImplementedError as AE:
                     LOG.log(2,"Cannot save as %s: %s" % (dataClass,AE))
                 else:
                     break
             if Object is None:
                 raise TypeError("Object to be saved cannot be cast as %s" % self.dataClasses)
+        elif framename is not None:
+            Object = data.copy(label=framename)
         else:
-            Object = data.copy(label=statename)
+            Object = data
             
-        if statename == None:
-            statename = Object.label
+        if framename == None:
+            framename = Object.label
         else:
-            assert Object.label == statename, "Object label improperly set by constructor"
+            assert Object.label == framename, "Object label improperly set by constructor"
             
-        if statename in self.states and not (clobber or self.clobber):
-            raise KeyError("Cannot Duplicate State Name: \'%s\' Use this.remove(\'%s\') or clobber=True" % (statename,statename))
-        elif statename in self.states:
-            LOG.log(2,"Overwiting the frame %s" % statename)
-        # Save the actual state
-        self.states[statename] = Object
+        if framename in self._frames and not (clobber or self.clobber):
+            raise KeyError("Cannot Duplicate State Name: \'%s\' Use this.remove(\'%s\') or clobber=True" % (framename,framename))
+        elif framename in self._frames:
+            LOG.log(2,"Overwiting the frame %s" % framename)
+        # Save the actual frame
+        self._frames[framename] = Object
         LOG.log(5,"Saved frame %s" % Object)
-        # Activate the saved state as the current state
+        # Activate the saved frame as the current frame
         if select:
-            self.select(statename)
-        return statename
+            self.select(framename)
+        return framename
     
-    def data(self,statename=None,**kwargs):
-        """Returns the raw data for the current state. This is done through the :meth:`FITSFrame.__call__` method, which should return basic data in as raw a form as possible. The purpose of this call is to allow the user get at the most recent piece of data as easily as possible.
+    def data(self,framename=None,**kwargs):
+        """Returns the raw data for the current frame. This is done through the :meth:`FITSFrame.__call__` method, which should return basic data in as raw a form as possible. The purpose of this call is to allow the user get at the most recent piece of data as easily as possible.
         
-        :param string statename: the name of the state to be retrieved.
+        :param string framename: the name of the frame to be retrieved.
         :param kwargs: arguments to be passed to the data call.
         :returns: np.array of called data
         
         .. Warning::
-            I have not finished examining some issues with referencing vs. copying data that comes out of this call. Be aware that manipulating some objects produced here may actually manipulate the version saved in the Object. The current implementation which protects this call relies on the numpy copy command, ``np.copy(state())``, which might fail when used with data objects that do not return numpy arrays.
+            I have not finished examining some issues with referencing vs. copying data that comes out of this call. Be aware that manipulating some objects produced here may actually manipulate the version saved in the Object. The current implementation which protects this call relies on the numpy copy command, ``np.copy(frame())``, which might fail when used with data objects that do not return numpy arrays.
         """
-        # Load the current stat if no state provided
-        if not statename:
-            statename = self.statename
-        if statename != None and statename in self.states:
-            return np.copy(self.states[statename](**kwargs))
+        # Load the current stat if no frame provided
+        if not framename:
+            framename = self.framename
+        if framename != None and framename in self._frames:
+            return np.copy(self._frames[framename](**kwargs))
         else:
-            self._key_error(statename)
+            self._key_error(framename)
     
 
     
-    def frame(self,statename=None):
+    def frame(self,framename=None):
         """Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.
         
-        :param string statename: the name of the state to be retrieved.
+        :param string framename: the name of the frame to be retrieved.
         :returns: dataClass instance for this object
         
         .. Warning::
@@ -632,28 +657,34 @@ class BaseStack(collections.MutableMapping):
         
         .. Note:: 
             Using frames can be advantageous as you don't rely on the Object to guess what type of frame should be used. Most times, the object will guess correctly, but Frames are a more robust way of ensuring type consistency"""
-        if not statename:
-            statename = self.statename
-        if statename != None and statename in self.states:
-            return self.states[statename]
+        if not framename:
+            framename = self.framename
+        if framename != None and framename in self._frames:
+            return self._frames[framename]
         else:
-            self._key_error(statename)
+            self._key_error(framename)
     
-    def object(self,statename=None):
+    def object(self,framename=None):
         LOG.log(5,"Method \".object()\" on %s has been depreciated. Please use \".frame()\" instead." % self)
-        return self.frame(statename)
+        return self.frame(framename)
         
-    def select(self,statename):
-        """Sets the default frame to the given statename. Normally, the default frame is the one that was last saved.
+    def select(self,framename):
+        """Sets the default frame to the given framename. Normally, the default frame is the one that was last saved.
         
-        :param string statename: the name of the state to be selected.
+        :param string framename: the name of the frame to be selected.
+        
+        If ``framename=None``, then this method will select the most recently modified frame.
         
         """
-        if statename not in self.states:
-            self._key_error(statename)
-        self.statename = statename
-        LOG.log(5,"Selected state \'%s\'" % statename)
-        return
+        if framename is None:
+            self._framename = None # Unselect frame
+            framename = self._default_frame()
+            LOG.log(2,"Setting frame by cancelling selection and asking for default frame.")
+        elif framename not in self._frames:
+            self._key_error(framename)
+        self._framename = framename
+        LOG.log(5,"Selected frame \'%s\'" % self.framename)
+        return self.framename
     
     def list(self):
         """Provides a list of the available frames, by label.
@@ -661,157 +692,151 @@ class BaseStack(collections.MutableMapping):
         :returns: list
         
         """
-        return self.states.keys()
+        return self._frames.keys()
     
-    def _key_error(self,statename):
-        """Throw a keyError for the given statename."""
-        msg = "%s: State %s does not exist.\nStates: %s" % (self,statename,self.list())
+    def _key_error(self,framename):
+        """Throw a keyError for the given framename."""
+        msg = "%s: State %s does not exist.\nStates: %s" % (self,framename,self.list())
         raise KeyError(msg)
     
-    def _default_state(self,states=None):
-        """Returns the default state name. If the currently selected state exists, it's state name will return. If not, the system will search for the newest state.
+    def _default_frame(self,frames=None):
+        """Returns the default frame name. If the currently selected frame exists, it's frame name will return. If not, the system will search for the newest frame. If no frames exist, this function will return None.
         
-        :param tuple states: Tuple of state names from which to select the default. If not given, will use all states.
-        :returns: string statename
+        :param tuple frames: Tuple of frame names from which to select the default. If not given, will use all frames.
+        :returns: string framename
         
         """
-        if states == None:
-            states = self.list()
-        if self.statename in states:
-            return self.statename
-        if [] == states:
+        if frames == None:
+            frames = self.list()
+        if self._framename is not None and self._framename in frames:
+            return self._framename
+        if [] == frames:
             return None
-        Ages = [ time.clock() - self.frame(name).time for name in states ]
-        youngest = states[np.argmin(Ages)]
+        Ages = [ time.clock() - self.frame(name).time for name in frames ]
+        youngest = frames[np.argmin(Ages)]
         return youngest
     
     def clear(self,delete=False):
-        """Clears all states from this object. Returns an empty list representing the currently known states.
+        """Clears all frames from this object. Returns an empty list representing the currently known frames.
         
-        :param bool delete: whether to explicitly delete states or just stop referencing dictionary.
-        :returns: list of states remaining
+        :param bool delete: whether to explicitly delete frames or just stop referencing dictionary.
+        :returns: list of frames remaining
         
         """
         if delete:
-            for state in self.states.keys():
-                del self.states[state]
-            del self.states
-        self.states = {}
-        self.statename = self._default_state()
-        LOG.log(5,"%s: Cleared all states. Remaining: %s" % (self,self.list()))
+            for frame in self._frames.keys():
+                del self._frames[frame]
+            del self._frames
+        self._frames = {}
+        self._framename = self._default_frame()
+        LOG.log(5,"%s: Cleared all frames. Remaining: %s" % (self,self.list()))
         return self.list()
     
     
-    def keep(self,*statenames,**kwargs):
-        """Removes all states except the specified frame(s) in the object.
+    def keep(self,*framenames,**kwargs):
+        """Removes all frames except the specified frame(s) in the object.
         
-        :param statenames: the statenames to be kept.
+        :param framenames: the framenames to be kept.
         :param bool delete: whether to explicitly delete stages.
-        :returns: list of states remaining.
+        :returns: list of frames remaining.
         
         """
-        oldStates = self.states
+        oldStates = self._frames
         newStates = {}
-        for statename in statenames:
-            if statename not in self.states:
-                raise IndexError("%s: State %s does not exist!" % (self,statename))
-            newStates[statename] = oldStates[statename]
-        LOG.log(5,"%s: Kept states %s" % (self,list(statenames)))
-        if "delete" in kwargs and kwargs["delete"]:
-            for state in self.states.keys():
-                if state not in statenames:
-                    del self.states[state]
-            del self.states
-        self.states = newStates
-        self.statename = self._default_state()
+        for framename in framenames:
+            if framename not in self._frames:
+                raise IndexError("%s: State %s does not exist!" % (self,framename))
+            newStates[framename] = oldStates[framename]
+        LOG.log(5,"%s: Kept frames %s" % (self,list(framenames)))
+        if kwargs.get("delete",False):
+            for frame in self._frames.keys():
+                if frame not in framenames:
+                    del self._frames[frame]
+            del self._frames
+        self._frames = newStates
+        self._framename = self._default_frame()
         return self.list()
     
-    def remove(self,*statenames,**kwargs):
+    def remove(self,*framenames,**kwargs):
         """Removes the specified frame(s) from the object.
         
-        :param statenames: the statenames to be deleted.
+        :param framenames: the framenames to be deleted.
         :param bool delete: whether to explicitly delete stages.
-        :returns: list of states remaining.
+        :returns: list of frames remaining.
         
         """
-        if "clobber" in kwargs and kwargs["clobber"]:
-            clobber = True
-        else:
-            clobber = False
-        if "delete" in kwargs and kwargs["delete"]:
-            delete = True
-        else:
-            delete = False
         removed = []
-        LOG.log(2,"%s: Requested remove %s" % (self,statenames))
-        for statename in statenames:
-            if statename not in self.states:
-                if clobber:
-                    LOG.info("%s: Not removing state %s as it does not exist" % (self,statename))
+        LOG.log(2,"%s: Requested remove %s" % (self,framenames))
+        for framename in framenames:
+            if framename not in self._frames:
+                if kwargs.get("clobber",False):
+                    LOG.info("%s: Not removing frame %s as it does not exist" % (self,framename))
                 else:
-                    raise IndexError("%s: Object %s does not exist!" % (self,statename))
-            elif delete:
-                del self.states[statename]
+                    raise IndexError("%s: Object %s does not exist!" % (self,framename))
+            elif kwargs.get("delete",False):
+                del self._frames[framename]
             else:
-                self.states.pop(statename)
-            removed += [statename]
-        self.statename = self._default_state()
-        LOG.log(5,"%s: Removed states %s" % (self,removed))
+                self._frames.pop(framename)
+            removed += [framename]
+        self._framename = self._default_frame()
+        LOG.log(5,"%s: Removed frames %s" % (self,removed))
         return self.list()
     
-    def show(self,statename=None):
-        """Returns the (rendered) matplotlib plot for this object. This is a quick way to view your current data state without doing any serious plotting work. This aims for the sensible defaults philosophy, if you don't like what you get, write a new method that uses the :meth:`data` call and plots that.
+    def show(self,framename=None):
+        """Returns the (rendered) matplotlib plot for this object. This is a quick way to view your current data frame without doing any serious plotting work. This aims for the sensible defaults philosophy, if you don't like what you get, write a new method that uses the :meth:`data` call and plots that.
         
-        :param string statename: the name of the state to be retrieved.
+        :param string framename: the name of the frame to be retrieved.
         
         """
-        # Load the current stat if no state provided
-        if not statename:
-            statename = self._default_state()
-        if statename != None and statename in self.states:
-            return self.states[statename].__show__()
+        # Load the current stat if no frame provided
+        if not framename:
+            framename = self._default_frame()
+        if framename != None and framename in self._frames:
+            return self._frames[framename].__show__()
         else:
-            self._key_error(statename)
+            self._key_error(framename)
     
-    def write(self,filename=None,states=None,primaryState=None,clobber=False,singleFrame=False):
-        """Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify ``states`` then only those states will be used. ``primaryState`` should be the state of the front HDU. When not specified, the latest state will be used. It uses the :attr:`dataClasses` :meth:`FITSFrame.__hdu__` method to return a valid HDU object for each Frame.
+    def write(self,filename=None,frames=None,primaryFrame=None,clobber=False,singleFrame=False):
+        """Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify ``frames`` then only those frames will be used. ``primaryFrame`` should be the frame of the front HDU. When not specified, the latest frame will be used. It uses the :attr:`dataClasses` :meth:`FITSFrame.__hdu__` method to return a valid HDU object for each Frame.
         
         :param string filename: the name of the file for saving.
-        :param list states: A list of states to include in the file. If ``None``, save all states.
-        :param string primaryState: The state to become the front of the FITS file. If none, uses :meth:`_default_state`
+        :param list frames: A list of frames to include in the file. If ``None``, save all frames.
+        :param string primaryFrame: The frame to become the front of the FITS file. If none, uses :meth:`_default_frame`
         :param bool clobber: Whether to overwrite the destination file or not.
         :param bool singleFrame: Whether to save only a single frame.
+        :returns: Tuple of (PrimaryFrame, Frames, Filename)
         
         """
-        if not states:
-            states = self.list()
-            LOG.log(2,"Saving all states: %s" % states)
-        if not primaryState:
-            primaryState = self._default_state(states)
-            LOG.log(2,"Set primary statename to default state %s" % primaryState)
-        if primaryState in states:
-            states.remove(primaryState)
+        if not frames:
+            frames = self.list()
+            LOG.log(2,"Saving all frames: %s" % frames)
+        if not primaryFrame:
+            primaryFrame = self._default_frame(frames)
+            LOG.log(2,"Set primary framename to default frame %s" % primaryFrame)
+        if primaryFrame in frames:
+            frames.remove(primaryFrame)
         if singleFrame:
-            states = []
+            frames = []
         if not filename:
             if self.filename == None:
-                filename = primaryState
+                filename = primaryFrame
                 LOG.log(2,"Set Filename from Primary State. Filename: %s" % filename)
             else:
                 filename = self.filename
                 LOG.log(2,"Set filename from Object. Filename: %s" % filename)
         if isinstance(filename,(str,unicode)):
             filename = validate_filename(filename)
-        PrimaryHDU = self.states[primaryState].hdu(primary=True)
-        if len(states) > 0:
-            HDUs = [self.states[state].hdu(primary=False) for state in states]
+        PrimaryHDU = self._frames[primaryFrame].hdu(primary=True)
+        if len(frames) > 0:
+            HDUs = [self._frames[frame].hdu(primary=False) for frame in frames]
             HDUList = pf.HDUList([PrimaryHDU]+HDUs)
         else:
             HDUList = pf.HDUList([PrimaryHDU])
         HDUList.writeto(filename,clobber=clobber)
-        LOG.log(5,"Wrote state %s (primary) and states %s to FITS file %s" % (primaryState,states,filename))
+        LOG.log(5,"Wrote frame %s (primary) and frames %s to FITS file %s" % (primaryFrame,frames,filename))
+        return primaryFrame,frames,filename
     
-    def read(self,filename=None,statename=None):
+    def read(self,filename=None,framename=None,clobber=False):
         """This reader takes a FITS file, and trys to render each HDU within that FITS file as a frame in this Object. As such, it might read multiple frames. This method will return a list of Frames that it read. It uses the :attr:`dataClasses` :meth:`FITSFrame.__read__` method to return a valid Frame object for each HDU.
         
         ::
@@ -819,27 +844,31 @@ class BaseStack(collections.MutableMapping):
             >>> obj = BaseStack()
             >>> obj.read("SomeImage.fits")
             >>> obj.list()
-            ["SomeImage","SomeImage Frame 1","SomeImage Frame 2"]
+            ["SomeImage","SomeImage-1","SomeImage-2"]
             
         """
         if not filename:
             filename = self.filename
-        if statename is None:
-            LOG.log(2,"Set statename for image from filename: %s" % os.path.basename(filename))
         HDUList = pf.open(filename)
         Read = 0
         Labels = []
-        for HDU in HDUList:
-            Object = None
-            if statename is None and "label" in HDU.header:
-                label = HDU.header["label"]
-            elif statename is None:
-                statename = os.path.basename(filename)
-                label = statename
-            else:
-                label = statename
+        for HDU in HDUList:    
+            Object = None # Target variable
+            if framename is None and "label" in HDU.header:
+                # We take from the "label" HDU when we aren't given explicit framenames
+                framename = HDU.header["label"]
+                LOG.log(2,"Set label for image from HDU Header: %s" % framename)
+            elif framename is None:
+                # We default the framename to be the basename of the file
+                framename = os.path.basename(filename)
+                LOG.log(2,"Set label for image from filename: %s" % framename)
+            label = framename
             if label in Labels:
-                label = label + " Frame %d" % Read
+                # We don't allow repeat loading of labels
+                label = framename + "-%d" % Read
+                LOG.log(2,"Incrementing label for multi-frame images: %s" % label)
+            
+            # Iterate through our potential data classes
             for dataClass in self.dataClasses:
                 try:
                     Object = dataClass.__read__(HDU,label)
@@ -853,12 +882,12 @@ class BaseStack(collections.MutableMapping):
             else:
                 Read += 1
                 Labels += [label]
-                self.save(Object)
+                self.save(Object,clobber=clobber)
         if not Read:
             msg = "No HDUs were saved from FITS file %s to %s" % (filename,self)
             raise ValueError(msg)
         
-        LOG.log(5,"Saved states %s" % Labels)
+        LOG.log(5,"Saved frames %s" % Labels)
         return Labels
     
     def fromAtFile(self,atfile):
@@ -878,7 +907,7 @@ class BaseStack(collections.MutableMapping):
             
             >>> obj = BaseStack.fromFile("SomeImage.fits")
             >>> obj.list()
-            ["SomeImage","SomeImage Frame 1","SomeImage Frame 2"]
+            ["SomeImage","SomeImage-1","SomeImage-2"]
             
         
         """
@@ -886,4 +915,12 @@ class BaseStack(collections.MutableMapping):
         Object.read(filename)
         return Object
 
+class FrameStack(BaseStack):
+    """This stack accepts any type of frame, and overrides data-saving style save methods by calling the BaseFrame save method by default, which will fail because it isn't implemented."""
+    def __init__(self):
+        super(FrameStack, self).__init__()
+        self.dataClasses = [BaseFrame]
+        
+    
+        
 

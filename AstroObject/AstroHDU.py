@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-11-08.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-a2
+#  Version 0.5-b1
 # 
 """
 :mod:`AstroHDU` – HDU Objects and Storage 
@@ -165,7 +165,9 @@ class HDUStack(AstroObjectBase.BaseStack):
     """This object tracks a number of HDU frames. This class is a simple subclass of :class:`AstroObjectBase.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. It uses only the :class:`HDUFrame` class for data.
     """
     def __init__(self, dataClasses=[HDUFrame],filename=None):
-        super(HDUStack, self).__init__(dataClasses=dataClasses)
-        if filename != None:
-            self.read(filename)        # Save the initializing data
-            
+        super(HDUStack, self).__init__(dataClasses=dataClasses,filename=filename)
+        if filename is not None:
+            try:
+                self.read(filename)
+            except IOError:
+                LOG.log(2,"Initializing file doesn't exist yet. Ignoring.")

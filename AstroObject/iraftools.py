@@ -5,13 +5,18 @@
 #  
 #  Created by Alexander Rudy on 2012-04-19.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.5-a2
+#  Version 0.5-b1
 # 
 u"""
 :mod:`iraftools` – IRAF integration facility
 ============================================
 
 This module provides an interface for using :mod:`AstroObject` with PyIRAF. For documentation of the individual methods provided by this module, see :class:`IRAFToolsMixin`. The next two sections will provide a brief overview of the use of :mod:`iraftools`.
+
+To use :mod:`iraftools`, use the :func:`UseIRAFTools` function.
+
+.. autofunction::
+    AstroObject.iraftools.UseIRAFTools
 
 .. _IRAFTools_Filetypes:
 
@@ -20,9 +25,23 @@ File types in :mod:`iraftools`
 
 There are three types of FITS files provided by :mod:`iraftools`:
 
-- ``in`` files are FITS files which are used as input to an ``iraf`` fucntion. They are created immediately, and will exist untill the :mod:`~AstroObject.iraftools` cleanup stage (:meth:`iraf.done <AstroObject.iraftools.IRAFTools.done>`).
-- ``out`` files are FITS files which will be output targets for ``iraf``. As such, the filename returned does not point to an existing FITS file. Instead, the filename points to a potential file which will be re-read by the parent **stack** during the cleanup stage (:meth:`iraf.done <AstroObject.iraftools.IRAFTools.done>`).
-- ``mod`` files are FITS files which will be modified in-place by ``iraf``. These files are created immediately, just like ``in`` files, and are re-loaded automatically during the cleanup stage (:meth:`iraf.done <AstroObject.iraftools.IRAFTools.done>`). To prevent these **frames** from overwriting their original content, use the ``append=`` keyword to append a string to the new **frame** name. You could also make a copy of the original **frame** using
+.. describe:: in-file
+    
+    :meth:`infile <IRAFToolsMixin.iraf.infile>` and :meth:`inatfile <IRAFToolsMixin.iraf.inatfile>`
+    
+    ``in`` files are FITS files which are used as input to an ``iraf`` fucntion. They are created immediately, and will exist untill the :mod:`~AstroObject.iraftools` cleanup stage (:meth:`iraf.done <AstroObject.iraftools.IRAFTools.done>`).
+
+.. describe:: out-file
+    
+    :meth:`outfile <IRAFToolsMixin.iraf.infile>` and :meth:`outatfile <IRAFToolsMixin.iraf.outatfile>`
+    
+    ``out`` files are FITS files which will be output targets for ``iraf``. As such, the filename returned does not point to an existing FITS file. Instead, the filename points to a potential file which will be re-read by the parent **stack** during the cleanup stage (:meth:`iraf.done <AstroObject.iraftools.IRAFTools.done>`).
+
+.. describe:: mod-file
+    
+    :meth:`modfile <IRAFToolsMixin.iraf.modfile>` and :meth:`modatfile <IRAFToolsMixin.iraf.modatfile>`
+    
+    ``mod`` files are FITS files which will be modified in-place by ``iraf``. These files are created immediately, just like ``in`` files, and are re-loaded automatically during the cleanup stage (:meth:`iraf.done <AstroObject.iraftools.IRAFTools.done>`). To prevent these **frames** from overwriting their original content, use the ``append=`` keyword to append a string to the new **frame** name. You could also make a copy of the original **frame** using
     ::
 	
     	Data["newname"] = Data["oldname"]
@@ -46,57 +65,57 @@ A full examle program can be seen in :ref:`IRAFToolsExample`.
 .. autoclass::
     AstroObject.iraftools.IRAFToolsMixin
     
-    .. method:: iraf.infile(statename=None,extension='.fits')
+    .. method:: iraf.infile(framename=None,extension='.fits')
         
-        Returns a filename for a ``fits`` file from the given statename which can be used as input for IRAF tasks. This method should be used for files which will not be modified, as modifications will not be captured by the system. For files which are input, but will be modified, use :meth:`imod`.
+        Returns a filename for a ``fits`` file from the given framename which can be used as input for IRAF tasks. This method should be used for files which will not be modified, as modifications will not be captured by the system. For files which are input, but will be modified, use :meth:`imod`.
         
-        :param statename: The name of the **frame** to use for input.
+        :param framename: The name of the **frame** to use for input.
         :param extension: The file extension to use.
         :returns: Filename for use with PyRAF
     
-    .. method:: iraf.outfile(statename=None,extension='.fits',append=None)
+    .. method:: iraf.outfile(framename=None,extension='.fits',append=None)
         
-        Returns a filename for a ``fits`` file from the given statename which can be used for output for IRAF tasks. The file is not created, but will be read back into this **stack** when :meth:`idone` is called.
+        Returns a filename for a ``fits`` file from the given framename which can be used for output for IRAF tasks. The file is not created, but will be read back into this **stack** when :meth:`idone` is called.
         
-        :param statename: The name of the **frame** to use for output.
+        :param framename: The name of the **frame** to use for output.
         :param extension: The file extension to use.
-        :param append: A string to append to the state names
+        :param append: A string to append to the frame names
         :returns: Filename for use with PyRAF
     
-    .. method:: iraf.modfile(statename=None,newstatename=None,extension='.fits',append=None)
+    .. method:: iraf.modfile(framename=None,newframename=None,extension='.fits',append=None)
     
-        Returns a filename for a ``fits`` file from the given statename which can be used as input for IRAF tasks which modify a file in-place. The file will be reloaded when :meth:`idone` is called.
+        Returns a filename for a ``fits`` file from the given framename which can be used as input for IRAF tasks which modify a file in-place. The file will be reloaded when :meth:`idone` is called.
         
-        :param statename: The name of the **frame** to use for input.
-        :param newstatename: The name of the **frame** to use fo the output. If ``None``, uses ``statename``
+        :param framename: The name of the **frame** to use for input.
+        :param newframename: The name of the **frame** to use fo the output. If ``None``, uses ``framename``
         :param extension: The file extension to use.
-        :param append: A string to be appended tp the new state name.
+        :param append: A string to be appended tp the new frame name.
         :returns: Filename for use with PyRAF
         
-    .. method:: iraf.inatfile(*statenames,extension='.fits')
+    .. method:: iraf.inatfile(*framenames,extension='.fits')
     
         Returns a filename for an "@"-list. The "@"-list lists fits files for each frame provided. These fitsfiles are created automatically. The "@"-list should not be used for in-place modification, for that, use :meth:`imodat`.
         
-        :param statenames: Names of states to be included in the "@"-list.
+        :param framenames: Names of frames to be included in the "@"-list.
         :param extension: The file extension to use.
         :retunrs: Filename of the "@"-list
         
-    .. method:: iraf.outatfile(*statenames,append=None,extension='.fits')
+    .. method:: iraf.outatfile(*framenames,append=None,extension='.fits')
         
         Returns a filename for an "@"-list. The "@"-list lists fits files for each frame provided. These fits-files will be output destinations. They will be re-read into the object when :meth:`idone` is called.
         
-        :param statenames: Names of states to be included in the "@"-list.
+        :param framenames: Names of frames to be included in the "@"-list.
         :param extension: The file extension to use.
-        :param append: A string to append to the state names
+        :param append: A string to append to the frame names
         :retunrs: Filename of the "@"-list
         
-    .. method:: iraf.modatfile(*statenames,append=None,extension='.fits')
+    .. method:: iraf.modatfile(*framenames,append=None,extension='.fits')
         
         Returns a filename for an "@"-list. The "@"-list lists fits files for each frame provided. These fits-files will be in-place modification destinations. They will be re-read into the object when :meth:`idone` is called.
         
-        :param statenames: Names of states to be included in the "@"-list.
+        :param framenames: Names of frames to be included in the "@"-list.
         :param extension: The file extension to use.
-        :param append: A string to append to the state names
+        :param append: A string to append to the frame names
         :retunrs: Filename of the "@"-list
         
     .. method:: iraf.done()
@@ -257,71 +276,71 @@ class IRAFTools(object):
         else:
             self._directory = None
         
-    def infile(self,statename=None,extension='.fits',**kwargs):
-        """Returns a filename for a ``fits`` file from the given statename which can be used as input for IRAF tasks. This method should be used for files which will not be modified, as modifications will not be captured by the system. For files which are input, but will be modified, use :meth:`modfile`.
+    def infile(self,framename=None,extension='.fits',**kwargs):
+        """Returns a filename for a ``fits`` file from the given framename which can be used as input for IRAF tasks. This method should be used for files which will not be modified, as modifications will not be captured by the system. For files which are input, but will be modified, use :meth:`modfile`.
         
-        :param statename: The name of the **frame** to use for input.
+        :param framename: The name of the **frame** to use for input.
         :param extension: The file extension to use.
         :returns: Filename for use with PyRAF
         
         """
-        if statename is None:
-            statename = self.object.statename
-        filename = self.set.filename(extension=extension,prefix=statename)
-        self.object.write(states=[statename],filename=filename,clobber=True)
-        LOG.log(2,"Created infile for state %s named %s" % (statename,filename))
+        if framename is None:
+            framename = self.object.framename
+        filename = self.set.filename(extension=extension,prefix=framename)
+        self.object.write(frames=[framename],filename=filename,clobber=True)
+        LOG.log(2,"Created infile for frame %s named %s" % (framename,filename))
         return filename
         
-    def outfile(self,statename=None,append=None,extension='.fits',**kwargs):
+    def outfile(self,framename=None,append=None,extension='.fits',**kwargs):
         """
-        Returns a filename for a ``fits`` file from the given statename which can be used for output for IRAF tasks. The file is not created, but will be read back into this **stack** when :meth:`done` is called.
+        Returns a filename for a ``fits`` file from the given framename which can be used for output for IRAF tasks. The file is not created, but will be read back into this **stack** when :meth:`done` is called.
         
-        :param statename: The name of the **frame** to use for output.
+        :param framename: The name of the **frame** to use for output.
         :param extension: The file extension to use.
-        :param append: A string to append to the state names
+        :param append: A string to append to the frame names
         :returns: Filename for use with PyRAF
     
         """
-        if statename is None:
-            statename = self.object.statename + "-iraf"
+        if framename is None:
+            framename = self.object.framename + "-iraf"
         if append is not None:
-            statename += append
-        if statename in self.object:
-            raise KeyError("Cannot register state \'%s\' for output, state already exists in %s." % (statename,self.object))
-        filename = self.set.filename(extension=extension,prefix=statename)
+            framename += append
+        if framename in self.object:
+            raise KeyError("Cannot register frame \'%s\' for output, frame already exists in %s." % (framename,self.object))
+        filename = self.set.filename(extension=extension,prefix=framename)
         os.unlink(filename)
-        self.object.save(FITSFrame(data=None,label=statename))
-        self._collect[statename] = filename
-        LOG.log(2,"Created outfile for state %s named %s" % (statename,filename))
+        self.object.save(FITSFrame(data=None,label=framename))
+        self._collect[framename] = filename
+        LOG.log(2,"Created outfile for frame %s named %s" % (framename,filename))
         return filename
         
-    def modfile(self,statename,newstatename=None,append=None,extension='.fits',**kwargs):
-        """Returns a filename for a ``fits`` file from the given statename which can be used as input for IRAF tasks which modify a file in-place. The file will be reloaded when :meth:`done` is called.
+    def modfile(self,framename,newframename=None,append=None,extension='.fits',**kwargs):
+        """Returns a filename for a ``fits`` file from the given framename which can be used as input for IRAF tasks which modify a file in-place. The file will be reloaded when :meth:`done` is called.
         
-        :param statename: The name of the **frame** to use for input.
-        :param newstatename: The name of the **frame** to use fo the output. If ``None``, uses ``statename``
+        :param framename: The name of the **frame** to use for input.
+        :param newframename: The name of the **frame** to use fo the output. If ``None``, uses ``framename``
         :param extension: The file extension to use.
-        :param append: A string to be appended tp the new state name.
+        :param append: A string to be appended tp the new frame name.
         :returns: Filename for use with PyRAF
         """
-        if newstatename is None:
-            newstatename = statename
+        if newframename is None:
+            newframename = framename
         if append is not None:
-            newstatename += append
-        if statename is None:
-            statename = self.object.statename
-        filename = self.set.filename(extension=extension,prefix=statename)
-        self.object.write(states=[statename],filename=filename,clobber=True)
-        if newstatename not in self.object:
-            self.object.save(FITSFrame(data=None,label=newstatename))
-        LOG.log(2,"Created modfile for state %s named %s" % (statename,filename))
-        self._collect[newstatename] = filename
+            newframename += append
+        if framename is None:
+            framename = self.object.framename
+        filename = self.set.filename(extension=extension,prefix=framename)
+        self.object.write(frames=[framename],filename=filename,clobber=True)
+        if newframename not in self.object:
+            self.object.save(FITSFrame(data=None,label=newframename))
+        LOG.log(2,"Created modfile for frame %s named %s" % (framename,filename))
+        self._collect[newframename] = filename
         return filename
         
-    def _atfile(self,*statenames,**kwargs):
+    def _atfile(self,*framenames,**kwargs):
         """Generic atfile creation routine"""
-        if len(statenames) < 1:
-            statenames = self.object.list()
+        if len(framenames) < 1:
+            framenames = self.object.list()
         atlist = self.set.filename(extension='.list')
 
         function = kwargs.pop('function',None)
@@ -329,36 +348,35 @@ class IRAFTools(object):
             raise TypeError("Must provide a filename creation function")
         
         with open(atlist,'w') as stream:
-            for statename in statenames:
-                filename = function(statename,**kwargs)
+            for framename in framenames:
+                filename = function(framename,**kwargs)
                 stream.write("%s\n" % filename)
-        LOG.log(2,"Created atlist for states %s named %s" % (statenames,atlist))
+        LOG.log(2,"Created atlist for frames %s named %s" % (framenames,atlist))
         return "@" + atlist
 
-    def modatfile(self,*statenames,**kwargs):
+    def modatfile(self,*framenames,**kwargs):
         """File list for modification"""
         kwargs.pop("function",None)
-        return self._atfile(*statenames,function=self.modfile,**kwargs)
+        return self._atfile(*framenames,function=self.modfile,**kwargs)
     
-    def inatfile(self,*statenames,**kwargs):
+    def inatfile(self,*framenames,**kwargs):
         """Return a filename with @ appended, for a file which lists a series of fitsfiles."""
         kwargs.pop("function",None)
-        return self._atfile(*statenames,function=self.infile,**kwargs)
+        return self._atfile(*framenames,function=self.infile,**kwargs)
 
-    def outatfile(self,*statenames,**kwargs):
+    def outatfile(self,*framenames,**kwargs):
         """Return a filename with @ appended, for a file which lists a series of fitsfiles"""
         kwargs.pop("function",None)
-        return self._atfile(*statenames,function=self.outfile,**kwargs)
+        return self._atfile(*framenames,function=self.outfile,**kwargs)
         
     def done(self):
-        """Finish the IRAF statename."""
+        """Finish the IRAF framename."""
         if not self.active:
             return
-        for statename,filename in self._collect.iteritems():
-            self.object.remove(statename,clobber=True)
-            states = self.object.read(filename=filename,statename=statename)
-            LOG.log(2,"Collected file for state %s named %s" % (statename,filename))
-            LOG.log(2,"States created: %s" % states)
+        for framename,filename in self._collect.iteritems():
+            frames = self.object.read(filename=filename,framename=framename,clobber=True)
+            LOG.log(2,"Collected file for frame %s named %s" % (framename,filename))
+            LOG.log(2,"States created: %s" % frames)
         self._collect = {}
         self.set.close()
 
@@ -398,13 +416,23 @@ class IRAFToolsMixin(Mixin):
             
         
 
-def UseIRAFTools(objclass):
-    """Class wrapper which allows classes to use IRAF tools."""
-    assert issubclass(objclass,BaseStack)
-    class _IRAFClass(objclass):
+def UseIRAFTools(klass):
+    """Class wrapper which allows classes to use IRAF tools. Takes a single parameter, the class name which should have IRAF tools, and creates a dummy class which activates IRAF tools during initialization.
+    
+    :param klass: The class to apply :mod:`iraftools` to.
+    
+    Example::
+        
+        from AstroObject.iraftools import UseIRAFTools
+        from AstroObject.AstroImage import ImageStack
+        ImageStack = UseIRAFTools(ImageStack)
+        
+    """
+    assert issubclass(klass,BaseStack)
+    class _IRAFClass(klass):
         """An object which contains the IRAF Tools"""
         def __new__(cls,*args,**kwargs):
-            obj = objclass(*args,**kwargs)
+            obj = klass(*args,**kwargs)
             obj.iraf = IRAFTools(obj)
             obj.iraf.set_instance_methods()
             return obj

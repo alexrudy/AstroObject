@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 
 from AstroObject.AstroObjectLogging import *
 from AstroObject.AnalyticSpectra import InterpolatedSpectrum,GaussianSpectrum,FlatSpectrum,BlackBodySpectrum,UnitarySpectrum,Resolver
-from AstroObject.AstroSpectra import SpectraStrack
+from AstroObject.AstroSpectra import SpectraStack
 
 LOG = logging.getLogger('AstroObject')
 LOG.configure()
@@ -26,7 +26,7 @@ WAVELENGTHS_LOWR = ((np.arange(23)+0.25)*2.0 + 1.0) * 1e-7
 LOWR = WAVELENGTHS_LOWR[1:]/np.diff(WAVELENGTHS_LOWR)/2
 VALID = np.array([(np.arange(50) + 1.0) * 1e-7, np.sin(np.arange(50)/2.0)+2.0 + np.arange(50)/25.0])
 
-OBJECT = SpectraStrack()
+OBJECT = SpectraStack()
 
 OBJECT["Raw Data"] = VALID
 OBJECT.show()

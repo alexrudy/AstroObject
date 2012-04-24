@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2012-04-18.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.5-a2
+#  Version 0.5-b1
 # 
 u"""
 :mod:`AstroNDArray` – Numpy Array Frames
@@ -73,13 +73,19 @@ class NDArrayFrame(HDUHeaderMixin,BaseFrame,np.ndarray):
             obj.header = header
         else:
             assert header == None, "%s doesn't understand the header, %s, type %s" % (self,header,type(header))
+        if isinstance(metadata,collections.Mapping):
+            obj.metadata = metadata
+        else:
+            obj.metadata = {}
         if not hasattr(obj,'time'):
             obj.time = time.clock()
+            LOG.log(2,"Saving NDArrayFrame at time %r" % obj.time)
         obj.__setlabel__(label)
         try:
             obj.__valid__()
         except AssertionError as e:
             raise AttributeError(str(e))
+        LOG.log(2,"Created NDArrayFrame labeled %r" % obj.label)
         return obj
     
     def __array_finalize__(self,obj):
@@ -88,9 +94,14 @@ class NDArrayFrame(HDUHeaderMixin,BaseFrame,np.ndarray):
             self.header = getattr(obj,'header',pf.core.Header())
             self.metadata = getattr(obj,'metadata',{})
             self._label = getattr(obj,'label',None)
-        if not hasattr(self,'time'):
+            self.time = getattr(obj,'time',None)
+        if not hasattr(self,'time') or self.time is None:
             self.time = time.clock()
-        if isinstance(self.header,collections.Mapping):
+            LOG.log(2,"Setting NDArrayFrame at time %r" % self.time)
+        if isinstance(self.header,pf.core.Header):
+            #Nothing to do when we are already with the correct header type.
+            pass
+        elif isinstance(self.header,collections.Mapping):
             _header = self.header
             self.header = pf.core.Header()
             for key,value in _header.iteritems():
@@ -101,6 +112,7 @@ class NDArrayFrame(HDUHeaderMixin,BaseFrame,np.ndarray):
             self.__valid__()
         except AssertionError as e:
             raise AttributeError(str(e))
+        LOG.log(2,"Initialized NDArrayFrame labeled %r" % self.label)
         
     def __setlabel__(self,label):
         """One use function to set the label"""

@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-31.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-a2
+#  Version 0.5-b1
 # 
 
 import numpy as np
@@ -61,8 +61,8 @@ class test_SpectraFrame(equality_SpectraFrame,API_General_Frame):
     
         
         
-class test_SpectraStrack(equality_SpectraFrame,API_Base_Object):
-    """AstroSpectra.SpectraStrack"""
+class test_SpectraStack(equality_SpectraFrame,API_BaseStack):
+    """AstroSpectra.SpectraStack"""
         
     def setup(self):
         """Fixture for setting up a basic image frame"""
@@ -74,7 +74,7 @@ class test_SpectraStrack(equality_SpectraFrame,API_Base_Object):
         self.FRAMESTR = "<'ImageFrame' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.axes.Subplot
-        self.OBJECT = AstroObject.AstroSpectra.SpectraStrack
-        super(test_SpectraStrack, self).setup()
+        self.OBJECT = AstroObject.AstroSpectra.SpectraStack
+        super(test_SpectraStack, self).setup()
     
         

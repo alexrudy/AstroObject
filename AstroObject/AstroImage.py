@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-04-28.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-a2
+#  Version 0.5-b1
 # 
 """
 :mod:`AstroImage` — Image Stacks and Storage 
@@ -103,7 +103,7 @@ class ImageFrame(AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame):
         LOG.log(2,"Plotting %s using matplotlib.pyplot.imshow" % self)
         import matplotlib as mpl
         import matplotlib.pyplot as plt
-        figure = plt.imshow(self())
+        figure = plt.imshow(self(),interpolation="nearest")
         plt.title(r'\verb-'+self.label+r'-')
         figure.set_cmap('binary_r')
         plt.colorbar()
@@ -155,162 +155,79 @@ class ImageStack(AstroObjectBase.BaseStack):
         if array != None:
             raise NotImplemented("Cannot initialize with data")        # Save the initializing data
             
-    def loadFromFile(self,filename=None,statename=None):
+    def loadFromFile(self, filename=None, framename=None):
         """This function can be used to load an image file (but not a FITS file) into this image frame. Image files should be formats accepatble to the Python Image Library, but that generally applies to most common image formats, such as .png and .jpg .
-        This method takes a *filename* and a *statename* parameter. If either is not given, they will be generated using sensible defaults."""
+        This method takes a *filename* and a *framename* parameter. If either is not given, they will be generated using sensible defaults."""
         if not filename:
             filename = self.filename
-        if statename == None:
-            statename = os.path.basename(filename)
-            LOG.log(2,"Set statename for image from filename: %s" % statename)
+        if framename == None:
+            framename = os.path.basename(filename)
+            LOG.log(2,"Set framename for image from filename: %s" % framename)
         import matplotlib.image as mpimage
-        self.save(mpimage.imread(filename),statename)
+        self.save(mpimage.imread(filename),framename)
         LOG.log(5,"Loaded Image from file: "+filename)
     
-    def show3D(self,statename=None):
+    def show3D(self, framename=None):
         """Shows a 3D contour of the image"""
-        if not statename:
-            statename = self._default_state()
-        if statename != None and statename in self.states:
+        if not framename:
+            framename = self.framename
+        if framename != None and framename in self:
             import matplotlib as mpl
             import matplotlib.pyplot as plt
             from matplotlib import cm            
-            X = np.arange(self.states[self.statename]().shape[0])
-            Y = np.arange(self.states[self.statename]().shape[1])
+            X = np.arange(self.data(framename).shape[0])
+            Y = np.arange(self.data(framename).shape[1])
             X,Y = np.meshgrid(X,Y)
-            Z = self.states[self.statename]()
+            Z = self.data(framename)
             LOG.log(2,"3D Plotting: Axis Size %s %s %s" % (X.size, Y.size, Z.size))
             ax = plt.gca(projection='3d')
             surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.jet, linewidth=0, antialiased=False)
             plt.colorbar(surf, shrink=0.5, aspect=5)
-            LOG.log(2,"Plot Image in 3D: %s" % self.statename)
+            LOG.log(2,"Plot Image in 3D: %s" % framename)
         else:
-            raise KeyError("Object not instantiated with any data...")
-
-
-class OLDImageStack(AstroObjectBase.BaseStack):
-    """docstring for ImageStack"""
-    
-    ##########################
-    # File Writing Functions #
-    ##########################
-    
-    def FITS(self,filename=None,statename=None):
-        """Generates a FITS file of the specified filename, and returns that filename for convenience. This function will only include the specified statename."""
-        if not statename:
-            statename = self.statename
-        if not filename:
-            if self.filename == None:
-                filename = statename
-                LOG.log(8,"Setting Filename from statename %s. No filename validation was performed." % filename)
-            else:
-                filename = self.filename
-                LOG.log(8,"Setting filename from default %s. No filename validation was performed" % filename)
-        
-        filename = validate_filename(filename)
-        LOG.log(2,"Generating FITS File from state %s with filename %s" % (statename,filename))
-        HDU = pf.PrimaryHDU(self.states[statename]())
-        HDUList = pf.HDUList([HDU])
-        HDUList.writeto(filename)
-        LOG.log(5,"Wrote FITS File %s" % filename)
-        return filename
-    
-    def outFITS(self,filename=None,statename=None):
-        """This creates a FITS file designed for output from an IRAF function.
-        This function creates the FITS file, and requests that at the next opportune moment,
-        the object should re-read the created FITS file, re-incorportating it in the object
-        model and deleting the original file."""
-        
-        if not statename:
-            statename = self.statename
-        if not filename:
-            if self.filename == None:
-                filename = statename
-                LOG.log(8,"Setting Filename from statename %s. No filename validation was performed." % filename)
-            else:
-                filename = self.filename
-                LOG.log(8,"Setting filename from default %s. No filename validation was performed" % filename)
-                
-        filename = validate_filename(filename)
-        if os.access(filename,os.F_OK):
-            LOG.critical("FITS File %s Exists, and is scheduled to be over-written..." % filename)
-        
-        if not self.outputData:
-            self.outputData = []
-        self.outputData += [(filename,statename)]
-        
-        return filename
-    
-    def inFITS(self,filename=None,statename=None):
-        """similar to outFITS, handles fits files used for IRAF routines"""
-        filename = self.FITS(filename,statename)
-        if not self.inputData:
-            self.inputData = []
-        self.inputData += [filename]
-        
-        return filename
-    
-    def reloadFITS(self):
-        """Reloads the last created temporary FITS file from an action."""
-        if self.outputData:
-            for filename,statename in self.outputData:
-                self.outputData = False
-                self.loadFromFITS(filename,statename)
-                if os.access(filename,os.F_OK):
-                    os.remove(filename)
-                    LOG.log(5,"Deleted FITS file %s" % filename)
-        if self.inputData:
-            for filename in self.inputData:
-                self.inputData = False
-                if os.access(filename,os.F_OK):
-                    os.remove(filename)
-                    LOG.log(5,"Deleted FITS file %s" % filename)
-                
-    
+            self._key_error(framename)
     
     ##########################
     # Manipulating Functions #
     ##########################
-    def mask(self,left,top,right=None,bottom=None):
-        """Masks the image by the distances provided"""
+    def mask(self, left, top, right=None, bottom=None, label=None, clobber=True):
+        """Masks the image by the distances provided. This function masks the current frame. Use :meth:`select` to change which frame this method acts on. Masks cut out the edges of images by the specified width.
+        
+        :param float left: Size to mask off of the left of the image.
+        :param float top: Size to mask off the top of the image.
+        :param float right: Size to mask off the right of the image. If no size is given, will use ``left``.
+        :param float bottom: Size to mask off the bottom of the image. If no size is given, will use ``right``.
+        :keyword label: The label to use for saving this masked image.
+        :keyword bool clobber: Whether to overwrite the named frame in this stack.
+        
+        """
         if not right:
             right = left
         if not bottom:
             bottom = top
-        shape  = self.states[self.statename].shape
-        masked = self.states[self.statename].data[left:shape[0]-right,top:shape[1]-bottom]
+        shape  = self.d.shape
+        masked = self.d[left:shape[0]-right,top:shape[1]-bottom]
+        if label == None:
+            label = "Masked"
         LOG.log(2,"Masked masked and saved image")
-        self.save(masked,"Masked")
-    
-    def crop(self,x,y,xsize,ysize=None):
-        """Crops the provided image to twice the specified size, centered around the x and y coordinates provided."""
+        self.save(masked,label,clobber=clobber)
+        
+    def crop(self,x,y,xsize,ysize=None,label=None,clobber=True):
+        """Crops the provided image to twice the specified size, centered around the x and y coordinates provided.
+        
+        :param int x: The x position of the desired center.
+        :param int y: The y position of the desired center.
+        :param int xsize: The size of the x direction. This results in indexing like [x-xsize:x+xsize].
+        :param int ysize: The size of the y direction. If ``None``, will use ``xsize``.
+        :keyword label: The label to use for saving this cropped image.
+        :keyword clobber: Whether to overwrite the named frame in this stack.
+        
+        """
         if not ysize:
             ysize = xsize
-        cropped = self.states[self.statename].data[x-xsize:x+xsize,y-ysize:y+ysize]
-        LOG.log(2,"Cropped and Saved Image")
-        self.save(cropped,"Cropped")
-    
-    
-    ######################
-    # Plotting Functions #
-    ######################
-    def show(self):
-        """Shows the image"""
-        plt.imshow(self.states[self.statename].data,interpolation="nearest")
-        plt.colorbar()
-        LOG.log(2,"Plot Image using IMSHOW: %s" % self.statename)
-    
-    def show3D(self):
-        """Shows a 3D contour of the image"""
-        X = np.arange(self.states[self.statename].shape[0])
-        Y = np.arange(self.states[self.statename].shape[1])
-        X,Y = np.meshgrid(X,Y)
-        Z = self.states[self.statename].data
-        LOG.log(2,"3D Plotting: Axis Size %s %s %s" % (X.size, Y.size, Z.size))
-        ax = plt.gca(projection='3d')
-        surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap=cm.jet, linewidth=0, antialiased=False)
-        plt.colorbar(surf, shrink=0.5, aspect=5)
-        LOG.log(2,"Plot Image in 3D: %s" % self.statename)
-    
+        cropped = self.d[x-xsize:x+xsize,y-ysize:y+ysize]
+        if label == None:
+            label = "Cropped"
+        self.save(cropped,label,clobber=clobber)
 
                 
