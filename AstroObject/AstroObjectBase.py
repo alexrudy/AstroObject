@@ -384,10 +384,8 @@ class HDUHeaderMixin(Mixin):
         """
         HDU.header.update('label',self.label)
         HDU.header.update('object',self.label)
-        if isinstance(self.header,collections.Mapping):
-            headeri = self.header.iteritems()
-        for key,value in headeri:
-            HDU.header.update(key,value)
+        for key in self.header:
+            HDU.header.update(key,self.header[key])
         return HDU
         
     def __getheader__(self,HDU):
