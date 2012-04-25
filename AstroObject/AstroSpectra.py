@@ -123,10 +123,6 @@ class SpectraFrame(AstroObjectBase.HDUHeaderMixin,SpectraMixin,AstroObjectBase.B
         else:
             LOG.log(5,"Generating an image HDU for %s" % self)
             HDU = pf.ImageHDU(self.data)
-        HDU.header.update('label',self.label)
-        HDU.header.update('object',self.label)
-        for key,value in self.header.iteritems():
-            HDU.header.update(key,value)
         return HDU
     
     
