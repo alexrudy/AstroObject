@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-b1
+#  Version 0.5-b2
 # 
 u"""
 .. _AstroObjectAPI:
@@ -384,10 +384,8 @@ class HDUHeaderMixin(Mixin):
         """
         HDU.header.update('label',self.label)
         HDU.header.update('object',self.label)
-        if isinstance(self.header,collections.Mapping):
-            headeri = self.header.iteritems()
-        for key,value in headeri:
-            HDU.header.update(key,value)
+        for key in self.header:
+            HDU.header.update(key,self.header[key])
         return HDU
         
     def __getheader__(self,HDU):
