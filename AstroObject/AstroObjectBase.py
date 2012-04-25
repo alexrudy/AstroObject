@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-b1
+#  Version 0.5-b2
 # 
 u"""
 .. _AstroObjectAPI:

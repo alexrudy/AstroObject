@@ -24,7 +24,7 @@ minor = 5
 bugfix = None
 patch = None
 isdev = True
-devstr = "b1"
+devstr = "b2"
 
 
 #everything below here is derived
@@ -217,7 +217,8 @@ bugfix = %s
 isdev = %s
 devstr = "%s"
 
-release = not isdev
+dev = isdev
+release = not dev
 """
 
 if __name__ == '__main__':
