@@ -25,6 +25,15 @@ Basic Configurations: :class:`Configuration`
     AstroObject.AstroConfig.Configuration
     :members:
 
+Dotted Configurations: :class:`Configuration`
+---------------------------------------------
+
+.. autoclass::
+    AstroObject.AstroConfig.DottedConfiguration
+    :members:
+    :inherited-members:
+
+
 Structured Configurations: :class:`StructuredConfiguration`
 -----------------------------------------------------------
 
@@ -166,14 +175,114 @@ class Configuration(collections.MutableMapping):
         """
         return self._store
 
-class StructuredConfiguration(Configuration):
-    """A structured configuration with some basic defaults for AstroObject-type classes"""
+
+class DottedConfiguration(Configuration):
+    """A configuration which can use dotted accessor methods.
+    
+    Configuration variables can be accessed and set with dot-qualified names. E.g.::
+        
+        >>> Config = StructuredConfigruation( { "Data": { "Value": { "ResultA" : 10 }, }, })
+        >>> Config["Data"]["Value"]["ResultA"]
+        10
+        >>> Config["Data.Value.ResultA"]
+        10
+        
+    By default, this will not work for doubly nested values::
+    
+        >>> Config["Data"]["Value.ResultA"]
+        KeyError
+        
+    However, this behavior can be changed by specifying a new default nesting structure::
+        
+        >>> Config.dn = StructuredConfiguration
+        
+    """
+    
+    dn = dict
+    
+    def _getitem(self,store,parts=[]):
+        """Recursive getitem calling function."""
+        key = parts.pop(0)
+        if len(parts) == 0:
+            return store[key]
+        else:
+            return self._getitem(store[key],parts)
+            
+    def _setitem(self,store,parts=[],value=None):
+        """Recursive setitem calling function"""
+        key = parts.pop(0)
+        if len(parts) == 0:
+            return store.__setitem__(key,value)
+        else:
+            store[key] = store.get(key,self.dn())
+            return self._setitem(store[key],parts,value)
+            
+    def _delitem(self,store,parts=[]):
+        """Recursive delitem calling function"""
+        key = parts.pop(0)
+        if len(parts) == 0:
+            return store.__delitem__(key)
+        else:
+            return self._getitem(store[key],parts)
+        
+        
+    def __getitem__(self,key):
+        """Dictionary getter"""
+        keyparts = key.split(".")
+        if len(keyparts) > 1:
+            return self._getitem(self,keyparts)
+        return self._store.__getitem__(key)
+        
+    def __setitem__(self,key,value):
+        """Dictonary setter"""
+        keyparts = key.split(".")
+        if len(keyparts) > 1:
+            return self._setitem(self,keyparts,value)
+        return self._store.__setitem__(key,value)
+        
+    def __delitem__(self,key):
+        """Dictionary delete"""
+        keyparts = key.split(".")
+        if len(keyparts) > 1:
+            return self._delitem(self,keyparts)        
+        return self._store.__delitem__(key)
+    
+
+
+class StructuredConfiguration(DottedConfiguration):
+    """A structured configuration with some basic defaults for AstroObject-type classes.
+    
+    This class does two things differently for configurations:
+    
+    1. Configurations are stored in a "Configurations" variable set. They can then be loaded by configuration key instead of filename, using the :meth:`setFile` method to set the filename, and then calling :meth:`load` or meth:`save` with no arguments.
+    2. Configuration variables can be accessed and set with dot-qualified names. E.g.::
+        
+        >>> Config = StructuredConfigruation( { "Data": { "Value": { "ResultA" : 10 }, }, })
+        >>> Config["Data"]["Value"]["ResultA"]
+        10
+        >>> Config["Data.Value.ResultA"]
+        10
+        
+    
+    By default, this will not work for doubly nested values::
+        
+        >>> Config["Data"]["Value.ResultA"]
+        KeyError
+        
+    However, this behavior can be changed by specifying a new default nesting structure::
+        
+        >>> Config.dn = DottedConfiguration
+        
+    """
     def __init__(self,  *args, **kwargs):
-        super(StructuredConfiguration, self).__init__(*args, **kwargs) 
+        super(StructuredConfiguration, self).__init__(*args, **kwargs)
         if "Configurations" not in self:
             self["Configurations"] = {}
         if "This" not in self["Configurations"]:
             self["Configurations"]["This"] = "AO.config.yaml"
+        
+    
+    
         
     def setFile(self,filename=None,name=None):
         """Set the default/current configuration file for this configuration.

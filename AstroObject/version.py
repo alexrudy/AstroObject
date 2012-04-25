@@ -215,7 +215,7 @@ major = %s
 minor = %s
 bugfix = %s
 isdev = %s
-devstr = %s
+devstr = "%s"
 
 release = not dev
 """

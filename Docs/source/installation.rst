@@ -35,6 +35,8 @@ What to do about Bugs
 
 It is really helpful, if (or maybe when) you find bugs, to file issues on *GitHub*, at <http://github.com/alexrudy/AstroObject/issues>. Bug reports are useful no matter how little output you can provide, but they are easier to fix if I have as much information as possible. Please be sure to at least provide the traceback showing the issue that caused the bug.
 
+.. _development:
+
 Development of :mod:`AstroObject`
 ---------------------------------
 

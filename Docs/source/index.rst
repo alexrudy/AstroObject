@@ -9,7 +9,7 @@ Welcome to AstroObject!
 AstroObject is a library for Object-Oriented Astronomy. Currently under development at `github`_, it contains tools for object-oriented management of Spectrum Data, Image Data, and Analytic Spectrum Data. More features are planned for the future. To get a sense of the philosophy of this project, read the introduction.
 
 .. Warning::
-    This module is under development. The version number |version| is very low, indicating that much of this module may be unreliable. The behavior in specific instances is not guaranteed nor should it be trusted. For more information about the development of this module, see :doc:`installation`.
+    This module is under development. The version number |version| is very low, indicating that much of this module may be unreliable. The behavior in specific instances is not guaranteed nor should it be trusted. For more information about the development of this module, see :ref:`development`.
 
 .. _Main_TOC:
 
@@ -50,6 +50,7 @@ Examples
     examples/simulator
     examples/iraftools
     examples/spectra
+    examples/pipeline
     
 
 Testing and Development Features
