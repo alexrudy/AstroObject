@@ -217,7 +217,7 @@ bugfix = %s
 isdev = %s
 devstr = "%s"
 
-release = not dev
+release = not isdev
 """
 
 if __name__ == '__main__':
