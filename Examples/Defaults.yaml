@@ -1,0 +1,45 @@
+Configurations:
+  Main: RC.main.config.yaml
+  Test: RC.main.config.test.yaml
+  This: Defaults.yaml
+Debug: false
+Default: null
+Dirs:
+  Caches: Caches
+  Output: Images
+  Logs: Logs
+  Partials: Partials
+  Data: Data
+logging:
+  console:
+    enable: true
+    format: '%(levelname)-8s... %(message)s'
+    level: 20
+    message: '...%(message)s'
+  file:
+    dateformat: '%Y-%m-%d-%H:%M:%S'
+    enable: true
+    filename: RCPipeline
+    format: '%(asctime)s : %(levelname)-8s : %(funcName)-20s : %(message)s'
+  growl:
+    enable: false
+    level: 20
+    name: RC Pipeline
+Bias:
+  Files: null
+  Combine: median
+  Reject: minmax 
+  Master: BiasMaster.fits
+Dark:
+  Files: null
+  Combine: median
+  Reject: minmax 
+  Master: DarkMaster.fits
+Flat:
+  Files: null
+  Combine: median
+  Reject: minmax
+  Scale: mode
+  Master: DarkMaster.fits
+Data:
+  Files: null

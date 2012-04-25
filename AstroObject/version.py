@@ -24,7 +24,7 @@ minor = 5
 bugfix = None
 patch = None
 isdev = True
-devstr = "b1"
+devstr = "b2"
 
 
 #everything below here is derived
@@ -215,8 +215,9 @@ major = %s
 minor = %s
 bugfix = %s
 isdev = %s
-devstr = %s
+devstr = "%s"
 
+dev = isdev
 release = not dev
 """
 

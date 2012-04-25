@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-b1
+#  Version 0.5-b2
 # 
 """
 :mod:`AstroSpectra` — Raw Spectrum Management 
@@ -123,10 +123,6 @@ class SpectraFrame(AstroObjectBase.HDUHeaderMixin,SpectraMixin,AstroObjectBase.B
         else:
             LOG.log(5,"Generating an image HDU for %s" % self)
             HDU = pf.ImageHDU(self.data)
-        HDU.header.update('label',self.label)
-        HDU.header.update('object',self.label)
-        for key,value in self.header.iteritems():
-            HDU.header.update(key,value)
         return HDU
     
     
