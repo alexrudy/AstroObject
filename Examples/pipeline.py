@@ -57,9 +57,11 @@ class Pipeline(Simulator):
     def load_type(self,key,stack):
         """Load a specific type of files using a generalized loading procedure"""
         if isinstance(self.config[key]["Files"],collections.Sequence):
+            ReadStates = []
             for filename in self.config[key]["Files"]:
-                stack.read(filename)
+                ReadStates += stack.read(filename)
                 self.log.debug("Loaded %s: %s" % (key,filename))
+            return ReadStates
         else:
             self.log.error("No %s files are given." % key)
             raise IOError("No %s files are given." % key)
@@ -120,14 +122,14 @@ class Pipeline(Simulator):
         """Creating Combined Dark Frame"""
         self.log.debug("Running iraf.darkcombine on image list...")
         iraf.unlearn(iraf.darkcombine)
-        iraf.darkcombine(self.dark.iinat(),
-            output=self.dark.iout("Dark"),
+        iraf.darkcombine(self.dark.iraf.inatfile(),
+            output=self.dark.iraf.outfile("Dark"),
             combine=self.config["Dark.Combine"], 
             ccdtype="dark", 
             reject=self.config["Dark.Reject"], 
             process="no", scale="exposure", nlow=0, nhigh=1, nkeep=1, mclip="yes", lsigma=3.0, hsigma=3.0, rdnoise="0.", gain ="1."
             )
-        self.dark.idone()
+        self.dark.iraf.done()
     
     @help("Create Flat Frames")
     @depends("load-flat")

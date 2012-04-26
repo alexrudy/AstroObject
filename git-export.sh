@@ -24,7 +24,7 @@ then
 	exit
 fi
 
-DESTINATION=$1
+DESTINATION=${1%/}
 
 echo "Exporting branch $BRANCH to $DESTINATION"
 echo " $ git archive $BRANCH | tar x -C $DESTINATION"
