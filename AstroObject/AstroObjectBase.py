@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-b2
+#  Version 0.5-b3
 # 
 u"""
 .. _AstroObjectAPI:
@@ -768,7 +768,7 @@ class BaseStack(collections.MutableMapping):
         for framename in framenames:
             if framename not in self._frames:
                 if kwargs.get("clobber",False):
-                    LOG.info("%s: Not removing frame %s as it does not exist" % (self,framename))
+                    LOG.info(u"%s: Not removing frame %s as it does not exist" % (self,framename))
                 else:
                     raise IndexError("%s: Object %s does not exist!" % (self,framename))
             elif kwargs.get("delete",False):

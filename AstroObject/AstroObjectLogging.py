@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-b2
+#  Version 0.5-b3
 #
 """
 :mod:`AstroObjectLogging` — Structured Configuration Logging 
@@ -18,15 +18,15 @@ Other than a simpler set of possible configuration options, this object has the 
 To use the logging::
 	
 	LOG = logging.getLogger(__name__)
-	LOG.info("Buffered Message Saved for later output")
+	LOG.info(u"Buffered Message Saved for later output")
 	LOG.configure(configFile="some.yaml")
-	LOG.info("Buffered Message, saved for later output")
+	LOG.info(u"Buffered Message, saved for later output")
 	LOG.start()
-	LOG.info("Normal Message")
+	LOG.info(u"Normal Message")
 	LOG.useConsole(False)
-	LOG.info("Not on the console")
+	LOG.info(u"Not on the console")
 	LOG.useConsole(True)
-	LOG.info("Back to the console!")
+	LOG.info(u"Back to the console!")
 	
 
 .. autoclass::
@@ -113,6 +113,9 @@ class LogManager(logging.getLoggerClass()):
         self.handling = False
         self.doConsole = False
         self.level = False
+        
+        self.messages = {}
+                
         self.setLevel(1)
         self._initialize()
     

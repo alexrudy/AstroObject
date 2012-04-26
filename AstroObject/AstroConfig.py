@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2012-02-08.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.5-b2
+#  Version 0.5-b3
 # 
 """
 :mod:`AstroConfig` — YAML-based Configuration Dictionaries
@@ -209,7 +209,13 @@ class DottedConfiguration(Configuration):
             return self._getitem(store[key],parts)
             
     def _setitem(self,store,parts=[],value=None):
-        """Recursive setitem calling function"""
+        """Recursive setitem calling function
+        
+        This function handles a few things:
+        - Store is passed in as a variable to make the recursive mode work.
+        - If there are no more parts left, then we call the store's setitem.
+        - If there are parts left, then we get the value of the next key in line. When we do this, if that key has not been set, we use a default nester, the ``self.dn`` attribute, which should construct a mapping object.
+        - Recurses into the system."""
         key = parts.pop(0)
         if len(parts) == 0:
             return store.__setitem__(key,value)

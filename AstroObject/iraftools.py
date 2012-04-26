@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2012-04-19.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.5-b2
+#  Version 0.5-b3
 # 
 u"""
 :mod:`iraftools` – IRAF integration facility
@@ -65,7 +65,7 @@ A full examle program can be seen in :ref:`IRAFToolsExample`.
 .. autoclass::
     AstroObject.iraftools.IRAFToolsMixin
     
-    .. method:: iraf.infile(framename=None,extension='.fits')
+    .. method:: iraf.inpfile(framename=None,extension='.fits')
         
         Returns a filename for a ``fits`` file from the given framename which can be used as input for IRAF tasks. This method should be used for files which will not be modified, as modifications will not be captured by the system. For files which are input, but will be modified, use :meth:`imod`.
         
@@ -92,7 +92,7 @@ A full examle program can be seen in :ref:`IRAFToolsExample`.
         :param append: A string to be appended tp the new frame name.
         :returns: Filename for use with PyRAF
         
-    .. method:: iraf.inatfile(*framenames,extension='.fits')
+    .. method:: iraf.inpatlist(*framenames,extension='.fits')
     
         Returns a filename for an "@"-list. The "@"-list lists fits files for each frame provided. These fitsfiles are created automatically. The "@"-list should not be used for in-place modification, for that, use :meth:`imodat`.
         
@@ -100,7 +100,7 @@ A full examle program can be seen in :ref:`IRAFToolsExample`.
         :param extension: The file extension to use.
         :retunrs: Filename of the "@"-list
         
-    .. method:: iraf.outatfile(*framenames,append=None,extension='.fits')
+    .. method:: iraf.outatlist(*framenames,append=None,extension='.fits')
         
         Returns a filename for an "@"-list. The "@"-list lists fits files for each frame provided. These fits-files will be output destinations. They will be re-read into the object when :meth:`idone` is called.
         
@@ -109,7 +109,7 @@ A full examle program can be seen in :ref:`IRAFToolsExample`.
         :param append: A string to append to the frame names
         :retunrs: Filename of the "@"-list
         
-    .. method:: iraf.modatfile(*framenames,append=None,extension='.fits')
+    .. method:: iraf.modatlist(*framenames,append=None,extension='.fits')
         
         Returns a filename for an "@"-list. The "@"-list lists fits files for each frame provided. These fits-files will be in-place modification destinations. They will be re-read into the object when :meth:`idone` is called.
         
@@ -276,7 +276,7 @@ class IRAFTools(object):
         else:
             self._directory = None
         
-    def infile(self,framename=None,extension='.fits',**kwargs):
+    def inpfile(self,framename=None,extension='.fits',**kwargs):
         """Returns a filename for a ``fits`` file from the given framename which can be used as input for IRAF tasks. This method should be used for files which will not be modified, as modifications will not be captured by the system. For files which are input, but will be modified, use :meth:`modfile`.
         
         :param framename: The name of the **frame** to use for input.
@@ -290,6 +290,8 @@ class IRAFTools(object):
         self.object.write(frames=[framename],filename=filename,clobber=True)
         LOG.log(2,"Created infile for frame %s named %s" % (framename,filename))
         return filename
+    
+    infile = inpfile
         
     def outfile(self,framename=None,append=None,extension='.fits',**kwargs):
         """
@@ -354,20 +356,26 @@ class IRAFTools(object):
         LOG.log(2,"Created atlist for frames %s named %s" % (framenames,atlist))
         return "@" + atlist
 
-    def modatfile(self,*framenames,**kwargs):
+    def modatlist(self,*framenames,**kwargs):
         """File list for modification"""
         kwargs.pop("function",None)
         return self._atfile(*framenames,function=self.modfile,**kwargs)
     
-    def inatfile(self,*framenames,**kwargs):
+    modatfile = modatlist
+    
+    def inpatlist(self,*framenames,**kwargs):
         """Return a filename with @ appended, for a file which lists a series of fitsfiles."""
         kwargs.pop("function",None)
         return self._atfile(*framenames,function=self.infile,**kwargs)
-
-    def outatfile(self,*framenames,**kwargs):
+    
+    inatfile = inpatlist
+    
+    def outatlist(self,*framenames,**kwargs):
         """Return a filename with @ appended, for a file which lists a series of fitsfiles"""
         kwargs.pop("function",None)
         return self._atfile(*framenames,function=self.outfile,**kwargs)
+        
+    outatfile = outatlist
         
     def done(self):
         """Finish the IRAF framename."""

@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-14.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-b2
+#  Version 0.5-b3
 # 
 """
 :mod:`AstroSimulator` — Complex Task Management 
@@ -428,9 +428,9 @@ class Simulator(object):
         self.options = None
         
         if version==None:
-            self.version = u"AstroObject: " + __version__
+            self.version = [u"AstroObject: " + __version__]
         else:
-            self.version = self.name + u": " + version + u"\n" + u"AstroObject: " + __version__
+            self.version = [self.name + u": " + version,u"AstroObject: " + __version__]
         
         self._initOptions()
         
@@ -763,7 +763,7 @@ class Simulator(object):
         """Dump the configuration to a file"""
         filename = self.config["Configurations"]["This"].rstrip(".yaml")+".dump.yaml"
         with open(filename,"w") as stream:
-            stream.write("# Configuration from %s\n" % self.name)
+            stream.write(u"# Configuration from %s\n" % self.name)
             yaml.dump(self.config.extract(),stream,default_flow_style=False) 
         
                 
@@ -775,7 +775,8 @@ class Simulator(object):
         self._preConfiguration()
         self._configure(configFile=self.config["Configurations"]["This"])
         self._postConfiguration()
-        self.log.info(self.version)
+        for vstr in self.version:
+            self.log.info(vstr)
         self.starting = False
         
         
@@ -795,7 +796,7 @@ class Simulator(object):
         
         It is possible to stop execution in the middle of this function. Simply set the simulator's ``paused`` variable to ``True`` and the simulator will remain in a state where you are free to call :meth:`do` again."""
         if self.running and not self.paused:
-            raise ConfigurationError("Simulator is already running!")
+            raise ConfigurationError(u"Simulator is already running!")
         elif self.paused:
             self.pasued = False
             self.options["macro"] += list(stages)
@@ -806,7 +807,7 @@ class Simulator(object):
                 if self.config["Default"]:
                     self.options["macro"] = self.config["Default"]
                 else:
-                    self.parser.error("No stages triggered to run!")
+                    self.parser.error(u"No stages triggered to run!")
             if self.attempt == []:
                 self.inorder = True
                 self.complete = []
@@ -824,11 +825,11 @@ class Simulator(object):
             raise
         
         if self.options['dry_run'] and not self.running:
-            text = "Stages done:\n"
+            text = u"Stages done:\n"
             for stage in self.done:
                 s = self.stages[stage]
-                text += "%(command)-20s : %(desc)s" % {'command':s.name,'desc':s.description}
-                text += "\n"
+                text += u"%(command)-20s : %(desc)s" % {'command':s.name,'desc':s.description}
+                text += u"\n"
             self.exit(msg=text)
         
         if self.options['profile'] and not self.running:
@@ -883,11 +884,11 @@ class Simulator(object):
                         self.execute(dependent)
                     if dependent not in self.complete:
                         if self.stages[dependent].optional:
-                            self.log.debug("Stage \'%s\' requested by \'%s\' but skipped" % (dependent,stage))
+                            self.log.debug(u"Stage \'%s\' requested by \'%s\' but skipped" % (dependent,stage))
                         else:
-                            self.log.warning("Stage \'%s\' required by \'%s\' but failed to complete." % (dependent,stage))
+                            self.log.warning(u"Stage \'%s\' required by \'%s\' but failed to complete." % (dependent,stage))
         else:
-            self.log.warning("Explicity skipping dependents")
+            self.log.warning(u"Explicity skipping dependents")
         
         s = self.stages[stage]
         if s.macro or self.options["dry_run"]:
@@ -896,7 +897,7 @@ class Simulator(object):
             return use
         
         self.log.debug("Starting \'%s\'" % s.name)
-        self.log.info("%s" % s.description)
+        self.log.info(u"%s" % s.description)
         
         try:
             s.run()
@@ -935,7 +936,7 @@ class Simulator(object):
         :param string msg: exit message"""
         if msg:
             self.log.info(msg)
-        self.log.info("Simulator %s Finished" % self.name)
+        self.log.info(u"Simulator %s Finished" % self.name)
         sys.exit(code)
         
     def collect(self,matching=r'^(?!\_)',**kwargs):
@@ -1008,10 +1009,14 @@ class Simulator(object):
         finally:       
             if showBar:
                 self._end_progress_bar()
+            ferr = float(len(self.errors)) / float(len(collection))
+            if ferr > 0.1:
+                self.log.warning(u"%d%% of iterations had errors." % (ferr * 100.0))
+                self.log.warning(u"See the log for Errors.")
             if len(self.errors) > 0:
-                self.log.warning("Trapped %d errors" % len(self.errors))
+                self.log.warning(u"Trapped %d errors" % len(self.errors))
                 for error in self.errors:
-                    self.log.debug("Error %s caught" % error)
+                    self.log.debug(u"Error %s caught" % error)
     
     def map_over_collection(self,function,idfun=str,collection=[],exceptions=True,color="green"):
         """docstring for map_over_collection"""
