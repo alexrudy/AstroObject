@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2012-04-19.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.5-b2
+#  Version 0.5-b3
 # 
 u"""
 :mod:`iraftools` – IRAF integration facility
@@ -65,7 +65,7 @@ A full examle program can be seen in :ref:`IRAFToolsExample`.
 .. autoclass::
     AstroObject.iraftools.IRAFToolsMixin
     
-    .. method:: iraf.infile(framename=None,extension='.fits')
+    .. method:: iraf.inpfile(framename=None,extension='.fits')
         
         Returns a filename for a ``fits`` file from the given framename which can be used as input for IRAF tasks. This method should be used for files which will not be modified, as modifications will not be captured by the system. For files which are input, but will be modified, use :meth:`imod`.
         
@@ -92,7 +92,7 @@ A full examle program can be seen in :ref:`IRAFToolsExample`.
         :param append: A string to be appended tp the new frame name.
         :returns: Filename for use with PyRAF
         
-    .. method:: iraf.inatfile(*framenames,extension='.fits')
+    .. method:: iraf.inpatlist(*framenames,extension='.fits')
     
         Returns a filename for an "@"-list. The "@"-list lists fits files for each frame provided. These fitsfiles are created automatically. The "@"-list should not be used for in-place modification, for that, use :meth:`imodat`.
         
@@ -100,7 +100,7 @@ A full examle program can be seen in :ref:`IRAFToolsExample`.
         :param extension: The file extension to use.
         :retunrs: Filename of the "@"-list
         
-    .. method:: iraf.outatfile(*framenames,append=None,extension='.fits')
+    .. method:: iraf.outatlist(*framenames,append=None,extension='.fits')
         
         Returns a filename for an "@"-list. The "@"-list lists fits files for each frame provided. These fits-files will be output destinations. They will be re-read into the object when :meth:`idone` is called.
         
@@ -109,7 +109,7 @@ A full examle program can be seen in :ref:`IRAFToolsExample`.
         :param append: A string to append to the frame names
         :retunrs: Filename of the "@"-list
         
-    .. method:: iraf.modatfile(*framenames,append=None,extension='.fits')
+    .. method:: iraf.modatlist(*framenames,append=None,extension='.fits')
         
         Returns a filename for an "@"-list. The "@"-list lists fits files for each frame provided. These fits-files will be in-place modification destinations. They will be re-read into the object when :meth:`idone` is called.
         

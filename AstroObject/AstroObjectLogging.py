@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-b2
+#  Version 0.5-b3
 #
 """
 :mod:`AstroObjectLogging` — Structured Configuration Logging 
