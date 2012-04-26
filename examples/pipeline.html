@@ -1,0 +1,330 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Pipeline written with AstroObject &mdash; AstroObject 0.5-b3 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.5-b3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="AstroObject 0.5-b3 documentation" href="../index.html" />
+    <link rel="next" title="AstroTest for nosetests" href="../AstroTest.html" />
+    <link rel="prev" title="Example Spectral Data Script" href="spectra.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../AstroTest.html" title="AstroTest for nosetests"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="spectra.html" title="Example Spectral Data Script"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="pipeline-written-with-astroobject">
+<span id="pipelinewalkthrough"></span><h1>Pipeline written with <a class="reference internal" href="../intro.html#module-AstroObject" title="AstroObject"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject</span></tt></a><a class="headerlink" href="#pipeline-written-with-astroobject" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c"># </span>
+<span class="c">#  pipeline.py</span>
+<span class="c">#  AstroObject</span>
+<span class="c">#  </span>
+<span class="c">#  Created by Alexander Rudy on 2012-04-25.</span>
+<span class="c">#  Copyright 2012 Alexander Rudy. All rights reserved.</span>
+<span class="c"># </span>
+<span class="sd">u&quot;&quot;&quot;</span>
+<span class="sd">Basic CCD Reduction Pipeline written with AstroObject</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="c"># Python Imports</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+
+<span class="c"># Numpy Imports</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="c"># Package Resources Imports</span>
+<span class="kn">from</span> <span class="nn">pkg_resources</span> <span class="kn">import</span> <span class="n">resource_filename</span>
+
+<span class="c"># PyRAF Imports</span>
+<span class="kn">from</span> <span class="nn">pyraf</span> <span class="kn">import</span> <span class="n">iraf</span>
+<span class="kn">from</span> <span class="nn">iraf</span> <span class="kn">import</span> <span class="n">imred</span><span class="p">,</span> <span class="n">ccdred</span>
+
+<span class="kn">from</span> <span class="nn">AstroObject.AstroSimulator</span> <span class="kn">import</span> <span class="n">Simulator</span>
+<span class="kn">from</span> <span class="nn">AstroObject.AstroSimulator</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">optional</span><span class="p">,</span>
+    <span class="n">description</span><span class="p">,</span>
+    <span class="n">include</span><span class="p">,</span>
+    <span class="n">replaces</span><span class="p">,</span>
+    <span class="n">depends</span><span class="p">,</span>
+    <span class="n">excepts</span><span class="p">,</span>
+    <span class="n">collect</span><span class="p">,</span>
+    <span class="n">ignore</span><span class="p">,</span>
+    <span class="n">help</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">AstroObject.AstroImage</span> <span class="kn">import</span> <span class="n">ImageStack</span>
+<span class="kn">from</span> <span class="nn">AstroObject.iraftools</span> <span class="kn">import</span> <span class="n">UseIRAFTools</span>
+<span class="kn">from</span> <span class="nn">AstroObject.AstroObjectLogging</span> <span class="kn">import</span> <span class="n">logging</span>
+<span class="n">ImageStack</span> <span class="o">=</span> <span class="n">UseIRAFTools</span><span class="p">(</span><span class="n">ImageStack</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Pipeline</span><span class="p">(</span><span class="n">Simulator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A task manager for the RC Pipeline&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Pipeline</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">commandLine</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;Example Pipeline&quot;</span><span class="p">,</span><span class="n">version</span><span class="o">=</span><span class="s">&quot;1.0&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">resource_filename</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span><span class="s">&quot;Defaults.yaml&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">setFile</span><span class="p">(</span><span class="s">&quot;Main&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    
+    <span class="nd">@ignore</span>
+    <span class="k">def</span> <span class="nf">load_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="n">stack</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load a specific type of files using a generalized loading procedure&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s">&quot;Files&quot;</span><span class="p">],</span><span class="n">collections</span><span class="o">.</span><span class="n">Sequence</span><span class="p">):</span>
+            <span class="n">ReadStates</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s">&quot;Files&quot;</span><span class="p">]:</span>
+                <span class="n">ReadStates</span> <span class="o">+=</span> <span class="n">stack</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Loaded </span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">filename</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">ReadStates</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;No </span><span class="si">%s</span><span class="s"> files are given.&quot;</span> <span class="o">%</span> <span class="n">key</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;No </span><span class="si">%s</span><span class="s"> files are given.&quot;</span> <span class="o">%</span> <span class="n">key</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">load_bias</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Loading Raw Bias Frames&quot;&quot;&quot;</span>
+        <span class="c"># Load individual bias frames.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="n">ImageStack</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_type</span><span class="p">(</span><span class="s">&quot;Bias&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span>
+        <span class="c"># Set Header Values for each image.</span>
+        <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">frame</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s">&#39;IMAGETYP&#39;</span><span class="p">,</span><span class="s">&#39;zero&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Set IMAGETYP=zero for frame </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">frame</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Set Header IMAGETYP=zero for frames </span><span class="si">%r</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">list</span><span class="p">())</span>
+        
+    <span class="k">def</span> <span class="nf">load_dark</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Loading Dark Frames&quot;&quot;&quot;</span>
+        <span class="c"># Load individual bias frames.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dark</span> <span class="o">=</span> <span class="n">ImageStack</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_type</span><span class="p">(</span><span class="s">&quot;Dark&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">dark</span><span class="p">)</span>
+        <span class="c"># Set Header Values for each image.</span>
+        <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dark</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">frame</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s">&#39;IMAGETYP&#39;</span><span class="p">,</span><span class="s">&#39;dark&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Set IMAGETYP=dark for frame </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">frame</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Set Header IMAGETYP=dark for frames </span><span class="si">%r</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">dark</span><span class="o">.</span><span class="n">list</span><span class="p">())</span>
+        
+    <span class="k">def</span> <span class="nf">load_flat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Loading Dark Frames&quot;&quot;&quot;</span>
+        <span class="c"># Load individual bias frames.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flat</span> <span class="o">=</span> <span class="n">ImageStack</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_type</span><span class="p">(</span><span class="s">&quot;Flat&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">flat</span><span class="p">)</span>
+        <span class="c"># Set Header Values for each image.</span>
+        <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">flat</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">frame</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s">&#39;IMAGETYP&#39;</span><span class="p">,</span><span class="s">&#39;flat&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Set IMAGETYP=flat for frame </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">frame</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Set Header IMAGETYP=flat for frames </span><span class="si">%r</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">dark</span><span class="o">.</span><span class="n">list</span><span class="p">())</span>
+    
+        
+        
+    <span class="nd">@help</span><span class="p">(</span><span class="s">&quot;Create bias frames from the configured bias list.&quot;</span><span class="p">)</span>
+    <span class="nd">@depends</span><span class="p">(</span><span class="s">&quot;load-bias&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">create_bias</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creating Combined Bias Frame&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Running iraf.zerocombine on image list...&quot;</span><span class="p">)</span>
+        <span class="n">iraf</span><span class="o">.</span><span class="n">unlearn</span><span class="p">(</span><span class="n">iraf</span><span class="o">.</span><span class="n">zerocombine</span><span class="p">)</span>
+        <span class="n">iraf</span><span class="o">.</span><span class="n">zerocombine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">iinat</span><span class="p">(),</span>
+            <span class="n">output</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">iout</span><span class="p">(</span><span class="s">&quot;Bias&quot;</span><span class="p">),</span>
+            <span class="n">combine</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Bias.Combine&quot;</span><span class="p">],</span> 
+            <span class="n">ccdtype</span><span class="o">=</span><span class="s">&quot;zero&quot;</span><span class="p">,</span> 
+            <span class="n">reject</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Bias.Reject&quot;</span><span class="p">],</span> 
+            <span class="n">scale</span><span class="o">=</span><span class="s">&quot;none&quot;</span><span class="p">,</span> <span class="n">nlow</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">nhigh</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nkeep</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mclip</span><span class="o">=</span><span class="s">&quot;yes&quot;</span><span class="p">,</span> <span class="n">lsigma</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">hsigma</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">rdnoise</span><span class="o">=</span><span class="s">&quot;0.&quot;</span><span class="p">,</span> <span class="n">gain</span> <span class="o">=</span><span class="s">&quot;1.&quot;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">idone</span><span class="p">()</span>
+    
+    <span class="nd">@help</span><span class="p">(</span><span class="s">&quot;Create Dark Frames&quot;</span><span class="p">)</span>
+    <span class="nd">@depends</span><span class="p">(</span><span class="s">&quot;load-dark&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">create_dark</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creating Combined Dark Frame&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Running iraf.darkcombine on image list...&quot;</span><span class="p">)</span>
+        <span class="n">iraf</span><span class="o">.</span><span class="n">unlearn</span><span class="p">(</span><span class="n">iraf</span><span class="o">.</span><span class="n">darkcombine</span><span class="p">)</span>
+        <span class="n">iraf</span><span class="o">.</span><span class="n">darkcombine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dark</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">inatfile</span><span class="p">(),</span>
+            <span class="n">output</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dark</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">outfile</span><span class="p">(</span><span class="s">&quot;Dark&quot;</span><span class="p">),</span>
+            <span class="n">combine</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Dark.Combine&quot;</span><span class="p">],</span> 
+            <span class="n">ccdtype</span><span class="o">=</span><span class="s">&quot;dark&quot;</span><span class="p">,</span> 
+            <span class="n">reject</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Dark.Reject&quot;</span><span class="p">],</span> 
+            <span class="n">process</span><span class="o">=</span><span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s">&quot;exposure&quot;</span><span class="p">,</span> <span class="n">nlow</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">nhigh</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nkeep</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mclip</span><span class="o">=</span><span class="s">&quot;yes&quot;</span><span class="p">,</span> <span class="n">lsigma</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">hsigma</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">rdnoise</span><span class="o">=</span><span class="s">&quot;0.&quot;</span><span class="p">,</span> <span class="n">gain</span> <span class="o">=</span><span class="s">&quot;1.&quot;</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dark</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
+    
+    <span class="nd">@help</span><span class="p">(</span><span class="s">&quot;Create Flat Frames&quot;</span><span class="p">)</span>
+    <span class="nd">@depends</span><span class="p">(</span><span class="s">&quot;load-flat&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">create_flat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creating Combined Flat Frame&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Runnign iraf.flatcombine on image list...&quot;</span><span class="p">)</span>
+        <span class="n">iraf</span><span class="o">.</span><span class="n">unlearn</span><span class="p">(</span><span class="n">iraf</span><span class="o">.</span><span class="n">flatcombine</span><span class="p">)</span>
+        <span class="n">iraf</span><span class="o">.</span><span class="n">flatcombine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flat</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">inatfile</span><span class="p">(),</span>
+            <span class="n">output</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">flat</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">outfile</span><span class="p">(</span><span class="s">&quot;Flat&quot;</span><span class="p">),</span> 
+            <span class="n">combine</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Flat.Combine&quot;</span><span class="p">],</span> 
+            <span class="n">ccdtype</span><span class="o">=</span><span class="s">&quot;flat&quot;</span><span class="p">,</span>
+            <span class="n">reject</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Flat.Reject&quot;</span><span class="p">],</span>
+            <span class="n">scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Flat.Scale&quot;</span><span class="p">],</span> 
+            <span class="n">process</span><span class="o">=</span><span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="n">subsets</span><span class="o">=</span><span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="n">nlow</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">nhigh</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nkeep</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mclip</span><span class="o">=</span><span class="s">&quot;yes&quot;</span><span class="p">,</span> <span class="n">lsigma</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">hsigma</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">rdnoise</span><span class="o">=</span><span class="s">&quot;0.&quot;</span><span class="p">,</span> <span class="n">gain</span> <span class="o">=</span><span class="s">&quot;1.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flat</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
+        
+    <span class="k">def</span> <span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Loading Raw Data into the system.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">ImageStack</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_type</span><span class="p">(</span><span class="s">&quot;Data&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        
+    <span class="nd">@include</span>
+    <span class="nd">@depends</span><span class="p">(</span><span class="s">&quot;create-bias&quot;</span><span class="p">,</span><span class="s">&quot;load-data&quot;</span><span class="p">)</span>
+    <span class="nd">@help</span><span class="p">(</span><span class="s">&quot;Subtract Bias Frame&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">subtract_bias</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Subtracting Bias Frame&quot;&quot;&quot;</span>
+        <span class="n">iraf</span><span class="o">.</span><span class="n">unlearn</span><span class="p">(</span><span class="n">iraf</span><span class="o">.</span><span class="n">ccdproc</span><span class="p">)</span>
+        <span class="n">iraf</span><span class="o">.</span><span class="n">ccdproc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">modatfile</span><span class="p">(),</span> 
+            <span class="n">ccdtype</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">fixpix</span><span class="o">=</span><span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="n">overscan</span><span class="o">=</span><span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="n">trim</span> <span class="o">=</span><span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="n">zerocor</span><span class="o">=</span><span class="s">&quot;yes&quot;</span><span class="p">,</span> <span class="n">darkcor</span><span class="o">=</span><span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="n">flatcor</span> <span class="o">=</span><span class="s">&quot;no&quot;</span><span class="p">,</span> 
+            <span class="n">zero</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">iin</span><span class="p">(</span><span class="s">&quot;Bias&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">idone</span><span class="p">()</span>
+       
+    <span class="nd">@include</span>
+    <span class="nd">@depends</span><span class="p">(</span><span class="s">&quot;create-dark&quot;</span><span class="p">,</span><span class="s">&quot;load-data&quot;</span><span class="p">)</span>
+    <span class="nd">@help</span><span class="p">(</span><span class="s">&quot;Subtract Dark Frame&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">subtract_dark</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Subtracting Dark Frame&quot;&quot;&quot;</span>
+        <span class="n">iraf</span><span class="o">.</span><span class="n">unlearn</span><span class="p">(</span><span class="n">iraf</span><span class="o">.</span><span class="n">ccdproc</span><span class="p">)</span>
+        <span class="n">iraf</span><span class="o">.</span><span class="n">ccdproc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">modatfile</span><span class="p">(),</span> 
+            <span class="n">ccdtype</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">fixpix</span><span class="o">=</span><span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="n">overscan</span><span class="o">=</span><span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="n">trim</span> <span class="o">=</span><span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="n">zerocor</span><span class="o">=</span><span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="n">darkcor</span><span class="o">=</span><span class="s">&quot;yes&quot;</span><span class="p">,</span> <span class="n">flatcor</span> <span class="o">=</span><span class="s">&quot;no&quot;</span><span class="p">,</span> 
+            <span class="n">dark</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dark</span><span class="o">.</span><span class="n">iin</span><span class="p">(</span><span class="s">&quot;Dark&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">idone</span><span class="p">()</span>
+    
+    <span class="nd">@include</span>
+    <span class="nd">@depends</span><span class="p">(</span><span class="s">&quot;create-flat&quot;</span><span class="p">,</span><span class="s">&quot;load-data&quot;</span><span class="p">)</span>
+    <span class="nd">@help</span><span class="p">(</span><span class="s">&quot;Divide out flat frame&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">divide_flat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Dividing by Flat Frame&quot;&quot;&quot;</span>
+        <span class="n">iraf</span><span class="o">.</span><span class="n">unlearn</span><span class="p">(</span><span class="n">iraf</span><span class="o">.</span><span class="n">ccdproc</span><span class="p">)</span>
+        <span class="n">iraf</span><span class="o">.</span><span class="n">ccdproc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">inatfile</span><span class="p">(),</span> 
+            <span class="n">output</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">outatfile</span><span class="p">(</span><span class="n">append</span><span class="o">=</span><span class="s">&quot;-Flat&quot;</span><span class="p">),</span>
+            <span class="n">flat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">flat</span><span class="o">.</span><span class="n">iin</span><span class="p">(</span><span class="s">&quot;Flat&quot;</span><span class="p">),</span>
+            <span class="n">ccdtype</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">fixpix</span><span class="o">=</span><span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="n">overscan</span><span class="o">=</span><span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="n">trim</span> <span class="o">=</span><span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="n">zerocor</span><span class="o">=</span><span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="n">flatcor</span><span class="o">=</span><span class="s">&quot;yes&quot;</span><span class="p">,</span> <span class="n">darkcor</span> <span class="o">=</span><span class="s">&quot;no&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
+    
+    <span class="nd">@include</span> 
+    <span class="nd">@depends</span><span class="p">(</span><span class="s">&quot;load-data&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">save_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save the new fits file&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;DataFile.fits&quot;</span><span class="p">,</span><span class="n">frames</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">framename</span><span class="p">],</span><span class="n">clobber</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        
+    <span class="nd">@help</span><span class="p">(</span><span class="s">&quot;Save Partial Images&quot;</span><span class="p">)</span>
+    <span class="nd">@depends</span><span class="p">(</span><span class="s">&quot;create-flat&quot;</span><span class="p">,</span><span class="s">&quot;create-dark&quot;</span><span class="p">,</span><span class="s">&quot;create-bias&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">save_partials</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Saving partial images&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">frames</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;Bias&quot;</span><span class="p">],</span><span class="n">filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Bias.Master&quot;</span><span class="p">],</span><span class="n">clobber</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dark</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">frames</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;Dark&quot;</span><span class="p">],</span><span class="n">filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Dark.Master&quot;</span><span class="p">],</span><span class="n">clobber</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flat</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">frames</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;Flat&quot;</span><span class="p">],</span><span class="n">filename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Flat.Master&quot;</span><span class="p">],</span><span class="n">clobber</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        
+        
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">RCPipeline</span><span class="p">()</span>
+    <span class="n">pipeline</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>     
+                
+    
+        
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="spectra.html"
+                        title="previous chapter">Example Spectral Data Script</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../AstroTest.html"
+                        title="next chapter"><tt class="docutils literal docutils literal"><span class="pre">AstroTest</span></tt> for nosetests</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/examples/pipeline.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../AstroTest.html" title="AstroTest for nosetests"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="spectra.html" title="Example Spectral Data Script"
+             >previous</a> |</li>
+        <li><a href="../index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Alexander Rudy.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

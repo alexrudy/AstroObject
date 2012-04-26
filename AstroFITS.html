@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3. AstroFITS – Empty FITS HDUs &mdash; AstroObject 0.5-b1 documentation</title>
+    <title>3. AstroFITS – Empty FITS HDUs &mdash; AstroObject 0.5-b3 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5-b1',
+        VERSION:     '0.5-b3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5-b1 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.5-b3 documentation" href="index.html" />
     <link rel="next" title="4. AstroImage — Image Stacks and Storage" href="AstroImage.html" />
     <link rel="prev" title="2. Installation" href="installation.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="installation.html" title="2. Installation"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-b1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -58,15 +58,15 @@
 <h1>3. <tt class="xref py py-mod docutils literal"><span class="pre">AstroFITS</span></tt> – Empty FITS HDUs<a class="headerlink" href="#astrofits-empty-fits-hdus" title="Permalink to this headline">¶</a></h1>
 <p>The <a class="reference internal" href="#AstroObject.AstroFITS.FITSStack" title="AstroObject.AstroFITS.FITSStack"><tt class="xref py py-class docutils literal"><span class="pre">FITSStack</span></tt></a> <strong>stack</strong> handles <em>empty</em> FITS Header-Data-Units (or HDUs). As such, it can only contain HDUs that do not have data, and should only be used when you need to write a FITS file that has only header information and no actual data. The module does serve as a good demonstration of the use and implementation of the <a class="reference internal" href="AstroObject.html#astroobjectapi"><em>AstroObjectBase – AstroObject API</em></a>.</p>
 <p class="graphviz">
-<img src="_images/inheritance-59c73f2335bef7db378e02d59eeab5a7b1027dcd.png" alt="Inheritance diagram of AstroObject.AstroFITS.FITSStack, AstroObject.AstroFITS.FITSFrame" usemap="#inheritance2532213fd1" class="inheritance"/>
+<img src="_images/inheritance-f31886593265de1955c673431b3e8a8c9ebe5def.png" alt="Inheritance diagram of AstroObject.AstroFITS.FITSStack, AstroObject.AstroFITS.FITSFrame" usemap="#inheritance2532213fd1" class="inheritance"/>
 <map id="inheritance2532213fd1" name="inheritance2532213fd1">
-<area shape="rect" id="node7" href="AstroObject.html#AstroObject.AstroObjectBase.BaseStack" title="BaseStack" alt="" coords="493,153,584,178"/>
-<area shape="rect" id="node4" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="12,54,84,79"/>
-<area shape="rect" id="node16" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="139,5,269,30"/>
-<area shape="rect" id="node18" href="AstroObject.html#AstroObject.AstroObjectBase.NoDataMixin" title="NoDataMixin" alt="" coords="153,54,255,79"/>
-<area shape="rect" id="node20" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="157,103,251,129"/>
-<area shape="rect" id="node6" href="#AstroObject.AstroFITS.FITSStack" title="FITSStack" alt="" coords="633,153,717,178"/>
-<area shape="rect" id="node15" href="#AstroObject.AstroFITS.FITSFrame" title="FITSFrame" alt="" coords="337,54,426,79"/>
+<area shape="rect" id="node1" href="#AstroObject.AstroFITS.FITSFrame" title="FITSFrame" alt="" coords="337,153,426,178"/>
+<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="139,103,269,129"/>
+<area shape="rect" id="node4" href="AstroObject.html#AstroObject.AstroObjectBase.NoDataMixin" title="NoDataMixin" alt="" coords="153,153,255,178"/>
+<area shape="rect" id="node6" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="157,202,251,227"/>
+<area shape="rect" id="node18" href="AstroObject.html#AstroObject.AstroObjectBase.BaseStack" title="BaseStack" alt="" coords="493,54,584,79"/>
+<area shape="rect" id="node17" href="#AstroObject.AstroFITS.FITSStack" title="FITSStack" alt="" coords="633,54,717,79"/>
+<area shape="rect" id="node20" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="12,153,84,178"/>
 </map>
 </p>
 <div class="section" id="fitsstack-empty-hdu-stacks">
@@ -539,7 +539,7 @@ Frames are known as Header Data Units, or HDUs when written to a FITS file.</p>
         <li class="right" >
           <a href="installation.html" title="2. Installation"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-b1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

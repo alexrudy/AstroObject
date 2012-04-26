@@ -1,9 +1,10 @@
 Release Notes
 =============
 * 0.5.0
-	- Consistent vocabulary is now in force: Two object types, **stacks** and **frames**. See :ref:`**stacks** <Stacks>` and :ref:`**frames** <Frames>`.
-	- :mod:`~AstroObject.iraftools` is included to provide access to writing and reading IRAF FITS files in a python-centric routine.
-	- Testing is vastly improved.
+    - Consistent vocabulary is now in force: Two object types, **stacks** and **frames**. See :ref:`**stacks** <Stacks>` and :ref:`**frames** <Frames>`.
+    - :mod:`~AstroObject.iraftools` is included to provide access to writing and reading IRAF FITS files in a python-centric routine.
+    - Testing is vastly improved.
+    - Fixed some unicode errors.
 * 0.4.0
     - Inheritance structure improved, now with abstract classes and mixins. See :ref:`AstroObjectAPI`
     - Documentation improved wildly, now everything except AstroCache is documented. See :doc:`index`.

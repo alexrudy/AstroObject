@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>13. AstroObjectLogging — Structured Configuration Logging &mdash; AstroObject 0.5-b1 documentation</title>
+    <title>13. AstroObjectLogging — Structured Configuration Logging &mdash; AstroObject 0.5-b3 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5-b1',
+        VERSION:     '0.5-b3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5-b1 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.5-b3 documentation" href="index.html" />
     <link rel="next" title="14. AstroObject Utilities" href="Utilities.html" />
     <link rel="prev" title="12. AstroConfig — YAML-based Configuration Dictionaries" href="AstroConfig.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="AstroConfig.html" title="12. AstroConfig — YAML-based Configuration Dictionaries"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-b1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -60,15 +60,15 @@
 <p>Other than a simpler set of possible configuration options, this object has the advantage that it allows for dynamic configurations which vary from run to run. As is common in complex programs, a lot happens before reading a configuration file. However, without the configuration file, the system can&#8217;t start logging. This logger holds all the messages it recieves pre-configuration for use once the logger starts, preserving these messages for later debugging.</p>
 <p>To use the logging:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
-<span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Buffered Message Saved for later output&quot;</span><span class="p">)</span>
+<span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">u&quot;Buffered Message Saved for later output&quot;</span><span class="p">)</span>
 <span class="n">LOG</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">configFile</span><span class="o">=</span><span class="s">&quot;some.yaml&quot;</span><span class="p">)</span>
-<span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Buffered Message, saved for later output&quot;</span><span class="p">)</span>
+<span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">u&quot;Buffered Message, saved for later output&quot;</span><span class="p">)</span>
 <span class="n">LOG</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-<span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Normal Message&quot;</span><span class="p">)</span>
+<span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">u&quot;Normal Message&quot;</span><span class="p">)</span>
 <span class="n">LOG</span><span class="o">.</span><span class="n">useConsole</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
-<span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Not on the console&quot;</span><span class="p">)</span>
+<span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">u&quot;Not on the console&quot;</span><span class="p">)</span>
 <span class="n">LOG</span><span class="o">.</span><span class="n">useConsole</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
-<span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Back to the console!&quot;</span><span class="p">)</span>
+<span class="n">LOG</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">u&quot;Back to the console!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="class">
@@ -146,7 +146,7 @@
         <li class="right" >
           <a href="AstroConfig.html" title="12. AstroConfig — YAML-based Configuration Dictionaries"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-b1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObject.iraftools &mdash; AstroObject 0.5-b1 documentation</title>
+    <title>AstroObject.iraftools &mdash; AstroObject 0.5-b3 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5-b1',
+        VERSION:     '0.5-b3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5-b1 documentation" href="../../index.html" />
+    <link rel="top" title="AstroObject 0.5-b3 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.5-b1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -56,7 +56,7 @@
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2012-04-19.</span>
 <span class="c">#  Copyright 2012 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.5-b1</span>
+<span class="c">#  Version 0.5-b3</span>
 <span class="c"># </span>
 <span class="sd">u&quot;&quot;&quot;</span>
 <span class="sd">:mod:`iraftools` – IRAF integration facility</span>
@@ -116,7 +116,7 @@
 <span class="sd">.. autoclass::</span>
 <span class="sd">    AstroObject.iraftools.IRAFToolsMixin</span>
 <span class="sd">    </span>
-<span class="sd">    .. method:: iraf.infile(framename=None,extension=&#39;.fits&#39;)</span>
+<span class="sd">    .. method:: iraf.inpfile(framename=None,extension=&#39;.fits&#39;)</span>
 <span class="sd">        </span>
 <span class="sd">        Returns a filename for a ``fits`` file from the given framename which can be used as input for IRAF tasks. This method should be used for files which will not be modified, as modifications will not be captured by the system. For files which are input, but will be modified, use :meth:`imod`.</span>
 <span class="sd">        </span>
@@ -143,7 +143,7 @@
 <span class="sd">        :param append: A string to be appended tp the new frame name.</span>
 <span class="sd">        :returns: Filename for use with PyRAF</span>
 <span class="sd">        </span>
-<span class="sd">    .. method:: iraf.inatfile(*framenames,extension=&#39;.fits&#39;)</span>
+<span class="sd">    .. method:: iraf.inpatlist(*framenames,extension=&#39;.fits&#39;)</span>
 <span class="sd">    </span>
 <span class="sd">        Returns a filename for an &quot;@&quot;-list. The &quot;@&quot;-list lists fits files for each frame provided. These fitsfiles are created automatically. The &quot;@&quot;-list should not be used for in-place modification, for that, use :meth:`imodat`.</span>
 <span class="sd">        </span>
@@ -151,7 +151,7 @@
 <span class="sd">        :param extension: The file extension to use.</span>
 <span class="sd">        :retunrs: Filename of the &quot;@&quot;-list</span>
 <span class="sd">        </span>
-<span class="sd">    .. method:: iraf.outatfile(*framenames,append=None,extension=&#39;.fits&#39;)</span>
+<span class="sd">    .. method:: iraf.outatlist(*framenames,append=None,extension=&#39;.fits&#39;)</span>
 <span class="sd">        </span>
 <span class="sd">        Returns a filename for an &quot;@&quot;-list. The &quot;@&quot;-list lists fits files for each frame provided. These fits-files will be output destinations. They will be re-read into the object when :meth:`idone` is called.</span>
 <span class="sd">        </span>
@@ -160,7 +160,7 @@
 <span class="sd">        :param append: A string to append to the frame names</span>
 <span class="sd">        :retunrs: Filename of the &quot;@&quot;-list</span>
 <span class="sd">        </span>
-<span class="sd">    .. method:: iraf.modatfile(*framenames,append=None,extension=&#39;.fits&#39;)</span>
+<span class="sd">    .. method:: iraf.modatlist(*framenames,append=None,extension=&#39;.fits&#39;)</span>
 <span class="sd">        </span>
 <span class="sd">        Returns a filename for an &quot;@&quot;-list. The &quot;@&quot;-list lists fits files for each frame provided. These fits-files will be in-place modification destinations. They will be re-read into the object when :meth:`idone` is called.</span>
 <span class="sd">        </span>
@@ -327,7 +327,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_directory</span> <span class="o">=</span> <span class="bp">None</span>
         </div>
-<div class="viewcode-block" id="IRAFTools.infile"><a class="viewcode-back" href="../../iraftools.html#AstroObject.iraftools.IRAFTools.infile">[docs]</a>    <span class="k">def</span> <span class="nf">infile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">framename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">extension</span><span class="o">=</span><span class="s">&#39;.fits&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="IRAFTools.inpfile"><a class="viewcode-back" href="../../iraftools.html#AstroObject.iraftools.IRAFTools.inpfile">[docs]</a>    <span class="k">def</span> <span class="nf">inpfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">framename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">extension</span><span class="o">=</span><span class="s">&#39;.fits&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns a filename for a ``fits`` file from the given framename which can be used as input for IRAF tasks. This method should be used for files which will not be modified, as modifications will not be captured by the system. For files which are input, but will be modified, use :meth:`modfile`.</span>
 <span class="sd">        </span>
 <span class="sd">        :param framename: The name of the **frame** to use for input.</span>
@@ -341,7 +341,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">frames</span><span class="o">=</span><span class="p">[</span><span class="n">framename</span><span class="p">],</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Created infile for frame </span><span class="si">%s</span><span class="s"> named </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">framename</span><span class="p">,</span><span class="n">filename</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">filename</span>
-        </div>
+    </div>
+    <span class="n">infile</span> <span class="o">=</span> <span class="n">inpfile</span>
+        
 <div class="viewcode-block" id="IRAFTools.outfile"><a class="viewcode-back" href="../../iraftools.html#AstroObject.iraftools.IRAFTools.outfile">[docs]</a>    <span class="k">def</span> <span class="nf">outfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">framename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">append</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">extension</span><span class="o">=</span><span class="s">&#39;.fits&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a filename for a ``fits`` file from the given framename which can be used for output for IRAF tasks. The file is not created, but will be read back into this **stack** when :meth:`done` is called.</span>
@@ -405,21 +407,27 @@
         <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Created atlist for frames </span><span class="si">%s</span><span class="s"> named </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">framenames</span><span class="p">,</span><span class="n">atlist</span><span class="p">))</span>
         <span class="k">return</span> <span class="s">&quot;@&quot;</span> <span class="o">+</span> <span class="n">atlist</span>
 
-<div class="viewcode-block" id="IRAFTools.modatfile"><a class="viewcode-back" href="../../iraftools.html#AstroObject.iraftools.IRAFTools.modatfile">[docs]</a>    <span class="k">def</span> <span class="nf">modatfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">framenames</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="IRAFTools.modatlist"><a class="viewcode-back" href="../../iraftools.html#AstroObject.iraftools.IRAFTools.modatlist">[docs]</a>    <span class="k">def</span> <span class="nf">modatlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">framenames</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;File list for modification&quot;&quot;&quot;</span>
         <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;function&quot;</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atfile</span><span class="p">(</span><span class="o">*</span><span class="n">framenames</span><span class="p">,</span><span class="n">function</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">modfile</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="IRAFTools.inatfile"><a class="viewcode-back" href="../../iraftools.html#AstroObject.iraftools.IRAFTools.inatfile">[docs]</a>    <span class="k">def</span> <span class="nf">inatfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">framenames</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">modatfile</span> <span class="o">=</span> <span class="n">modatlist</span>
+    
+<div class="viewcode-block" id="IRAFTools.inpatlist"><a class="viewcode-back" href="../../iraftools.html#AstroObject.iraftools.IRAFTools.inpatlist">[docs]</a>    <span class="k">def</span> <span class="nf">inpatlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">framenames</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a filename with @ appended, for a file which lists a series of fitsfiles.&quot;&quot;&quot;</span>
         <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;function&quot;</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atfile</span><span class="p">(</span><span class="o">*</span><span class="n">framenames</span><span class="p">,</span><span class="n">function</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">infile</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="IRAFTools.outatfile"><a class="viewcode-back" href="../../iraftools.html#AstroObject.iraftools.IRAFTools.outatfile">[docs]</a>    <span class="k">def</span> <span class="nf">outatfile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">framenames</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    </div>
+    <span class="n">inatfile</span> <span class="o">=</span> <span class="n">inpatlist</span>
+    
+<div class="viewcode-block" id="IRAFTools.outatlist"><a class="viewcode-back" href="../../iraftools.html#AstroObject.iraftools.IRAFTools.outatlist">[docs]</a>    <span class="k">def</span> <span class="nf">outatlist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">framenames</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a filename with @ appended, for a file which lists a series of fitsfiles&quot;&quot;&quot;</span>
         <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&quot;function&quot;</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atfile</span><span class="p">(</span><span class="o">*</span><span class="n">framenames</span><span class="p">,</span><span class="n">function</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">outfile</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         </div>
+    <span class="n">outatfile</span> <span class="o">=</span> <span class="n">outatlist</span>
+        
 <div class="viewcode-block" id="IRAFTools.done"><a class="viewcode-back" href="../../iraftools.html#AstroObject.iraftools.IRAFTools.done">[docs]</a>    <span class="k">def</span> <span class="nf">done</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Finish the IRAF framename.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
@@ -521,7 +529,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.5-b1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
