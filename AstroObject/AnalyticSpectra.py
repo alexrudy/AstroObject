@@ -220,13 +220,13 @@ class CompositeSpectra(AstroObjectBase.AnalyticMixin,AnalyticSpectrum):
         
     
     """
-    ops = {'sub':"-",'add':"+",'mul':"*",'div':"/"}
+    ops = {'sub':u"-",'add':u"+",'mul':u"*",'div':u"/"}
     def __init__(self, partA, partB, operation):
-        label = "("
-        label += partA.label if hasattr(partA,'label') else str(partA)
-        label += ") " + self.ops[operation] + " ("
-        label += partB.label if hasattr(partB,'label') else str(partB)
-        label += ")"
+        label = u"("
+        label += partA.label if hasattr(partA,'label') else unicode(partA)
+        label += u") " + self.ops[operation] + u" ("
+        label += partB.label if hasattr(partB,'label') else unicode(partB)
+        label += u")"
         self.operation = operation
         super(CompositeSpectra, self).__init__(None,label)
         self.A = partA
@@ -413,7 +413,7 @@ class InterpolatedSpectrumBase(AstroSpectra.SpectraMixin,AnalyticSpectrum,AstroO
                     arrays[u"Given λ"] = oldwl
                     arrays[u"Difference in R"] = delrs
                     if upsample:
-                        debug = True
+                        warning = True
                     else:
                         error = ValueError
                 else:

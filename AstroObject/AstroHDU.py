@@ -91,16 +91,16 @@ class HDUFrame(AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame,pf.Image
     def __hdu__(self,primary=False):
         """Retruns an HDU which represents this frame. HDUs are either ``pyfits.PrimaryHDU`` or ``pyfits.ImageHDU`` depending on the *primary* keyword."""
         if primary and isinstance(self,pf.ImageHDU):
-            LOG.info("Generating a primary HDU for %s" % self)
+            LOG.info(u"Generating a primary HDU for %s" % self)
             return pf.PrimaryHDU(self.data,self.header)
         elif (not primary) and isinstance(self,pf.PrimaryHDU):
-            LOG.info("Generating an image HDU for %s" % self)
+            LOG.info(u"Generating an image HDU for %s" % self)
             return pf.ImageHDU(self.data,self.header)
         elif primary and isinstance(self,pf.PrimaryHDU):
-            LOG.info("Returning a primary HDU for %s" % self)
+            LOG.info(u"Returning a primary HDU for %s" % self)
             return pf.PrimaryHDU(self.data,self.header)
         elif (not primary) and isinstance(self,pf.ImageHDU):
-            LOG.info("Returning an image HDU for %s" % self)
+            LOG.info(u"Returning an image HDU for %s" % self)
             return pf.ImageHDU(self.data,self.header)
             
     def __show__(self):

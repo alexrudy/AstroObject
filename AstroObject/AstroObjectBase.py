@@ -768,7 +768,7 @@ class BaseStack(collections.MutableMapping):
         for framename in framenames:
             if framename not in self._frames:
                 if kwargs.get("clobber",False):
-                    LOG.info("%s: Not removing frame %s as it does not exist" % (self,framename))
+                    LOG.info(u"%s: Not removing frame %s as it does not exist" % (self,framename))
                 else:
                     raise IndexError("%s: Object %s does not exist!" % (self,framename))
             elif kwargs.get("delete",False):
