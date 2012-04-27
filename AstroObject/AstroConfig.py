@@ -53,6 +53,10 @@ from Utilities import *
 
 class Configuration(collections.MutableMapping):
     """Adds extra methods to dictionary for configuration"""
+    
+    dn = dict
+    dt = dict
+    
     def __init__(self, *args, **kwargs):
         super(Configuration, self).__init__()
         self.log = logging.getLogger(__name__)
@@ -116,7 +120,7 @@ class Configuration(collections.MutableMapping):
             return d
         for k, v in u.iteritems():
             if isinstance(v, collections.Mapping):
-                r = self._merge(d.get(k, {}), v)
+                r = self._merge(d.get(k, self.dn()), v)
                 d[k] = r
             else:
                 d[k] = u[k]
@@ -164,7 +168,23 @@ class Configuration(collections.MutableMapping):
     def store(self):
         """Dictionary representing this configuration. This property should be used if you wish to have a 'true' dictionary object. It is used internally to write this configuration to a YAML file.
         """
-        return self._store
+        return self._extract(self._store)
+        
+    def _extract(self,d):
+        """docstring for _extract"""
+        if not isinstance(d,collections.Mapping):
+            return d
+        e = self.dt()
+        for k in d:
+            v = d.get(k)
+            if isinstance(v,collections.Mapping):
+                e[k] = self._extract(v)
+            elif isinstance(v,collections.Sequence) and not isinstance(v,(str,unicode)):
+                e[k] = [ self._extract(i) for i in v ]
+            else:
+                e[k] = v
+        return e
+        
         
     def extract(self):
         """Extract the dictionary from this object.
@@ -173,7 +193,7 @@ class Configuration(collections.MutableMapping):
             use :attr:`store`
         
         """
-        return self._store
+        return self.store
 
 
 class DottedConfiguration(Configuration):
@@ -194,18 +214,16 @@ class DottedConfiguration(Configuration):
         
     However, this behavior can be changed by specifying a new default nesting structure::
         
-        >>> Config.dn = StructuredConfiguration
+        >>> Config.dn = DottedConfiguration
         
     """
-    
-    dn = dict
-    
     def _getitem(self,store,parts=[]):
         """Recursive getitem calling function."""
         key = parts.pop(0)
         if len(parts) == 0:
             return store[key]
         else:
+            store[key] = store.get(key,self.dn())
             return self._getitem(store[key],parts)
             
     def _setitem(self,store,parts=[],value=None):
@@ -229,7 +247,8 @@ class DottedConfiguration(Configuration):
         if len(parts) == 0:
             return store.__delitem__(key)
         else:
-            return self._getitem(store[key],parts)
+            store[key] = store.get(key,self.dn())
+            return self._delitem(store[key],parts)
         
         
     def __getitem__(self,key):
