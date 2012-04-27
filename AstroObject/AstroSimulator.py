@@ -296,6 +296,8 @@ class Stage(object):
                 description = name
         if exceptions == None:
             self.exceptions = tuple()
+        elif exceptions == True:
+            self.exceptions = Exception
         else:
             self.exceptions = exceptions
         self.description = description
@@ -515,7 +517,7 @@ class Simulator(object):
         
         
         
-    def registerStage(self,stage,name=None,description=None,exceptions=None,include=None,help=False,dependencies=None,replaces=None,optional=False):
+    def registerStage(self,stage,name=None,description=None,exceptions=True,include=None,help=False,dependencies=None,replaces=None,optional=False):
         """Register a stage for operation with the simulator. The stage will then be available as a command line option, and will be operated with the simulator. Stages should be registered early in the operation of the simulator (preferably in the initialization, after the simulator class itself has initialized) so that the program is aware of the stages for running. 
         
         :keyword function stage: The function to run for this stage. Should not take any arguments
@@ -573,6 +575,8 @@ class Simulator(object):
             exceptions = stage.exceptions
         elif exceptions == None:
             exceptions = tuple()
+        if exceptions == True:
+            exceptions = Exception
         
         if dependencies == None and hasattr(stage,'dependencies'):
             dependencies = stage.dependencies
@@ -916,7 +920,7 @@ class Simulator(object):
                 raise
         except Exception as e:
             self.log.useConsole(True)
-            self.log.critical(u"Error %(name)s in stage %(stage)s:%(desc)s!" % {'name': e.__class__.__name__, 'desc': s.description,'stage':s.name})
+            self.log.critical(u"Error %(name)s in stage %(stage)s:'%(desc)s'!" % {'name': e.__class__.__name__, 'desc': s.description,'stage':s.name})
             self.log.critical(u"Error: %(msg)s" % {'msg':e})
             raise
         else:
