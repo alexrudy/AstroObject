@@ -45,7 +45,14 @@ Structured Configurations: :class:`StructuredConfiguration`
 
 """
 # Standard Python Modules
-import math, copy, sys, time, logging, os,collections, re
+import math
+import copy
+import sys
+import time
+import logging
+import os
+import collections
+import re
 import yaml
 
 # Submodules from this system
@@ -185,6 +192,28 @@ class Configuration(collections.MutableMapping):
                 e[k] = v
         return e
         
+    def _renest(self,d):
+        """docstring for _renest"""
+        if not isinstance(d,collections.Mapping):
+            return d
+        e = self.dn()
+        for k in d:
+            v = d.get(k)
+            if isinstance(v,collections.Mapping):
+                e[k] = self._renest(v)
+            elif isinstance(v,collections.Sequence) and not isinstance(v,(str,unicode)):
+                e[k] = [ self._renest(i) for i in v ]
+            else:
+                e[k] = v
+        return e
+    
+    def renest(self,deep_nest_type=None):
+        """Re-nest this object"""
+        if isinstance(deep_nest_type,collections.Mapping):
+            self.dn = deep_nest_type
+        elif deep_nest_type is not None:
+            TypeError("%r is not a mapping type." % deep_nest_type)
+        self._store = self._renest(self._store)
         
     def extract(self):
         """Extract the dictionary from this object.
@@ -201,7 +230,7 @@ class DottedConfiguration(Configuration):
     
     Configuration variables can be accessed and set with dot-qualified names. E.g.::
         
-        >>> Config = StructuredConfigruation( { "Data": { "Value": { "ResultA" : 10 }, }, })
+        >>> Config = DottedConfiguration( { "Data": { "Value": { "ResultA" : 10 }, }, })
         >>> Config["Data"]["Value"]["ResultA"]
         10
         >>> Config["Data.Value.ResultA"]
@@ -215,6 +244,9 @@ class DottedConfiguration(Configuration):
     However, this behavior can be changed by specifying a new default nesting structure::
         
         >>> Config.dn = DottedConfiguration
+        >>> Config.merge(Config)
+        >>> Config["Data"]["Value.ResultA"]
+        10
         
     """
     def _getitem(self,store,parts=[]):
@@ -304,7 +336,7 @@ class StructuredConfiguration(DottedConfiguration):
         if "Configurations" not in self:
             self["Configurations"] = {}
         if "This" not in self["Configurations"]:
-            self["Configurations"]["This"] = "AO.config.yaml"
+            self["Configurations.This"] = "AO.config.yaml"
         
     
     
@@ -328,7 +360,7 @@ class StructuredConfiguration(DottedConfiguration):
                 name = os.path.basename(filename)
         if name not in self["Configurations"]:
             self["Configurations"][name] = filename
-        self["Configurations"]["This"] = self["Configurations"][name]
+        self["Configurations.This"] = self["Configurations"][name]
     
     def save(self,filename=None):
         """Save the configuration to a YAML file. If ``filename`` is not provided, the configuration will use the file set by :meth:`setFile`.
@@ -338,7 +370,7 @@ class StructuredConfiguration(DottedConfiguration):
         Uses :meth:`Configuration.save`.
         """
         if filename == None:
-            filename = self["Configurations"]["This"]
+            filename = self["Configurations.This"]
         return super(StructuredConfiguration, self).save(filename)
     
         
@@ -350,6 +382,6 @@ class StructuredConfiguration(DottedConfiguration):
         
         Uses :meth:`Configuration.load`."""
         if filename == None:
-            filename = self["Configurations"]["This"]
+            filename = self["Configurations.This"]
         return super(StructuredConfiguration, self).load(filename,silent)
         
