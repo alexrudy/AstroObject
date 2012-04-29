@@ -104,8 +104,8 @@ The remaining keyword arguments that we provided to ``ccdproc`` are standard ``i
 
 Once we finish with the ``ccdproc`` command, we need to tell :mod:`~AstroObject.iraftools` that we are done calling ``iraf`` and using these temporary files. Calling :meth:`iraf.done <AstroObject.iraftools.IRAFToolsMixin.iraf.done>` does just that. Specifically, :meth:`iraf.done <AstroObject.iraftools.IRAFToolsMixin.iraf.done>` does the following:
 
-- Reloads any modified files (as created by :meth:`iraf.modfile <AstroObject.iraftools.IRAFToolsMixin.iraf.modfile>` and :meth:`iraf.modatfile <AstroObject.iraftools.IRAFToolsMixin.iraf.modatfile>`).
-- Loads any created output files (as set up by :meth:`iraf.outfile <AstroObject.iraftools.IRAFToolsMixin.iraf.outfile>` and :meth:`iraf.outatfile <AstroObject.iraftools.IRAFToolsMixin.iraf.outatfile>`)
+- Reloads any modified files (as created by :meth:`iraf.modfile <AstroObject.iraftools.IRAFToolsMixin.iraf.modfile>` and :meth:`iraf.modatlist <AstroObject.iraftools.IRAFToolsMixin.iraf.modatlist>`).
+- Loads any created output files (as set up by :meth:`iraf.outfile <AstroObject.iraftools.IRAFToolsMixin.iraf.outfile>` and :meth:`iraf.outatlist <AstroObject.iraftools.IRAFToolsMixin.iraf.outatlist>`)
 - Deletes all of the temporary FITS files that we created.
 
 So the last call in our ``iraf`` command is::

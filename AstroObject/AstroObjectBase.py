@@ -538,10 +538,7 @@ class BaseStack(collections.MutableMapping):
     
     @property
     def framename(self):
-        """Current frame name::
-            
-            >>> Stack.framename
-            
+        """Current frame name. This will normally be the last saved **frame**, but there are some exceptions. First, explicitly using :meth:`select` will change the framename. Also, deleting the most recent frame will by default change the selected frame to the second oldest. Using the :meth:`save` function with ``save(data,select=False)`` will skip the selection of that added frame.
         """
         return self._default_frame()
     
@@ -560,10 +557,7 @@ class BaseStack(collections.MutableMapping):
         
             >>> Stack.frame()
             
-        or::
-            
-            >>> Stack.frame(framename=Stack.s)
-            
+        
         """
         return self.frame()
     
