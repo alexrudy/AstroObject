@@ -47,7 +47,7 @@ After loading our data, we want to select the **frame** that we are most likely 
 Notice that when we select the frame, we use ``"data"``. The :class:`~AstroObject.AstroImage.ImageStack` class will automtacially remove the ``".fits"`` extension, and use the base of the filename as the framename for imported frames. We could have specified a name for this **frame** using the ``framename`` keyword argument to read.
 ::
 	
-	Data.read("data.fits",stataename="another name")
+	Data.read("data.fits",framename="another name")
 	
 Now we are ready to make our ``iraf`` call. In interactive mode, we would have used ``epar`` to set parameters for each ``iraf`` call, then made the call. In ``pyraf``, we use keyword arguments to set the parameters of the IRAF call.
 ::
