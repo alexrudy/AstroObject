@@ -55,8 +55,8 @@ class test_HDUFrame(equality_HDUFrame,API_CanBeEmpty_Frame,API_General_Frame):
         self.testJPG = "Hong-Kong.jpg"
         self.data = [self.testJPG]
         if not os.access(self.testJPG,os.R_OK):
-            self.image = np.zeros((1000,1000))
-            self.image[450:550,450:550] = np.ones((100,100))
+            self.image = np.zeros((100,100))
+            self.image[45:55,45:55] = np.ones((10,10))
         else:
             self.image = np.int32(np.sum(mpimage.imread(self.testJPG),axis=2))
         
@@ -79,8 +79,8 @@ class test_HDUStack(equality_HDUFrame,API_BaseStack):
         self.data = [self.testJPG]
         self.files = ["TestFile.fits"]
         if not os.access(self.testJPG,os.R_OK):
-            self.image = np.zeros((1000,1000))
-            self.image[450:550,450:550] = np.ones((100,100))
+            self.image = np.zeros((100,100))
+            self.image[45:55,45:55] = np.ones((10,10))
         else:
             self.image = np.int32(np.sum(mpimage.imread(self.testJPG),axis=2))
 
