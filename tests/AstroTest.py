@@ -855,7 +855,7 @@ class API_BaseStack(API_Base):
         assert ["A","C"] == sorted(AObject.list()) , "List: %s" % AObject.list()
         assert "B" not in AObject.list(), "States: %s" % AObject.list()
     
-    @nt.raises(IndexError)
+    @nt.raises(KeyError)
     def test_keep_non_existant_frame(self):
         """keep() fails with non-existent frame"""
         AObject = self.OBJECT()
@@ -864,7 +864,7 @@ class API_BaseStack(API_Base):
         assert ["A","B"] == sorted(AObject.list())
         AObject.keep("C")
     
-    @nt.raises(IndexError)
+    @nt.raises(KeyError)
     def test_keep_empty(self):
         """keep() fails with an empty object"""
         AObject = self.OBJECT()
@@ -966,14 +966,14 @@ class API_BaseStack(API_Base):
         assert "A" in AObject
     
     
-    @nt.raises(IndexError)
+    @nt.raises(KeyError)
     def test_remove_non_existant_frame(self):
         """remove() fails with non-existent frame"""
         AObject = self.OBJECT()
         AObject.save(self.frame(),"A")
         AObject.remove("B")
     
-    @nt.raises(IndexError)
+    @nt.raises(KeyError)
     def test_remove_empty(self):
         """remove() fails with an empty object"""
         AObject = self.OBJECT()

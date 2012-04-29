@@ -187,13 +187,13 @@ class BaseFrame(Mixin):
             for key, value in header.iteritems():
                 self.header.update(key,value)
         else:
-            assert header == None, "%s doesn't understand the header, %s, type %s" % (self,header,type(header))
+            assert header == None, u"%s doesn't understand the header, %s, type %s" % (self,header,type(header))
             
         try:
             self.__valid__()
-            assert isinstance(self.label,(str,unicode)), "Frame requires a label, got %s" % self.label
+            assert isinstance(self.label,(str,unicode)), u"Frame requires a label, got %s" % self.label
         except AssertionError as e:
-            raise AttributeError(str(e))
+            raise AttributeError(unicode(e))
     
     @property
     def label(self):
@@ -223,7 +223,7 @@ class BaseFrame(Mixin):
                 return self.data
             
         """
-        msg = "Abstract Data Structure %s was called, but cannot return data!" % self
+        msg = u"Abstract Data Structure %s was called, but cannot return data!" % self
         raise NotImplementedError(msg)
 
     def __repr__(self):
@@ -269,7 +269,7 @@ class BaseFrame(Mixin):
         :returns: HDU with modified header attributes.
         
         """
-        msg = "Abstract Data Structure %s cannot be used for HDU Generation!" % (self)
+        msg = u"Abstract Data Structure %s cannot be used for HDU Generation!" % (self)
         raise NotImplementedError(msg)
 
         
@@ -281,7 +281,7 @@ class BaseFrame(Mixin):
         :returns: *None*
         
         """
-        msg = "Abstract Data Structure %s cannot be used for HDU Generation!" % (self)
+        msg = u"Abstract Data Structure %s cannot be used for HDU Generation!" % (self)
         raise NotImplementedError(msg)
     
     
@@ -294,7 +294,7 @@ class BaseFrame(Mixin):
         :returns: pyfits.PrimaryHDU or pyfits.HDU
         
         If the frame cannot reasonable generate a :class:`pyFITS.PrimaryHDU`, then it should raise an :exc:`NotImplementedError` in that case."""
-        msg = "Abstract Data Structure %s cannot be used for HDU Generation!" % (self)
+        msg = u"Abstract Data Structure %s cannot be used for HDU Generation!" % (self)
         raise NotImplementedError(msg)
     
     @abstractmethod
@@ -302,7 +302,7 @@ class BaseFrame(Mixin):
         """This method should create a simple view of the provided frame. Often this is done using :mod:`Matplotlib.pyplot` to create a simple plot. The plot should have the minimum amount of work done to make a passable plot view, but still be basic enough that the end user can customize the plot object after calling :meth:`__show__`.
         
         :returns: Matplotlib plot object"""
-        msg = "Abstract Data Structure %s cannot be used for plotting!" % (self)
+        msg = u"Abstract Data Structure %s cannot be used for plotting!" % (self)
         raise NotImplementedError(msg)
     
     @classmethod
@@ -324,7 +324,7 @@ class BaseFrame(Mixin):
                     raise NotImplementedError(msg)
                 
             This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like :exc:`AttributeError`) which are diffult to track and diagnose without the code in :meth:`__save__`. See :meth:`AstroImage.__save__` for an example ``__save__`` function which uses this trick, but also includes some basic data validation."""
-        msg = "Abstract Data Structure %s cannot be the target of a save operation!" % (cls)
+        msg = u"Abstract Data Structure %s cannot be the target of a save operation!" % (cls)
         raise NotImplementedError(msg)
         
     
@@ -349,7 +349,7 @@ class BaseFrame(Mixin):
             This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like :exc:`AttributeError`) which are diffult to track and diagnose without the code in :meth:`__read__`. See :meth:`AstroImage.__read__` for an example ``__read__`` function which uses this trick, but also includes some basic data validation.
             
         .. Note:: It is acceptable to call the class :meth:`__save__` function here. However, the :meth:`__read__` function should also correctly handle header data."""
-        msg = "Abstract Data Structure %s cannot be the target of a read operation!" % (cls)
+        msg = u"Abstract Data Structure %s cannot be the target of a read operation!" % (cls)
         raise NotImplementedError(msg)
         
 
@@ -357,7 +357,7 @@ def semiabstractmethod(txt):
     """Convert semi-abstract-methods into raisers for NotImplementedErrors"""
     if callable(txt):
         func = txt
-        txt = "Abstract method %s.%s() cannot be called."
+        txt = u"Abstract method %s.%s() cannot be called."
     def decorator(func):
         def raiser(self,*args,**kwargs):
             msg = txt % (self,func.__name__)
@@ -405,18 +405,18 @@ class NoDataMixin(Mixin):
     Due to the validity of empty HDUs, it is possible to have an object which doesn't contain data, but can still produce HDUs.
     """
     
-    @semiabstractmethod("Cannot call %s.%s() as this frame cannot contain data.")
+    @semiabstractmethod(u"Cannot call %s.%s() as this frame cannot contain data.")
     def __call__(self):
         """Return data"""
         return None
         
-    @semiabstractmethod("Cannot call %s.%s() as this frame cannot contain data.")
+    @semiabstractmethod(u"Cannot call %s.%s() as this frame cannot contain data.")
     def __show__(self):
         """Show no data... NotImplemented"""
         pass
     
     @classmethod    
-    @semiabstractmethod("Cannot call %s.%s() as this frame cannot contain data.")
+    @semiabstractmethod(u"Cannot call %s.%s() as this frame cannot contain data.")
     def __save__(self):
         """Show no data... NotImplemented"""
         pass
@@ -425,7 +425,7 @@ class NoDataMixin(Mixin):
     def __valid__(self):
         """Require no data"""
         if hasattr(self,'data'):
-            assert self.data == None, "The frame %s cannot accept data, found data with type %s" % (self,type(self.data))
+            assert self.data == None, u"The frame %s cannot accept data, found data with type %s" % (self,type(self.data))
         return super(NoDataMixin,self).__valid__()
 
     
@@ -436,20 +436,20 @@ class NoHDUMixin(Mixin):
     This mixin allows the developer to not implement :meth:`~BaseFrame.__getheader__`, :meth:`~BaseFrame.__setheader__`, :meth:`~BaseFrame.__hdu__`, and :meth:`~BaseFrame.__read__`.
     """
     
-    @semiabstractmethod("Cannot call %s.%s() as this frame cannot read HDUs.")
+    @semiabstractmethod(u"Cannot call %s.%s() as this frame cannot read HDUs.")
     def __getheader__(self):
         pass
     
-    @semiabstractmethod("Cannot call %s.%s() as this frame cannot create HDUs.")
+    @semiabstractmethod(u"Cannot call %s.%s() as this frame cannot create HDUs.")
     def __setheader__(self):
         pass
     
-    @semiabstractmethod("Cannot call %s.%s() as this frame cannot create HDUs.")
+    @semiabstractmethod(u"Cannot call %s.%s() as this frame cannot create HDUs.")
     def __hdu__(self,primary=False):
         pass
 
     @classmethod    
-    @semiabstractmethod("Cannot call %s.%s() as this frame cannot read HDUs.")
+    @semiabstractmethod(u"Cannot call %s.%s() as this frame cannot read HDUs.")
     def __read__(cls,HDU,label):
         pass
 
@@ -464,7 +464,7 @@ class AnalyticMixin(NoHDUMixin,NoDataMixin):
         pass
     
     @classmethod
-    @semiabstractmethod("Cannot call %s.%s() as this frame cannot be the target of a save operation.")
+    @semiabstractmethod(u"Cannot call %s.%s() as this frame cannot be the target of a save operation.")
     def __save__(self,data,label):
         pass
     
@@ -490,9 +490,9 @@ class BaseStack(collections.MutableMapping):
         if isinstance(dataClasses,list):
             self.dataClasses += dataClasses
         elif dataClasses:
-            raise AttributeError("Can't understand data classes")
+            raise AttributeError(u"Can't understand data classes")
         if len(self.dataClasses) < 1:
-            raise NotImplementedError("Instantiating %s without any valid data classes!" % self)
+            raise NotImplementedError(u"Instantiating %s without any valid data classes!" % self)
 
         
     def __repr__(self):
@@ -589,11 +589,11 @@ class BaseStack(collections.MutableMapping):
                 try:
                     Object = dataClass.__save__(data,framename)
                 except NotImplementedError as AE:
-                    LOG.log(2,"Cannot save as %s: %s" % (dataClass,AE))
+                    LOG.log(2,u"Cannot save as %s: %s" % (dataClass,AE))
                 else:
                     break
             if Object is None:
-                raise TypeError("Object to be saved cannot be cast as %s" % self.dataClasses)
+                raise TypeError(u"Object to be saved cannot be cast as %s" % self.dataClasses)
         elif framename is not None:
             Object = data.copy(label=framename)
         else:
@@ -602,15 +602,15 @@ class BaseStack(collections.MutableMapping):
         if framename == None:
             framename = Object.label
         else:
-            assert Object.label == framename, "Object label improperly set by constructor"
+            assert Object.label == framename, u"Object label improperly set by constructor"
             
-        if framename in self._frames and not (clobber or self.clobber):
-            raise KeyError("Cannot Duplicate State Name: \'%s\' Use this.remove(\'%s\') or clobber=True" % (framename,framename))
+        if framename in self and not (clobber or self.clobber):
+            raise KeyError(u"Cannot Duplicate State Name: \'%s\' Use this.remove(\'%s\') or clobber=True" % (framename,framename))
         elif framename in self._frames:
-            LOG.log(2,"Overwiting the frame %s" % framename)
+            LOG.log(2,u"Overwiting the frame %s" % framename)
         # Save the actual frame
         self._frames[framename] = Object
-        LOG.log(5,"Saved frame %s" % Object)
+        LOG.log(5,u"Saved frame %s" % Object)
         # Activate the saved frame as the current frame
         if select:
             self.select(framename)
@@ -629,7 +629,7 @@ class BaseStack(collections.MutableMapping):
         # Load the current stat if no frame provided
         if not framename:
             framename = self.framename
-        if framename != None and framename in self._frames:
+        if framename != None and framename in self:
             return np.copy(self._frames[framename](**kwargs))
         else:
             self._key_error(framename)
@@ -657,13 +657,13 @@ class BaseStack(collections.MutableMapping):
             Using frames can be advantageous as you don't rely on the Object to guess what type of frame should be used. Most times, the object will guess correctly, but Frames are a more robust way of ensuring type consistency"""
         if not framename:
             framename = self.framename
-        if framename != None and framename in self._frames:
+        if framename != None and framename in self:
             return self._frames[framename]
         else:
             self._key_error(framename)
     
     def object(self,framename=None):
-        LOG.log(5,"Method \".object()\" on %s has been depreciated. Please use \".frame()\" instead." % self)
+        LOG.log(5,u"Method \".object()\" on %s has been depreciated. Please use \".frame()\" instead." % self)
         return self.frame(framename)
         
     def select(self,framename):
@@ -677,11 +677,11 @@ class BaseStack(collections.MutableMapping):
         if framename is None:
             self._framename = None # Unselect frame
             framename = self._default_frame()
-            LOG.log(2,"Setting frame by cancelling selection and asking for default frame.")
-        elif framename not in self._frames:
+            LOG.log(2,u"Setting frame by cancelling selection and asking for default frame.")
+        elif framename not in self:
             self._key_error(framename)
         self._framename = framename
-        LOG.log(5,"Selected frame \'%s\'" % self.framename)
+        LOG.log(5,u"Selected frame \'%s\'" % self.framename)
         return self.framename
     
     def list(self):
@@ -694,7 +694,7 @@ class BaseStack(collections.MutableMapping):
     
     def _key_error(self,framename):
         """Throw a keyError for the given framename."""
-        msg = "%s: State %s does not exist.\nStates: %s" % (self,framename,self.list())
+        msg = u"%s: State %s does not exist.\nStates: %s" % (self,framename,self.list())
         raise KeyError(msg)
     
     def _default_frame(self,frames=None):
@@ -727,7 +727,7 @@ class BaseStack(collections.MutableMapping):
             del self._frames
         self._frames = {}
         self._framename = self._default_frame()
-        LOG.log(5,"%s: Cleared all frames. Remaining: %s" % (self,self.list()))
+        LOG.log(5,u"%s: Cleared all frames. Remaining: %s" % (self,self.list()))
         return self.list()
     
     
@@ -739,15 +739,14 @@ class BaseStack(collections.MutableMapping):
         :returns: list of frames remaining.
         
         """
-        oldStates = self._frames
         newStates = {}
         for framename in framenames:
-            if framename not in self._frames:
-                raise IndexError("%s: State %s does not exist!" % (self,framename))
-            newStates[framename] = oldStates[framename]
-        LOG.log(5,"%s: Kept frames %s" % (self,list(framenames)))
-        if kwargs.get("delete",False):
-            for frame in self._frames.keys():
+            if framename not in self:
+                self._key_error(framename)
+            newStates[framename] = self[framename]
+        LOG.log(5,u"%s: Kept frames %s" % (self,list(framenames)))
+        if kwargs.get('delete',False):
+            for frame in self.keys():
                 if frame not in framenames:
                     del self._frames[frame]
             del self._frames
@@ -764,20 +763,20 @@ class BaseStack(collections.MutableMapping):
         
         """
         removed = []
-        LOG.log(2,"%s: Requested remove %s" % (self,framenames))
+        LOG.log(2,u"%s: Requested remove %s" % (self,framenames))
         for framename in framenames:
-            if framename not in self._frames:
-                if kwargs.get("clobber",False):
+            if framename not in self:
+                if kwargs.get('clobber',False):
                     LOG.info(u"%s: Not removing frame %s as it does not exist" % (self,framename))
                 else:
-                    raise IndexError("%s: Object %s does not exist!" % (self,framename))
-            elif kwargs.get("delete",False):
+                    self._key_error(framename)
+            elif kwargs.get('delete',False):
                 del self._frames[framename]
             else:
                 self._frames.pop(framename)
             removed += [framename]
         self._framename = self._default_frame()
-        LOG.log(5,"%s: Removed frames %s" % (self,removed))
+        LOG.log(5,u"%s: Removed frames %s" % (self,removed))
         return self.list()
     
     def show(self,framename=None):
@@ -789,8 +788,8 @@ class BaseStack(collections.MutableMapping):
         # Load the current stat if no frame provided
         if not framename:
             framename = self._default_frame()
-        if framename != None and framename in self._frames:
-            return self._frames[framename].__show__()
+        if framename != None and framename in self:
+            return self[framename].__show__()
         else:
             self._key_error(framename)
     
@@ -807,10 +806,10 @@ class BaseStack(collections.MutableMapping):
         """
         if not frames:
             frames = self.list()
-            LOG.log(2,"Saving all frames: %s" % frames)
+            LOG.log(2,u"Saving all frames: %s" % frames)
         if not primaryFrame:
             primaryFrame = self._default_frame(frames)
-            LOG.log(2,"Set primary framename to default frame %s" % primaryFrame)
+            LOG.log(2,u"Set primary framename to default frame %s" % primaryFrame)
         if primaryFrame in frames:
             frames.remove(primaryFrame)
         if singleFrame:
@@ -818,20 +817,20 @@ class BaseStack(collections.MutableMapping):
         if not filename:
             if self.filename == None:
                 filename = primaryFrame
-                LOG.log(2,"Set Filename from Primary State. Filename: %s" % filename)
+                LOG.log(2,u"Set Filename from Primary State. Filename: %s" % filename)
             else:
                 filename = self.filename
-                LOG.log(2,"Set filename from Object. Filename: %s" % filename)
+                LOG.log(2,u"Set filename from Object. Filename: %s" % filename)
         if isinstance(filename,(str,unicode)):
             filename = validate_filename(filename)
-        PrimaryHDU = self._frames[primaryFrame].hdu(primary=True)
+        PrimaryHDU = self[primaryFrame].hdu(primary=True)
         if len(frames) > 0:
-            HDUs = [self._frames[frame].hdu(primary=False) for frame in frames]
+            HDUs = [self[frame].hdu(primary=False) for frame in frames]
             HDUList = pf.HDUList([PrimaryHDU]+HDUs)
         else:
             HDUList = pf.HDUList([PrimaryHDU])
         HDUList.writeto(filename,clobber=clobber)
-        LOG.log(5,"Wrote frame %s (primary) and frames %s to FITS file %s" % (primaryFrame,frames,filename))
+        LOG.log(5,u"Wrote frame %s (primary) and frames %s to FITS file %s" % (primaryFrame,frames,filename))
         return primaryFrame,frames,filename
     
     def read(self,filename=None,framename=None,clobber=False):
@@ -852,40 +851,40 @@ class BaseStack(collections.MutableMapping):
         Labels = []
         for HDU in HDUList:    
             Object = None # Target variable
-            if framename is None and "label" in HDU.header:
+            if framename is None and 'label' in HDU.header:
                 # We take from the "label" HDU when we aren't given explicit framenames
-                framename = HDU.header["label"]
-                LOG.log(2,"Set label for image from HDU Header: %s" % framename)
+                framename = HDU.header['label']
+                LOG.log(2,u"Set label for image from HDU Header: %s" % framename)
             elif framename is None:
                 # We default the framename to be the basename of the file
                 framename = os.path.basename(filename)
-                LOG.log(2,"Set label for image from filename: %s" % framename)
+                LOG.log(2,u"Set label for image from filename: %s" % framename)
             label = framename
             if label in Labels:
                 # We don't allow repeat loading of labels
                 label = framename + "-%d" % Read
-                LOG.log(2,"Incrementing label for multi-frame images: %s" % label)
-            
+                LOG.log(2,u"Incrementing label for multi-frame images: %s" % label)
+            label = unicode(label)
             # Iterate through our potential data classes
             for dataClass in self.dataClasses:
                 try:
                     Object = dataClass.__read__(HDU,label)
                     Object.__getheader__(HDU)
                 except NotImplementedError as AE:
-                    LOG.log(2,"Cannot read as %s: %s" % (dataClass,AE))
+                    LOG.log(2,u"Cannot read as %s: %s" % (dataClass,AE))
                 else:
                     break
             if Object == None:
-                LOG.log(8,"Skipping HDU %s, cannot save as valid type " % HDU)
+                LOG.log(8,u"Skipping HDU %s, cannot save as valid type " % HDU)
             else:
                 Read += 1
                 Labels += [label]
                 self.save(Object,clobber=clobber)
         if not Read:
-            msg = "No HDUs were saved from FITS file %s to %s" % (filename,self)
+            msg = u"No HDUs were saved from FITS file %s to %s" % (filename,self)
             raise ValueError(msg)
         
-        LOG.log(5,"Saved frames %s" % Labels)
+        LOG.log(5,u"Saved frames %s" % Labels)
         return Labels
     
     def fromAtFile(self,atfile):
