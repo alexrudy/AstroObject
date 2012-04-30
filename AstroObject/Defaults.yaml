@@ -2,8 +2,8 @@
 Configurations:
   Main: Simulator.yaml
   This: Simulator.yaml
-CommandLine:
-  OptionsParsed: false
+Options:
+  Parsed: false
 Default: null
 Debug: false
 Dirs:
