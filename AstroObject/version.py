@@ -146,7 +146,7 @@ def _get_git_devstatus():
         warn('Parts missing stuff: '+stdout)
         return False
     
-    if parts[2] in ["master","release"]:
+    if parts[2] in ["master","release","hotfix"]:
         return False
     else:
         return True

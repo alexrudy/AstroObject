@@ -76,7 +76,8 @@ class GrowlHandler(logging.Handler):
             logging.INFO:"%s Info" % self.name,
             logging.WARNING:"%s Warning" % self.name,
             logging.CRITICAL:"%s Critical" % self.name,
-            logging.ERROR:"%s Error" % self.name}
+            logging.ERROR:"%s Error" % self.name,
+            }
         
     
     mapping = {logging.DEBUG:"Debug Message",logging.INFO:"Info Message",logging.WARNING:"Warning Message",logging.CRITICAL:"Critical Message",logging.ERROR:"Error Message"}

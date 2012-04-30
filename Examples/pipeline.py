@@ -53,7 +53,7 @@ class Pipeline(Simulator):
         self.config.load()
         self.collect()
     
-    @ignore
+    @ignore #Don't load this method as a stage... it is a helper method used to implement other stages.
     def load_type(self,key,stack):
         """Load a specific type of files using a generalized loading procedure"""
         if isinstance(self.config[key]["Files"],collections.Sequence):
@@ -102,7 +102,7 @@ class Pipeline(Simulator):
         
         
     @help("Create bias frames from the configured bias list.")
-    @depends("load-bias")
+    @depends("load-bias") # Declare a dependency on another stage: Method ``load_bias()``.
     def create_bias(self):
         """Creating Combined Bias Frame"""
         self.log.debug("Running iraf.zerocombine on image list...")
@@ -151,7 +151,7 @@ class Pipeline(Simulator):
         self.data = ImageStack()
         self.load_type("Data",self.data)
         
-    @include
+    @include # Set this stage as something to be run with the *all macro.
     @depends("create-bias","load-data")
     @help("Subtract Bias Frame")
     def subtract_bias(self):
@@ -162,7 +162,7 @@ class Pipeline(Simulator):
             zero=self.bias.iin("Bias"))
         self.data.idone()
        
-    @include
+    @include # Set this stage as something to be run with the *all macro.
     @depends("create-dark","load-data")
     @help("Subtract Dark Frame")
     def subtract_dark(self):
@@ -173,7 +173,7 @@ class Pipeline(Simulator):
             dark=self.dark.iin("Dark"))
         self.data.idone()
     
-    @include
+    @include # Set this stage as something to be run with the *all macro.
     @depends("create-flat","load-data")
     @help("Divide out flat frame")
     def divide_flat(self):
@@ -185,11 +185,15 @@ class Pipeline(Simulator):
             ccdtype="", fixpix="no", overscan="no", trim ="no", zerocor="no", flatcor="yes", darkcor ="no")
         self.data.iraf.done()
     
-    @include 
+    # Since the simulator loads and runs stages in order, this stage will always
+    # be run last.
+    @include # Set this stage as something to be run with the *all macro.
     @depends("load-data")
     def save_file(self):
         """Save the new fits file"""
         self.data.write("DataFile.fits",frames=[self.data.framename],clobber=True)
+        
+        
         
     @help("Save Partial Images")
     @depends("create-flat","create-dark","create-bias")
@@ -201,7 +205,7 @@ class Pipeline(Simulator):
         
         
 def main():
-    pipeline = RCPipeline()
+    pipeline = Pipeline()
     pipeline.run()     
                 
     

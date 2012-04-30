@@ -230,6 +230,7 @@ import math, copy, sys, time, logging, os, json, datetime
 import re
 import argparse
 import yaml
+from ast import literal_eval
 
 from pkg_resources import resource_filename
 
@@ -240,7 +241,7 @@ from progressbar import *
 
 # Submodules from this system
 from AstroCache import *
-from AstroConfig import *
+from AstroConfig import StructuredConfiguration, DottedConfiguration
 from Utilities import *
 
 __all__ = ["Simulator","on_collection","help","replaces","excepts","depends","include","optional","description","collect","ignore","on_instance_collection"]
@@ -396,6 +397,7 @@ class Simulator(object):
         super(Simulator, self).__init__()
         self.stages = {}
         self.macros = {}
+        self.functions = {}
         self.exclude = []
         self.include = []
         self.orders = []
@@ -408,6 +410,7 @@ class Simulator(object):
         self.name = name
         self.order = None
         self.config = StructuredConfiguration({})
+        self.config.dn = DottedConfiguration
         self.config.load(resource_filename(__name__,"Defaults.yaml"))
         
         if name == "__class__.__name__":
@@ -427,7 +430,6 @@ class Simulator(object):
         self.progressbar = False
         self.commandLine = commandLine
         self.Caches = CacheManager()
-        self.options = None
         
         if version==None:
             self.version = [u"AstroObject: " + __version__]
@@ -488,18 +490,18 @@ class Simulator(object):
         self.inc_stage_parser = self.parser.add_argument_group('Stages')
         
         # Add the basic controls for the script
-        self.parser.add_argument('--version',action='version',version=self.version)
+        self.parser.add_argument('--version',action='version',version="\n".join(self.version))
         
         # Operational Controls
         self.registerConfigOpts('d',{'Debug':True},help="enable debugging messages and plots")
         
         # Config Commands
         self.parser.add_argument('--p','--profile',action='store_true',dest='profile')
-        self.parser.add_argument('--pre-configure',action='append',help=argparse.SUPPRESS,metavar="{'config':'value'}",dest='preconfigure')
-        self.parser.add_argument('--configure',action='append',metavar="{'config':'value'}",help="Add configuration items in the form of python dictionaries",dest='postconfig')
+        self.parser.add_argument('--configure',action='append',metavar="Option.Key='Literal Value'",help="Add configuration items in the form of dotted name pairs",dest='literalconfig')
         self.parser.add_argument('--cf',action='store',dest='config',type=str,help="use the specified configuration file",metavar="file.yaml")
         self.parser.add_argument('--dry-run',action='store_true',dest='dry_run',help="Print the stages that the simulator wishes to run, without executing.")
         self.registerFunction('--dump',self._dump_config)
+        self.registerFunction('--dump-full-raw',self._dump_full_config)
         self.registerFunction('--stages',self._list_stages,help="List all of the stages initialized")
         
 
@@ -620,7 +622,7 @@ class Simulator(object):
         if include:
             self.stages["all"].deps += [name]
         
-    def registerFunction(self,argument,function,post=True,**kwargs):
+    def registerFunction(self,argument,function,name=None,post=True,**kwargs):
         """Register a function to run using a flag.
         
         :param string argument: The calling argument, e.g. ``--hello-world``
@@ -640,11 +642,15 @@ class Simulator(object):
             help = kwargs["help"]
             del kwargs["help"]
         if post:
-            dest='postfunc'
+            dest='afterFunction'
         else:
-            dest='prefunc'
+            dest='beforeFunction'
         
-        self.parser.add_argument(argument,action='append_const',dest='postfunc',const=function,help=help,**kwargs)
+        if name is None:
+            name = function.__name__
+        
+        self.functions[name] = function
+        self.parser.add_argument(argument,action='append_const',dest=dest,const=name,help=help,**kwargs)
         
         
     def registerConfigOpts(self,argument,configuration,preconfig=True,**kwargs):
@@ -665,32 +671,22 @@ class Simulator(object):
             help = kwargs["help"]
             del kwargs["help"]
         if preconfig:
-            dest = 'preconfig'
+            dest = 'beforeConfigure'
         else:
-            dest = 'postconifg'
+            dest = 'afterConfigure'
         self.config_parser.add_argument("-"+argument,action='append_const',dest=dest,const=configuration,help=help,**kwargs)
         
         
-    def _configure(self,configFile=None,configuration=None):
+    def _configure(self):
         """Configure this object. Configuration happens first from passed dictionaries (`configuration` variable) and then from files. The result is that configuration will use the values from files in place of values from passed in dictionaries. Running this function twice requires re-setting the `self.configured`."""
         if self.running:
             return ConfigurationError("Cannot configure the simulator, the simulation has already started!")
         if self.configured:
             raise ConfigurationError("%s appears to be already configured" % (self.name))
-        # Configure from Variable
-        if configuration != None:
-            self.config.merge(configuration)
-            self.log.debug("Updated Configuration from variable")            
-            self.configured |= True
-        # Configure from File
-        if configFile != None:
-            self.configured |= self.config.load(configFile)
-            self.log.debug("Updated Configuration from file %s" % configFile)                        
-        else:
-            self.configured |= self.config.load()
-            self.log.debug("Updated Configuration from default file %s" % self.config["Configurations"]["This"])            
-        
-        
+
+        self.configured |= self.config.load()
+        self.log.debug("Updated Configuration from default file %s" % self.config["Configurations.This"])            
+                
         if not self.configured:
             self.log.log(8,"No configuration provided or accessed. Using defaults.")
         
@@ -699,7 +695,7 @@ class Simulator(object):
         self.log.start()
         
         # Write Configuration to Partials Directory
-        if os.path.isdir(self.config["Dirs"]["Partials"]):
+        if os.path.isdir(self.config["Dirs.Partials"]):
             with open(self._dir_filename("Partials","%s.config.yaml" % self.name),"w") as stream:
                 stream.write("# Configuration from %s\n" % self.name)
                 yaml.dump(self.config,stream,default_flow_style=False) 
@@ -712,46 +708,59 @@ class Simulator(object):
         """Parse arguments. Argumetns can be passed into this function like they would be passed to the command line. These arguments will only be parsed when the system is not in `commandLine` mode."""
         if self.commandLine:
             Namespace = self.parser.parse_args()
-            self.options = vars(Namespace)
+            self.config["Options"].merge(vars(Namespace))
+            self.config["Options.Parsed"] = True
             self.log.log(2,"Parsed command line arguments")
-        elif self.options == None:
+        elif not self.config["Options.Parsed"]:
             Namespace = self.parser.parse_args("")
-            self.options = vars(Namespace)
+            self.config["Options"].merge(vars(Namespace))
+            self.config["Options.Parsed"] = True
             self.log.log(2,"Parsed default line arguments")
         else:
             self.log.debug("Skipping argument parsing")
+        
+        # Reset empty append-to variables.
+        if self.config.get("Options.beforeConfigure",True) == None:
+            del self.config["Options.beforeConfigure"]
+        if self.config.get("Options.beforeFunction",True) == None:
+            del self.config["Options.beforeFunction"]
+        if self.config.get("Options.afterConfigure",True) == None:
+            del self.config["Options.afterConfigure"]
+        if self.config.get("Options.afterFunction",True) == None:
+            del self.config["Options.afterFunction"]
+        if self.config.get("Options.literalconfig",True) == None:
+            del self.config["Options.literalconfig"]
+        
     
     def _preConfiguration(self):
         """Applies arguments before configuration. Only argument applied is the name of the configuration file, allowing the command line to change the configuration file name."""
-        if "config" in self.options and self.options["config"] != None:
-            self.config["Configurations"]["This"] = self.options["config"]
-        if "preconfig" in self.options and self.options["preconfig"] != None:
-            for preconfig in self.options["preconfig"]:
-                if isinstance(preconfig,str):
-                    preconfig = json.loads(unicode(preconfig))
-                self.config.merge(preconfig)
-        if "prefunc" in self.options and self.options["prefunc"] != None:
-            for f in self.options["prefunc"]:
-                f()
+        if self.config.get("Options.config",False):
+            self.config.setFile(self.config["Options.config"],"Options")
+        for fk in self.config.get("Options.beforeFunction",[]):
+            self.functions[fk]()
+        for cfg in self.config.get("Options.beforeConfigure",[]):
+            self.config.merge(cfg)
         
             
     def _postConfiguration(self):
         """Apply arguments after configuration. The arguments applied here flesh out macros, and copy data from the configuration system into the operations system."""
-        if "exclude" not in self.options or not isinstance(self.options["exclude"],list):
-            self.options["exclude"] = []
-        if "include" not in self.options or not isinstance(self.options["include"],list):
-            self.options["include"] = []
-        if "macro" not in self.options or not isinstance(self.options["macro"],list):
-            self.options["macro"] = []
-        if "postconfig" in self.options and self.options["postconfig"] != None:
-            for preconfig in self.options["postconfig"]:
-                if isinstance(preconfig,str):
-                    preconfig = json.loads(unicode(preconfig))
-                self.config.merge(preconfig)
-        
-        if "postfunc" in self.options and self.options["postfunc"] != None:
-            for f in self.options["postfunc"]:
-                f()
+        if not isinstance(self.config.get("Options.exclude",False),list):
+            self.config["Options.exclude"] = []
+        if not isinstance(self.config.get("Options.include",False),list):
+            self.config["Options.include"] = []
+        if not isinstance(self.config.get("Options.macro",False),list):
+            self.config["Options.macro"] = []
+        for item in self.config.get("Options.literalconfig",[]):    
+            key,value = item.split("=")
+            try:
+                self.config[key] = literal_eval(value)
+            except:
+                self.config[key] = value
+        for cfg in self.config.get("Options.afterConfigure",[]):
+            self.config.merge(cfg)
+        for fk in self.config.get("Options.afterFunction",[]):
+            self.functions[fk]()
+
         
         
     def _list_stages(self):
@@ -762,14 +771,24 @@ class Simulator(object):
             text += "%(command)-20s : %(desc)s" % {'command':s.name,'desc':s.description}
             text += "\n"
         self.exit(msg=text)
+    
+    def _dump_full_config(self):
+        """docstring for _dump_full_config"""
+        filename = self.config["Configurations.This"].rstrip(".yaml")+".fdump.yaml"
+        config = self.config.store
+        with open(filename,"w") as stream:
+            stream.write(u"# Configuration from %s\n" % self.name)
+            yaml.dump(config,stream,default_flow_style=False) 
+        
         
     def _dump_config(self):
         """Dump the configuration to a file"""
-        filename = self.config["Configurations"]["This"].rstrip(".yaml")+".dump.yaml"
+        filename = self.config["Configurations.This"].rstrip(".yaml")+".dump.yaml"
+        config = self.config.store
+        del config["Options"]
         with open(filename,"w") as stream:
             stream.write(u"# Configuration from %s\n" % self.name)
-            yaml.dump(self.config.extract(),stream,default_flow_style=False) 
-        
+            yaml.dump(config,stream,default_flow_style=False) 
                 
     def startup(self):
         """Start up the simulation. This function handles the configuration of the system, and prepares for any calls made to :meth:`do`."""
@@ -777,7 +796,7 @@ class Simulator(object):
         self.starting = True
         self._parseArguments()
         self._preConfiguration()
-        self._configure(configFile=self.config["Configurations"]["This"])
+        self._configure()
         self._postConfiguration()
         for vstr in self.version:
             self.log.info(vstr)
@@ -803,13 +822,13 @@ class Simulator(object):
             raise ConfigurationError(u"Simulator is already running!")
         elif self.paused:
             self.pasued = False
-            self.options["macro"] += list(stages)
+            self.config["Options.macro"] += list(stages)
         else:
             self.running = True
-            self.options["macro"] += list(stages)
-            if self.options["macro"] == []:
+            self.config["Options.macro"] += list(stages)
+            if self.config["Options.macro"] == []:
                 if self.config["Default"]:
-                    self.options["macro"] = self.config["Default"]
+                    self.config["Options.macro"] = self.config["Default"]
                 else:
                     self.parser.error(u"No stages triggered to run!")
             if self.attempt == []:
@@ -818,17 +837,17 @@ class Simulator(object):
         
         try:
             for stage in self.orders:
-                if stage in self.options["macro"]:
+                if stage in self.config["Options.macro"]:
                     self.execute(stage)
-                elif stage in self.options["include"]:
+                elif stage in self.config["Options.include"]:
                     self.execute(stage,deps=False)
             self.running = False
         except:
-            if self.options["profile"] and not self.running:
+            if self.config["Options.profile"] and not self.running:
                 self.show_profile()
             raise
         
-        if self.options['dry_run'] and not self.running:
+        if self.config["Options"]['dry_run'] and not self.running:
             text = u"Stages done:\n"
             for stage in self.done:
                 s = self.stages[stage]
@@ -836,7 +855,7 @@ class Simulator(object):
                 text += u"\n"
             self.exit(msg=text)
         
-        if self.options['profile'] and not self.running:
+        if self.config["Options"]['profile'] and not self.running:
             self.show_profile()
     
     def show_profile(self):
@@ -869,9 +888,9 @@ class Simulator(object):
             self.log.critical("Stage %s does not exist." % stage)
             self.exit(1)
         use = True
-        if stage in self.options["exclude"]:
+        if stage in self.config["Options.exclude"]:
             use = False
-        if stage in self.options["include"]:
+        if stage in self.config["Options.include"]:
             use = True
         if stage in self.attempt:
             return use
@@ -895,7 +914,7 @@ class Simulator(object):
             self.log.warning(u"Explicity skipping dependents")
         
         s = self.stages[stage]
-        if s.macro or self.options["dry_run"]:
+        if s.macro or self.config["Options.dry_run"]:
             self.complete += [stage] + s.reps
             self.done += [stage]
             return use

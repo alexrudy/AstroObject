@@ -1,12 +1,2 @@
 windowTitle = "AstroObject - $TM_DISPLAYNAME"
 
-[ python ]
-softTabs = True
-
-[ yaml ]
-softTabs = True
-tabSize = 2
-
-[ text.restructuredtext ]
-softTabs = True
-tabSize = 4
