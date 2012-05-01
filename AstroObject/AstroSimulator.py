@@ -860,6 +860,7 @@ can be customized using the 'Default' configuration variable in the configuratio
             self.log.debug(u"Completed '%s' and %r" % (s.name,s.reps))
             self.complete += [stage] + s.reps
             self.ran += [stage]
+            self.done += [stage]
         finally:
             self.aran += [stage]
             self.log.debug(u"Finished '%s'" % s.name)
