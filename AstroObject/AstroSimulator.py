@@ -317,16 +317,16 @@ class Stage(object):
     @staticmethod
     def table_head():
         """Table head for profiling."""
-        text  = ""
-        text += terminal.render("|%(BLUE)s-----------------------%(NORMAL)s|%(BLUE)s--------%(NORMAL)s|%(BLUE)s---------------%(NORMAL)s|\n")
-        text += "|         Stage         | Passed |     Time      |\n"
-        text += terminal.render("|%(BLUE)s-----------------------%(NORMAL)s|%(BLUE)s--------%(NORMAL)s|%(BLUE)s---------------%(NORMAL)s|")
+        text  = u""
+        text += terminal.render(u"|%(BLUE)s-----------------------%(NORMAL)s|%(BLUE)s--------%(NORMAL)s|%(BLUE)s---------------%(NORMAL)s|\n")
+        text += u"|         Stage         | Passed |     Time      |\n"
+        text += terminal.render(u"|%(BLUE)s-----------------------%(NORMAL)s|%(BLUE)s--------%(NORMAL)s|%(BLUE)s---------------%(NORMAL)s|")
         return text
       
     @staticmethod 
     def table_foot(total):
         """Table footer for profiling."""
-        text  = terminal.render("|%(BLUE)s-----------------------%(NORMAL)s Total Time: ")+"%(time)-9s"+terminal.render("%(BLUE)s---%(NORMAL)s|")
+        text  = terminal.render(u"|%(BLUE)s-----------------------%(NORMAL)s Total Time: ")+u"%(time)-9s"+terminal.render(u"%(BLUE)s---%(NORMAL)s|")
         text = text % {"time":datetime.timedelta(seconds=int(total))}
         return text
         
@@ -342,7 +342,7 @@ class Stage(object):
                 "time": datetime.timedelta(seconds=int(self.durTime)),
             }
         if total == None or total == 0:
-            keys["timestr"] = "% 12s" % keys["time"]            
+            keys["timestr"] = u"% 12s" % keys["time"]            
         else:
             keys["per"] = ( self.durTime / total ) * 100.0
             if keys["per"] > 50:
@@ -356,15 +356,15 @@ class Stage(object):
                 blen = terminal.COLUMNS - 50
             string += u"█" * blen
             string += terminal.NORMAL
-            keys["timestr"] = "%(time)9s %(per)2d%%" % keys
+            keys["timestr"] = u"%(time)9s %(per)2d%%" % keys
         return string % keys
         
     def profile(self):
         """Return a string stage profile for this stage."""
-        assert self.ran, "Stage %s didn't run" % self.name
-        return "Stage %(stage)s %(result)s in %(time).2fe" % {
+        assert self.ran, u"Stage %s didn't run" % self.name
+        return u"Stage %(stage)s %(result)s in %(time).2fe" % {
             "stage": self.name,
-            "result": "completed" if self.complete else "failed",
+            "result": u"completed" if self.complete else u"failed",
             "time": datetime.timedelta(seconds=self.durTime),
         }
         
@@ -430,6 +430,7 @@ class Simulator(object):
         self.progressbar = False
         self.commandLine = commandLine
         self.Caches = CacheManager()
+        self._depTree = []
         
         if version==None:
             self.version = [u"AstroObject: " + __version__]
@@ -463,11 +464,11 @@ class Simulator(object):
         ========= ==================================================
         
         """
-        self.USAGE = "%(command)s %(basicOpts)s %(subcommand)s"
-        self.USAGEFMT = { 'command' : "%(prog)s", 'basicOpts': "[ options ][ configuration ]", 'subcommand' : "{stages}" }
+        self.USAGE = u"%(command)s %(basicOpts)s %(subcommand)s"
+        self.USAGEFMT = { 'command' : u"%(prog)s", 'basicOpts': u"[ options ][ configuration ]", 'subcommand' : u"{stages}" }
         
-        
-        ShortHelp = """
+        HelpDict = { 'command': u"%(prog)s",'name': self.name }
+        ShortHelp = u"""
         Command Line Interface for %(name)s.
         The simulator is set up in stages, which are listed below. 
         By default, the *all stage should run the important parts of the simulator.
@@ -477,11 +478,15 @@ class Simulator(object):
         (+) Include-only : To include a stage, but not the dependents of that stage, use +stage.
         
         To run the simulater, use 
-        $ %(command)s *all""" % { 'command': "%(prog)s",'name': self.name }
-        LongHelp = """The command line interface to %(name)s normally takes a stage or stages as arguments. Each stage is specified on the command line prefixed by the *,+, or - characters. The * will run the stage and all dependents. The + will run solely that stage. The - will specifically exclude that stage (and so skip it's dependents)."""
+        $ %(command)s *all""" % HelpDict
+        LongHelp = u"""This is a multi-function dynamic command line interface to a complex program. 
+The base unit, stages, are individual functions which should be able to run independtly of each other. 
+Stages can declare dependencies if they are not independent of each other. The command line interface
+can be customized using the 'Default' configuration variable in the configuration file.
+        """ % HelpDict
         
         self.parser = argparse.ArgumentParser(description=ShortHelp,
-            formatter_class=argparse.RawDescriptionHelpFormatter,usage=self.USAGE % self.USAGEFMT,prefix_chars="-+*")
+            formatter_class=argparse.RawDescriptionHelpFormatter,usage=self.USAGE % self.USAGEFMT,prefix_chars="-+*",epilog=LongHelp)
         
         # Parsers
         self.config_parser = self.parser.add_argument_group("Configuration")
@@ -499,7 +504,8 @@ class Simulator(object):
         self.parser.add_argument('--p','--profile',action='store_true',dest='profile')
         self.parser.add_argument('--configure',action='append',metavar="Option.Key='Literal Value'",help="Add configuration items in the form of dotted name pairs",dest='literalconfig')
         self.parser.add_argument('--cf',action='store',dest='config',type=str,help="use the specified configuration file",metavar="file.yaml")
-        self.parser.add_argument('--dry-run',action='store_true',dest='dry_run',help="Print the stages that the simulator wishes to run, without executing.")
+        self.parser.add_argument('--dry-run',action='store_true',dest='dryRun',help="Print the stages that the simulator wishes to run, without executing.")
+        self.parser.add_argument('--show-dep-tree',action='store_true',dest='depTree')
         self.registerFunction('--dump',self._dump_config)
         self.registerFunction('--dump-full-raw',self._dump_full_config)
         self.registerFunction('--stages',self._list_stages,help="List all of the stages initialized")
@@ -676,6 +682,10 @@ class Simulator(object):
             dest = 'afterConfigure'
         self.config_parser.add_argument("-"+argument,action='append_const',dest=dest,const=configuration,help=help,**kwargs)
         
+    
+    def setLongHelp(self,string):
+        """Set the long epilogue help for the simulator."""
+        self.parser.epilog = string
         
     def _configure(self):
         """Configure this object. Configuration happens first from passed dictionaries (`configuration` variable) and then from files. The result is that configuration will use the values from files in place of values from passed in dictionaries. Running this function twice requires re-setting the `self.configured`."""
@@ -698,7 +708,7 @@ class Simulator(object):
         if os.path.isdir(self.config["Dirs.Partials"]):
             with open(self._dir_filename("Partials","%s.config.yaml" % self.name),"w") as stream:
                 stream.write("# Configuration from %s\n" % self.name)
-                yaml.dump(self.config,stream,default_flow_style=False) 
+                yaml.dump(self.config.store,stream,default_flow_style=False) 
     
     def _dir_filename(self,directory,filename):
         """Return a directory filename."""
@@ -719,17 +729,9 @@ class Simulator(object):
         else:
             self.log.debug("Skipping argument parsing")
         
-        # Reset empty append-to variables.
-        if self.config.get("Options.beforeConfigure",True) == None:
-            del self.config["Options.beforeConfigure"]
-        if self.config.get("Options.beforeFunction",True) == None:
-            del self.config["Options.beforeFunction"]
-        if self.config.get("Options.afterConfigure",True) == None:
-            del self.config["Options.afterConfigure"]
-        if self.config.get("Options.afterFunction",True) == None:
-            del self.config["Options.afterFunction"]
-        if self.config.get("Options.literalconfig",True) == None:
-            del self.config["Options.literalconfig"]
+        for key in self.config["Options"].keys():
+            if self.config["Options"][key] == None:
+                del self.config["Options"][key]
         
     
     def _preConfiguration(self):
@@ -847,15 +849,21 @@ class Simulator(object):
                 self.show_profile()
             raise
         
-        if self.config["Options"]['dry_run'] and not self.running:
+        if self.config["Options.dryRun"] and not self.running:
             text = u"Stages done:\n"
             for stage in self.done:
                 s = self.stages[stage]
                 text += u"%(command)-20s : %(desc)s" % {'command':s.name,'desc':s.description}
                 text += u"\n"
             self.exit(msg=text)
+            
+        if self.config["Options.depTree"] and not self.running:
+            self._depTree.reverse()
+            text = u"Dependency Tree:\n"
+            text += "\n".join(self._depTree)
+            self.exit(msg=text)
         
-        if self.config["Options"]['profile'] and not self.running:
+        if self.config["Options.profile"] and not self.running:
             self.show_profile()
     
     def show_profile(self):
@@ -873,7 +881,7 @@ class Simulator(object):
             
         self.log.info(text)
             
-    def execute(self,stage,deps=True):
+    def execute(self,stage,deps=True,level=0):
         """Actually exectue a particular stage. This function can be called to execute individual stages, either with or without dependencies. As such, it gives finer granularity than :func:`do`.
         
         :param string stage: The stage name to be exectued.
@@ -904,7 +912,7 @@ class Simulator(object):
             for dependent in self.orders:
                 if dependent in self.stages[stage].deps:
                     if dependent not in self.attempt:
-                        self.execute(dependent)
+                        self.execute(dependent,level=level+1)
                     if dependent not in self.complete:
                         if self.stages[dependent].optional:
                             self.log.debug(u"Stage \'%s\' requested by \'%s\' but skipped" % (dependent,stage))
@@ -914,9 +922,10 @@ class Simulator(object):
             self.log.warning(u"Explicity skipping dependents")
         
         s = self.stages[stage]
-        if s.macro or self.config["Options.dry_run"]:
+        if s.macro or self.config["Options.dryRun"] or self.config["Options.depTree"]:
             self.complete += [stage] + s.reps
             self.done += [stage]
+            self._depTree += [u"  " * level + u"└>%s" % stage]
             return use
         
         self.log.debug("Starting \'%s\'" % s.name)
@@ -939,16 +948,16 @@ class Simulator(object):
                 raise
         except Exception as e:
             self.log.useConsole(True)
-            self.log.critical(u"Error %(name)s in stage %(stage)s:'%(desc)s'!" % {'name': e.__class__.__name__, 'desc': s.description,'stage':s.name})
-            self.log.critical(u"Error: %(msg)s" % {'msg':e})
+            self.log.critical(u"Error %(name)s in stage %(stage)s:'%(desc)s'!" % { 'name' : e.__class__.__name__, 'desc' : s.description, 'stage' : s.name } )
+            self.log.critical(u"Error: %(msg)s" % { 'msg' : e } )
             raise
         else:
-            self.log.debug(u"Completed \'%s\'" % s.name)
+            self.log.debug(u"Completed '%s' and %r" % (s.name,s.reps))
             self.complete += [stage] + s.reps
             self.ran += [stage]
         finally:
             self.aran += [stage]
-            self.log.debug(u"Finished \'%s\'" % s.name)
+            self.log.debug(u"Finished '%s'" % s.name)
         
         return use
         
@@ -956,7 +965,9 @@ class Simulator(object):
         """This function exist the current python instance with the requested code. Before exiting, a message is printed.
         
         :param int code: exit code
-        :param string msg: exit message"""
+        :param string msg: exit message
+        
+        """
         if msg:
             self.log.info(msg)
         self.log.info(u"Simulator %s Finished" % self.name)
