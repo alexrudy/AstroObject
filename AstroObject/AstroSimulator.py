@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-14.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-b3
+#  Version 0.5.1
 # 
 """
 :mod:`AstroSimulator` — Complex Task Management 
@@ -103,11 +103,11 @@ The program is actually agnostic to the order of arguments. Any argument may com
 	
 	Set the name of the configuration file to use. By default, the configuation file is called `SED.main.config.yaml`. This will be the filename used for dumping configurations with the :option:`--dump` command (Dump will append the extension ``-dump.yaml`` onto the filename to prevent overwriting exisitng configurations)
 	
-.. option:: --dry-run
+.. option:: -n,--dry-run
 	
 	Traverse all of the stages to be run, printing them as the program goes, but do not run any stages.
 	
-.. option:: --stages
+.. option:: --list-stages
 	
 	Print all stages registered in the simulator. Any stage listed in the output of this function can be run.
 	
@@ -115,7 +115,7 @@ The program is actually agnostic to the order of arguments. Any argument may com
 	
 	Dump the configuration to a file. Filenames are the configuration file name with ``-dump.yaml`` appended.
 
-.. option:: --profile
+.. option:: --p,--profile
     
     Show a timing profile of the simulation, including status of stages, at the end of the simulation.
 
@@ -124,15 +124,14 @@ The program is actually agnostic to the order of arguments. Any argument may com
 :program:`Simulator` Configuration Files
 ----------------------------------------
 
-:program:`Simulator` configuration files are YAML files which contain a dictionary structure. All values in the YAML files are basic yaml, and contain no python-specific directives. To find out what the default or current configuration is, use the :option:`--dump` command. The file produced from this will contain a YAML structure for the configuration in use when the system started up. The various directives in the configuration file are described below.
+:program:`Simulator` configuration files are YAML files which contain a dictionary structure. All values in the YAML files are basic yaml, and contain no python-specific directives. To find out what the default or current configuration is, use the :option:`--dump` command. The file produced from this will contain a YAML structure for the configuration in use when the system started up. The various directives in the configuration file are described below. Configuration options are described using the dotted-syntax described in :mod:`AstroObject.AstroConfig`
 
 - ``Configurations``: contains a list of potential configuration files.
-    - ``Main``: The name of the primary configuration file. This default is produced by the program. Overriding it in the configuration file has essentially no effect.
+- ``Configurations.Main``: The name of the primary configuration file. This default is produced by the program. Overriding it in the configuration file has essentially no effect.
 - ``Dirs``: Directories that this simulator will use for output.
-    - ``Caches``: Location of cache files.
-        .. Note:: This function has almost no effect, but can be used internally by the simulator. See :ref:`SimulatorExample`
-    - ``Logs``: Location of log files
-    - ``Partials``: Location of partial output, including a dump of the configuration.
+- ``Dirs.Caches``: Location of cache files.
+- ``Dirs.Logs``: Location of log files.
+- ``Dirs.Partials``: Location of partial output, including a dump of the configuration.
 - ``Logging``: Configuration of the :mod:`AstroObject.AstroObjectLogging` module
 
 A simple configuration file can be found in the :ref:`SimulatorExample`.
@@ -163,7 +162,7 @@ The following methods handle the external-API for the simulator. Normally, when 
     
     .. automethod:: exit
     
-    .. automethod:: map_over_collection
+    .. automethod:: map
 
 .. _Simulator_Decorators:
     
@@ -186,6 +185,12 @@ The following decorators can be used (in conjuction with :meth:`AstroObject.Astr
 .. autofunction:: replaces
 
 .. autofunction:: optional
+
+.. autofunction:: excepts
+
+.. autofunction:: on_collection
+
+.. autofunction:: on_instance_collection
     
 Private Methods and Classes
 ---------------------------
@@ -230,6 +235,7 @@ import math, copy, sys, time, logging, os, json, datetime
 import re
 import argparse
 import yaml
+from ast import literal_eval
 
 from pkg_resources import resource_filename
 
@@ -240,7 +246,7 @@ from progressbar import *
 
 # Submodules from this system
 from AstroCache import *
-from AstroConfig import *
+from AstroConfig import StructuredConfiguration, DottedConfiguration
 from Utilities import *
 
 __all__ = ["Simulator","on_collection","help","replaces","excepts","depends","include","optional","description","collect","ignore","on_instance_collection"]
@@ -296,6 +302,8 @@ class Stage(object):
                 description = name
         if exceptions == None:
             self.exceptions = tuple()
+        elif exceptions == True:
+            self.exceptions = Exception
         else:
             self.exceptions = exceptions
         self.description = description
@@ -314,21 +322,28 @@ class Stage(object):
     @staticmethod
     def table_head():
         """Table head for profiling."""
-        text  = ""
-        text += terminal.render("|%(BLUE)s-----------------------%(NORMAL)s|%(BLUE)s--------%(NORMAL)s|%(BLUE)s---------------%(NORMAL)s|\n")
-        text += "|         Stage         | Passed |     Time      |\n"
-        text += terminal.render("|%(BLUE)s-----------------------%(NORMAL)s|%(BLUE)s--------%(NORMAL)s|%(BLUE)s---------------%(NORMAL)s|")
+        text  = u""
+        text += terminal.render(u"|%(BLUE)s-----------------------%(NORMAL)s|%(BLUE)s--------%(NORMAL)s|%(BLUE)s---------------%(NORMAL)s|\n")
+        text += u"|         Stage         | Passed |     Time      |\n"
+        text += terminal.render(u"|%(BLUE)s-----------------------%(NORMAL)s|%(BLUE)s--------%(NORMAL)s|%(BLUE)s---------------%(NORMAL)s|")
         return text
       
     @staticmethod 
     def table_foot(total):
         """Table footer for profiling."""
-        text  = terminal.render("|%(BLUE)s-----------------------%(NORMAL)s Total Time: ")+"%(time)-9s"+terminal.render("%(BLUE)s---%(NORMAL)s|")
+        text  = terminal.render(u"|%(BLUE)s-----------------------%(NORMAL)s Total Time: ")+u"%(time)-9s"+terminal.render(u"%(BLUE)s---%(NORMAL)s|")
         text = text % {"time":datetime.timedelta(seconds=int(total))}
         return text
         
     def table_row(self,total=None):
-        """Return a profiling string table row."""
+        """Return a profiling string table row.
+        ::
+            
+            >>> stage.table_row()
+            |                 other |   True |  0:00:00   0% |
+            
+        
+        """
         assert self.ran, "Stage %s didn't run" % self.name
         string =  u"| %(stage)21s | %(color)s%(result)6s%(normal)s | %(timestr) 12s |"
         keys = {
@@ -339,7 +354,7 @@ class Stage(object):
                 "time": datetime.timedelta(seconds=int(self.durTime)),
             }
         if total == None or total == 0:
-            keys["timestr"] = "% 12s" % keys["time"]            
+            keys["timestr"] = u"% 12s" % keys["time"]            
         else:
             keys["per"] = ( self.durTime / total ) * 100.0
             if keys["per"] > 50:
@@ -353,15 +368,15 @@ class Stage(object):
                 blen = terminal.COLUMNS - 50
             string += u"█" * blen
             string += terminal.NORMAL
-            keys["timestr"] = "%(time)9s %(per)2d%%" % keys
+            keys["timestr"] = u"%(time)8s %(per)3d%%" % keys
         return string % keys
         
     def profile(self):
         """Return a string stage profile for this stage."""
-        assert self.ran, "Stage %s didn't run" % self.name
-        return "Stage %(stage)s %(result)s in %(time).2fe" % {
+        assert self.ran, u"Stage %s didn't run" % self.name
+        return u"Stage %(stage)s %(result)s in %(time).2fe" % {
             "stage": self.name,
-            "result": "completed" if self.complete else "failed",
+            "result": u"completed" if self.complete else u"failed",
             "time": datetime.timedelta(seconds=self.durTime),
         }
         
@@ -394,6 +409,7 @@ class Simulator(object):
         super(Simulator, self).__init__()
         self.stages = {}
         self.macros = {}
+        self.functions = {}
         self.exclude = []
         self.include = []
         self.orders = []
@@ -406,6 +422,7 @@ class Simulator(object):
         self.name = name
         self.order = None
         self.config = StructuredConfiguration({})
+        self.config.dn = DottedConfiguration
         self.config.load(resource_filename(__name__,"Defaults.yaml"))
         
         if name == "__class__.__name__":
@@ -425,7 +442,7 @@ class Simulator(object):
         self.progressbar = False
         self.commandLine = commandLine
         self.Caches = CacheManager()
-        self.options = None
+        self._depTree = []
         
         if version==None:
             self.version = [u"AstroObject: " + __version__]
@@ -459,11 +476,11 @@ class Simulator(object):
         ========= ==================================================
         
         """
-        self.USAGE = "%(command)s %(basicOpts)s %(subcommand)s"
-        self.USAGEFMT = { 'command' : "%(prog)s", 'basicOpts': "[ options ][ configuration ]", 'subcommand' : "{stages}" }
+        self.USAGE = u"%(command)s %(basicOpts)s %(subcommand)s"
+        self.USAGEFMT = { 'command' : u"%(prog)s", 'basicOpts': u"[ options ][ configuration ]", 'subcommand' : u"{stages}" }
         
-        
-        ShortHelp = """
+        HelpDict = { 'command': u"%(prog)s",'name': self.name }
+        ShortHelp = u"""
         Command Line Interface for %(name)s.
         The simulator is set up in stages, which are listed below. 
         By default, the *all stage should run the important parts of the simulator.
@@ -473,34 +490,38 @@ class Simulator(object):
         (+) Include-only : To include a stage, but not the dependents of that stage, use +stage.
         
         To run the simulater, use 
-        $ %(command)s *all""" % { 'command': "%(prog)s",'name': self.name }
-        LongHelp = """The command line interface to %(name)s normally takes a stage or stages as arguments. Each stage is specified on the command line prefixed by the *,+, or - characters. The * will run the stage and all dependents. The + will run solely that stage. The - will specifically exclude that stage (and so skip it's dependents)."""
+        $ %(command)s *all""" % HelpDict
+        LongHelp = u"""This is a multi-function dynamic command line interface to a complex program. 
+The base unit, stages, are individual functions which should be able to run independtly of each other. 
+Stages can declare dependencies if they are not independent of each other. The command line interface
+can be customized using the 'Default' configuration variable in the configuration file.
+        """ % HelpDict
         
         self.parser = argparse.ArgumentParser(description=ShortHelp,
-            formatter_class=argparse.RawDescriptionHelpFormatter,usage=self.USAGE % self.USAGEFMT,prefix_chars="-+*")
+            formatter_class=argparse.RawDescriptionHelpFormatter,usage=self.USAGE % self.USAGEFMT,prefix_chars="-+*",epilog=LongHelp)
         
         # Parsers
-        self.config_parser = self.parser.add_argument_group("Configuration")
+        self.config_parser = self.parser.add_argument_group("configuration presets")
         self.pos_stage_parser = self.parser.add_argument_group('Single Use Stages')
         self.neg_stage_parser = self.parser.add_argument_group('Remove Stages')
-        self.inc_stage_parser = self.parser.add_argument_group('Stages')
+        self.inc_stage_parser = self.parser.add_argument_group('action stages')
         
         # Add the basic controls for the script
-        self.parser.add_argument('--version',action='version',version=self.version)
+        self.parser.add_argument('--version',action='version',version="\n".join(self.version))
         
         # Operational Controls
         self.registerConfigOpts('d',{'Debug':True},help="enable debugging messages and plots")
         
         # Config Commands
-        self.parser.add_argument('--p','--profile',action='store_true',dest='profile')
-        self.parser.add_argument('--pre-configure',action='append',help=argparse.SUPPRESS,metavar="{'config':'value'}",dest='preconfigure')
-        self.parser.add_argument('--configure',action='append',metavar="{'config':'value'}",help="Add configuration items in the form of python dictionaries",dest='postconfig')
-        self.parser.add_argument('--cf',action='store',dest='config',type=str,help="use the specified configuration file",metavar="file.yaml")
-        self.parser.add_argument('--dry-run',action='store_true',dest='dry_run',help="Print the stages that the simulator wishes to run, without executing.")
-        self.registerFunction('--dump',self._dump_config)
-        self.registerFunction('--stages',self._list_stages,help="List all of the stages initialized")
-        
-
+        self.parser.add_argument('--configure',action='append',metavar="Option.Key='literal value'",help="add configuration items in the form of dotted names and value pairs: Option.Key='literal value' will set config[\"Option.Key\"] = 'literal value'",dest='literalconfig')
+        self.parser.add_argument('-c','--config-file',action='store',dest='config',type=str,help="use the specified configuration file",metavar="file.yaml")
+        self.registerFunction('-p','--profile',self._show_profile,run='end',help="show a simulation profile")
+        self.registerFunction('-n','--dry-run', self._dry_run, run='post',help="run the simulation, but do not execute stages.")
+        self.registerFunction('--show-tree', self._show_dep_tree, run='end',help="show a dependcy tree of all stages run.")
+        self.registerFunction('--show-stages',self._show_done_stages,run='end',help="show a flat list of all stages run.")
+        self.registerFunction('--dump-config', self._dump_config,help="dump the configuration to a file, with extension .dump.yaml")
+        self.registerFunction('--dump-full-raw', self._dump_full_config)
+        self.registerFunction('--list-stages', self._list_stages, help="list all of the stages initialized in the simulator.")
         
         # Default Macro
         self.registerStage(None,"all",description="Run all stages",help="Run all stages",include=False)
@@ -513,7 +534,9 @@ class Simulator(object):
         self.orders += ["all"]
 
         
-        
+    #########################
+    ### REGISTRATION APIs ###
+    #########################    
         
     def registerStage(self,stage,name=None,description=None,exceptions=None,include=None,help=False,dependencies=None,replaces=None,optional=False):
         """Register a stage for operation with the simulator. The stage will then be available as a command line option, and will be operated with the simulator. Stages should be registered early in the operation of the simulator (preferably in the initialization, after the simulator class itself has initialized) so that the program is aware of the stages for running. 
@@ -539,25 +562,6 @@ class Simulator(object):
     	``+``     Include-only To include a stage, but not the dependents of that stage, use ``+stage``.
     	========= ============ ================================
         
-        To use a registered stage, and call all of its dependents, call ::
-            
-            $ Simulator *stage
-            
-        Registered stages can be explicity run from the command line by including::
-            
-            $ Simulator +stage
-            
-        And can be explicity excluded from the command line::
-            
-            $ Simulator -stage
-            
-        Where `+stage` will override `-stage` so::
-            
-            $ Simulator +test -test
-            $ Simulator -test +test
-            
-        will both run the `test` stage.
-        
         Stages cannot be added dynamically. Once the simulator starts running (i.e. processing stages) the order and settings are fixed. Attempting to adjsut the stages at this point will raise an error.
         """
         if self.running or self.starting:
@@ -573,6 +577,8 @@ class Simulator(object):
             exceptions = stage.exceptions
         elif exceptions == None:
             exceptions = tuple()
+        if exceptions == True:
+            exceptions = Exception
         
         if dependencies == None and hasattr(stage,'dependencies'):
             dependencies = stage.dependencies
@@ -616,12 +622,14 @@ class Simulator(object):
         if include:
             self.stages["all"].deps += [name]
         
-    def registerFunction(self,argument,function,post=True,**kwargs):
+    def registerFunction(self,*arguments,**kwargs):
         """Register a function to run using a flag.
         
-        :param string argument: The calling argument, e.g. ``--hello-world``
-        :param function function: The function to be run.
-        :keyword bool post: Whether to run the function before or after configuration of the simulator.
+        :param string argument: The calling argument, e.g. ``--hello-world``. Multiple arguments can be provided.
+        :param function function: The function to be run. This should be the last comma separated argument.
+        :keyword str help: Command line help for this function.
+        :keyword str run: ('pre'|'post'|'end') Whether to run the function before or after configuration of the simulator, or at the end of the simulation.
+        :keyword str name: An explicit function name.
         
         Functions registered with ``post=False`` will be run before the simulator is configured from a file. As such, changes they make can be easily re-adjusted by the user. Functions registered with ``post=True`` (the default) will run after configuration, but before any stages run. They can be used to inspect or adjust configuration variables or other globals.
         
@@ -629,18 +637,22 @@ class Simulator(object):
         """
         if self.running or self.starting:
             raise ConfigureError("Cannot add macro after simulator has started!")
+
+        help = kwargs.pop("help",argparse.SUPPRESS)
+            
+        run = kwargs.pop('run','post')
+        runOpts = { 'post' : 'afterFunction' , 'pre' : 'beforeFunction', 'end' : 'endFunction'}
+        if run not in runOpts:
+            raise KeyError("Run option not supported: %s, %r" % (run,runOpts.keys()))
         
-        if "help" not in kwargs:
-            help = argparse.SUPPRESS
-        else:
-            help = kwargs["help"]
-            del kwargs["help"]
-        if post:
-            dest='postfunc'
-        else:
-            dest='prefunc'
+        arguments = list(arguments)
+        function = arguments.pop()
         
-        self.parser.add_argument(argument,action='append_const',dest='postfunc',const=function,help=help,**kwargs)
+        name = kwargs.pop('name',function.__name__)
+        
+        self.functions[name] = function
+        
+        self.parser.add_argument(*arguments,action='append_const',dest=runOpts[run],const=name,help=help,**kwargs)
         
         
     def registerConfigOpts(self,argument,configuration,preconfig=True,**kwargs):
@@ -661,284 +673,26 @@ class Simulator(object):
             help = kwargs["help"]
             del kwargs["help"]
         if preconfig:
-            dest = 'preconfig'
+            dest = 'beforeConfigure'
         else:
-            dest = 'postconifg'
+            dest = 'afterConfigure'
         self.config_parser.add_argument("-"+argument,action='append_const',dest=dest,const=configuration,help=help,**kwargs)
         
-        
-    def _configure(self,configFile=None,configuration=None):
-        """Configure this object. Configuration happens first from passed dictionaries (`configuration` variable) and then from files. The result is that configuration will use the values from files in place of values from passed in dictionaries. Running this function twice requires re-setting the `self.configured`."""
-        if self.running:
-            return ConfigurationError("Cannot configure the simulator, the simulation has already started!")
-        if self.configured:
-            raise ConfigurationError("%s appears to be already configured" % (self.name))
-        # Configure from Variable
-        if configuration != None:
-            self.config.merge(configuration)
-            self.log.debug("Updated Configuration from variable")            
-            self.configured |= True
-        # Configure from File
-        if configFile != None:
-            self.configured |= self.config.load(configFile)
-            self.log.debug("Updated Configuration from file %s" % configFile)                        
-        else:
-            self.configured |= self.config.load()
-            self.log.debug("Updated Configuration from default file %s" % self.config["Configurations"]["This"])            
-        
-        
-        if not self.configured:
-            self.log.log(8,"No configuration provided or accessed. Using defaults.")
-        
-        # Start Logging
-        self.log.configure(configuration=self.config)
-        self.log.start()
-        
-        # Write Configuration to Partials Directory
-        if os.path.isdir(self.config["Dirs"]["Partials"]):
-            with open(self._dir_filename("Partials","%s.config.yaml" % self.name),"w") as stream:
-                stream.write("# Configuration from %s\n" % self.name)
-                yaml.dump(self.config,stream,default_flow_style=False) 
     
-    def _dir_filename(self,directory,filename):
+    def setLongHelp(self,string):
+        """Set the long epilogue help for the simulator. The long help will be printed at the end of the help documentation."""
+        assert not self.starting, "Parsing has started, can't set long help!"
+        assert not self.running, "Simulator is running, can't set long help!"
+        self.parser.epilog = string
+        
+    def dir_filename(self,directory,filename):
         """Return a directory filename."""
         return "%(directory)s/%(filename)s" % { "directory" : self.config["Dirs"][directory] , "filename" : filename }
-        
-    def _parseArguments(self):
-        """Parse arguments. Argumetns can be passed into this function like they would be passed to the command line. These arguments will only be parsed when the system is not in `commandLine` mode."""
-        if self.commandLine:
-            Namespace = self.parser.parse_args()
-            self.options = vars(Namespace)
-            self.log.log(2,"Parsed command line arguments")
-        elif self.options == None:
-            Namespace = self.parser.parse_args("")
-            self.options = vars(Namespace)
-            self.log.log(2,"Parsed default line arguments")
-        else:
-            self.log.debug("Skipping argument parsing")
     
-    def _preConfiguration(self):
-        """Applies arguments before configuration. Only argument applied is the name of the configuration file, allowing the command line to change the configuration file name."""
-        if "config" in self.options and self.options["config"] != None:
-            self.config["Configurations"]["This"] = self.options["config"]
-        if "preconfig" in self.options and self.options["preconfig"] != None:
-            for preconfig in self.options["preconfig"]:
-                if isinstance(preconfig,str):
-                    preconfig = json.loads(unicode(preconfig))
-                self.config.merge(preconfig)
-        if "prefunc" in self.options and self.options["prefunc"] != None:
-            for f in self.options["prefunc"]:
-                f()
-        
-            
-    def _postConfiguration(self):
-        """Apply arguments after configuration. The arguments applied here flesh out macros, and copy data from the configuration system into the operations system."""
-        if "exclude" not in self.options or not isinstance(self.options["exclude"],list):
-            self.options["exclude"] = []
-        if "include" not in self.options or not isinstance(self.options["include"],list):
-            self.options["include"] = []
-        if "macro" not in self.options or not isinstance(self.options["macro"],list):
-            self.options["macro"] = []
-        if "postconfig" in self.options and self.options["postconfig"] != None:
-            for preconfig in self.options["postconfig"]:
-                if isinstance(preconfig,str):
-                    preconfig = json.loads(unicode(preconfig))
-                self.config.merge(preconfig)
-        
-        if "postfunc" in self.options and self.options["postfunc"] != None:
-            for f in self.options["postfunc"]:
-                f()
-        
-        
-    def _list_stages(self):
-        """List stages and exit"""
-        text = "Stages:\n"
-        for stage in self.orders:
-            s = self.stages[stage]
-            text += "%(command)-20s : %(desc)s" % {'command':s.name,'desc':s.description}
-            text += "\n"
-        self.exit(msg=text)
-        
-    def _dump_config(self):
-        """Dump the configuration to a file"""
-        filename = self.config["Configurations"]["This"].rstrip(".yaml")+".dump.yaml"
-        with open(filename,"w") as stream:
-            stream.write(u"# Configuration from %s\n" % self.name)
-            yaml.dump(self.config.extract(),stream,default_flow_style=False) 
-        
-                
-    def startup(self):
-        """Start up the simulation. This function handles the configuration of the system, and prepares for any calls made to :meth:`do`."""
-        self._default_macros()
-        self.starting = True
-        self._parseArguments()
-        self._preConfiguration()
-        self._configure(configFile=self.config["Configurations"]["This"])
-        self._postConfiguration()
-        for vstr in self.version:
-            self.log.info(vstr)
-        self.starting = False
-        
-        
-        
-    def run(self):
-        """Run the actual simulator. This command handles simulators which can be run from the command line. Calling :meth:`run` will run all of the stages specified on the command line. If you do not want this effect, use :meth:`startup` to prepare the simulator, and :meth:`do` to run the actual simulator. Calling :meth:`exit` at the end will allow the simulator to close out and perform any output tasks, but will also end the current python session."""
-        self.startup()
-        self.do()
-        self.exit()
+    #############################
+    ### PUBLIC OPERATION APIs ###
+    #############################
     
-    def do(self,*stages):
-        """Run the simulator.
-        
-        :arguments stages: Stages to be run as macros.
-        
-        This command can be used to run specific stages and their dependents. The control is far less flow control than the command-line interface (there is currently no argument interface to inclusion and exclusion lists, ``+`` and ``-``.), but can be used to call single macros in simulators froms scripts. In these cases, it is often beneficial to set up your own macro (calling :func:`registerStage` with ``None`` as the stage action) to wrap the actions you want taken in each phase.
-        
-        It is possible to stop execution in the middle of this function. Simply set the simulator's ``paused`` variable to ``True`` and the simulator will remain in a state where you are free to call :meth:`do` again."""
-        if self.running and not self.paused:
-            raise ConfigurationError(u"Simulator is already running!")
-        elif self.paused:
-            self.pasued = False
-            self.options["macro"] += list(stages)
-        else:
-            self.running = True
-            self.options["macro"] += list(stages)
-            if self.options["macro"] == []:
-                if self.config["Default"]:
-                    self.options["macro"] = self.config["Default"]
-                else:
-                    self.parser.error(u"No stages triggered to run!")
-            if self.attempt == []:
-                self.inorder = True
-                self.complete = []
-        
-        try:
-            for stage in self.orders:
-                if stage in self.options["macro"]:
-                    self.execute(stage)
-                elif stage in self.options["include"]:
-                    self.execute(stage,deps=False)
-            self.running = False
-        except:
-            if self.options["profile"] and not self.running:
-                self.show_profile()
-            raise
-        
-        if self.options['dry_run'] and not self.running:
-            text = u"Stages done:\n"
-            for stage in self.done:
-                s = self.stages[stage]
-                text += u"%(command)-20s : %(desc)s" % {'command':s.name,'desc':s.description}
-                text += u"\n"
-            self.exit(msg=text)
-        
-        if self.options['profile'] and not self.running:
-            self.show_profile()
-    
-    def show_profile(self):
-        """Show the profile of the simulation"""
-        
-        total = sum([ self.stages[stage].durTime for stage in self.aran])
-        
-        text = "Simulation profile:\n"
-        text += Stage.table_head() + "\n"
-        
-        for stage in self.aran:
-            text += self.stages[stage].table_row(total) + "\n"
-            
-        text += Stage.table_foot(total)
-            
-        self.log.info(text)
-            
-    def execute(self,stage,deps=True):
-        """Actually exectue a particular stage. This function can be called to execute individual stages, either with or without dependencies. As such, it gives finer granularity than :func:`do`.
-        
-        :param string stage: The stage name to be exectued.
-        :param bool deps: Whether to run all dependencies.
-        
-        This method handles exceptions from the called stages, including keyboard interrupts.
-        """
-        if self.paused or not self.running:
-            return False
-            
-        if stage not in self.stages:
-            self.log.critical("Stage %s does not exist." % stage)
-            self.exit(1)
-        use = True
-        if stage in self.options["exclude"]:
-            use = False
-        if stage in self.options["include"]:
-            use = True
-        if stage in self.attempt:
-            return use
-        if not use:
-            return use
-        
-        self.attempt += [stage] + self.stages[stage].reps
-         
-        if deps:
-            
-            for dependent in self.orders:
-                if dependent in self.stages[stage].deps:
-                    if dependent not in self.attempt:
-                        self.execute(dependent)
-                    if dependent not in self.complete:
-                        if self.stages[dependent].optional:
-                            self.log.debug(u"Stage \'%s\' requested by \'%s\' but skipped" % (dependent,stage))
-                        else:
-                            self.log.warning(u"Stage \'%s\' required by \'%s\' but failed to complete." % (dependent,stage))
-        else:
-            self.log.warning(u"Explicity skipping dependents")
-        
-        s = self.stages[stage]
-        if s.macro or self.options["dry_run"]:
-            self.complete += [stage] + s.reps
-            self.done += [stage]
-            return use
-        
-        self.log.debug("Starting \'%s\'" % s.name)
-        self.log.info(u"%s" % s.description)
-        
-        try:
-            s.run()
-        except KeyboardInterrupt as e:
-            self.log.useConsole(True)
-            self.log.critical("Keyboard Interrupt during %(stage)s... ending simulator." % {'stage':s.name})
-            self.log.critical("Last completed stage: %(stage)s" % {'stage':self.complete.pop()})
-            self.log.debug("Stages completed: %s" % self.complete)
-            self.exit()
-        except s.exceptions as e:
-            if self.config["Debug"]:
-                self.log.useConsole(True)
-            self.log.error(u"Error %(name)s in stage %(stage)s:%(desc)s. Stage indicated that this error was not critical" % {'name': e.__class__.__name__, 'desc': s.description,'stage':s.name})
-            self.log.error(u"Error: %(msg)s" % {'msg':e})
-            if self.config["Debug"]:
-                raise
-        except Exception as e:
-            self.log.useConsole(True)
-            self.log.critical(u"Error %(name)s in stage %(stage)s:%(desc)s!" % {'name': e.__class__.__name__, 'desc': s.description,'stage':s.name})
-            self.log.critical(u"Error: %(msg)s" % {'msg':e})
-            raise
-        else:
-            self.log.debug(u"Completed \'%s\'" % s.name)
-            self.complete += [stage] + s.reps
-            self.ran += [stage]
-        finally:
-            self.aran += [stage]
-            self.log.debug(u"Finished \'%s\'" % s.name)
-        
-        return use
-        
-    def exit(self,code=0,msg=None):
-        """This function exist the current python instance with the requested code. Before exiting, a message is printed.
-        
-        :param int code: exit code
-        :param string msg: exit message"""
-        if msg:
-            self.log.info(msg)
-        self.log.info(u"Simulator %s Finished" % self.name)
-        sys.exit(code)
-        
     def collect(self,matching=r'^(?!\_)',**kwargs):
         """Collect class methods for inclusion as simulator stages. Instance methods are collected if they do not belong to the parent :class:`Simulator` class (i.e. this method, and others like :meth:`registerStage` will not be collected.). Registered stages will default to having no dependents, to be named similar to thier own methods (``collected_stage`` becomes ``*collected-stage`` on the command line) and will use thier doc-string as the stage description. The way in which these stages are collected can be adjusted using the decorators provided in this module.
         
@@ -974,21 +728,165 @@ class Simulator(object):
         [ self.registerStage(stage,**kwargs) for stage in stageList ]
     
     
-    def _start_progress_bar(self,length,color):
-        """Return a progress bar object of a specified color in the standard format."""
-        widgets = [Percentage(),' ',ColorBar(color=color),' ',ETA()]
-        self.progressbar = ProgressBar(widgets=widgets,maxval=length).start()
-        self.progress = 0
-        self.log.useConsole(False)
-        return self.progressbar
+    def run(self):
+        """Run the actual simulator. This command handles simulators which can be run from the command line. Calling :meth:`run` will run all of the stages specified on the command line. If you do not want this effect, use :meth:`startup` to prepare the simulator, and :meth:`do` to run the actual simulator. Calling :meth:`exit` at the end will allow the simulator to close out and perform any output tasks, but will also end the current python session."""
+        self.startup()
+        try:
+            self.do()
+        except Exception:
+            raise
+        finally:
+            self.exit()
+    
+    def startup(self):
+        """Start up the simulation. This function handles the configuration of the system, and prepares for any calls made to :meth:`do`."""
+        self._default_macros()
+        self.starting = True
+        self._parseArguments()
+        self._preConfiguration()
+        self._configure()
+        self._postConfiguration()
+        # Start Logging
+        self.log.configure(configuration=self.config)
+        self.log.start()
+        for vstr in self.version:
+            self.log.info(vstr)
+        self.starting = False
+                
+    def do(self,*stages):
+        """Run the simulator.
         
-    def _end_progress_bar(self):
-        """End the progressbar object's operation"""
-        self.progressbar.finish()
-        self.log.useConsole(True)
-        self.progressbar = False
-        self.progress = 0
+        :argument stages: Stages to be run as macros.
         
+        This command can be used to run specific stages and their dependents. The control is far less flow control than the command-line interface (there is currently no argument interface to inclusion and exclusion lists, ``+`` and ``-``.), but can be used to call single macros in simulators froms scripts. In these cases, it is often beneficial to set up your own macro (calling :func:`registerStage` with ``None`` as the stage action) to wrap the actions you want taken in each phase.
+        
+        It is possible to stop execution in the middle of this function. Simply set the simulator's ``paused`` variable to ``True`` and the simulator will remain in a state where you are free to call :meth:`do` again."""
+        if self.running and not self.paused:
+            raise ConfigurationError(u"Simulator is already running!")
+        elif self.paused:
+            self.pasued = False
+            self.config["Options.macro"] += list(stages)
+        else:
+            self.running = True
+            self.config["Options.macro"] += list(stages)
+            if self.config["Options.macro"] == []:
+                if self.config["Default"]:
+                    self.config["Options.macro"] = self.config["Default"]
+                else:
+                    self.parser.error(u"No stages triggered to run!")
+            if self.attempt == []:
+                self.inorder = True
+                self.complete = []
+        
+        for stage in self.orders:
+            if stage in self.config["Options.macro"]:
+                self.execute(stage)
+            elif stage in self.config["Options.include"]:
+                self.execute(stage,deps=False)
+        self.running = False
+    
+    
+    def execute(self,stage,deps=True,level=0):
+        """Actually exectue a particular stage. This function can be called to execute individual stages, either with or without dependencies. As such, it gives finer granularity than :func:`do`.
+        
+        :param string stage: The stage name to be exectued.
+        :param bool deps: Whether to run all dependencies.
+        
+        This method handles exceptions from the called stages, including keyboard interrupts.
+        """
+        if self.paused or not self.running:
+            return False
+            
+        if stage not in self.stages:
+            self.log.critical("Stage %s does not exist." % stage)
+            self.exit(1)
+        use = True
+        if stage in self.config["Options.exclude"]:
+            use = False
+        if stage in self.config["Options.include"]:
+            use = True
+        if stage in self.attempt:
+            return use
+        if not use:
+            return use
+        
+        self.attempt += [stage] + self.stages[stage].reps
+         
+        if deps:
+            
+            for dependent in self.orders:
+                if dependent in self.stages[stage].deps:
+                    if dependent not in self.attempt:
+                        self.execute(dependent,level=level+1)
+                    else:
+                        self._depTree += ["%-30s : (done already)" % (u"  " * (level+1) + u"└ %s" % dependent)]
+                    if dependent not in self.complete:
+                        if self.stages[dependent].optional:
+                            self.log.debug(u"Stage '%s' requested by '%s' but skipped" % (dependent,stage))
+                        else:
+                            self.log.warning(u"Stage '%s' required by '%s' but failed to complete." % (dependent,stage))
+        else:
+            self.log.warning(u"Explicity skipping dependents")
+        
+        s = self.stages[stage]
+        indicator = u"└>%s" if level else u"=>%s"
+        self._depTree += ["%-30s : %s" % (u"  " * level + indicator % stage,s.description)]
+        if s.macro or self.config["Options.DryRun"]:
+            self.complete += [stage] + s.reps
+            self.done += [stage]
+            return use
+        
+        self.log.debug("Starting \'%s\'" % s.name)
+        self.log.info(u"%s" % s.description)
+        
+        try:
+            s.run()
+        except KeyboardInterrupt as e:
+            self.log.useConsole(True)
+            self.log.critical("Keyboard Interrupt during %(stage)s... ending simulator." % {'stage':s.name})
+            self.log.critical("Last completed stage: %(stage)s" % {'stage':self.complete.pop()})
+            self.log.debug("Stages completed: %s" % self.complete)
+            raise
+        except s.exceptions as e:
+            if self.config["Debug"]:
+                self.log.useConsole(True)
+            self.log.error(u"Error %(name)s in stage %(stage)s:%(desc)s. Stage indicated that this error was not critical" % {'name': e.__class__.__name__, 'desc': s.description,'stage':s.name})
+            self.log.error(u"Error: %(msg)s" % {'msg':e})
+            if self.config["Debug"]:
+                raise
+        except Exception as e:
+            self.log.useConsole(True)
+            self.log.critical(u"Error %(name)s in stage %(stage)s:'%(desc)s'!" % { 'name' : e.__class__.__name__, 'desc' : s.description, 'stage' : s.name } )
+            self.log.critical(u"Error: %(msg)s" % { 'msg' : e } )
+            raise
+        else:
+            self.log.debug(u"Completed '%s' and %r" % (s.name,s.reps))
+            self.complete += [stage] + s.reps
+            self.ran += [stage]
+            self.done += [stage]
+        finally:
+            self.aran += [stage]
+            self.log.debug(u"Finished '%s'" % s.name)
+        
+        return use
+        
+    def exit(self,code=0,msg=None):
+        """This function exist the current python instance with the requested code. Before exiting, a message is printed.
+        
+        :param int code: exit code
+        :param string msg: exit message
+        
+        """
+        for fk in self.config.get("Options.endFunction",[]):
+            self.functions[fk]()
+        if msg:
+            self.log.info(msg)
+        self.log.info(u"Simulator %s Finished" % self.name)
+        if code != 0:
+            sys.exit(code)
+        
+
+    
     def map(self,function,collection=[],idfun=str,exceptions=True,color="green"):
         """Map a function over a given collection."""
         if exceptions == True:
@@ -996,7 +894,7 @@ class Simulator(object):
         
         self.errors = []
         
-        if not self.progressbar and color:
+        if not self.progressbar and color and self.log.console.level <= 20:
             self._start_progress_bar(len(collection),color)
             showBar = True
         else:
@@ -1021,6 +919,161 @@ class Simulator(object):
     def map_over_collection(self,function,idfun=str,collection=[],exceptions=True,color="green"):
         """docstring for map_over_collection"""
         self.map(function,collection,idfun,exceptions,color)
+    
+    
+    ##################################
+    ### INTERNAL OPERATING METHODS ###
+    ##################################
+    
+    def _parseArguments(self):
+        """Parse arguments. Argumetns can be passed into this function like they would be passed to the command line. These arguments will only be parsed when the system is not in `commandLine` mode."""
+        if self.commandLine:
+            Namespace = self.parser.parse_args()
+            self.config["Options"].merge(vars(Namespace))
+            self.config["Options.Parsed"] = True
+            self.log.log(2,"Parsed command line arguments")
+        elif not self.config["Options.Parsed"]:
+            Namespace = self.parser.parse_args("")
+            self.config["Options"].merge(vars(Namespace))
+            self.config["Options.Parsed"] = True
+            self.log.log(2,"Parsed default line arguments")
+        else:
+            self.log.debug("Skipping argument parsing")
+        
+        for key in self.config["Options"].keys():
+            if self.config["Options"][key] == None:
+                del self.config["Options"][key]
+        
+    
+    def _preConfiguration(self):
+        """Applies arguments before configuration. Only argument applied is the name of the configuration file, allowing the command line to change the configuration file name."""
+        if self.config.get("Options.config",False):
+            self.config.setFile(self.config["Options.config"],"Options")
+        for fk in self.config.get("Options.beforeFunction",[]):
+            self.functions[fk]()
+        for cfg in self.config.get("Options.beforeConfigure",[]):
+            self.config.merge(cfg)
+        
+    
+    def _configure(self):
+        """Loads the default configuration file, and writes the configuration to a partial file."""
+        if self.running:
+            return ConfigurationError("Cannot configure the simulator, the simulation has already started!")
+        if self.configured:
+            raise ConfigurationError("%s appears to be already configured" % (self.name))
+
+        self.configured |= self.config.load()
+        self.log.debug("Updated Configuration from default file %s" % self.config["Configurations.This"])            
+                
+        if not self.configured:
+            self.log.log(8,"No configuration provided or accessed. Using defaults.")
+        
+        # Write Configuration to Partials Directory
+        if os.path.isdir(self.config["Dirs.Partials"]):
+            filename = self.dir_filename("Partials","%s.config.yaml" % self.name)
+            self.config.save(filename)
+    
+            
+    def _postConfiguration(self):
+        """Apply arguments after configuration. The arguments applied here flesh out macros, and copy data from the configuration system into the operations system."""
+        if not isinstance(self.config.get("Options.exclude",False),list):
+            self.config["Options.exclude"] = []
+        if not isinstance(self.config.get("Options.include",False),list):
+            self.config["Options.include"] = []
+        if not isinstance(self.config.get("Options.macro",False),list):
+            self.config["Options.macro"] = []
+        for item in self.config.get("Options.literalconfig",[]):    
+            key,value = item.split("=")
+            try:
+                self.config[key] = literal_eval(value)
+            except:
+                self.config[key] = value
+        for cfg in self.config.get("Options.afterConfigure",[]):
+            self.config.merge(cfg)
+        for fk in self.config.get("Options.afterFunction",[]):
+            self.functions[fk]()
+
+    ############################################
+    ### INTERNAL FUNCTION INTROSPECTION APIs ###
+    ############################################    
+        
+    def _list_stages(self):
+        """List stages and exit"""
+        text = "Stages:\n"
+        for stage in self.orders:
+            s = self.stages[stage]
+            text += "%(command)-20s : %(desc)s" % {'command':s.name,'desc':s.description}
+            text += "\n"
+        self.exit(msg=text)
+    
+    def _dump_full_config(self):
+        """docstring for _dump_full_config"""
+        filename = self.config["Configurations.This"].rstrip(".yaml")+".fdump.yaml"
+        self.config.save(filename)        
+        
+    def _dump_config(self):
+        """Dump the configuration to a file"""
+        filename = self.config["Configurations.This"].rstrip(".yaml")+".dump.yaml"
+        config = self.config.store
+        del config["Options"]
+        config.save(filename) 
+        
+    def _dry_run(self):
+        """Trigger a dry run"""
+        self.config["Options.DryRun"] = True
+        self.log.debug(u"Operating in DryRun mode")
+        
+    def _show_done_stages(self):
+        """Dry Run"""
+        text = [u"Stages done, in order:"]
+        order = 1
+        for stage in self.done:
+            s = self.stages[stage]
+            text += [u"%(order)3d. %(command)-20s : %(desc)s" % {'order':order,'command':s.name,'desc':s.description}]
+            order += 1
+        self.log.info(u"\n".join(text))
+
+    def _show_dep_tree(self):
+        """Dependency Tree"""
+        self._depTree.reverse()
+        text = u"Dependency Tree, request order:\n"
+        text += "\n".join(self._depTree)
+        self.log.info(text)
+        
+    def _show_profile(self):
+        """Show the profile of the simulation"""
+        
+        total = sum([ self.stages[stage].durTime for stage in self.aran])
+        
+        text = [u"Simulation profile:"]
+        text += [Stage.table_head()]
+        
+        for stage in self.aran:
+            text += [self.stages[stage].table_row(total)]
+            
+        text += [Stage.table_foot(total)]
+            
+        self.log.info(u"\n".join(text))
+            
+    
+    #################################
+    ### INTERNAL HELPER FUNCTIONS ###
+    #################################
+    
+    def _start_progress_bar(self,length,color):
+        """Return a progress bar object of a specified color in the standard format."""
+        widgets = [Percentage(),' ',ColorBar(color=color),' ',ETA()]
+        self.progressbar = ProgressBar(widgets=widgets,maxval=length).start()
+        self.progress = 0
+        self.log.useConsole(False)
+        return self.progressbar
+        
+    def _end_progress_bar(self):
+        """End the progressbar object's operation"""
+        self.progressbar.finish()
+        self.log.useConsole(True)
+        self.progressbar = False
+        self.progress = 0
     
     def _collection_map(self,i,function,exceptions,idfun,showBar):
         """Maps something over a bunch of lenslets"""
@@ -1093,7 +1146,7 @@ def depends(*dependencies):
     return decorate
 
 def excepts(*exceptions):
-    """Registers dependencies for this function"""
+    """Registers exceptions for this function."""
     def decorate(func):
         func.exceptions = tuple(exceptions)
         return func

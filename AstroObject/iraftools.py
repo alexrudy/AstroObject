@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2012-04-19.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.5-b3
+#  Version 0.5.1
 # 
 u"""
 :mod:`iraftools` – IRAF integration facility
@@ -27,19 +27,19 @@ There are three types of FITS files provided by :mod:`iraftools`:
 
 .. describe:: in-file
     
-    :meth:`infile <IRAFToolsMixin.iraf.infile>` and :meth:`inatfile <IRAFToolsMixin.iraf.inatfile>`
+    :meth:`inpfile <IRAFToolsMixin.iraf.inpfile>` and :meth:`inpatfile <IRAFToolsMixin.iraf.inpatlist>`
     
     ``in`` files are FITS files which are used as input to an ``iraf`` fucntion. They are created immediately, and will exist untill the :mod:`~AstroObject.iraftools` cleanup stage (:meth:`iraf.done <AstroObject.iraftools.IRAFTools.done>`).
 
 .. describe:: out-file
     
-    :meth:`outfile <IRAFToolsMixin.iraf.infile>` and :meth:`outatfile <IRAFToolsMixin.iraf.outatfile>`
+    :meth:`outfile <IRAFToolsMixin.iraf.outfile>` and :meth:`outatfile <IRAFToolsMixin.iraf.outatlist>`
     
     ``out`` files are FITS files which will be output targets for ``iraf``. As such, the filename returned does not point to an existing FITS file. Instead, the filename points to a potential file which will be re-read by the parent **stack** during the cleanup stage (:meth:`iraf.done <AstroObject.iraftools.IRAFTools.done>`).
 
 .. describe:: mod-file
     
-    :meth:`modfile <IRAFToolsMixin.iraf.modfile>` and :meth:`modatfile <IRAFToolsMixin.iraf.modatfile>`
+    :meth:`modfile <IRAFToolsMixin.iraf.modfile>` and :meth:`modatfile <IRAFToolsMixin.iraf.modatlist>`
     
     ``mod`` files are FITS files which will be modified in-place by ``iraf``. These files are created immediately, just like ``in`` files, and are re-loaded automatically during the cleanup stage (:meth:`iraf.done <AstroObject.iraftools.IRAFTools.done>`). To prevent these **frames** from overwriting their original content, use the ``append=`` keyword to append a string to the new **frame** name. You could also make a copy of the original **frame** using
     ::

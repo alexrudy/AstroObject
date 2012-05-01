@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2012-02-08.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.5-b3
+#  Version 0.5.1
 # 
 """
 :mod:`AstroConfig` — YAML-based Configuration Dictionaries
@@ -45,7 +45,14 @@ Structured Configurations: :class:`StructuredConfiguration`
 
 """
 # Standard Python Modules
-import math, copy, sys, time, logging, os,collections, re
+import math
+import copy
+import sys
+import time
+import logging
+import os
+import collections
+import re
 import yaml
 
 # Submodules from this system
@@ -53,6 +60,13 @@ from Utilities import *
 
 class Configuration(collections.MutableMapping):
     """Adds extra methods to dictionary for configuration"""
+    
+    dn = dict
+    """Deep nesting dictionary setting. This class will be used to create deep nesting structures for this dictionary."""
+    
+    dt = dict
+    """Exctraction nesting dictionary setting. This class will be used to create deep nesting structures when this object is extracted."""
+    
     def __init__(self, *args, **kwargs):
         super(Configuration, self).__init__()
         self.log = logging.getLogger(__name__)
@@ -116,7 +130,7 @@ class Configuration(collections.MutableMapping):
             return d
         for k, v in u.iteritems():
             if isinstance(v, collections.Mapping):
-                r = self._merge(d.get(k, {}), v)
+                r = self._merge(d.get(k, self.dn()), v)
                 d[k] = r
             else:
                 d[k] = u[k]
@@ -164,7 +178,50 @@ class Configuration(collections.MutableMapping):
     def store(self):
         """Dictionary representing this configuration. This property should be used if you wish to have a 'true' dictionary object. It is used internally to write this configuration to a YAML file.
         """
-        return self._store
+        return self._extract(self._store)
+        
+    def _extract(self,d):
+        """Internal recursive extraction method for getting dictionaries out of thi object."""
+        if not isinstance(d,collections.Mapping):
+            return d
+        e = self.dt()
+        for k in d:
+            v = d.get(k)
+            if isinstance(v,collections.Mapping):
+                e[k] = self._extract(v)
+            elif isinstance(v,collections.Sequence) and not isinstance(v,(str,unicode)):
+                e[k] = [ self._extract(i) for i in v ]
+            else:
+                e[k] = v
+        return e
+        
+    def _renest(self,d):
+        """Internal recurisve nesting method for deep mapping dictionary work."""
+        if not isinstance(d,collections.Mapping):
+            return d
+        e = self.dn()
+        for k in d:
+            v = d.get(k)
+            if isinstance(v,collections.Mapping):
+                e[k] = self._renest(v)
+            elif isinstance(v,collections.Sequence) and not isinstance(v,(str,unicode)):
+                e[k] = [ self._renest(i) for i in v ]
+            else:
+                e[k] = v
+        return e
+    
+    def renest(self,deep_nest_type=None):
+        """Re-nest this object. This method applies the :attr:`dn` deep-nesting attribute to each nesting level in the configuration object.
+        
+        :param deep_nest_type: mapping nesting type, will set :attr:`dn`.
+        
+        This method does not return anything.
+        """
+        if isinstance(deep_nest_type,collections.Mapping):
+            self.dn = deep_nest_type
+        elif deep_nest_type is not None:
+            TypeError("%r is not a mapping type." % deep_nest_type)
+        self._store = self._renest(self._store)
         
     def extract(self):
         """Extract the dictionary from this object.
@@ -173,7 +230,7 @@ class Configuration(collections.MutableMapping):
             use :attr:`store`
         
         """
-        return self._store
+        return self.store
 
 
 class DottedConfiguration(Configuration):
@@ -181,7 +238,7 @@ class DottedConfiguration(Configuration):
     
     Configuration variables can be accessed and set with dot-qualified names. E.g.::
         
-        >>> Config = StructuredConfigruation( { "Data": { "Value": { "ResultA" : 10 }, }, })
+        >>> Config = DottedConfiguration( { "Data": { "Value": { "ResultA" : 10 }, }, })
         >>> Config["Data"]["Value"]["ResultA"]
         10
         >>> Config["Data.Value.ResultA"]
@@ -194,18 +251,19 @@ class DottedConfiguration(Configuration):
         
     However, this behavior can be changed by specifying a new default nesting structure::
         
-        >>> Config.dn = StructuredConfiguration
+        >>> Config.dn = DottedConfiguration
+        >>> Config.merge(Config)
+        >>> Config["Data"]["Value.ResultA"]
+        10
         
     """
-    
-    dn = dict
-    
     def _getitem(self,store,parts=[]):
         """Recursive getitem calling function."""
         key = parts.pop(0)
         if len(parts) == 0:
             return store[key]
         else:
+            store[key] = store.get(key,self.dn())
             return self._getitem(store[key],parts)
             
     def _setitem(self,store,parts=[],value=None):
@@ -229,7 +287,8 @@ class DottedConfiguration(Configuration):
         if len(parts) == 0:
             return store.__delitem__(key)
         else:
-            return self._getitem(store[key],parts)
+            store[key] = store.get(key,self.dn())
+            return self._delitem(store[key],parts)
         
         
     def __getitem__(self,key):
@@ -285,7 +344,7 @@ class StructuredConfiguration(DottedConfiguration):
         if "Configurations" not in self:
             self["Configurations"] = {}
         if "This" not in self["Configurations"]:
-            self["Configurations"]["This"] = "AO.config.yaml"
+            self["Configurations.This"] = "AO.config.yaml"
         
     
     
@@ -309,7 +368,7 @@ class StructuredConfiguration(DottedConfiguration):
                 name = os.path.basename(filename)
         if name not in self["Configurations"]:
             self["Configurations"][name] = filename
-        self["Configurations"]["This"] = self["Configurations"][name]
+        self["Configurations.This"] = self["Configurations"][name]
     
     def save(self,filename=None):
         """Save the configuration to a YAML file. If ``filename`` is not provided, the configuration will use the file set by :meth:`setFile`.
@@ -319,7 +378,7 @@ class StructuredConfiguration(DottedConfiguration):
         Uses :meth:`Configuration.save`.
         """
         if filename == None:
-            filename = self["Configurations"]["This"]
+            filename = self["Configurations.This"]
         return super(StructuredConfiguration, self).save(filename)
     
         
@@ -331,6 +390,6 @@ class StructuredConfiguration(DottedConfiguration):
         
         Uses :meth:`Configuration.load`."""
         if filename == None:
-            filename = self["Configurations"]["This"]
+            filename = self["Configurations.This"]
         return super(StructuredConfiguration, self).load(filename,silent)
         

@@ -30,8 +30,9 @@ The AstroObject module also has a simulator framework. The simulator is designed
 
 # Release Notes
 
-* 0.5-b3
-	- Beta Release for testing IRAF Tools
+* 0.5.1
+	- Better simulator output options
+	- Refactored simulator code to use internal APIs
 	- Naming schemes have changed: e.g. **stacks** and **frames** are more consistently used. Keyword arguments that used to be **statename** are now **framename** for more consistency. There is NO depreciation provided.
 	- Internal properties of **stacks** have been made private.
 	- There is a new crop and mask method for AstroImage.ImageStack

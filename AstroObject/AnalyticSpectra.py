@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-b3
+#  Version 0.5.1
 # 
 """
 :mod:`AnalyticSpectra` – Analytic Spectra and Interpolation
@@ -271,14 +271,14 @@ class CompositeSpectra(AstroObjectBase.AnalyticMixin,AnalyticSpectrum):
     
 
 
-class InterpolatedSpectrumBase(AstroSpectra.SpectraMixin,AnalyticSpectrum,AstroObjectBase.BaseFrame):
+class InterpolatedSpectrumBase(AnalyticSpectrum,AstroObjectBase.BaseFrame):
 
     def __init__(self, data=None, label=None, wavelengths=None,resolution=None, method=u"interpolate",integrator='integrate_hist', **kwargs):
+        self.method = getattr(self,method)
+        self.default_integrator = integrator
         super(InterpolatedSpectrumBase, self).__init__(data=data,label=label,**kwargs)
         self._wavelengths = wavelengths
-        self.resolution = resolution
-        self.method = getattr(self,method)
-        self.default_integrator = integrator        
+        self.resolution = resolution        
     
     def __call__(self,method=None,**kwargs):
         """Calls this interpolated spectrum over certain wavelengths. The `method` parameter will default to the one set for the object, and controls the method used to interpret this spectrum. Available methods include all members of :class:`InterpolatedSpectrum` which provide return values (all those documented below)."""
@@ -869,7 +869,7 @@ class InterpolatedSpectrum(AstroSpectra.SpectraFrame,InterpolatedSpectrumBase):
         # This allows a custom __call__ function for extraction of interpolated spectral data withouth the difficulties caused by MROs
     
 
-class Resolver(InterpolatedSpectrum):
+class Resolver(AstroSpectra.SpectraFrame,InterpolatedSpectrumBase):
     """This spectrum performs a unitary operation on any InterpolatedSpectrum-type-object. The operation (specified by the `method` keyword) is performed after the contained spectrum is called. The included spectrum is called immediately and then discarded. As such, wavelength and resolution keywords should be provided when appropriate to resolve the spectrum immediately. This operation does not save the old data state. All methods in :class:`InterpolatedSpectrum` are available.
     
     .. inheritance-diagram::
@@ -878,14 +878,35 @@ class Resolver(InterpolatedSpectrum):
         
     
     """
-    def __init__(self, spectrum, label=None, new_method='interpolate',**kwargs):
-        data = spectrum(**kwargs)
+    def __init__(self, spectrum=None, label=None, new_method='interpolate',**kwargs):
+        
+        # Priority grabbing of Spectra
+        if isinstance(spectrum,AstroObjectBase.BaseFrame):
+            # First assume everything is a spectrum
+            data = spectrum(**kwargs)
+        elif spectrum is not None:
+            data = spectrum
+        elif isinstance(kwargs.get('data',None),AstroObjectBase.BaseFrame):
+            data = kwargs.pop('data',None)(**kwargs)
+        else:
+            data = kwargs.pop('data',None)
+                
         if not label:
             label =  u"R[" + spectrum.label + "]"
+        
         super(Resolver, self).__init__(data=data,label=label,method=new_method,**kwargs)
         
+    def __call__(self,method=None,**kwargs):
+        """Calls this interpolated spectrum over certain wavelengths. The `method` parameter will default to the one set for the object, and controls the method used to interpret this spectrum. Available methods include all members of :class:`InterpolatedSpectrum` which provide return values (all those documented below)."""
+        return InterpolatedSpectrumBase.__call__(self,method=method,**kwargs)
+        # This call explicitly overrides MRO for this class, as a workaround.
+        # Simply put, we want SpectraFrame calls to show up before AnalyticSpectrum, so that __hdu__ and __show__ etc
+        # end up pulled from the SpectraFrame, and then __call__ gets pulled from InterpolatedSpectrumBase
+        # This allows a custom __call__ function for extraction of interpolated spectral data withouth the difficulties caused by MROs
         
-class UnitarySpectrum(InterpolatedSpectrumBase):
+    
+        
+class UnitarySpectrum(AstroObjectBase.AnalyticMixin,AstroSpectra.SpectraMixin,InterpolatedSpectrumBase):
     """This spectrum performs a unitary operation on any InterpolatedSpectrum-type-object. The operation (specified by the `method` keyword) is performed after the contained spectrum is called. All methods in :class:`InterpolatedSpectrum` are available.
     
     .. inheritance-diagram::
@@ -894,18 +915,29 @@ class UnitarySpectrum(InterpolatedSpectrumBase):
         
     
     """
-    def __init__(self, spectrum, method='interpolate', label=None,**kwargs):
+    def __init__(self, spectrum=None, method='interpolate', label=None,**kwargs):
+        if spectrum is None:
+            spectrum = kwargs.pop('data',None)
         if not label:
-            label =  u"[" + spectrum.label + "]"
-        super(UnitarySpectrum, self).__init__(data=None, label=label,**kwargs)
+            label =  u"[" + spectrum.label + u"]"
         self.spectrum = spectrum
-        self.method = getattr(self,method)
+        super(UnitarySpectrum, self).__init__(data=None, label=label, method=method,**kwargs)
         
     def __call__(self,old_method=None,method=None,**kwargs):
         """Calls this interpolated spectrum over certain wavelengths. The `method` parameter will default to the one set for the object, and controls the method used to interpret this spectrum. The `old_method` parameter will be used on the contained spectrum. Available methods include all members of :class:`InterpolatedSpectrum` which provide return values (all those documented below)."""
         self.data = self.spectrum(method=old_method,**kwargs)
-        return super(UnitarySpectrum, self).__call__(method=method,**kwargs)
+        return InterpolatedSpectrumBase.__call__(self,method=method,**kwargs)
+        # This call explicitly overrides MRO for this class, as a workaround.
+        # Simply put, we want SpectraFrame calls to show up before AnalyticSpectrum, so that __hdu__ and __show__ etc
+        # end up pulled from the SpectraFrame, and then __call__ gets pulled from InterpolatedSpectrumBase
+        # This allows a custom __call__ function for extraction of interpolated spectral data withouth the difficulties caused by MROs
 
+    def __valid__(self):
+        """Check our unitary spectrum for validity"""
+        assert isinstance(self.spectrum,AstroObjectBase.BaseFrame), "Unitary Spectrum must contain another spectrum"
+        assert callable(self.method), "Method must be a callable object."
+        super(UnitarySpectrum, self).__valid__()
+        
                     
 
 import AnalyticSpectraObjects

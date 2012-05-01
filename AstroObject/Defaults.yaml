@@ -2,6 +2,9 @@
 Configurations:
   Main: Simulator.yaml
   This: Simulator.yaml
+Options:
+  Parsed: false
+  DryRun: false
 Default: null
 Debug: false
 Dirs:

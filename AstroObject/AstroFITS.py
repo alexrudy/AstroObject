@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2012-04-17.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.5-b3
+#  Version 0.5.1
 # 
 """
 :mod:`AstroFITS` – Empty FITS HDUs

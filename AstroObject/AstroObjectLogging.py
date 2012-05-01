@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-b3
+#  Version 0.5.1
 #
 """
 :mod:`AstroObjectLogging` — Structured Configuration Logging 
@@ -76,7 +76,8 @@ class GrowlHandler(logging.Handler):
             logging.INFO:"%s Info" % self.name,
             logging.WARNING:"%s Warning" % self.name,
             logging.CRITICAL:"%s Critical" % self.name,
-            logging.ERROR:"%s Error" % self.name}
+            logging.ERROR:"%s Error" % self.name,
+            }
         
     
     mapping = {logging.DEBUG:"Debug Message",logging.INFO:"Info Message",logging.WARNING:"Warning Message",logging.CRITICAL:"Critical Message",logging.ERROR:"Error Message"}

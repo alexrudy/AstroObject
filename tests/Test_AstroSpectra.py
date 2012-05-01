@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-31.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-b3
+#  Version 0.5.1
 # 
 
 import numpy as np
@@ -57,6 +57,7 @@ class test_SpectraFrame(equality_SpectraFrame,API_General_Frame):
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.axes.Subplot
         self.RKWARGS = {}
+        self.FLABEL = "Valid"
         super(test_SpectraFrame, self).setup()
     
         
@@ -71,10 +72,11 @@ class test_SpectraStack(equality_SpectraFrame,API_BaseStack):
         self.VALID = np.array([(np.arange(50) + 1.0) * 1e-7,np.sin(np.arange(50))+2.0])
         self.INVALID = 20
         self.OBJECTSTR = None
-        self.FRAMESTR = "<'ImageFrame' labeled 'Valid'>"
+        self.FRAMESTR = "<'SpectraFrame' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.axes.Subplot
         self.OBJECT = AstroObject.AstroSpectra.SpectraStack
+        self.FLABEL = "Valid"
         super(test_SpectraStack, self).setup()
     
         
