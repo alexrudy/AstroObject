@@ -815,6 +815,8 @@ can be customized using the 'Default' configuration variable in the configuratio
                 if dependent in self.stages[stage].deps:
                     if dependent not in self.attempt:
                         self.execute(dependent,level=level+1)
+                    else:
+                        self._depTree += ["%-30s : (done already)" % (u"  " * (level+1) + u"└ %s" % dependent)]
                     if dependent not in self.complete:
                         if self.stages[dependent].optional:
                             self.log.debug(u"Stage '%s' requested by '%s' but skipped" % (dependent,stage))
@@ -824,7 +826,8 @@ can be customized using the 'Default' configuration variable in the configuratio
             self.log.warning(u"Explicity skipping dependents")
         
         s = self.stages[stage]
-        self._depTree += ["%-30s : %s" % (u"  " * level + u"└>%s" % stage,s.description)]
+        indicator = u"└>%s" if level else u"=>%s"
+        self._depTree += ["%-30s : %s" % (u"  " * level + indicator % stage,s.description)]
         if s.macro or self.config["Options.DryRun"]:
             self.complete += [stage] + s.reps
             self.done += [stage]
@@ -1021,17 +1024,18 @@ can be customized using the 'Default' configuration variable in the configuratio
         
     def _show_done_stages(self):
         """Dry Run"""
-        text = u"Stages done:\n"
+        text = [u"Stages done, in order:"]
+        order = 1
         for stage in self.done:
             s = self.stages[stage]
-            text += u"%(command)-20s : %(desc)s" % {'command':s.name,'desc':s.description}
-            text += u"\n"
-        self.log.info(text)
+            text += [u"%(order)3d. %(command)-20s : %(desc)s" % {'order':order,'command':s.name,'desc':s.description}]
+            order += 1
+        self.log.info(u"\n".join(text))
 
     def _show_dep_tree(self):
         """Dependency Tree"""
         self._depTree.reverse()
-        text = u"Dependency Tree:\n"
+        text = u"Dependency Tree, request order:\n"
         text += "\n".join(self._depTree)
         self.log.info(text)
         
@@ -1040,15 +1044,15 @@ can be customized using the 'Default' configuration variable in the configuratio
         
         total = sum([ self.stages[stage].durTime for stage in self.aran])
         
-        text = "Simulation profile:\n"
-        text += Stage.table_head() + "\n"
+        text = [u"Simulation profile:"]
+        text += [Stage.table_head()]
         
         for stage in self.aran:
-            text += self.stages[stage].table_row(total) + "\n"
+            text += [self.stages[stage].table_row(total)]
             
-        text += Stage.table_foot(total)
+        text += [Stage.table_foot(total)]
             
-        self.log.info(text)
+        self.log.info(u"\n".join(text))
             
     
     #################################
