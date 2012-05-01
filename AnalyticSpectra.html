@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>6. AnalyticSpectra – Analytic Spectra and Interpolation &mdash; AstroObject 0.5-b3 documentation</title>
+    <title>6. AnalyticSpectra – Analytic Spectra and Interpolation &mdash; AstroObject 0.5.1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5-b3',
+        VERSION:     '0.5.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5-b3 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.5.1 documentation" href="index.html" />
     <link rel="next" title="7. AstroNDArray – Numpy Array Frames" href="AstroNDArray.html" />
     <link rel="prev" title="5. AstroSpectra — Raw Spectrum Management" href="AstroSpectra.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="AstroSpectra.html" title="5. AstroSpectra — Raw Spectrum Management"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -82,21 +82,21 @@
 <p><a class="reference internal" href="#AstroObject.AnalyticSpectra.Resolver" title="AstroObject.AnalyticSpectra.Resolver"><tt class="xref py py-class docutils literal"><span class="pre">Resolver</span></tt></a> is used to perform a single interpolation on a spectrum <em>immediately</em>. As such, it is a full-class spectrum like an <a class="reference internal" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum" title="AstroObject.AnalyticSpectra.InterpolatedSpectrum"><tt class="xref py py-class docutils literal"><span class="pre">InterpolatedSpectrum</span></tt></a>.</p>
 <p>The <a class="reference internal" href="#AstroObject.AnalyticSpectra.FlatSpectrum" title="AstroObject.AnalyticSpectra.FlatSpectrum"><tt class="xref py py-class docutils literal"><span class="pre">FlatSpectrum</span></tt></a>, <a class="reference internal" href="#AstroObject.AnalyticSpectra.GaussianSpectrum" title="AstroObject.AnalyticSpectra.GaussianSpectrum"><tt class="xref py py-class docutils literal"><span class="pre">GaussianSpectrum</span></tt></a>, and <a class="reference internal" href="#AstroObject.AnalyticSpectra.BlackBodySpectrum" title="AstroObject.AnalyticSpectra.BlackBodySpectrum"><tt class="xref py py-class docutils literal"><span class="pre">BlackBodySpectrum</span></tt></a> objects are all analytic spectra with a specific functional implementation (as thier names imply).</p>
 <p class="graphviz">
-<img src="_images/inheritance-839d436182379fcfb7192820e3ddaed5e21c3c12.png" alt="Inheritance diagram of AstroObject.AnalyticSpectra.AnalyticSpectrum, AstroObject.AnalyticSpectra.CompositeSpectra, AstroObject.AnalyticSpectra.InterpolatedSpectrum, AstroObject.AnalyticSpectra.Resolver, AstroObject.AnalyticSpectra.UnitarySpectrum, AstroObject.AnalyticSpectra.FlatSpectrum, AstroObject.AnalyticSpectra.GaussianSpectrum, AstroObject.AnalyticSpectra.BlackBodySpectrum" usemap="#inheritance7515099a54" class="inheritance"/>
+<img src="_images/inheritance-3ef223f2d1cb283d72f4eebe1e25d24dc7ba9197.png" alt="Inheritance diagram of AstroObject.AnalyticSpectra.AnalyticSpectrum, AstroObject.AnalyticSpectra.CompositeSpectra, AstroObject.AnalyticSpectra.InterpolatedSpectrum, AstroObject.AnalyticSpectra.Resolver, AstroObject.AnalyticSpectra.UnitarySpectrum, AstroObject.AnalyticSpectra.FlatSpectrum, AstroObject.AnalyticSpectra.GaussianSpectrum, AstroObject.AnalyticSpectra.BlackBodySpectrum" usemap="#inheritance7515099a54" class="inheritance"/>
 <map id="inheritance7515099a54" name="inheritance7515099a54">
-<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.AnalyticMixin" title="AnalyticMixin" alt="" coords="240,41,318,60"/>
-<area shape="rect" id="node28" href="#AstroObject.AnalyticSpectra.CompositeSpectra" title="CompositeSpectra" alt="" coords="386,78,492,97"/>
-<area shape="rect" id="node4" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="229,78,330,97"/>
-<area shape="rect" id="node6" href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraFrame" title="SpectraFrame" alt="" coords="237,192,322,211"/>
-<area shape="rect" id="node32" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum" title="InterpolatedSpectrum" alt="" coords="548,191,670,210"/>
-<area shape="rect" id="node7" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="94,192,192,211"/>
-<area shape="rect" id="node9" href="AstroObject.html#AstroObject.AstroSpectra.SpectraMixin" title="SpectraMixin" alt="" coords="104,154,182,173"/>
-<area shape="rect" id="node11" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="108,116,179,135"/>
-<area shape="rect" id="node17" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="4,116,58,135"/>
-<area shape="rect" id="node19" href="AstroObject.html#AstroObject.AstroObjectBase.NoHDUMixin" title="NoHDUMixin" alt="" coords="105,79,182,98"/>
-<area shape="rect" id="node21" href="AstroObject.html#AstroObject.AstroObjectBase.NoDataMixin" title="NoDataMixin" alt="" coords="105,42,182,61"/>
-<area shape="rect" id="node37" href="#AstroObject.AnalyticSpectra.UnitarySpectrum" title="UnitarySpectrum" alt="" coords="560,153,658,172"/>
-<area shape="rect" id="node42" href="#AstroObject.AnalyticSpectra.Resolver" title="Resolver" alt="" coords="707,191,764,210"/>
+<area shape="rect" id="node1" href="AstroObject.html#AstroObject.AstroObjectBase.AnalyticMixin" title="AnalyticMixin" alt="" coords="273,123,362,144"/>
+<area shape="rect" id="node26" href="#AstroObject.AnalyticSpectra.UnitarySpectrum" title="UnitarySpectrum" alt="" coords="638,208,750,230"/>
+<area shape="rect" id="node32" href="#AstroObject.AnalyticSpectra.CompositeSpectra" title="CompositeSpectra" alt="" coords="440,166,561,188"/>
+<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.NoHDUMixin" title="NoHDUMixin" alt="" coords="119,124,207,146"/>
+<area shape="rect" id="node4" href="AstroObject.html#AstroObject.AstroObjectBase.NoDataMixin" title="NoDataMixin" alt="" coords="119,166,207,188"/>
+<area shape="rect" id="node6" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="260,165,375,187"/>
+<area shape="rect" id="node7" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="122,208,203,230"/>
+<area shape="rect" id="node37" href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraFrame" title="SpectraFrame" alt="" coords="269,295,366,316"/>
+<area shape="rect" id="node12" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="5,208,66,230"/>
+<area shape="rect" id="node20" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="107,294,219,315"/>
+<area shape="rect" id="node28" href="AstroObject.html#AstroObject.AstroSpectra.SpectraMixin" title="SpectraMixin" alt="" coords="119,251,207,273"/>
+<area shape="rect" id="node36" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum" title="InterpolatedSpectrum" alt="" coords="624,273,763,295"/>
+<area shape="rect" id="node40" href="#AstroObject.AnalyticSpectra.Resolver" title="Resolver" alt="" coords="661,315,726,337"/>
 </map>
 </p>
 </div>
@@ -108,11 +108,11 @@
 <dd><p>A functional spectrum object for spectrum generation. This is an abstract class which implements spectrum arithmetic. Spectrum arithmetic has a delayed implementation, whereby it is applied to the spectrum only once the spectrum is called for data, allowing spectra to produce data which matches the requested wavelengths (and resolution, if applicable).</p>
 <p>The Analytic spectrum can be provided with a set of wavelengths upon intialization. The <cite>wavelengths</cite> keyword will be stored and used when this spectrum is later called by the system. The <cite>units</cite> keyword is currently unused.</p>
 <p class="graphviz">
-<img src="_images/inheritance-af5281b7cca8eb2c867d128047c3e7b19717a7c8.png" alt="Inheritance diagram of AstroObject.AnalyticSpectra.AnalyticSpectrum" usemap="#inheritancea7f4cf52a5" class="inheritance"/>
+<img src="_images/inheritance-ba29b1021df291260b177754c7684a2d63199d24.png" alt="Inheritance diagram of AstroObject.AnalyticSpectra.AnalyticSpectrum" usemap="#inheritancea7f4cf52a5" class="inheritance"/>
 <map id="inheritancea7f4cf52a5" name="inheritancea7f4cf52a5">
-<area shape="rect" id="node1" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="5,5,77,30"/>
-<area shape="rect" id="node3" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="126,5,221,30"/>
-<area shape="rect" id="node2" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="270,5,405,30"/>
+<area shape="rect" id="node1" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="126,5,221,30"/>
+<area shape="rect" id="node4" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="270,5,405,30"/>
+<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="5,5,77,30"/>
 </map>
 </p>
 </dd></dl>
@@ -122,14 +122,14 @@
 <em class="property">class </em><tt class="descclassname">AstroObject.AnalyticSpectra.</tt><tt class="descname">CompositeSpectra</tt><big>(</big><em>partA</em>, <em>partB</em>, <em>operation</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#CompositeSpectra"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.CompositeSpectra" title="Permalink to this definition">¶</a></dt>
 <dd><p>Binary composition of two functional spectra. This object should not be initialized by the user. Instead, this class is returned when you combine two spectra of different types, or combine a spectra with any other type. As such, do not initialze composite spectra idependently. See the <a class="reference internal" href="#AstroObject.AnalyticSpectra.CompositeSpectra.__call__" title="AstroObject.AnalyticSpectra.CompositeSpectra.__call__"><tt class="xref py py-meth docutils literal"><span class="pre">__call__()</span></tt></a> function for documentation of how to use this type of object.</p>
 <p class="graphviz">
-<img src="_images/inheritance-c919d65458c160a84b8fb8dbaea3bb53737da5f7.png" alt="Inheritance diagram of AstroObject.AnalyticSpectra.CompositeSpectra" usemap="#inheritance059d4c1ab5" class="inheritance"/>
+<img src="_images/inheritance-a0ac7e6d72090fe7901ef36bf934fab05fb785b3.png" alt="Inheritance diagram of AstroObject.AnalyticSpectra.CompositeSpectra" usemap="#inheritance059d4c1ab5" class="inheritance"/>
 <map id="inheritance059d4c1ab5" name="inheritance059d4c1ab5">
-<area shape="rect" id="node1" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="278,5,413,30"/>
-<area shape="rect" id="node11" href="#AstroObject.AnalyticSpectra.CompositeSpectra" title="CompositeSpectra" alt="" coords="461,30,603,55"/>
-<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="130,5,225,30"/>
-<area shape="rect" id="node4" href="AstroObject.html#AstroObject.AstroObjectBase.AnalyticMixin" title="AnalyticMixin" alt="" coords="293,54,397,79"/>
-<area shape="rect" id="node5" href="AstroObject.html#AstroObject.AstroObjectBase.NoHDUMixin" title="NoHDUMixin" alt="" coords="126,54,229,79"/>
-<area shape="rect" id="node7" href="AstroObject.html#AstroObject.AstroObjectBase.NoDataMixin" title="NoDataMixin" alt="" coords="126,103,229,129"/>
+<area shape="rect" id="node1" href="AstroObject.html#AstroObject.AstroObjectBase.AnalyticMixin" title="AnalyticMixin" alt="" coords="293,54,397,79"/>
+<area shape="rect" id="node13" href="#AstroObject.AnalyticSpectra.CompositeSpectra" title="CompositeSpectra" alt="" coords="461,79,603,105"/>
+<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.NoHDUMixin" title="NoHDUMixin" alt="" coords="126,5,229,30"/>
+<area shape="rect" id="node4" href="AstroObject.html#AstroObject.AstroObjectBase.NoDataMixin" title="NoDataMixin" alt="" coords="126,54,229,79"/>
+<area shape="rect" id="node6" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="278,103,413,129"/>
+<area shape="rect" id="node7" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="130,103,225,129"/>
 <area shape="rect" id="node9" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="5,54,77,79"/>
 </map>
 </p>
@@ -179,15 +179,15 @@
 <dd><p>An analytic representation of a generic, specified spectrum. The spectrum provided will be used to create an infintiely dense interpolation function. This function can then be used to call the spectrum at any wavelength. The interpolation used by default is a simple 1d interpolation.</p>
 <p>Passing the name of any member function in this class to the <cite>method</cite> parameter will change the interpolation/method used for this spectrum.</p>
 <p class="graphviz">
-<img src="_images/inheritance-fe86a08619f03dbe7a68139313259386e6540b17.png" alt="Inheritance diagram of AstroObject.AnalyticSpectra.InterpolatedSpectrum" usemap="#inheritance23ddbd5d64" class="inheritance"/>
+<img src="_images/inheritance-e2112f0858c4c0f1687b72e1ccf385f1c1b5b0ec.png" alt="Inheritance diagram of AstroObject.AnalyticSpectra.InterpolatedSpectrum" usemap="#inheritance23ddbd5d64" class="inheritance"/>
 <map id="inheritance23ddbd5d64" name="inheritance23ddbd5d64">
-<area shape="rect" id="node1" href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraFrame" title="SpectraFrame" alt="" coords="269,4,366,26"/>
-<area shape="rect" id="node17" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum" title="InterpolatedSpectrum" alt="" coords="624,48,763,70"/>
-<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="107,5,219,27"/>
-<area shape="rect" id="node4" href="AstroObject.html#AstroObject.AstroSpectra.SpectraMixin" title="SpectraMixin" alt="" coords="119,47,207,69"/>
-<area shape="rect" id="node6" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="122,89,203,111"/>
-<area shape="rect" id="node8" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="260,91,375,112"/>
-<area shape="rect" id="node10" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="5,47,66,69"/>
+<area shape="rect" id="node1" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="260,4,375,26"/>
+<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="122,47,203,69"/>
+<area shape="rect" id="node11" href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraFrame" title="SpectraFrame" alt="" coords="269,91,366,112"/>
+<area shape="rect" id="node4" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="5,89,66,111"/>
+<area shape="rect" id="node9" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="107,89,219,111"/>
+<area shape="rect" id="node13" href="AstroObject.html#AstroObject.AstroSpectra.SpectraMixin" title="SpectraMixin" alt="" coords="119,132,207,153"/>
+<area shape="rect" id="node16" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum" title="InterpolatedSpectrum" alt="" coords="624,69,763,91"/>
 </map>
 </p>
 <dl class="method">
@@ -346,24 +346,23 @@
 
 <dl class="class">
 <dt id="AstroObject.AnalyticSpectra.Resolver">
-<em class="property">class </em><tt class="descclassname">AstroObject.AnalyticSpectra.</tt><tt class="descname">Resolver</tt><big>(</big><em>spectrum</em>, <em>label=None</em>, <em>new_method='interpolate'</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#Resolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.Resolver" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">AstroObject.AnalyticSpectra.</tt><tt class="descname">Resolver</tt><big>(</big><em>spectrum=None</em>, <em>label=None</em>, <em>new_method='interpolate'</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#Resolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.Resolver" title="Permalink to this definition">¶</a></dt>
 <dd><p>This spectrum performs a unitary operation on any InterpolatedSpectrum-type-object. The operation (specified by the <cite>method</cite> keyword) is performed after the contained spectrum is called. The included spectrum is called immediately and then discarded. As such, wavelength and resolution keywords should be provided when appropriate to resolve the spectrum immediately. This operation does not save the old data state. All methods in <a class="reference internal" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum" title="AstroObject.AnalyticSpectra.InterpolatedSpectrum"><tt class="xref py py-class docutils literal"><span class="pre">InterpolatedSpectrum</span></tt></a> are available.</p>
 <p class="graphviz">
-<img src="_images/inheritance-c96dba278034c9be4201c9814ae73f2d60dac5a3.png" alt="Inheritance diagram of AstroObject.AnalyticSpectra.Resolver" usemap="#inheritancea363062b50" class="inheritance"/>
+<img src="_images/inheritance-2a4a4a80f11b069673bfd9eb680fcbf5de8b9ae4.png" alt="Inheritance diagram of AstroObject.AnalyticSpectra.Resolver" usemap="#inheritancea363062b50" class="inheritance"/>
 <map id="inheritancea363062b50" name="inheritancea363062b50">
-<area shape="rect" id="node1" href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraFrame" title="SpectraFrame" alt="" coords="237,4,322,23"/>
-<area shape="rect" id="node17" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum" title="InterpolatedSpectrum" alt="" coords="548,43,670,61"/>
-<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="94,5,192,24"/>
-<area shape="rect" id="node4" href="AstroObject.html#AstroObject.AstroSpectra.SpectraMixin" title="SpectraMixin" alt="" coords="104,42,182,60"/>
-<area shape="rect" id="node6" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="108,79,179,98"/>
-<area shape="rect" id="node8" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="229,80,330,99"/>
-<area shape="rect" id="node10" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="4,42,58,60"/>
-<area shape="rect" id="node20" href="#AstroObject.AnalyticSpectra.Resolver" title="Resolver" alt="" coords="707,43,764,61"/>
+<area shape="rect" id="node1" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="288,4,415,28"/>
+<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="135,52,225,76"/>
+<area shape="rect" id="node11" href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraFrame" title="SpectraFrame" alt="" coords="298,100,405,124"/>
+<area shape="rect" id="node4" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="5,99,73,123"/>
+<area shape="rect" id="node9" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="118,99,242,123"/>
+<area shape="rect" id="node13" href="AstroObject.html#AstroObject.AstroSpectra.SpectraMixin" title="SpectraMixin" alt="" coords="131,145,229,169"/>
+<area shape="rect" id="node16" href="#AstroObject.AnalyticSpectra.Resolver" title="Resolver" alt="" coords="691,76,762,100"/>
 </map>
 </p>
 <dl class="method">
 <dt id="AstroObject.AnalyticSpectra.Resolver.__call__">
-<tt class="descname">__call__</tt><big>(</big><em>method=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AnalyticSpectra.Resolver.__call__" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">__call__</tt><big>(</big><em>method=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#Resolver.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.Resolver.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calls this interpolated spectrum over certain wavelengths. The <cite>method</cite> parameter will default to the one set for the object, and controls the method used to interpret this spectrum. Available methods include all members of <a class="reference internal" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum" title="AstroObject.AnalyticSpectra.InterpolatedSpectrum"><tt class="xref py py-class docutils literal"><span class="pre">InterpolatedSpectrum</span></tt></a> which provide return values (all those documented below).</p>
 </dd></dl>
 
@@ -371,16 +370,19 @@
 
 <dl class="class">
 <dt id="AstroObject.AnalyticSpectra.UnitarySpectrum">
-<em class="property">class </em><tt class="descclassname">AstroObject.AnalyticSpectra.</tt><tt class="descname">UnitarySpectrum</tt><big>(</big><em>spectrum</em>, <em>method='interpolate'</em>, <em>label=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#UnitarySpectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.UnitarySpectrum" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">AstroObject.AnalyticSpectra.</tt><tt class="descname">UnitarySpectrum</tt><big>(</big><em>spectrum=None</em>, <em>method='interpolate'</em>, <em>label=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AnalyticSpectra.html#UnitarySpectrum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AnalyticSpectra.UnitarySpectrum" title="Permalink to this definition">¶</a></dt>
 <dd><p>This spectrum performs a unitary operation on any InterpolatedSpectrum-type-object. The operation (specified by the <cite>method</cite> keyword) is performed after the contained spectrum is called. All methods in <a class="reference internal" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum" title="AstroObject.AnalyticSpectra.InterpolatedSpectrum"><tt class="xref py py-class docutils literal"><span class="pre">InterpolatedSpectrum</span></tt></a> are available.</p>
 <p class="graphviz">
-<img src="_images/inheritance-4896e56f323da44b71fd7eaddf120ab02ed0ed80.png" alt="Inheritance diagram of AstroObject.AnalyticSpectra.UnitarySpectrum" usemap="#inheritancea8d4c012f0" class="inheritance"/>
+<img src="_images/inheritance-3cdede8fde6ee58e81e58dfc38dfa20209c05884.png" alt="Inheritance diagram of AstroObject.AnalyticSpectra.UnitarySpectrum" usemap="#inheritancea8d4c012f0" class="inheritance"/>
 <map id="inheritancea8d4c012f0" name="inheritancea8d4c012f0">
-<area shape="rect" id="node1" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="249,4,374,28"/>
-<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="116,51,204,74"/>
-<area shape="rect" id="node4" href="AstroObject.html#AstroObject.AstroSpectra.SpectraMixin" title="SpectraMixin" alt="" coords="263,98,359,121"/>
-<area shape="rect" id="node5" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="5,74,71,98"/>
-<area shape="rect" id="node12" href="#AstroObject.AnalyticSpectra.UnitarySpectrum" title="UnitarySpectrum" alt="" coords="642,51,763,74"/>
+<area shape="rect" id="node1" href="AstroObject.html#AstroObject.AstroObjectBase.AnalyticMixin" title="AnalyticMixin" alt="" coords="268,4,363,27"/>
+<area shape="rect" id="node15" href="#AstroObject.AnalyticSpectra.UnitarySpectrum" title="UnitarySpectrum" alt="" coords="644,85,763,108"/>
+<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.NoHDUMixin" title="NoHDUMixin" alt="" coords="115,4,209,27"/>
+<area shape="rect" id="node4" href="AstroObject.html#AstroObject.AstroObjectBase.NoDataMixin" title="NoDataMixin" alt="" coords="115,49,209,73"/>
+<area shape="rect" id="node6" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="254,49,377,73"/>
+<area shape="rect" id="node7" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="119,94,205,118"/>
+<area shape="rect" id="node9" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="5,73,71,96"/>
+<area shape="rect" id="node17" href="AstroObject.html#AstroObject.AstroSpectra.SpectraMixin" title="SpectraMixin" alt="" coords="463,130,558,153"/>
 </map>
 </p>
 <dl class="method">
@@ -408,13 +410,13 @@
 </tbody>
 </table>
 <p class="graphviz">
-<img src="_images/inheritance-aee84588ffb25d0b11be466bbea4634433313277.png" alt="Inheritance diagram of AstroObject.AnalyticSpectra.BlackBodySpectrum" usemap="#inheritancef9ceff9ed5" class="inheritance"/>
+<img src="_images/inheritance-a91104c61f46cbf27e6ca4ba188a0af2b65db2c6.png" alt="Inheritance diagram of AstroObject.AnalyticSpectra.BlackBodySpectrum" usemap="#inheritancef9ceff9ed5" class="inheritance"/>
 <map id="inheritancef9ceff9ed5" name="inheritancef9ceff9ed5">
-<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.AnalyticMixin" title="AnalyticMixin" alt="" coords="293,54,397,79"/>
-<area shape="rect" id="node4" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="278,5,413,30"/>
-<area shape="rect" id="node6" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="130,5,225,30"/>
-<area shape="rect" id="node8" href="AstroObject.html#AstroObject.AstroObjectBase.NoHDUMixin" title="NoHDUMixin" alt="" coords="126,54,229,79"/>
-<area shape="rect" id="node10" href="AstroObject.html#AstroObject.AstroObjectBase.NoDataMixin" title="NoDataMixin" alt="" coords="126,103,229,129"/>
+<area shape="rect" id="node1" href="AstroObject.html#AstroObject.AstroObjectBase.AnalyticMixin" title="AnalyticMixin" alt="" coords="293,54,397,79"/>
+<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.NoHDUMixin" title="NoHDUMixin" alt="" coords="126,5,229,30"/>
+<area shape="rect" id="node4" href="AstroObject.html#AstroObject.AstroObjectBase.NoDataMixin" title="NoDataMixin" alt="" coords="126,54,229,79"/>
+<area shape="rect" id="node6" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="278,103,413,129"/>
+<area shape="rect" id="node7" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="130,103,225,129"/>
 <area shape="rect" id="node12" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="5,54,77,79"/>
 </map>
 </p>
@@ -472,13 +474,13 @@
 </tbody>
 </table>
 <p class="graphviz">
-<img src="_images/inheritance-bb0ce2d5a02d430155fac3418be65f2d384e4de2.png" alt="Inheritance diagram of AstroObject.AnalyticSpectra.GaussianSpectrum" usemap="#inheritancee51921036d" class="inheritance"/>
+<img src="_images/inheritance-835153c8f3682d540f902756de14c1c9f712037e.png" alt="Inheritance diagram of AstroObject.AnalyticSpectra.GaussianSpectrum" usemap="#inheritancee51921036d" class="inheritance"/>
 <map id="inheritancee51921036d" name="inheritancee51921036d">
-<area shape="rect" id="node1" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="278,5,413,30"/>
-<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="130,5,225,30"/>
-<area shape="rect" id="node4" href="AstroObject.html#AstroObject.AstroObjectBase.AnalyticMixin" title="AnalyticMixin" alt="" coords="293,54,397,79"/>
-<area shape="rect" id="node5" href="AstroObject.html#AstroObject.AstroObjectBase.NoHDUMixin" title="NoHDUMixin" alt="" coords="126,54,229,79"/>
-<area shape="rect" id="node7" href="AstroObject.html#AstroObject.AstroObjectBase.NoDataMixin" title="NoDataMixin" alt="" coords="126,103,229,129"/>
+<area shape="rect" id="node1" href="AstroObject.html#AstroObject.AstroObjectBase.AnalyticMixin" title="AnalyticMixin" alt="" coords="293,54,397,79"/>
+<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.NoHDUMixin" title="NoHDUMixin" alt="" coords="126,5,229,30"/>
+<area shape="rect" id="node4" href="AstroObject.html#AstroObject.AstroObjectBase.NoDataMixin" title="NoDataMixin" alt="" coords="126,54,229,79"/>
+<area shape="rect" id="node6" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="278,103,413,129"/>
+<area shape="rect" id="node7" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="130,103,225,129"/>
 <area shape="rect" id="node9" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="5,54,77,79"/>
 </map>
 </p>
@@ -531,14 +533,14 @@
 </tbody>
 </table>
 <p class="graphviz">
-<img src="_images/inheritance-add3ccf972c8aa77f8bd6b51db25d196ffa4244f.png" alt="Inheritance diagram of AstroObject.AnalyticSpectra.FlatSpectrum" usemap="#inheritancedb62b9250e" class="inheritance"/>
+<img src="_images/inheritance-f81d1bc747d441dfa6da95a70d471eafeb78366e.png" alt="Inheritance diagram of AstroObject.AnalyticSpectra.FlatSpectrum" usemap="#inheritancedb62b9250e" class="inheritance"/>
 <map id="inheritancedb62b9250e" name="inheritancedb62b9250e">
-<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.AnalyticMixin" title="AnalyticMixin" alt="" coords="293,54,397,79"/>
-<area shape="rect" id="node4" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="278,5,413,30"/>
-<area shape="rect" id="node6" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="130,5,225,30"/>
-<area shape="rect" id="node8" href="AstroObject.html#AstroObject.AstroObjectBase.NoHDUMixin" title="NoHDUMixin" alt="" coords="126,54,229,79"/>
-<area shape="rect" id="node10" href="AstroObject.html#AstroObject.AstroObjectBase.NoDataMixin" title="NoDataMixin" alt="" coords="126,103,229,129"/>
-<area shape="rect" id="node12" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="5,54,77,79"/>
+<area shape="rect" id="node1" href="AstroObject.html#AstroObject.AstroObjectBase.AnalyticMixin" title="AnalyticMixin" alt="" coords="293,54,397,79"/>
+<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.NoHDUMixin" title="NoHDUMixin" alt="" coords="126,5,229,30"/>
+<area shape="rect" id="node4" href="AstroObject.html#AstroObject.AstroObjectBase.NoDataMixin" title="NoDataMixin" alt="" coords="126,54,229,79"/>
+<area shape="rect" id="node6" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="278,103,413,129"/>
+<area shape="rect" id="node7" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="130,103,225,129"/>
+<area shape="rect" id="node9" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="5,54,77,79"/>
 </map>
 </p>
 <dl class="method">
@@ -640,7 +642,7 @@
         <li class="right" >
           <a href="AstroSpectra.html" title="5. AstroSpectra — Raw Spectrum Management"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

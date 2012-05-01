@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Walkthrough of a basic iraftools script &mdash; AstroObject 0.5-b3 documentation</title>
+    <title>Walkthrough of a basic iraftools script &mdash; AstroObject 0.5.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.5-b3',
+        VERSION:     '0.5.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5-b3 documentation" href="../index.html" />
+    <link rel="top" title="AstroObject 0.5.1 documentation" href="../index.html" />
     <link rel="next" title="Example Spectral Data Script" href="spectra.html" />
     <link rel="prev" title="An Example Simulator" href="simulator.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="simulator.html" title="An Example Simulator"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -124,7 +124,7 @@
 </pre></div>
 </div>
 <p>Notice that when we select the frame, we use <tt class="docutils literal"><span class="pre">&quot;data&quot;</span></tt>. The <a class="reference internal" href="../AstroImage.html#AstroObject.AstroImage.ImageStack" title="AstroObject.AstroImage.ImageStack"><tt class="xref py py-class docutils literal"><span class="pre">ImageStack</span></tt></a> class will automtacially remove the <tt class="docutils literal"><span class="pre">&quot;.fits&quot;</span></tt> extension, and use the base of the filename as the framename for imported frames. We could have specified a name for this <strong>frame</strong> using the <tt class="docutils literal"><span class="pre">framename</span></tt> keyword argument to read.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">Data</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&quot;data.fits&quot;</span><span class="p">,</span><span class="n">stataename</span><span class="o">=</span><span class="s">&quot;another name&quot;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">Data</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&quot;data.fits&quot;</span><span class="p">,</span><span class="n">framename</span><span class="o">=</span><span class="s">&quot;another name&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Now we are ready to make our <tt class="docutils literal"><span class="pre">iraf</span></tt> call. In interactive mode, we would have used <tt class="docutils literal"><span class="pre">epar</span></tt> to set parameters for each <tt class="docutils literal"><span class="pre">iraf</span></tt> call, then made the call. In <tt class="docutils literal"><span class="pre">pyraf</span></tt>, we use keyword arguments to set the parameters of the IRAF call.</p>
@@ -173,8 +173,8 @@
 <p>The remaining keyword arguments that we provided to <tt class="docutils literal"><span class="pre">ccdproc</span></tt> are standard <tt class="docutils literal"><span class="pre">iraf</span></tt> keywords. They obviously depend on what you want to get done with this system.</p>
 <p>Once we finish with the <tt class="docutils literal"><span class="pre">ccdproc</span></tt> command, we need to tell <a class="reference internal" href="../iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a> that we are done calling <tt class="docutils literal"><span class="pre">iraf</span></tt> and using these temporary files. Calling <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFToolsMixin.iraf.done" title="AstroObject.iraftools.IRAFToolsMixin.iraf.done"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.done</span></tt></a> does just that. Specifically, <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFToolsMixin.iraf.done" title="AstroObject.iraftools.IRAFToolsMixin.iraf.done"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.done</span></tt></a> does the following:</p>
 <ul class="simple">
-<li>Reloads any modified files (as created by <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFToolsMixin.iraf.modfile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.modfile"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.modfile</span></tt></a> and <tt class="xref py py-meth docutils literal"><span class="pre">iraf.modatfile</span></tt>).</li>
-<li>Loads any created output files (as set up by <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFToolsMixin.iraf.outfile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.outfile"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.outfile</span></tt></a> and <tt class="xref py py-meth docutils literal"><span class="pre">iraf.outatfile</span></tt>)</li>
+<li>Reloads any modified files (as created by <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFToolsMixin.iraf.modfile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.modfile"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.modfile</span></tt></a> and <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFToolsMixin.iraf.modatlist" title="AstroObject.iraftools.IRAFToolsMixin.iraf.modatlist"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.modatlist</span></tt></a>).</li>
+<li>Loads any created output files (as set up by <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFToolsMixin.iraf.outfile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.outfile"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.outfile</span></tt></a> and <a class="reference internal" href="../iraftools.html#AstroObject.iraftools.IRAFToolsMixin.iraf.outatlist" title="AstroObject.iraftools.IRAFToolsMixin.iraf.outatlist"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.outatlist</span></tt></a>)</li>
 <li>Deletes all of the temporary FITS files that we created.</li>
 </ul>
 <p>So the last call in our <tt class="docutils literal"><span class="pre">iraf</span></tt> command is:</p>
@@ -300,7 +300,7 @@
         <li class="right" >
           <a href="simulator.html" title="An Example Simulator"
              >previous</a> |</li>
-        <li><a href="../index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

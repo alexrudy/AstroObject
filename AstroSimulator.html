@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>11. AstroSimulator — Complex Task Management &mdash; AstroObject 0.5-b3 documentation</title>
+    <title>11. AstroSimulator — Complex Task Management &mdash; AstroObject 0.5.1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5-b3',
+        VERSION:     '0.5.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5-b3 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.5.1 documentation" href="index.html" />
     <link rel="next" title="12. AstroConfig — YAML-based Configuration Dictionaries" href="AstroConfig.html" />
     <link rel="prev" title="10. AstroObjectBase – AstroObject API" href="AstroObject.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="AstroObject.html" title="10. AstroObjectBase – AstroObject API"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -169,7 +169,7 @@ $ Simulator *none</pre>
 <dd><p>Get help about the <strong class="program">Simulator</strong> command. Help will list commonly used stages, optional arguments, and configuration items.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">To get a full list of stages available, use <a class="reference internal" href="#cmdoption-Simulator--stages"><em class="xref std std-option">--stages</em></a></p>
+<p class="last">To get a full list of stages available, use <em class="xref std std-option">--stages</em></p>
 </div>
 </dd></dl>
 
@@ -186,14 +186,14 @@ $ Simulator *none</pre>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-Simulator--dry-run">
-<tt class="descname">--dry-run</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-Simulator--dry-run" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-Simulator-n">
+<tt class="descname">-n</tt><tt class="descclassname">,--dry-run</tt><a class="headerlink" href="#cmdoption-Simulator-n" title="Permalink to this definition">¶</a></dt>
 <dd><p>Traverse all of the stages to be run, printing them as the program goes, but do not run any stages.</p>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-Simulator--stages">
-<tt class="descname">--stages</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-Simulator--stages" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-Simulator--list-stages">
+<tt class="descname">--list-stages</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-Simulator--list-stages" title="Permalink to this definition">¶</a></dt>
 <dd><p>Print all stages registered in the simulator. Any stage listed in the output of this function can be run.</p>
 </dd></dl>
 
@@ -204,46 +204,23 @@ $ Simulator *none</pre>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-Simulator--profile">
-<tt class="descname">--profile</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-Simulator--profile" title="Permalink to this definition">¶</a></dt>
+<dt id="cmdoption-Simulator--p">
+<tt class="descname">--p</tt><tt class="descclassname">,--profile</tt><a class="headerlink" href="#cmdoption-Simulator--p" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show a timing profile of the simulation, including status of stages, at the end of the simulation.</p>
 </dd></dl>
 
 </div>
 <div class="section" id="simulator-configuration-files">
 <span id="configuration"></span><h2>11.2. <strong class="program">Simulator</strong> Configuration Files<a class="headerlink" href="#simulator-configuration-files" title="Permalink to this headline">¶</a></h2>
-<p><strong class="program">Simulator</strong> configuration files are YAML files which contain a dictionary structure. All values in the YAML files are basic yaml, and contain no python-specific directives. To find out what the default or current configuration is, use the <a class="reference internal" href="#cmdoption-Simulator--dump"><em class="xref std std-option">--dump</em></a> command. The file produced from this will contain a YAML structure for the configuration in use when the system started up. The various directives in the configuration file are described below.</p>
-<ul>
-<li><dl class="first docutils">
-<dt><tt class="docutils literal"><span class="pre">Configurations</span></tt>: contains a list of potential configuration files.</dt>
-<dd><ul class="first last simple">
-<li><tt class="docutils literal"><span class="pre">Main</span></tt>: The name of the primary configuration file. This default is produced by the program. Overriding it in the configuration file has essentially no effect.</li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><tt class="docutils literal"><span class="pre">Dirs</span></tt>: Directories that this simulator will use for output.</dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><tt class="docutils literal"><span class="pre">Caches</span></tt>: Location of cache files.</dt>
-<dd><div class="first last admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">This function has almost no effect, but can be used internally by the simulator. See <a class="reference internal" href="examples/simulator.html#simulatorexample"><em>An Example Simulator</em></a></p>
-</div>
-</dd>
-</dl>
-</li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">Logs</span></tt>: Location of log files</p>
-</li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">Partials</span></tt>: Location of partial output, including a dump of the configuration.</p>
-</li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">Logging</span></tt>: Configuration of the <a class="reference internal" href="AstroObjectLogging.html#module-AstroObject.AstroObjectLogging" title="AstroObject.AstroObjectLogging"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroObjectLogging</span></tt></a> module</p>
-</li>
+<p><strong class="program">Simulator</strong> configuration files are YAML files which contain a dictionary structure. All values in the YAML files are basic yaml, and contain no python-specific directives. To find out what the default or current configuration is, use the <a class="reference internal" href="#cmdoption-Simulator--dump"><em class="xref std std-option">--dump</em></a> command. The file produced from this will contain a YAML structure for the configuration in use when the system started up. The various directives in the configuration file are described below. Configuration options are described using the dotted-syntax described in <a class="reference internal" href="AstroConfig.html#module-AstroObject.AstroConfig" title="AstroObject.AstroConfig"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroConfig</span></tt></a></p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">Configurations</span></tt>: contains a list of potential configuration files.</li>
+<li><tt class="docutils literal"><span class="pre">Configurations.Main</span></tt>: The name of the primary configuration file. This default is produced by the program. Overriding it in the configuration file has essentially no effect.</li>
+<li><tt class="docutils literal"><span class="pre">Dirs</span></tt>: Directories that this simulator will use for output.</li>
+<li><tt class="docutils literal"><span class="pre">Dirs.Caches</span></tt>: Location of cache files.</li>
+<li><tt class="docutils literal"><span class="pre">Dirs.Logs</span></tt>: Location of log files.</li>
+<li><tt class="docutils literal"><span class="pre">Dirs.Partials</span></tt>: Location of partial output, including a dump of the configuration.</li>
+<li><tt class="docutils literal"><span class="pre">Logging</span></tt>: Configuration of the <a class="reference internal" href="AstroObjectLogging.html#module-AstroObject.AstroObjectLogging" title="AstroObject.AstroObjectLogging"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroObjectLogging</span></tt></a> module</li>
 </ul>
 <p>A simple configuration file can be found in the <a class="reference internal" href="examples/simulator.html#simulatorexample"><em>An Example Simulator</em></a>.</p>
 </div>
@@ -349,20 +326,6 @@ $ Simulator *none</pre>
 </tr>
 </tbody>
 </table>
-<p>To use a registered stage, and call all of its dependents, call</p>
-<div class="highlight-python"><pre>$ Simulator *stage</pre>
-</div>
-<p>Registered stages can be explicity run from the command line by including:</p>
-<div class="highlight-python"><pre>$ Simulator +stage</pre>
-</div>
-<p>And can be explicity excluded from the command line:</p>
-<div class="highlight-python"><pre>$ Simulator -stage</pre>
-</div>
-<p>Where <cite>+stage</cite> will override <cite>-stage</cite> so:</p>
-<div class="highlight-python"><pre>$ Simulator +test -test
-$ Simulator -test +test</pre>
-</div>
-<p>will both run the <cite>test</cite> stage.</p>
 <p>Stages cannot be added dynamically. Once the simulator starts running (i.e. processing stages) the order and settings are fixed. Attempting to adjsut the stages at this point will raise an error.</p>
 </dd></dl>
 
@@ -388,16 +351,18 @@ $ Simulator -test +test</pre>
 
 <dl class="method">
 <dt id="AstroObject.AstroSimulator.Simulator.registerFunction">
-<tt class="descname">registerFunction</tt><big>(</big><em>argument</em>, <em>function</em>, <em>post=True</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.registerFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.registerFunction" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">registerFunction</tt><big>(</big><em>*arguments</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.registerFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.registerFunction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register a function to run using a flag.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>argument</strong> (<em>string</em>) &#8211; The calling argument, e.g. <tt class="docutils literal"><span class="pre">--hello-world</span></tt></li>
-<li><strong>function</strong> (<em>function</em>) &#8211; The function to be run.</li>
-<li><strong>post</strong> (<em>bool</em>) &#8211; Whether to run the function before or after configuration of the simulator.</li>
+<li><strong>argument</strong> (<em>string</em>) &#8211; The calling argument, e.g. <tt class="docutils literal"><span class="pre">--hello-world</span></tt>. Multiple arguments can be provided.</li>
+<li><strong>function</strong> (<em>function</em>) &#8211; The function to be run. This should be the last comma separated argument.</li>
+<li><strong>help</strong> (<em>str</em>) &#8211; Command line help for this function.</li>
+<li><strong>run</strong> (<em>str</em>) &#8211; (&#8216;pre&#8217;|&#8217;post&#8217;|&#8217;end&#8217;) Whether to run the function before or after configuration of the simulator, or at the end of the simulation.</li>
+<li><strong>name</strong> (<em>str</em>) &#8211; An explicit function name.</li>
 </ul>
 </td>
 </tr>
@@ -427,8 +392,7 @@ $ Simulator -test +test</pre>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Arguments stages:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body">Stages to be run as macros.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stages</strong> &#8211; Stages to be run as macros.</td>
 </tr>
 </tbody>
 </table>
@@ -455,9 +419,9 @@ $ Simulator -test +test</pre>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroSimulator.Simulator.map_over_collection">
-<tt class="descname">map_over_collection</tt><big>(</big><em>function</em>, <em>idfun=&lt;type 'str'&gt;</em>, <em>collection=</em><span class="optional">[</span><span class="optional">]</span>, <em>exceptions=True</em>, <em>color='green'</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.map_over_collection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.map_over_collection" title="Permalink to this definition">¶</a></dt>
-<dd><p>docstring for map_over_collection</p>
+<dt id="AstroObject.AstroSimulator.Simulator.map">
+<tt class="descname">map</tt><big>(</big><em>function</em>, <em>collection=</em><span class="optional">[</span><span class="optional">]</span>, <em>idfun=&lt;type 'str'&gt;</em>, <em>exceptions=True</em>, <em>color='green'</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.map"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.map" title="Permalink to this definition">¶</a></dt>
+<dd><p>Map a function over a given collection.</p>
 </dd></dl>
 
 </dd></dl>
@@ -512,6 +476,24 @@ $ Simulator -test +test</pre>
 <dt id="AstroObject.AstroSimulator.optional">
 <tt class="descclassname">AstroObject.AstroSimulator.</tt><tt class="descname">optional</tt><big>(</big><em>optional=True</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#optional"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.optional" title="Permalink to this definition">¶</a></dt>
 <dd><p>Makes this object optional</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="AstroObject.AstroSimulator.excepts">
+<tt class="descclassname">AstroObject.AstroSimulator.</tt><tt class="descname">excepts</tt><big>(</big><em>*exceptions</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#excepts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.excepts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Registers exceptions for this function.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="AstroObject.AstroSimulator.on_collection">
+<tt class="descclassname">AstroObject.AstroSimulator.</tt><tt class="descname">on_collection</tt><big>(</big><em>collection</em>, <em>idfun=&lt;type 'str'&gt;</em>, <em>exceptions=True</em>, <em>color='green'</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#on_collection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.on_collection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator for acting a specific method over a collection</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="AstroObject.AstroSimulator.on_instance_collection">
+<tt class="descclassname">AstroObject.AstroSimulator.</tt><tt class="descname">on_instance_collection</tt><big>(</big><em>get_collection</em>, <em>idfun=&lt;type 'str'&gt;</em>, <em>exceptions=True</em>, <em>color='green'</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#on_instance_collection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.on_instance_collection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator for acting a specific method over a collection</p>
 </dd></dl>
 
 </div>
@@ -600,8 +582,8 @@ $ Simulator -test +test</pre>
 
 <dl class="method">
 <dt id="AstroObject.AstroSimulator.Simulator._configure">
-<tt class="descclassname">Simulator.</tt><tt class="descname">_configure</tt><big>(</big><em>configFile=None</em>, <em>configuration=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator._configure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator._configure" title="Permalink to this definition">¶</a></dt>
-<dd><p>Configure this object. Configuration happens first from passed dictionaries (<cite>configuration</cite> variable) and then from files. The result is that configuration will use the values from files in place of values from passed in dictionaries. Running this function twice requires re-setting the <cite>self.configured</cite>.</p>
+<tt class="descclassname">Simulator.</tt><tt class="descname">_configure</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator._configure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator._configure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads the default configuration file, and writes the configuration to a partial file.</p>
 </dd></dl>
 
 <dl class="method">
@@ -612,7 +594,7 @@ $ Simulator -test +test</pre>
 
 <dl class="method">
 <dt id="AstroObject.AstroSimulator.Simulator.execute">
-<tt class="descclassname">Simulator.</tt><tt class="descname">execute</tt><big>(</big><em>stage</em>, <em>deps=True</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.execute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.execute" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">Simulator.</tt><tt class="descname">execute</tt><big>(</big><em>stage</em>, <em>deps=True</em>, <em>level=0</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSimulator.html#Simulator.execute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSimulator.Simulator.execute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Actually exectue a particular stage. This function can be called to execute individual stages, either with or without dependencies. As such, it gives finer granularity than <a class="reference internal" href="#AstroObject.AstroSimulator.Simulator.do" title="AstroObject.AstroSimulator.Simulator.do"><tt class="xref py py-func docutils literal"><span class="pre">do()</span></tt></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -747,7 +729,7 @@ $ Simulator -test +test</pre>
         <li class="right" >
           <a href="AstroObject.html" title="10. AstroObjectBase – AstroObject API"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

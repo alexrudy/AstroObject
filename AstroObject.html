@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>10. AstroObjectBase – AstroObject API &mdash; AstroObject 0.5-b3 documentation</title>
+    <title>10. AstroObjectBase – AstroObject API &mdash; AstroObject 0.5.1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5-b3',
+        VERSION:     '0.5.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5-b3 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.5.1 documentation" href="index.html" />
     <link rel="next" title="11. AstroSimulator — Complex Task Management" href="AstroSimulator.html" />
     <link rel="prev" title="9. iraftools – IRAF integration facility" href="iraftools.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="iraftools.html" title="9. iraftools – IRAF integration facility"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -72,31 +72,31 @@
 <p>The module generally uses <strong>stacks</strong> and <strong>frames</strong> as the base structures. <strong>Stacks</strong> are easily implemented (as above), and <strong>frames</strong> are single data instances which provide all of the required methods from <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame" title="AstroObject.AstroObjectBase.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a>. The structure for <strong>Stacks</strong> is quite simple, as there is little variance among different stacks. <strong>Frames</strong> each are required to implement all of the methods in <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame" title="AstroObject.AstroObjectBase.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a>, with only a few of those methods implmeneted by default, and most of these require re-implementation.</p>
 <p>The Mixin classes are provided to make the creation of certain basic methods easier, and to remove the requirement that other basic methods be implemented. See <a class="reference internal" href="#mixins"><em>Mixins in AstroObjectBase</em></a> for more information.</p>
 <p class="graphviz">
-<img src="_images/inheritance-0e9e8ab6e9fd05d65aa3e63b7918488243bde755.png" alt="Inheritance diagram of AstroObject.AstroFITS.FITSFrame, AstroObject.AstroFITS.FITSStack, AstroObject.AstroImage.ImageFrame, AstroObject.AstroImage.ImageStack, AstroObject.AstroSpectra.SpectraFrame, AstroObject.AstroSpectra.SpectraStack, AstroObject.AstroHDU.HDUFrame, AstroObject.AstroHDU.HDUStack, AstroObject.AstroNDArray.NDArrayFrame, AstroObject.AstroNDArray.NDArrayStack, AstroObject.AnalyticSpectra.AnalyticSpectrum, AstroObject.AnalyticSpectra.CompositeSpectra, AstroObject.AnalyticSpectra.InterpolatedSpectrum, AstroObject.AnalyticSpectra.Resolver, AstroObject.AnalyticSpectra.UnitarySpectrum, AstroObject.AnalyticSpectra.FlatSpectrum, AstroObject.AnalyticSpectra.GaussianSpectrum, AstroObject.AnalyticSpectra.BlackBodySpectrum" usemap="#inheritance9023f7c43f" class="inheritance"/>
+<img src="_images/inheritance-f8492ea2def2b2b75dd5c7e8d3390b1f74077ea1.png" alt="Inheritance diagram of AstroObject.AstroFITS.FITSFrame, AstroObject.AstroFITS.FITSStack, AstroObject.AstroImage.ImageFrame, AstroObject.AstroImage.ImageStack, AstroObject.AstroSpectra.SpectraFrame, AstroObject.AstroSpectra.SpectraStack, AstroObject.AstroHDU.HDUFrame, AstroObject.AstroHDU.HDUStack, AstroObject.AstroNDArray.NDArrayFrame, AstroObject.AstroNDArray.NDArrayStack, AstroObject.AnalyticSpectra.AnalyticSpectrum, AstroObject.AnalyticSpectra.CompositeSpectra, AstroObject.AnalyticSpectra.InterpolatedSpectrum, AstroObject.AnalyticSpectra.Resolver, AstroObject.AnalyticSpectra.UnitarySpectrum, AstroObject.AnalyticSpectra.FlatSpectrum, AstroObject.AnalyticSpectra.GaussianSpectrum, AstroObject.AnalyticSpectra.BlackBodySpectrum" usemap="#inheritance9023f7c43f" class="inheritance"/>
 <map id="inheritance9023f7c43f" name="inheritance9023f7c43f">
-<area shape="rect" id="node2" href="#AstroObject.AstroObjectBase.AnalyticMixin" title="AnalyticMixin" alt="" coords="261,146,336,165"/>
-<area shape="rect" id="node18" href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.CompositeSpectra" title="CompositeSpectra" alt="" coords="401,111,503,129"/>
-<area shape="rect" id="node4" href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="250,182,347,200"/>
-<area shape="rect" id="node6" href="#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="134,328,202,346"/>
-<area shape="rect" id="node12" href="AstroHDU.html#AstroObject.AstroHDU.HDUFrame" title="HDUFrame" alt="" coords="265,434,332,453"/>
-<area shape="rect" id="node21" href="AstroNDArray.html#AstroObject.AstroNDArray.NDArrayFrame" title="NDArrayFrame" alt="" coords="256,399,341,417"/>
-<area shape="rect" id="node31" href="AstroFITS.html#AstroObject.AstroFITS.FITSFrame" title="FITSFrame" alt="" coords="266,255,331,273"/>
-<area shape="rect" id="node36" href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraFrame" title="SpectraFrame" alt="" coords="258,328,339,346"/>
-<area shape="rect" id="node60" href="AstroImage.html#AstroObject.AstroImage.ImageFrame" title="ImageFrame" alt="" coords="262,363,336,382"/>
-<area shape="rect" id="node9" href="#AstroObject.AstroObjectBase.BaseStack" title="BaseStack" alt="" coords="420,75,485,94"/>
-<area shape="rect" id="node44" href="AstroFITS.html#AstroObject.AstroFITS.FITSStack" title="FITSStack" alt="" coords="585,4,646,23"/>
-<area shape="rect" id="node46" href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStack" title="SpectraStack" alt="" coords="576,40,654,58"/>
-<area shape="rect" id="node56" href="AstroNDArray.html#AstroObject.AstroNDArray.NDArrayStack" title="NDArrayStack" alt="" coords="575,75,656,94"/>
-<area shape="rect" id="node66" href="AstroHDU.html#AstroObject.AstroHDU.HDUStack" title="HDUStack" alt="" coords="584,111,647,129"/>
-<area shape="rect" id="node68" href="AstroImage.html#AstroObject.AstroImage.ImageStack" title="ImageStack" alt="" coords="580,146,651,165"/>
-<area shape="rect" id="node13" href="#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="121,363,215,382"/>
-<area shape="rect" id="node25" href="#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="19,291,71,310"/>
-<area shape="rect" id="node33" href="#AstroObject.AstroObjectBase.NoDataMixin" title="NoDataMixin" alt="" coords="131,255,205,273"/>
-<area shape="rect" id="node38" href="#AstroObject.AstroSpectra.SpectraMixin" title="SpectraMixin" alt="" coords="131,291,205,310"/>
-<area shape="rect" id="node51" href="#AstroObject.AstroObjectBase.NoHDUMixin" title="NoHDUMixin" alt="" coords="131,183,205,201"/>
-<area shape="rect" id="node28" href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.UnitarySpectrum" title="UnitarySpectrum" alt="" coords="568,272,662,290"/>
-<area shape="rect" id="node64" href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.InterpolatedSpectrum" title="InterpolatedSpectrum" alt="" coords="557,312,674,331"/>
-<area shape="rect" id="node63" href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.Resolver" title="Resolver" alt="" coords="709,312,764,331"/>
+<area shape="rect" id="node1" href="AstroHDU.html#AstroObject.AstroHDU.HDUStack" title="HDUStack" alt="" coords="661,358,733,378"/>
+<area shape="rect" id="node2" href="#AstroObject.AstroObjectBase.BaseStack" title="BaseStack" alt="" coords="475,438,549,459"/>
+<area shape="rect" id="node4" href="AstroFITS.html#AstroObject.AstroFITS.FITSStack" title="FITSStack" alt="" coords="663,398,732,419"/>
+<area shape="rect" id="node6" href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStack" title="SpectraStack" alt="" coords="653,438,741,459"/>
+<area shape="rect" id="node19" href="AstroImage.html#AstroObject.AstroImage.ImageStack" title="ImageStack" alt="" coords="657,478,738,499"/>
+<area shape="rect" id="node38" href="AstroNDArray.html#AstroObject.AstroNDArray.NDArrayStack" title="NDArrayStack" alt="" coords="652,519,743,539"/>
+<area shape="rect" id="node8" href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="283,154,393,175"/>
+<area shape="rect" id="node35" href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.CompositeSpectra" title="CompositeSpectra" alt="" coords="455,54,570,75"/>
+<area shape="rect" id="node9" href="#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="152,277,229,298"/>
+<area shape="rect" id="node23" href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraFrame" title="SpectraFrame" alt="" coords="292,237,385,258"/>
+<area shape="rect" id="node42" href="AstroFITS.html#AstroObject.AstroFITS.FITSFrame" title="FITSFrame" alt="" coords="302,277,375,298"/>
+<area shape="rect" id="node55" href="AstroNDArray.html#AstroObject.AstroNDArray.NDArrayFrame" title="NDArrayFrame" alt="" coords="290,398,386,419"/>
+<area shape="rect" id="node67" href="AstroHDU.html#AstroObject.AstroHDU.HDUFrame" title="HDUFrame" alt="" coords="300,358,376,378"/>
+<area shape="rect" id="node82" href="AstroImage.html#AstroObject.AstroImage.ImageFrame" title="ImageFrame" alt="" coords="296,317,380,338"/>
+<area shape="rect" id="node12" href="#AstroObject.AstroObjectBase.AnalyticMixin" title="AnalyticMixin" alt="" coords="296,114,381,135"/>
+<area shape="rect" id="node72" href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.UnitarySpectrum" title="UnitarySpectrum" alt="" coords="644,13,751,33"/>
+<area shape="rect" id="node22" href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.InterpolatedSpectrum" title="InterpolatedSpectrum" alt="" coords="631,236,764,256"/>
+<area shape="rect" id="node79" href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.Resolver" title="Resolver" alt="" coords="666,287,728,308"/>
+<area shape="rect" id="node29" href="#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="22,237,80,258"/>
+<area shape="rect" id="node31" href="#AstroObject.AstroObjectBase.NoDataMixin" title="NoDataMixin" alt="" coords="148,237,232,258"/>
+<area shape="rect" id="node33" href="#AstroObject.AstroObjectBase.NoHDUMixin" title="NoHDUMixin" alt="" coords="148,197,232,217"/>
+<area shape="rect" id="node40" href="#AstroObject.AstroSpectra.SpectraMixin" title="SpectraMixin" alt="" coords="148,156,233,177"/>
+<area shape="rect" id="node43" href="#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="137,317,244,338"/>
 </map>
 </p>
 </div>
@@ -520,10 +520,7 @@
 <dl class="attribute">
 <dt id="AstroObject.AstroObjectBase.BaseStack.framename">
 <tt class="descname">framename</tt><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseStack.framename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseStack.framename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Current frame name:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Stack</span><span class="o">.</span><span class="n">framename</span>
-</pre></div>
-</div>
+<dd><p>Current frame name. This will normally be the last saved <strong>frame</strong>, but there are some exceptions. First, explicitly using <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseStack.select" title="AstroObject.AstroObjectBase.BaseStack.select"><tt class="xref py py-meth docutils literal"><span class="pre">select()</span></tt></a> will change the framename. Also, deleting the most recent frame will by default change the selected frame to the second oldest. Using the <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseStack.save" title="AstroObject.AstroObjectBase.BaseStack.save"><tt class="xref py py-meth docutils literal"><span class="pre">save()</span></tt></a> function with <tt class="docutils literal"><span class="pre">save(data,select=False)</span></tt> will skip the selection of that added frame.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -540,10 +537,6 @@
 <tt class="descname">f</tt><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseStack.f"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseStack.f" title="Permalink to this definition">¶</a></dt>
 <dd><p>The selected FITS frame. This frame is usually the last modified frame in the system. Equivalent to:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Stack</span><span class="o">.</span><span class="n">frame</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>or:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Stack</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">framename</span><span class="o">=</span><span class="n">Stack</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -850,7 +843,7 @@
         <li class="right" >
           <a href="iraftools.html" title="9. iraftools – IRAF integration facility"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

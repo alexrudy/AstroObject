@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>4. AstroImage — Image Stacks and Storage &mdash; AstroObject 0.5-b3 documentation</title>
+    <title>4. AstroImage — Image Stacks and Storage &mdash; AstroObject 0.5.1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5-b3',
+        VERSION:     '0.5.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5-b3 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.5.1 documentation" href="index.html" />
     <link rel="next" title="5. AstroSpectra — Raw Spectrum Management" href="AstroSpectra.html" />
     <link rel="prev" title="3. AstroFITS – Empty FITS HDUs" href="AstroFITS.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="AstroFITS.html" title="3. AstroFITS – Empty FITS HDUs"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -59,14 +59,14 @@
 <p><strong>Stacks</strong> and <strong>frames</strong> for manipulating and managing images. Images are simply defined as a two-dimensional numpy array. Image <strong>stacks</strong> have two special methods, <a class="reference internal" href="#AstroObject.AstroImage.ImageStack.loadFromFile" title="AstroObject.AstroImage.ImageStack.loadFromFile"><tt class="xref py py-meth docutils literal"><span class="pre">ImageStack.loadFromFile()</span></tt></a> and <a class="reference internal" href="#AstroObject.AstroImage.ImageStack.show3D" title="AstroObject.AstroImage.ImageStack.show3D"><tt class="xref py py-meth docutils literal"><span class="pre">ImageStack.show3D()</span></tt></a>.</p>
 <p>To understand IRAF integration of this module, see the methods provided by <a class="reference internal" href="iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a>, including <a class="reference internal" href="iraftools.html#AstroObject.iraftools.UseIRAFTools" title="AstroObject.iraftools.UseIRAFTools"><tt class="xref py py-func docutils literal"><span class="pre">UseIRAFTools()</span></tt></a>.</p>
 <p class="graphviz">
-<img src="_images/inheritance-6c8b77c2a287f6e856ee622ab094750cd4b6e833.png" alt="Inheritance diagram of AstroObject.AstroImage.ImageStack, AstroObject.AstroImage.ImageFrame" usemap="#inheritance3acb2a5145" class="inheritance"/>
+<img src="_images/inheritance-ad6e9c5a64f17faf4d0d594401025e95e79dcf72.png" alt="Inheritance diagram of AstroObject.AstroImage.ImageStack, AstroObject.AstroImage.ImageFrame" usemap="#inheritance3acb2a5145" class="inheritance"/>
 <map id="inheritance3acb2a5145" name="inheritance3acb2a5145">
-<area shape="rect" id="node11" href="AstroObject.html#AstroObject.AstroObjectBase.BaseStack" title="BaseStack" alt="" coords="493,127,584,153"/>
-<area shape="rect" id="node10" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="12,29,84,54"/>
-<area shape="rect" id="node13" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="157,5,251,30"/>
-<area shape="rect" id="node16" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="139,54,269,79"/>
-<area shape="rect" id="node20" href="#AstroObject.AstroImage.ImageStack" title="ImageStack" alt="" coords="632,127,731,153"/>
-<area shape="rect" id="node15" href="#AstroObject.AstroImage.ImageFrame" title="ImageFrame" alt="" coords="330,30,433,55"/>
+<area shape="rect" id="node1" href="#AstroObject.AstroImage.ImageStack" title="ImageStack" alt="" coords="632,127,731,153"/>
+<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.BaseStack" title="BaseStack" alt="" coords="493,127,584,153"/>
+<area shape="rect" id="node13" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="12,29,84,54"/>
+<area shape="rect" id="node14" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="157,5,251,30"/>
+<area shape="rect" id="node18" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="139,54,269,79"/>
+<area shape="rect" id="node17" href="#AstroObject.AstroImage.ImageFrame" title="ImageFrame" alt="" coords="330,30,433,55"/>
 </map>
 </p>
 <div class="section" id="imagestack-image-stacks">
@@ -189,10 +189,6 @@ This method takes a <em>filename</em> and a <em>framename</em> parameter. If eit
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Stack</span><span class="o">.</span><span class="n">frame</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>or:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Stack</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">framename</span><span class="o">=</span><span class="n">Stack</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
-</pre></div>
-</div>
 </dd></dl>
 
 <dl class="method">
@@ -230,10 +226,7 @@ This method takes a <em>filename</em> and a <em>framename</em> parameter. If eit
 <dl class="attribute">
 <dt id="AstroObject.AstroImage.ImageStack.framename">
 <tt class="descname">framename</tt><a class="headerlink" href="#AstroObject.AstroImage.ImageStack.framename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Current frame name:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Stack</span><span class="o">.</span><span class="n">framename</span>
-</pre></div>
-</div>
+<dd><p>Current frame name. This will normally be the last saved <strong>frame</strong>, but there are some exceptions. First, explicitly using <a class="reference internal" href="#AstroObject.AstroImage.ImageStack.select" title="AstroObject.AstroImage.ImageStack.select"><tt class="xref py py-meth docutils literal"><span class="pre">select()</span></tt></a> will change the framename. Also, deleting the most recent frame will by default change the selected frame to the second oldest. Using the <a class="reference internal" href="#AstroObject.AstroImage.ImageStack.save" title="AstroObject.AstroImage.ImageStack.save"><tt class="xref py py-meth docutils literal"><span class="pre">save()</span></tt></a> function with <tt class="docutils literal"><span class="pre">save(data,select=False)</span></tt> will skip the selection of that added frame.</p>
 </dd></dl>
 
 <dl class="method">
@@ -517,7 +510,7 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
         <li class="right" >
           <a href="AstroFITS.html" title="3. AstroFITS – Empty FITS HDUs"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

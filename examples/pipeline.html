@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Pipeline written with AstroObject &mdash; AstroObject 0.5-b3 documentation</title>
+    <title>Pipeline written with AstroObject &mdash; AstroObject 0.5.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.5-b3',
+        VERSION:     '0.5.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5-b3 documentation" href="../index.html" />
+    <link rel="top" title="AstroObject 0.5.1 documentation" href="../index.html" />
     <link rel="next" title="AstroTest for nosetests" href="../AstroTest.html" />
     <link rel="prev" title="Example Spectral Data Script" href="spectra.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="spectra.html" title="Example Spectral Data Script"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -111,7 +111,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
     
-    <span class="nd">@ignore</span>
+    <span class="nd">@ignore</span> <span class="c">#Don&#39;t load this method as a stage... it is a helper method used to implement other stages.</span>
     <span class="k">def</span> <span class="nf">load_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="n">stack</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Load a specific type of files using a generalized loading procedure&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s">&quot;Files&quot;</span><span class="p">],</span><span class="n">collections</span><span class="o">.</span><span class="n">Sequence</span><span class="p">):</span>
@@ -160,7 +160,7 @@
         
         
     <span class="nd">@help</span><span class="p">(</span><span class="s">&quot;Create bias frames from the configured bias list.&quot;</span><span class="p">)</span>
-    <span class="nd">@depends</span><span class="p">(</span><span class="s">&quot;load-bias&quot;</span><span class="p">)</span>
+    <span class="nd">@depends</span><span class="p">(</span><span class="s">&quot;load-bias&quot;</span><span class="p">)</span> <span class="c"># Declare a dependency on another stage: Method ``load_bias()``.</span>
     <span class="k">def</span> <span class="nf">create_bias</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Creating Combined Bias Frame&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Running iraf.zerocombine on image list...&quot;</span><span class="p">)</span>
@@ -209,7 +209,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">ImageStack</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">load_type</span><span class="p">(</span><span class="s">&quot;Data&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
         
-    <span class="nd">@include</span>
+    <span class="nd">@include</span> <span class="c"># Set this stage as something to be run with the *all macro.</span>
     <span class="nd">@depends</span><span class="p">(</span><span class="s">&quot;create-bias&quot;</span><span class="p">,</span><span class="s">&quot;load-data&quot;</span><span class="p">)</span>
     <span class="nd">@help</span><span class="p">(</span><span class="s">&quot;Subtract Bias Frame&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">subtract_bias</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -220,7 +220,7 @@
             <span class="n">zero</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">iin</span><span class="p">(</span><span class="s">&quot;Bias&quot;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">idone</span><span class="p">()</span>
        
-    <span class="nd">@include</span>
+    <span class="nd">@include</span> <span class="c"># Set this stage as something to be run with the *all macro.</span>
     <span class="nd">@depends</span><span class="p">(</span><span class="s">&quot;create-dark&quot;</span><span class="p">,</span><span class="s">&quot;load-data&quot;</span><span class="p">)</span>
     <span class="nd">@help</span><span class="p">(</span><span class="s">&quot;Subtract Dark Frame&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">subtract_dark</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -231,7 +231,7 @@
             <span class="n">dark</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dark</span><span class="o">.</span><span class="n">iin</span><span class="p">(</span><span class="s">&quot;Dark&quot;</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">idone</span><span class="p">()</span>
     
-    <span class="nd">@include</span>
+    <span class="nd">@include</span> <span class="c"># Set this stage as something to be run with the *all macro.</span>
     <span class="nd">@depends</span><span class="p">(</span><span class="s">&quot;create-flat&quot;</span><span class="p">,</span><span class="s">&quot;load-data&quot;</span><span class="p">)</span>
     <span class="nd">@help</span><span class="p">(</span><span class="s">&quot;Divide out flat frame&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">divide_flat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -243,11 +243,15 @@
             <span class="n">ccdtype</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">fixpix</span><span class="o">=</span><span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="n">overscan</span><span class="o">=</span><span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="n">trim</span> <span class="o">=</span><span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="n">zerocor</span><span class="o">=</span><span class="s">&quot;no&quot;</span><span class="p">,</span> <span class="n">flatcor</span><span class="o">=</span><span class="s">&quot;yes&quot;</span><span class="p">,</span> <span class="n">darkcor</span> <span class="o">=</span><span class="s">&quot;no&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
     
-    <span class="nd">@include</span> 
+    <span class="c"># Since the simulator loads and runs stages in order, this stage will always</span>
+    <span class="c"># be run last.</span>
+    <span class="nd">@include</span> <span class="c"># Set this stage as something to be run with the *all macro.</span>
     <span class="nd">@depends</span><span class="p">(</span><span class="s">&quot;load-data&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">save_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Save the new fits file&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;DataFile.fits&quot;</span><span class="p">,</span><span class="n">frames</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">framename</span><span class="p">],</span><span class="n">clobber</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        
+        
         
     <span class="nd">@help</span><span class="p">(</span><span class="s">&quot;Save Partial Images&quot;</span><span class="p">)</span>
     <span class="nd">@depends</span><span class="p">(</span><span class="s">&quot;create-flat&quot;</span><span class="p">,</span><span class="s">&quot;create-dark&quot;</span><span class="p">,</span><span class="s">&quot;create-bias&quot;</span><span class="p">)</span>
@@ -259,7 +263,7 @@
         
         
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">RCPipeline</span><span class="p">()</span>
+    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">()</span>
     <span class="n">pipeline</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>     
                 
     
@@ -319,7 +323,7 @@
         <li class="right" >
           <a href="spectra.html" title="Example Spectral Data Script"
              >previous</a> |</li>
-        <li><a href="../index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

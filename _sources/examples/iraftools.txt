@@ -47,7 +47,7 @@ After loading our data, we want to select the **frame** that we are most likely 
 Notice that when we select the frame, we use ``"data"``. The :class:`~AstroObject.AstroImage.ImageStack` class will automtacially remove the ``".fits"`` extension, and use the base of the filename as the framename for imported frames. We could have specified a name for this **frame** using the ``framename`` keyword argument to read.
 ::
 	
-	Data.read("data.fits",stataename="another name")
+	Data.read("data.fits",framename="another name")
 	
 Now we are ready to make our ``iraf`` call. In interactive mode, we would have used ``epar`` to set parameters for each ``iraf`` call, then made the call. In ``pyraf``, we use keyword arguments to set the parameters of the IRAF call.
 ::
@@ -104,8 +104,8 @@ The remaining keyword arguments that we provided to ``ccdproc`` are standard ``i
 
 Once we finish with the ``ccdproc`` command, we need to tell :mod:`~AstroObject.iraftools` that we are done calling ``iraf`` and using these temporary files. Calling :meth:`iraf.done <AstroObject.iraftools.IRAFToolsMixin.iraf.done>` does just that. Specifically, :meth:`iraf.done <AstroObject.iraftools.IRAFToolsMixin.iraf.done>` does the following:
 
-- Reloads any modified files (as created by :meth:`iraf.modfile <AstroObject.iraftools.IRAFToolsMixin.iraf.modfile>` and :meth:`iraf.modatfile <AstroObject.iraftools.IRAFToolsMixin.iraf.modatfile>`).
-- Loads any created output files (as set up by :meth:`iraf.outfile <AstroObject.iraftools.IRAFToolsMixin.iraf.outfile>` and :meth:`iraf.outatfile <AstroObject.iraftools.IRAFToolsMixin.iraf.outatfile>`)
+- Reloads any modified files (as created by :meth:`iraf.modfile <AstroObject.iraftools.IRAFToolsMixin.iraf.modfile>` and :meth:`iraf.modatlist <AstroObject.iraftools.IRAFToolsMixin.iraf.modatlist>`).
+- Loads any created output files (as set up by :meth:`iraf.outfile <AstroObject.iraftools.IRAFToolsMixin.iraf.outfile>` and :meth:`iraf.outatlist <AstroObject.iraftools.IRAFToolsMixin.iraf.outatlist>`)
 - Deletes all of the temporary FITS files that we created.
 
 So the last call in our ``iraf`` command is::

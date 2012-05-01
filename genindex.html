@@ -10,7 +10,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Index &mdash; AstroObject 0.5-b3 documentation</title>
+    <title>Index &mdash; AstroObject 0.5.1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5-b3',
+        VERSION:     '0.5.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5-b3 documentation" href="index.html" /> 
+    <link rel="top" title="AstroObject 0.5.1 documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -93,17 +93,6 @@
       </dl></dd>
       
   <dt>
-    --dry-run
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="AstroSimulator.html#cmdoption-Simulator--dry-run">Simulator command line option</a>
-  </dt>
-
-      </dl></dd>
-      
-  <dt>
     --dump
   </dt>
 
@@ -115,28 +104,28 @@
       </dl></dd>
       
   <dt>
-    --profile
+    --list-stages
   </dt>
 
       <dd><dl>
         
-  <dt><a href="AstroSimulator.html#cmdoption-Simulator--profile">Simulator command line option</a>
+  <dt><a href="AstroSimulator.html#cmdoption-Simulator--list-stages">Simulator command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    --p,--profile
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="AstroSimulator.html#cmdoption-Simulator--p">Simulator command line option</a>
   </dt>
 
       </dl></dd>
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
-      
-  <dt>
-    --stages
-  </dt>
-
-      <dd><dl>
-        
-  <dt><a href="AstroSimulator.html#cmdoption-Simulator--stages">Simulator command line option</a>
-  </dt>
-
-      </dl></dd>
       
   <dt>
     --version
@@ -156,6 +145,17 @@
       <dd><dl>
         
   <dt><a href="AstroSimulator.html#cmdoption-Simulator-h">Simulator command line option</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt>
+    -n,--dry-run
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="AstroSimulator.html#cmdoption-Simulator-n">Simulator command line option</a>
   </dt>
 
       </dl></dd>
@@ -759,17 +759,21 @@
   <dt><a href="AstroSimulator.html#AstroObject.AstroSimulator.description">description() (in module AstroObject.AstroSimulator)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="iraftools.html#AstroObject.iraftools.IRAFTools.directory">directory() (AstroObject.iraftools.IRAFTools method)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
-  <dt><a href="AstroConfig.html#AstroObject.AstroConfig.DottedConfiguration.dn">dn (AstroObject.AstroConfig.DottedConfiguration attribute)</a>
+  <dt><a href="AstroConfig.html#AstroObject.AstroConfig.Configuration.dn">dn (AstroObject.AstroConfig.Configuration attribute)</a>
   </dt>
 
       <dd><dl>
+        
+  <dt><a href="AstroConfig.html#AstroObject.AstroConfig.DottedConfiguration.dn">(AstroObject.AstroConfig.DottedConfiguration attribute)</a>
+  </dt>
+
         
   <dt><a href="AstroConfig.html#AstroObject.AstroConfig.StructuredConfiguration.dn">(AstroObject.AstroConfig.StructuredConfiguration attribute)</a>
   </dt>
@@ -797,6 +801,20 @@
   <dt><a href="AstroConfig.html#AstroObject.AstroConfig.DottedConfiguration">DottedConfiguration (class in AstroObject.AstroConfig)</a>
   </dt>
 
+      
+  <dt><a href="AstroConfig.html#AstroObject.AstroConfig.Configuration.dt">dt (AstroObject.AstroConfig.Configuration attribute)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="AstroConfig.html#AstroObject.AstroConfig.DottedConfiguration.dt">(AstroObject.AstroConfig.DottedConfiguration attribute)</a>
+  </dt>
+
+        
+  <dt><a href="AstroConfig.html#AstroObject.AstroConfig.StructuredConfiguration.dt">(AstroObject.AstroConfig.StructuredConfiguration attribute)</a>
+  </dt>
+
+      </dl></dd>
   </dl></td>
 </tr></table>
 
@@ -808,15 +826,19 @@
   </dt>
 
       
-  <dt><a href="AstroSimulator.html#AstroObject.AstroSimulator.Simulator.execute">execute() (AstroObject.AstroSimulator.Simulator method)</a>
+  <dt><a href="AstroSimulator.html#AstroObject.AstroSimulator.excepts">excepts() (in module AstroObject.AstroSimulator)</a>
   </dt>
 
       
-  <dt><a href="AstroSimulator.html#AstroObject.AstroSimulator.Simulator.exit">exit() (AstroObject.AstroSimulator.Simulator method)</a>
+  <dt><a href="AstroSimulator.html#AstroObject.AstroSimulator.Simulator.execute">execute() (AstroObject.AstroSimulator.Simulator method)</a>
   </dt>
 
   </dl></td>
   <td style="width: 33%" valign="top"><dl>
+      
+  <dt><a href="AstroSimulator.html#AstroObject.AstroSimulator.Simulator.exit">exit() (AstroObject.AstroSimulator.Simulator method)</a>
+  </dt>
+
       
   <dt><a href="Utilities.html#AstroObject.Utilities.expandLim">expandLim() (in module AstroObject.Utilities)</a>
   </dt>
@@ -1256,7 +1278,7 @@
   </dt>
 
       
-  <dt><a href="AstroSimulator.html#AstroObject.AstroSimulator.Simulator.map_over_collection">map_over_collection() (AstroObject.AstroSimulator.Simulator method)</a>
+  <dt><a href="AstroSimulator.html#AstroObject.AstroSimulator.Simulator.map">map() (AstroObject.AstroSimulator.Simulator method)</a>
   </dt>
 
       
@@ -1346,6 +1368,14 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
+  <dt><a href="AstroSimulator.html#AstroObject.AstroSimulator.on_collection">on_collection() (in module AstroObject.AstroSimulator)</a>
+  </dt>
+
+      
+  <dt><a href="AstroSimulator.html#AstroObject.AstroSimulator.on_instance_collection">on_instance_collection() (in module AstroObject.AstroSimulator)</a>
+  </dt>
+
+      
   <dt><a href="AstroSimulator.html#AstroObject.AstroSimulator.Stage.optional">optional (AstroObject.AstroSimulator.Stage attribute)</a>
   </dt>
 
@@ -1353,12 +1383,12 @@
   <dt><a href="AstroSimulator.html#AstroObject.AstroSimulator.optional">optional() (in module AstroObject.AstroSimulator)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="iraftools.html#AstroObject.iraftools.IRAFTools.outatfile">outatfile() (AstroObject.iraftools.IRAFTools method)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="iraftools.html#AstroObject.iraftools.IRAFTools.outatlist">outatlist() (AstroObject.iraftools.IRAFTools method)</a>
   </dt>
@@ -1456,6 +1486,20 @@
 
         
   <dt><a href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStack.remove">(AstroObject.AstroSpectra.SpectraStack method)</a>
+  </dt>
+
+      </dl></dd>
+      
+  <dt><a href="AstroConfig.html#AstroObject.AstroConfig.Configuration.renest">renest() (AstroObject.AstroConfig.Configuration method)</a>
+  </dt>
+
+      <dd><dl>
+        
+  <dt><a href="AstroConfig.html#AstroObject.AstroConfig.DottedConfiguration.renest">(AstroObject.AstroConfig.DottedConfiguration method)</a>
+  </dt>
+
+        
+  <dt><a href="AstroConfig.html#AstroObject.AstroConfig.StructuredConfiguration.renest">(AstroObject.AstroConfig.StructuredConfiguration method)</a>
   </dt>
 
       </dl></dd>
@@ -1616,19 +1660,15 @@
   </dt>
 
         
-  <dt><a href="AstroSimulator.html#cmdoption-Simulator--dry-run">--dry-run</a>
-  </dt>
-
-        
   <dt><a href="AstroSimulator.html#cmdoption-Simulator--dump">--dump</a>
   </dt>
 
         
-  <dt><a href="AstroSimulator.html#cmdoption-Simulator--profile">--profile</a>
+  <dt><a href="AstroSimulator.html#cmdoption-Simulator--list-stages">--list-stages</a>
   </dt>
 
         
-  <dt><a href="AstroSimulator.html#cmdoption-Simulator--stages">--stages</a>
+  <dt><a href="AstroSimulator.html#cmdoption-Simulator--p">--p,--profile</a>
   </dt>
 
         
@@ -1637,6 +1677,10 @@
 
         
   <dt><a href="AstroSimulator.html#cmdoption-Simulator-h">-h, --help</a>
+  </dt>
+
+        
+  <dt><a href="AstroSimulator.html#cmdoption-Simulator-n">-n,--dry-run</a>
   </dt>
 
       </dl></dd>
@@ -1859,7 +1903,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

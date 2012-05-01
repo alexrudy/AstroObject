@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>5. AstroSpectra — Raw Spectrum Management &mdash; AstroObject 0.5-b3 documentation</title>
+    <title>5. AstroSpectra — Raw Spectrum Management &mdash; AstroObject 0.5.1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5-b3',
+        VERSION:     '0.5.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5-b3 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.5.1 documentation" href="index.html" />
     <link rel="next" title="6. AnalyticSpectra – Analytic Spectra and Interpolation" href="AnalyticSpectra.html" />
     <link rel="prev" title="4. AstroImage — Image Stacks and Storage" href="AstroImage.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="AstroImage.html" title="4. AstroImage — Image Stacks and Storage"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -62,15 +62,15 @@
 <p class="last">The class implemented here does not yet use a sophisticated enough method for saving FITS header data etc. As such, it will not preserve state names etc. The development of this class should bring it inline with the STSCI spectra classes in the future.</p>
 </div>
 <p class="graphviz">
-<img src="_images/inheritance-c27479fe5723114033e71df6fa4d0b6d09152113.png" alt="Inheritance diagram of AstroObject.AstroSpectra.SpectraStack, AstroObject.AstroSpectra.SpectraFrame" usemap="#inheritanceaeb70c4407" class="inheritance"/>
+<img src="_images/inheritance-0331c9fbf706885fe825cafb017be08aad6aafc5.png" alt="Inheritance diagram of AstroObject.AstroSpectra.SpectraStack, AstroObject.AstroSpectra.SpectraFrame" usemap="#inheritanceaeb70c4407" class="inheritance"/>
 <map id="inheritanceaeb70c4407" name="inheritanceaeb70c4407">
-<area shape="rect" id="node1" href="#AstroObject.AstroSpectra.SpectraFrame" title="SpectraFrame" alt="" coords="325,153,438,178"/>
-<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="139,103,269,129"/>
-<area shape="rect" id="node4" href="AstroObject.html#AstroObject.AstroSpectra.SpectraMixin" title="SpectraMixin" alt="" coords="152,153,256,178"/>
-<area shape="rect" id="node6" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="157,202,251,227"/>
-<area shape="rect" id="node18" href="AstroObject.html#AstroObject.AstroObjectBase.BaseStack" title="BaseStack" alt="" coords="493,54,584,79"/>
-<area shape="rect" id="node17" href="#AstroObject.AstroSpectra.SpectraStack" title="SpectraStack" alt="" coords="633,54,741,79"/>
-<area shape="rect" id="node20" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="12,153,84,178"/>
+<area shape="rect" id="node1" href="#AstroObject.AstroSpectra.SpectraStack" title="SpectraStack" alt="" coords="633,153,741,178"/>
+<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.BaseStack" title="BaseStack" alt="" coords="493,153,584,178"/>
+<area shape="rect" id="node13" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="12,54,84,79"/>
+<area shape="rect" id="node14" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="157,5,251,30"/>
+<area shape="rect" id="node16" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="139,54,269,79"/>
+<area shape="rect" id="node19" href="AstroObject.html#AstroObject.AstroSpectra.SpectraMixin" title="SpectraMixin" alt="" coords="152,103,256,129"/>
+<area shape="rect" id="node21" href="#AstroObject.AstroSpectra.SpectraFrame" title="SpectraFrame" alt="" coords="325,54,438,79"/>
 </map>
 </p>
 <div class="section" id="spectrastack-raw-spectrum-stacks">
@@ -148,10 +148,6 @@
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Stack</span><span class="o">.</span><span class="n">frame</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>or:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Stack</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">framename</span><span class="o">=</span><span class="n">Stack</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
-</pre></div>
-</div>
 </dd></dl>
 
 <dl class="method">
@@ -189,10 +185,7 @@
 <dl class="attribute">
 <dt id="AstroObject.AstroSpectra.SpectraStack.framename">
 <tt class="descname">framename</tt><a class="headerlink" href="#AstroObject.AstroSpectra.SpectraStack.framename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Current frame name:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Stack</span><span class="o">.</span><span class="n">framename</span>
-</pre></div>
-</div>
+<dd><p>Current frame name. This will normally be the last saved <strong>frame</strong>, but there are some exceptions. First, explicitly using <a class="reference internal" href="#AstroObject.AstroSpectra.SpectraStack.select" title="AstroObject.AstroSpectra.SpectraStack.select"><tt class="xref py py-meth docutils literal"><span class="pre">select()</span></tt></a> will change the framename. Also, deleting the most recent frame will by default change the selected frame to the second oldest. Using the <a class="reference internal" href="#AstroObject.AstroSpectra.SpectraStack.save" title="AstroObject.AstroSpectra.SpectraStack.save"><tt class="xref py py-meth docutils literal"><span class="pre">save()</span></tt></a> function with <tt class="docutils literal"><span class="pre">save(data,select=False)</span></tt> will skip the selection of that added frame.</p>
 </dd></dl>
 
 <dl class="method">
@@ -375,6 +368,12 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="AstroObject.AstroSpectra.SpectraFrame.__valid__">
+<tt class="descname">__valid__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSpectra.html#SpectraFrame.__valid__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSpectra.SpectraFrame.__valid__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates this spectrum frame to conform to the required data shape. This function is used to determine if a passed numpy data array appears to be a spectrum. It is essentially a helper function.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="AstroObject.AstroSpectra.SpectraFrame.__hdu__">
 <tt class="descname">__hdu__</tt><big>(</big><em>primary=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroSpectra.html#SpectraFrame.__hdu__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSpectra.SpectraFrame.__hdu__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retruns an HDU which represents this frame. HDUs are either <tt class="docutils literal"><span class="pre">pyfits.PrimaryHDU</span></tt> or <tt class="docutils literal"><span class="pre">pyfits.ImageHDU</span></tt> depending on the <em>primary</em> keyword.</p>
@@ -531,12 +530,6 @@ NotImplemented, the normal algorithm is used.  Otherwise, it
 overrides the normal algorithm (and the outcome is cached).</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="AstroObject.AstroSpectra.SpectraFrame.__valid__">
-<tt class="descname">__valid__</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.AstroSpectra.SpectraFrame.__valid__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Validates this spectrum frame to conform to the required data shape. This function is used to determine if a passed numpy data array appears to be a spectrum. It is essentially a helper function.</p>
-</dd></dl>
-
 <dl class="attribute">
 <dt id="AstroObject.AstroSpectra.SpectraFrame.__weakref__">
 <tt class="descname">__weakref__</tt><a class="headerlink" href="#AstroObject.AstroSpectra.SpectraFrame.__weakref__" title="Permalink to this definition">¶</a></dt>
@@ -646,7 +639,7 @@ overrides the normal algorithm (and the outcome is cached).</p>
         <li class="right" >
           <a href="AstroImage.html" title="4. AstroImage — Image Stacks and Storage"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

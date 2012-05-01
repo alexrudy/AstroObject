@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>9. iraftools – IRAF integration facility &mdash; AstroObject 0.5-b3 documentation</title>
+    <title>9. iraftools – IRAF integration facility &mdash; AstroObject 0.5.1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5-b3',
+        VERSION:     '0.5.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5-b3 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.5.1 documentation" href="index.html" />
     <link rel="next" title="10. AstroObjectBase – AstroObject API" href="AstroObject.html" />
     <link rel="prev" title="8. AstroHDU – HDU Objects and Storage" href="AstroHDU.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="AstroHDU.html" title="8. AstroHDU – HDU Objects and Storage"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -84,21 +84,21 @@
 <dl class="describe">
 <dt>
 <tt class="descname">in-file</tt></dt>
-<dd><p><tt class="xref py py-meth docutils literal"><span class="pre">infile</span></tt> and <tt class="xref py py-meth docutils literal"><span class="pre">inatfile</span></tt></p>
+<dd><p><a class="reference internal" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.inpfile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.inpfile"><tt class="xref py py-meth docutils literal"><span class="pre">inpfile</span></tt></a> and <a class="reference internal" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.inpatlist" title="AstroObject.iraftools.IRAFToolsMixin.iraf.inpatlist"><tt class="xref py py-meth docutils literal"><span class="pre">inpatfile</span></tt></a></p>
 <p><tt class="docutils literal"><span class="pre">in</span></tt> files are FITS files which are used as input to an <tt class="docutils literal"><span class="pre">iraf</span></tt> fucntion. They are created immediately, and will exist untill the <a class="reference internal" href="#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a> cleanup stage (<a class="reference internal" href="#AstroObject.iraftools.IRAFTools.done" title="AstroObject.iraftools.IRAFTools.done"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.done</span></tt></a>).</p>
 </dd></dl>
 
 <dl class="describe">
 <dt>
 <tt class="descname">out-file</tt></dt>
-<dd><p><tt class="xref py py-meth docutils literal"><span class="pre">outfile</span></tt> and <tt class="xref py py-meth docutils literal"><span class="pre">outatfile</span></tt></p>
+<dd><p><a class="reference internal" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.outfile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.outfile"><tt class="xref py py-meth docutils literal"><span class="pre">outfile</span></tt></a> and <a class="reference internal" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.outatlist" title="AstroObject.iraftools.IRAFToolsMixin.iraf.outatlist"><tt class="xref py py-meth docutils literal"><span class="pre">outatfile</span></tt></a></p>
 <p><tt class="docutils literal"><span class="pre">out</span></tt> files are FITS files which will be output targets for <tt class="docutils literal"><span class="pre">iraf</span></tt>. As such, the filename returned does not point to an existing FITS file. Instead, the filename points to a potential file which will be re-read by the parent <strong>stack</strong> during the cleanup stage (<a class="reference internal" href="#AstroObject.iraftools.IRAFTools.done" title="AstroObject.iraftools.IRAFTools.done"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.done</span></tt></a>).</p>
 </dd></dl>
 
 <dl class="describe">
 <dt>
 <tt class="descname">mod-file</tt></dt>
-<dd><p><a class="reference internal" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.modfile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.modfile"><tt class="xref py py-meth docutils literal"><span class="pre">modfile</span></tt></a> and <tt class="xref py py-meth docutils literal"><span class="pre">modatfile</span></tt></p>
+<dd><p><a class="reference internal" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.modfile" title="AstroObject.iraftools.IRAFToolsMixin.iraf.modfile"><tt class="xref py py-meth docutils literal"><span class="pre">modfile</span></tt></a> and <a class="reference internal" href="#AstroObject.iraftools.IRAFToolsMixin.iraf.modatlist" title="AstroObject.iraftools.IRAFToolsMixin.iraf.modatlist"><tt class="xref py py-meth docutils literal"><span class="pre">modatfile</span></tt></a></p>
 <p><tt class="docutils literal"><span class="pre">mod</span></tt> files are FITS files which will be modified in-place by <tt class="docutils literal"><span class="pre">iraf</span></tt>. These files are created immediately, just like <tt class="docutils literal"><span class="pre">in</span></tt> files, and are re-loaded automatically during the cleanup stage (<a class="reference internal" href="#AstroObject.iraftools.IRAFTools.done" title="AstroObject.iraftools.IRAFTools.done"><tt class="xref py py-meth docutils literal"><span class="pre">iraf.done</span></tt></a>). To prevent these <strong>frames</strong> from overwriting their original content, use the <tt class="docutils literal"><span class="pre">append=</span></tt> keyword to append a string to the new <strong>frame</strong> name. You could also make a copy of the original <strong>frame</strong> using</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">Data</span><span class="p">[</span><span class="s">&quot;newname&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Data</span><span class="p">[</span><span class="s">&quot;oldname&quot;</span><span class="p">]</span>
 </pre></div>
@@ -535,7 +535,7 @@
         <li class="right" >
           <a href="AstroHDU.html" title="8. AstroHDU – HDU Objects and Storage"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5-b3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
