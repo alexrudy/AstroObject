@@ -846,7 +846,7 @@ can be customized using the 'Default' configuration variable in the configuratio
             self.log.critical("Keyboard Interrupt during %(stage)s... ending simulator." % {'stage':s.name})
             self.log.critical("Last completed stage: %(stage)s" % {'stage':self.complete.pop()})
             self.log.debug("Stages completed: %s" % self.complete)
-            self.exit()
+            raise
         except s.exceptions as e:
             if self.config["Debug"]:
                 self.log.useConsole(True)
