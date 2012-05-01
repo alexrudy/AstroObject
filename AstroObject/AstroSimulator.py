@@ -875,7 +875,8 @@ can be customized using the 'Default' configuration variable in the configuratio
         if msg:
             self.log.info(msg)
         self.log.info(u"Simulator %s Finished" % self.name)
-        sys.exit(code)
+        if code != 0:
+            sys.exit(code)
         
 
     
