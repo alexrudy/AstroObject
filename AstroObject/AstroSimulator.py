@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-14.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-b3
+#  Version 0.5.1
 # 
 """
 :mod:`AstroSimulator` — Complex Task Management 
@@ -746,6 +746,9 @@ can be customized using the 'Default' configuration variable in the configuratio
         self._preConfiguration()
         self._configure()
         self._postConfiguration()
+        # Start Logging
+        self.log.configure(configuration=self.config)
+        self.log.start()
         for vstr in self.version:
             self.log.info(vstr)
         self.starting = False
@@ -815,6 +818,8 @@ can be customized using the 'Default' configuration variable in the configuratio
                 if dependent in self.stages[stage].deps:
                     if dependent not in self.attempt:
                         self.execute(dependent,level=level+1)
+                    else:
+                        self._depTree += ["%-30s : (done already)" % (u"  " * (level+1) + u"└ %s" % dependent)]
                     if dependent not in self.complete:
                         if self.stages[dependent].optional:
                             self.log.debug(u"Stage '%s' requested by '%s' but skipped" % (dependent,stage))
@@ -824,7 +829,8 @@ can be customized using the 'Default' configuration variable in the configuratio
             self.log.warning(u"Explicity skipping dependents")
         
         s = self.stages[stage]
-        self._depTree += ["%-30s : %s" % (u"  " * level + u"└>%s" % stage,s.description)]
+        indicator = u"└>%s" if level else u"=>%s"
+        self._depTree += ["%-30s : %s" % (u"  " * level + indicator % stage,s.description)]
         if s.macro or self.config["Options.DryRun"]:
             self.complete += [stage] + s.reps
             self.done += [stage]
@@ -840,7 +846,7 @@ can be customized using the 'Default' configuration variable in the configuratio
             self.log.critical("Keyboard Interrupt during %(stage)s... ending simulator." % {'stage':s.name})
             self.log.critical("Last completed stage: %(stage)s" % {'stage':self.complete.pop()})
             self.log.debug("Stages completed: %s" % self.complete)
-            self.exit()
+            raise
         except s.exceptions as e:
             if self.config["Debug"]:
                 self.log.useConsole(True)
@@ -857,6 +863,7 @@ can be customized using the 'Default' configuration variable in the configuratio
             self.log.debug(u"Completed '%s' and %r" % (s.name,s.reps))
             self.complete += [stage] + s.reps
             self.ran += [stage]
+            self.done += [stage]
         finally:
             self.aran += [stage]
             self.log.debug(u"Finished '%s'" % s.name)
@@ -875,7 +882,8 @@ can be customized using the 'Default' configuration variable in the configuratio
         if msg:
             self.log.info(msg)
         self.log.info(u"Simulator %s Finished" % self.name)
-        sys.exit(code)
+        if code != 0:
+            sys.exit(code)
         
 
     
@@ -886,7 +894,7 @@ can be customized using the 'Default' configuration variable in the configuratio
         
         self.errors = []
         
-        if not self.progressbar and color:
+        if not self.progressbar and color and self.log.console.level <= 20:
             self._start_progress_bar(len(collection),color)
             showBar = True
         else:
@@ -960,10 +968,6 @@ can be customized using the 'Default' configuration variable in the configuratio
         if not self.configured:
             self.log.log(8,"No configuration provided or accessed. Using defaults.")
         
-        # Start Logging
-        self.log.configure(configuration=self.config)
-        self.log.start()
-        
         # Write Configuration to Partials Directory
         if os.path.isdir(self.config["Dirs.Partials"]):
             filename = self.dir_filename("Partials","%s.config.yaml" % self.name)
@@ -1017,20 +1021,22 @@ can be customized using the 'Default' configuration variable in the configuratio
     def _dry_run(self):
         """Trigger a dry run"""
         self.config["Options.DryRun"] = True
+        self.log.debug(u"Operating in DryRun mode")
         
     def _show_done_stages(self):
         """Dry Run"""
-        text = u"Stages done:\n"
+        text = [u"Stages done, in order:"]
+        order = 1
         for stage in self.done:
             s = self.stages[stage]
-            text += u"%(command)-20s : %(desc)s" % {'command':s.name,'desc':s.description}
-            text += u"\n"
-        self.log.info(text)
+            text += [u"%(order)3d. %(command)-20s : %(desc)s" % {'order':order,'command':s.name,'desc':s.description}]
+            order += 1
+        self.log.info(u"\n".join(text))
 
     def _show_dep_tree(self):
         """Dependency Tree"""
         self._depTree.reverse()
-        text = u"Dependency Tree:\n"
+        text = u"Dependency Tree, request order:\n"
         text += "\n".join(self._depTree)
         self.log.info(text)
         
@@ -1039,15 +1045,15 @@ can be customized using the 'Default' configuration variable in the configuratio
         
         total = sum([ self.stages[stage].durTime for stage in self.aran])
         
-        text = "Simulation profile:\n"
-        text += Stage.table_head() + "\n"
+        text = [u"Simulation profile:"]
+        text += [Stage.table_head()]
         
         for stage in self.aran:
-            text += self.stages[stage].table_row(total) + "\n"
+            text += [self.stages[stage].table_row(total)]
             
-        text += Stage.table_foot(total)
+        text += [Stage.table_foot(total)]
             
-        self.log.info(text)
+        self.log.info(u"\n".join(text))
             
     
     #################################

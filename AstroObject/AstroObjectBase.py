@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-b3
+#  Version 0.5.1
 # 
 u"""
 .. _AstroObjectAPI:
@@ -382,8 +382,8 @@ class HDUHeaderMixin(Mixin):
         :returns: HDU with modified header attributes.
         
         """
-        HDU.header.update('label',self.label)
-        HDU.header.update('object',self.label)
+        HDU.header.update('label',str(self.label))
+        HDU.header.update('object',str(self.label))
         for key in self.header:
             HDU.header.update(key,self.header[key])
         return HDU

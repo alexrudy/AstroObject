@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-28.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5-b3
+#  Version 0.5.1
 # 
 
 from tests.AstroTest import *
@@ -59,6 +59,7 @@ class test_FITSFrame(equality_FITSFrame,API_NoData_Frame,API_General_Frame):
         self.SHOWTYPE = None
         self.HDUTYPE = pf.ImageHDU
         self.RKWARGS = {}
+        self.FLABEL = "Valid"
         super(test_FITSFrame, self).setup()
     
         
@@ -74,6 +75,7 @@ class test_FITSStack(equality_FITSFrame,API_BaseStack):
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = None
         self.OBJECTSTR = None
+        self.FLABEL = "Valid"
     
     @nt.raises(TypeError)
     def test_save_with_data(self):
@@ -85,30 +87,30 @@ class test_FITSStack(equality_FITSFrame,API_BaseStack):
     def test_save_overwrite(self):
         """save() can clobber from parent or save()"""
         AObject = self.OBJECT()
-        AObject.save(self.VALID,"Valid")
-        AObject.save(self.VALID,"Valid",clobber=True)
+        AObject.save(self.VALID,self.FLABEL)
+        AObject.save(self.VALID,self.FLABEL,clobber=True)
         AObject = self.OBJECT()
         AObject.clobber = True
-        AObject.save(self.VALID,"Valid")
-        AObject.save(self.VALID,"Valid")
+        AObject.save(self.VALID,self.FLABEL)
+        AObject.save(self.VALID,self.FLABEL)
         
     @nt.raises(TypeError)
     def test_save_no_overwrite(self):
         """save failes when trying to inadvertently clobber"""
         AObject = self.OBJECT()
-        AObject.save(self.VALID,"Valid")
-        AObject.save(self.VALID,"Valid",clobber=False)
+        AObject.save(self.VALID,self.FLABEL)
+        AObject.save(self.VALID,self.FLABEL,clobber=False)
         AObject = self.OBJECT()
         AObject.clobber = False
-        AObject.save(self.VALID,"Valid")
-        AObject.save(self.VALID,"Valid")
+        AObject.save(self.VALID,self.FLABEL)
+        AObject.save(self.VALID,self.FLABEL)
     
         
     @nt.raises(TypeError)
     def test_set_with_data(self):
         """[] fails with valid data"""
         AObject = self.OBJECT()
-        AObject["Valid"] = self.VALID
+        AObject[self.FLABEL] = self.VALID
         
     def test_double_saving_data_should_not_reference(self):
         """data() should prevent data from referencing each other."""

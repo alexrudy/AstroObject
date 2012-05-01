@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2012-04-18.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.5-b3
+#  Version 0.5.1
 # 
 
 
@@ -67,6 +67,7 @@ class test_NDArrayFrame(equality_ImageFrame,API_General_Frame):
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.image.AxesImage
         self.RKWARGS = {}
+        self.FLABEL = "Valid"
         super(test_NDArrayFrame,self).setup()            
     
     def test_read_grayscale_HDU(self):
@@ -104,6 +105,7 @@ class test_NDArrayStack(equality_ImageFrame,API_BaseStack):
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.image.AxesImage
         self.OBJECT = AstroObject.AstroNDArray.NDArrayStack
+        self.FLABEL = "Valid"
         super(test_NDArrayStack, self).setup()
         
     def test_double_saving_data_should_not_reference(self):
@@ -113,16 +115,16 @@ class test_NDArrayStack(equality_ImageFrame,API_BaseStack):
         AObject.save(AObject.data(),"Other")
         assert AObject.framename == "Other"
         assert AObject.frame().label == "Other"
-        AObject.select("Valid")
-        assert AObject.framename == "Valid"
-        assert AObject.frame().label == "Valid"
+        AObject.select(self.FLABEL)
+        assert AObject.framename == self.FLABEL
+        assert AObject.frame().label == self.FLABEL
         AObject.select("Other")
         assert AObject.framename == "Other"
         assert AObject.frame().label == "Other"
         data = AObject.data()
         data[1,1] = -1.0
         assert AObject.data()[1,1] != -1.0
-        AObject.select("Valid")
+        AObject.select(self.FLABEL)
         assert AObject.data()[1,1] != -1.0
 
 class btest_AstroImage_Functional(API_Base_Functional):
