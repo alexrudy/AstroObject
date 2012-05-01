@@ -21,10 +21,10 @@ from __future__ import division,with_statement
 #these components can be changed for new versions
 major = 0
 minor = 5
-bugfix = None
+bugfix = 1
 patch = None
 isdev = True
-devstr = "b3"
+devstr = None
 
 
 #everything below here is derived
