@@ -30,6 +30,8 @@ This module has test frameworks for all modules. The baisc hierarchy of testing 
     tests.Test_AstroImage.test_ImageStack
     tests.Test_AstroSpectra.test_SpectraFrame
     tests.Test_AstroSpectra.test_SpectraStack
+    tests.Test_AnalyticSpectra.test_InterpolatedSpectrum
+    tests.Test_AnalyticSpectra.test_UnitarySpectrum
     :parts: 1
 
 """
@@ -128,16 +130,16 @@ class equality_Base(object):
 
 class API_Base_Frame(API_Base):
     """Tests an Abstract Frame"""
-    attributes = ['FRAME','VALID','INVALID','SHOWTYPE','HDUTYPE','FRAMESTR','RKWARGS']
+    attributes = ['FRAME','VALID','INVALID','SHOWTYPE','HDUTYPE','FRAMESTR','RKWARGS','FLABEL']
     methods = ['frame_eq_frame','data_eq_data','data_eq_frame']
     
-    def frame(self):
+    def frame(self,**kwargs):
         """Returns a valid frame"""
-        return self.FRAME(data=self.VALID,label="Valid")
+        return self.FRAME(data=self.VALID,label=self.FLABEL,**kwargs)
     
     def test_init_data(self):
         """__init__() succeds with valid data"""
-        AFrame = self.FRAME(data=self.VALID,label="Valid",metadata={"A":"Abba"},header={"testvar":"avalue"})
+        AFrame = self.frame(metadata={"A":"Abba"},header={"testvar":"avalue"})
         assert AFrame.valid
         assert AFrame.header['testvar'] == "avalue", "Header value save failure"
         assert AFrame.metadata["A"] == "Abba", "Metadata save failure"
@@ -146,14 +148,14 @@ class API_Base_Frame(API_Base):
         """__init__() with PyFITS header succeeds."""
         header = pf.core.Header()
         header.update('testvar','avalue')
-        AFrame = self.FRAME(data=self.VALID,label="Valid",header=header)
+        AFrame = self.frame(header=header)
         assert AFrame.valid
         assert AFrame.header['testvar'] == "avalue", "Header value save failure"
         
     def test_init_empty(self):
         """__init__() abstract frame works without data"""
-        AFrame = self.FRAME(data=None,label="Valid")
-        assert AFrame.label == "Valid"
+        AFrame = self.FRAME(data=None,label=self.FLABEL)
+        assert AFrame.label == self.FLABEL
     
     @nt.raises(AttributeError)
     def test_init_invalid(self):
@@ -163,12 +165,12 @@ class API_Base_Frame(API_Base):
     @nt.raises(AttributeError)
     def test_init_nolabel(self):
         """__init__() fails with valid data but no label"""
-        AFrame = self.FRAME(self.VALID,None)
+        AFrame = self.FRAME(self.VALID,label=None)
 
     def test_string_representation(self):
         """__repr__() String representation correct for Frame"""
-        AFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert AFrame.label == "Valid"
+        AFrame = self.frame()
+        assert AFrame.label == self.FLABEL
         assert str(AFrame) == self.FRAMESTR
     
         
@@ -257,30 +259,30 @@ class API_HDUHeader_Frame(API_Base):
     """API for AstroObjectBase.HDUHeaderMixin """
     def test_getheader_primary(self):
         """__getheader__(HDU) a HDU frame with a primary HDU."""
-        BFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert BFrame.label == "Valid"
+        BFrame = self.frame()
+        assert BFrame.label == self.FLABEL
         HDU = pf.PrimaryHDU()
         BFrame.__getheader__(HDU)
         
     def test_getheader_secondary(self):
         """__getheader__(HDU) a HDU frame with a secondary HDU."""
-        BFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert BFrame.label == "Valid"
+        BFrame = self.frame()
+        assert BFrame.label == self.FLABEL
         HDU = self.HDUTYPE()
         BFrame.__getheader__(HDU)
     
     def test_setheader_primary(self):
         """__setheader__(HDU) a NoHDU frame with a primary HDU."""
-        BFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert BFrame.label == "Valid"
+        BFrame = self.frame()
+        assert BFrame.label == self.FLABEL
         HDU = pf.PrimaryHDU()
         nHDU = BFrame.__setheader__(HDU)
         assert isinstance(nHDU,pf.PrimaryHDU)
         
     def test_setheader_secondary(self):
         """__setheader__(HDU) a HDU frame with a secondary HDU."""
-        BFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert BFrame.label == "Valid"
+        BFrame = self.frame()
+        assert BFrame.label == self.FLABEL
         HDU = self.HDUTYPE()
         nHDU = BFrame.__setheader__(HDU)
         assert isinstance(nHDU,self.HDUTYPE)
@@ -291,29 +293,29 @@ class API_NoData_Frame(API_CanBeEmpty_Frame,API_Base):
     @nt.raises(NotImplementedError)
     def test_call_with_kwargs(self):
         """__call__(**kwargs) a NoData frame should raise an error."""
-        BFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert BFrame.label == "Valid"
+        BFrame = self.frame()
+        assert BFrame.label == self.FLABEL
         BFrame(**self.RKWARGS)
     
     @nt.raises(NotImplementedError)
     def test_call(self):
         """__call__() a NoData frame should raise an error."""
-        BFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert BFrame.label == "Valid"
+        BFrame = self.frame()
+        assert BFrame.label == self.FLABEL
         BFrame()
     
     @nt.raises(NotImplementedError)
     def test_show(self):
         """__show__() a NoData frame should raise an error."""
-        BFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert BFrame.label == "Valid"
+        BFrame = self.frame()
+        assert BFrame.label == self.FLABEL
         BFrame.__show__()
     
     @nt.raises(NotImplementedError)    
     def test_save_data(self):
         """__save__() a NoData frame should raise an error."""
-        AFrame = self.FRAME.__save__(self.VALID,"Valid")
-        assert AFrame.label == "Valid"
+        AFrame = self.FRAME.__save__(self.VALID,self.FLABEL)
+        assert AFrame.label == self.FLABEL
     
 
 class API_NoHDU_Frame(API_Base):
@@ -322,58 +324,58 @@ class API_NoHDU_Frame(API_Base):
     @nt.raises(NotImplementedError)
     def test_getheader_primary(self):
         """__getheader__(HDU) a NoHDU frame with a primary HDU should raise an error."""
-        BFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert BFrame.label == "Valid"
+        BFrame = self.frame()
+        assert BFrame.label == self.FLABEL
         HDU = pf.PrimaryHDU()
         BFrame.__getheader__(HDU)
         
     @nt.raises(NotImplementedError)
     def test_getheader_secondary(self):
         """__getheader__(HDU) a NoHDU frame with a secondary HDU should raise an error."""
-        BFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert BFrame.label == "Valid"
+        BFrame = self.frame()
+        assert BFrame.label == self.FLABEL
         HDU = self.HDUTYPE()
         BFrame.__getheader__(HDU)
     
     @nt.raises(NotImplementedError)
     def test_setheader_primary(self):
         """__setheader__(HDU) a NoHDU frame with a primary HDU should raise an error."""
-        BFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert BFrame.label == "Valid"
+        BFrame = self.frame()
+        assert BFrame.label == self.FLABEL
         HDU = pf.PrimaryHDU()
         BFrame.__setheader__(HDU)
         
     @nt.raises(NotImplementedError)
     def test_setheader_secondary(self):
         """__setheader__(HDU) a NoHDU frame with a secondary HDU should raise an error."""
-        BFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert BFrame.label == "Valid"
+        BFrame = self.frame()
+        assert BFrame.label == self.FLABEL
         HDU = self.HDUTYPE()
         BFrame.__setheader__(HDU)
     
     @nt.raises(NotImplementedError)
     def test__hdu__secondary(self):
         """__hdu__(primary=False) secondary raises an NotImplementedError"""
-        BFrame = self.FRAME(data=self.VALID,label="Empty")
-        assert BFrame.label == "Empty"
+        BFrame = self.frame()
+        assert BFrame.label == self.FLABEL
         HDU = BFrame.__hdu__()
     
     @nt.raises(NotImplementedError)
     def test__hdu__primary(self):
         """__hdu__(primary=True) primary raises an NotImplementedError"""
-        BFrame = self.FRAME(data=self.VALID,label="Empty")
-        assert BFrame.label == "Empty"
+        BFrame = self.frame()
+        assert BFrame.label == self.FLABEL
         HDU = BFrame.__hdu__(primary=True)
         
     @nt.raises(NotImplementedError)
     def test_read_secondary(self):
         """__read__() secondary HDU type should get an abstract error"""
-        BFrame = self.FRAME.__read__(self.HDUTYPE(self.VALID),"Secondary HDU")
+        BFrame = self.FRAME.__read__(self.HDUTYPE(),"Secondary HDU")
         
     @nt.raises(NotImplementedError)
     def test_read_primary(self):
         """__read__() primary HDU type should get an abstract error"""
-        BFrame = self.FRAME.__read__(pf.PrimaryHDU(self.VALID),"Primary HDU")
+        BFrame = self.FRAME.__read__(pf.PrimaryHDU(),"Primary HDU")
     
     @nt.raises(NotImplementedError)
     def test_read_empty_primary(self):
@@ -438,65 +440,65 @@ class API_General_Frame(API_HDUHeader_Frame,API_NotEmpty_Frame,API_Base_Frame):
     
     def test_save_data(self):
         """__save__() valid data"""
-        AFrame = self.FRAME.__save__(self.VALID,"Valid")
-        assert AFrame.label == "Valid"
+        AFrame = self.FRAME.__save__(self.VALID,self.FLABEL)
+        assert AFrame.label == self.FLABEL
     
     def test_read_primary(self):
         """__read__() primary HDU succeeds"""
-        AFrame = self.FRAME.__read__(pf.PrimaryHDU(self.VALID),"Valid")
+        AFrame = self.FRAME.__read__(pf.PrimaryHDU(self.VALID),self.FLABEL)
         assert isinstance(AFrame,self.FRAME)
-        assert AFrame.label == "Valid"
+        assert AFrame.label == self.FLABEL
         assert self.data_eq_frame(self.VALID,AFrame)
     
     def test_read_secondary(self):
         """__read__() secondary HDU succeeds"""
-        AFrame = self.FRAME.__read__(self.HDUTYPE(self.VALID),"Valid")
+        AFrame = self.FRAME.__read__(self.HDUTYPE(self.VALID),self.FLABEL)
         assert isinstance(AFrame,self.FRAME)
-        assert AFrame.label == "Valid"
+        assert AFrame.label == self.FLABEL
         assert self.data_eq_frame(self.VALID,AFrame)
     
     def test_call(self):
         """__call__() yields data"""
-        AFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert AFrame.label == "Valid"
+        AFrame = self.frame()
+        assert AFrame.label == self.FLABEL
         data = AFrame()
         assert self.data_eq_data(data,self.VALID)
     
     def test_call_with_kwargs(self):
         """__call__(**kwargs) yields data"""
-        AFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert AFrame.label == "Valid"
+        AFrame = self.frame()
+        assert AFrame.label == self.FLABEL
         data = AFrame(**self.RKWARGS)
         assert self.data_eq_data(data,self.VALID)
     
     def test__hdu__secondary(self):
         """__hdu__() works for secondary HDUs"""
-        AFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert AFrame.label == "Valid"
+        AFrame = self.frame()
+        assert AFrame.label == self.FLABEL
         HDU = AFrame.__hdu__()
         assert isinstance(HDU,self.HDUTYPE)
         assert self.data_eq_data(HDU.data,self.VALID)
     
     def test__hdu__primary(self):
         """__hdu__(primary=True) works for primary HDUs"""
-        AFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert AFrame.label == "Valid"
+        AFrame = self.frame()
+        assert AFrame.label == self.FLABEL
         HDU = AFrame.__hdu__(primary=True)
         assert isinstance(HDU,pf.PrimaryHDU)
         assert self.data_eq_data(HDU.data,self.VALID)
     
     def test_HDU_secondary(self):
-        """hdu() generates an empty Image HDU"""
-        BFrame = self.FRAME(data=self.VALID,label="Empty")
-        assert BFrame.label == "Empty"
+        """hdu() generates an Image HDU"""
+        BFrame = self.frame()
+        assert BFrame.label == self.FLABEL
         HDU = BFrame.hdu()
         assert isinstance(HDU,self.HDUTYPE)
         assert self.data_eq_data(HDU.data,self.VALID)
     
     def test_HDU_primary(self):
-        """hdu() generates an empty Image HDU"""
-        BFrame = self.FRAME(data=self.VALID,label="Empty")
-        assert BFrame.label == "Empty"
+        """hdu() generates a Primary HDU"""
+        BFrame = self.frame()
+        assert BFrame.label == self.FLABEL
         HDU = BFrame.hdu(primary=True)
         assert isinstance(HDU,pf.PrimaryHDU)
         assert self.data_eq_data(HDU.data,self.VALID)
@@ -505,16 +507,16 @@ class API_General_Frame(API_HDUHeader_Frame,API_NotEmpty_Frame,API_Base_Frame):
         """hdu() generates an empty Image HDU with Header"""
         header = pf.core.Header()
         header.update('test','value')
-        BFrame = self.FRAME(data=self.VALID,label="Valid",header=header)
-        assert BFrame.label == "Valid"
+        BFrame = self.FRAME(data=self.VALID,label=self.FLABEL,header=header)
+        assert BFrame.label == self.FLABEL
         HDU = BFrame.hdu()
         assert isinstance(HDU,self.HDUTYPE)
         assert HDU.header["test"] == 'value'  
         
     def test_show(self):
         """__show__() returns a valid type"""
-        AFrame = self.FRAME(data=self.VALID,label="Valid")
-        assert AFrame.label == "Valid"
+        AFrame = self.frame()
+        assert AFrame.label == self.FLABEL
         figure = AFrame.__show__()
         assert isinstance(figure,self.SHOWTYPE), "Found type %s" % type(figure)
     
@@ -522,12 +524,12 @@ class API_General_Frame(API_HDUHeader_Frame,API_NotEmpty_Frame,API_Base_Frame):
 class API_BaseStack(API_Base):
     """API for AstroObjectBase.BaseStack"""
     
-    attributes = ['FRAME','VALID','INVALID','SHOWTYPE','HDUTYPE','OBJECTSTR','OBJECT','FRAMESTR']
+    attributes = ['FRAME','VALID','INVALID','SHOWTYPE','HDUTYPE','OBJECTSTR','OBJECT','FRAMESTR','FLABEL']
     methods = ['frame_eq_frame','data_eq_data','data_eq_frame','frame']
     
-    def frame(self):
+    def frame(self,**kwargs):
         """Returns a valid frame"""
-        return self.FRAME(data=self.VALID,label="Valid")
+        return self.FRAME(data=self.VALID,label=self.FLABEL,**kwargs)
         
     @nt.raises(AttributeError)
     def test_init_with_bad_class(self):
@@ -552,34 +554,34 @@ class API_BaseStack(API_Base):
     def test_save_with_data(self):
         """save() works with valid data"""
         AObject = self.OBJECT()
-        AObject.save(self.VALID,"Valid")
+        AObject.save(self.VALID,self.FLABEL)
     
     def test_save_overwrite(self):
         """save() can clobber from parent or save()"""
         AObject = self.OBJECT()
-        AObject.save(self.VALID,"Valid")
-        AObject.save(self.VALID,"Valid",clobber=True)
+        AObject.save(self.VALID,self.FLABEL)
+        AObject.save(self.VALID,self.FLABEL,clobber=True)
         AObject = self.OBJECT()
         AObject.clobber = True
-        AObject.save(self.VALID,"Valid")
-        AObject.save(self.VALID,"Valid")
+        AObject.save(self.VALID,self.FLABEL)
+        AObject.save(self.VALID,self.FLABEL)
         
     @nt.raises(KeyError)
     def test_save_no_overwrite(self):
         """save failes when trying to inadvertently clobber"""
         AObject = self.OBJECT()
-        AObject.save(self.VALID,"Valid")
-        AObject.save(self.VALID,"Valid",clobber=False)
+        AObject.save(self.VALID,self.FLABEL)
+        AObject.save(self.VALID,self.FLABEL,clobber=False)
         AObject = self.OBJECT()
         AObject.clobber = False
-        AObject.save(self.VALID,"Valid")
-        AObject.save(self.VALID,"Valid")
+        AObject.save(self.VALID,self.FLABEL)
+        AObject.save(self.VALID,self.FLABEL)
         
     
     def test_set_with_data(self):
         """[] works with valid data"""
         AObject = self.OBJECT()
-        AObject["Valid"] = self.VALID
+        AObject[self.FLABEL] = self.VALID
     
     @nt.raises(TypeError)
     def test_save_with_invalid_data(self):
@@ -597,7 +599,7 @@ class API_BaseStack(API_Base):
         """save() succeeds with a frame"""
         AObject = self.OBJECT()
         AObject.save(self.frame())
-        assert AObject.framename == "Valid"
+        assert AObject.framename == self.FLABEL
         assert isinstance(AObject.frame(),self.FRAME)
     
     def test_set_frame_with_label(self):
@@ -622,9 +624,9 @@ class API_BaseStack(API_Base):
         assert AObject.framename == "Other"
         assert AObject.frame().label == "Other"
         try:
-            AObject.select("Valid")
-            assert AObject.framename == "Valid"
-            assert AObject.frame().label == "Valid"
+            AObject.select(self.FLABEL)
+            assert AObject.framename == self.FLABEL
+            assert AObject.frame().label == self.FLABEL
             AObject.select("Other")
             assert AObject.framename == "Other"
             assert AObject.frame().label == "Other"
@@ -639,9 +641,9 @@ class API_BaseStack(API_Base):
         assert AObject.framename == "Other"
         assert AObject.frame().label == "Other"
         try:
-            AObject.select("Valid")
-            assert AObject.framename == "Valid"
-            assert AObject.frame().label == "Valid"
+            AObject.select(self.FLABEL)
+            assert AObject.framename == self.FLABEL
+            assert AObject.frame().label == self.FLABEL
             AObject.select("Other")
             assert AObject.framename == "Other"
             assert AObject.frame().label == "Other"
@@ -690,7 +692,7 @@ class API_BaseStack(API_Base):
         AObject.save(self.frame())
         AObject["Other"] = self.frame()
         PF,Fs,FN = AObject.write(self.files[0])
-        assert Fs == ["Valid"]
+        assert Fs == [self.FLABEL]
         assert PF == "Other"
         
     def test_write_to_singleframe_file(self):
@@ -710,7 +712,7 @@ class API_BaseStack(API_Base):
         AObject.write(self.files[0])
         PF,Fs,FN = AObject.write(self.files[0],clobber=True)
         assert Fs == []
-        assert PF == "Valid"
+        assert PF == self.FLABEL
         
     
     @nt.raises(IOError)
@@ -730,9 +732,9 @@ class API_BaseStack(API_Base):
         AObject.save(Frame,Label)
         assert AObject.framename == Label
         assert AObject.frame().label == Label
-        AObject.select("Valid")
-        assert AObject.framename == "Valid"
-        assert AObject.frame().label == "Valid"
+        AObject.select(self.FLABEL)
+        assert AObject.framename == self.FLABEL
+        assert AObject.frame().label == self.FLABEL
     
     def test_select(self):
         """select(None) changes to default frame"""
@@ -742,12 +744,12 @@ class API_BaseStack(API_Base):
         AObject.save(Frame)
         assert AObject.framename == "Other"
         assert AObject.frame().label == "Other"
-        AObject.select("Valid")
-        assert AObject.framename == "Valid"
-        assert AObject.frame().label == "Valid"
+        AObject.select(self.FLABEL)
+        assert AObject.framename == self.FLABEL
+        assert AObject.frame().label == self.FLABEL
         AObject.select(None)
-        assert AObject.framename == "Valid"
-        assert AObject.frame().label == "Valid"
+        assert AObject.framename == self.FLABEL
+        assert AObject.frame().label == self.FLABEL
         
     
     
@@ -755,7 +757,7 @@ class API_BaseStack(API_Base):
     def test_select_unknown_frame(self):
         """select() cannont select non-existant frames"""
         AObject = self.OBJECT()
-        AObject.select("Valid")
+        AObject.select(self.FLABEL)
 
     def test_data(self):
         """data() returns data object"""
@@ -997,7 +999,7 @@ class API_BaseStack(API_Base):
         """show() raises KeyError for a non-existent frame name"""
         AObject = self.OBJECT()
         AObject.save(self.frame())
-        AObject.show("Valid" + "JUNK...")
+        AObject.show(self.FLABEL + "JUNK...")
     
     def test_object(self):
         """object() call exists and works, but has been depreciated"""

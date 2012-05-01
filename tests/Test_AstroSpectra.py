@@ -57,6 +57,7 @@ class test_SpectraFrame(equality_SpectraFrame,API_General_Frame):
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.axes.Subplot
         self.RKWARGS = {}
+        self.FLABEL = "Valid"
         super(test_SpectraFrame, self).setup()
     
         
@@ -71,10 +72,11 @@ class test_SpectraStack(equality_SpectraFrame,API_BaseStack):
         self.VALID = np.array([(np.arange(50) + 1.0) * 1e-7,np.sin(np.arange(50))+2.0])
         self.INVALID = 20
         self.OBJECTSTR = None
-        self.FRAMESTR = "<'ImageFrame' labeled 'Valid'>"
+        self.FRAMESTR = "<'SpectraFrame' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.axes.Subplot
         self.OBJECT = AstroObject.AstroSpectra.SpectraStack
+        self.FLABEL = "Valid"
         super(test_SpectraStack, self).setup()
     
         

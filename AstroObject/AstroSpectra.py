@@ -90,17 +90,6 @@ class SpectraMixin(AstroObjectBase.Mixin):
         plt.axis(expandLim(plt.axis()))
         plt.gca().ticklabel_format(style="sci",scilimits=(3,3))
         return plt.gca()
-        
-    def __valid__(self):
-        """Validates this spectrum frame to conform to the required data shape. This function is used to determine if a passed numpy data array appears to be a spectrum. It is essentially a helper function."""
-        dimensions = 2
-        rows = 2
-        assert self.size == self.data.size, "Members of %s appear to be inconsistent!" % self
-        assert self.shape == self.data.shape, "Members of %s appear to be inconsistent!" % self
-        assert self.data.ndim == dimensions , "Data of %s does not appear to be %d-dimensional! Shape: %s" % (self,dimensions,self.shape)
-        assert self.shape[0] == rows, "Spectrum for %s appears to be multi-dimensional, expected %d Shape: %s" % (self,rows,self.shape)        
-        return super(SpectraMixin, self).__valid__()
-    
 
 class SpectraFrame(AstroObjectBase.HDUHeaderMixin,SpectraMixin,AstroObjectBase.BaseFrame):
     """A single frame of a spectrum. This will save the spectrum as an image, with the first row having flux, and second row having the wavelength equivalent. Further rows can accomodate further spectral frames when stored to a FITS image. However, the frame only accepts a single spectrum."""
@@ -114,6 +103,15 @@ class SpectraFrame(AstroObjectBase.HDUHeaderMixin,SpectraMixin,AstroObjectBase.B
         """Returns the data for this frame, which should be a ``numpy.ndarray``. The first row will be the spectral data, the second row the equivalent wavelength for this spectrum."""
         return self.data
         
+    def __valid__(self):
+        """Validates this spectrum frame to conform to the required data shape. This function is used to determine if a passed numpy data array appears to be a spectrum. It is essentially a helper function."""
+        dimensions = 2
+        rows = 2
+        assert self.size == self.data.size, "Members of %s appear to be inconsistent!" % self
+        assert self.shape == self.data.shape, "Members of %s appear to be inconsistent!" % self
+        assert self.data.ndim == dimensions , "Data of %s does not appear to be %d-dimensional! Shape: %s" % (self,dimensions,self.shape)
+        assert self.shape[0] == rows, "Spectrum for %s appears to be multi-dimensional, expected %d Shape: %s" % (self,rows,self.shape)        
+        return super(SpectraFrame, self).__valid__()
     
     def __hdu__(self,primary=False):
         """Retruns an HDU which represents this frame. HDUs are either ``pyfits.PrimaryHDU`` or ``pyfits.ImageHDU`` depending on the *primary* keyword."""
