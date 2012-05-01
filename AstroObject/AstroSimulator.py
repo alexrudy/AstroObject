@@ -746,6 +746,9 @@ can be customized using the 'Default' configuration variable in the configuratio
         self._preConfiguration()
         self._configure()
         self._postConfiguration()
+        # Start Logging
+        self.log.configure(configuration=self.config)
+        self.log.start()
         for vstr in self.version:
             self.log.info(vstr)
         self.starting = False
@@ -891,7 +894,7 @@ can be customized using the 'Default' configuration variable in the configuratio
         
         self.errors = []
         
-        if not self.progressbar and color:
+        if not self.progressbar and color and self.log.console.level <= 20:
             self._start_progress_bar(len(collection),color)
             showBar = True
         else:
@@ -965,10 +968,6 @@ can be customized using the 'Default' configuration variable in the configuratio
         if not self.configured:
             self.log.log(8,"No configuration provided or accessed. Using defaults.")
         
-        # Start Logging
-        self.log.configure(configuration=self.config)
-        self.log.start()
-        
         # Write Configuration to Partials Directory
         if os.path.isdir(self.config["Dirs.Partials"]):
             filename = self.dir_filename("Partials","%s.config.yaml" % self.name)
@@ -1022,6 +1021,7 @@ can be customized using the 'Default' configuration variable in the configuratio
     def _dry_run(self):
         """Trigger a dry run"""
         self.config["Options.DryRun"] = True
+        self.log.debug(u"Operating in DryRun mode")
         
     def _show_done_stages(self):
         """Dry Run"""
