@@ -62,7 +62,10 @@ class Configuration(collections.MutableMapping):
     """Adds extra methods to dictionary for configuration"""
     
     dn = dict
+    """Deep nesting dictionary setting. This class will be used to create deep nesting structures for this dictionary."""
+    
     dt = dict
+    """Exctraction nesting dictionary setting. This class will be used to create deep nesting structures when this object is extracted."""
     
     def __init__(self, *args, **kwargs):
         super(Configuration, self).__init__()
@@ -178,7 +181,7 @@ class Configuration(collections.MutableMapping):
         return self._extract(self._store)
         
     def _extract(self,d):
-        """docstring for _extract"""
+        """Internal recursive extraction method for getting dictionaries out of thi object."""
         if not isinstance(d,collections.Mapping):
             return d
         e = self.dt()
@@ -193,7 +196,7 @@ class Configuration(collections.MutableMapping):
         return e
         
     def _renest(self,d):
-        """docstring for _renest"""
+        """Internal recurisve nesting method for deep mapping dictionary work."""
         if not isinstance(d,collections.Mapping):
             return d
         e = self.dn()
@@ -208,7 +211,12 @@ class Configuration(collections.MutableMapping):
         return e
     
     def renest(self,deep_nest_type=None):
-        """Re-nest this object"""
+        """Re-nest this object. This method applies the :attr:`dn` deep-nesting attribute to each nesting level in the configuration object.
+        
+        :param deep_nest_type: mapping nesting type, will set :attr:`dn`.
+        
+        This method does not return anything.
+        """
         if isinstance(deep_nest_type,collections.Mapping):
             self.dn = deep_nest_type
         elif deep_nest_type is not None:
