@@ -894,6 +894,9 @@ can be customized using the 'Default' configuration variable in the configuratio
         
         self.errors = []
         
+        if not len(collection) >= 1:
+            return
+        
         if not self.progressbar and color and self.log.console.level <= 20:
             self._start_progress_bar(len(collection),color)
             showBar = True
@@ -907,7 +910,11 @@ can be customized using the 'Default' configuration variable in the configuratio
         finally:       
             if showBar:
                 self._end_progress_bar()
-            ferr = float(len(self.errors)) / float(len(collection))
+                
+            if len(collection) >= 1:
+                ferr = float(len(self.errors)) / float(len(collection))
+            else:
+                ferr = 1.0
             if ferr > 0.1:
                 self.log.warning(u"%d%% of iterations had errors." % (ferr * 100.0))
                 self.log.warning(u"See the log for Errors.")
