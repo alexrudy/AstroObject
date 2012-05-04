@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-14.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5.1
+#  Version 0.5.2
 # 
 """
 :mod:`AstroSimulator` — Complex Task Management 
@@ -746,11 +746,6 @@ can be customized using the 'Default' configuration variable in the configuratio
         self._preConfiguration()
         self._configure()
         self._postConfiguration()
-        # Start Logging
-        self.log.configure(configuration=self.config)
-        self.log.start()
-        for vstr in self.version:
-            self.log.info(vstr)
         self.starting = False
                 
     def do(self,*stages):
@@ -894,6 +889,9 @@ can be customized using the 'Default' configuration variable in the configuratio
         
         self.errors = []
         
+        if not len(collection) >= 1:
+            return
+        
         if not self.progressbar and color and self.log.console.level <= 20:
             self._start_progress_bar(len(collection),color)
             showBar = True
@@ -907,7 +905,11 @@ can be customized using the 'Default' configuration variable in the configuratio
         finally:       
             if showBar:
                 self._end_progress_bar()
-            ferr = float(len(self.errors)) / float(len(collection))
+                
+            if len(collection) >= 1:
+                ferr = float(len(self.errors)) / float(len(collection))
+            else:
+                ferr = 1.0
             if ferr > 0.1:
                 self.log.warning(u"%d%% of iterations had errors." % (ferr * 100.0))
                 self.log.warning(u"See the log for Errors.")
@@ -990,6 +992,10 @@ can be customized using the 'Default' configuration variable in the configuratio
                 self.config[key] = value
         for cfg in self.config.get("Options.afterConfigure",[]):
             self.config.merge(cfg)
+        self.log.configure(configuration=self.config)
+        self.log.start()
+        for vstr in self.version:
+            self.log.info(vstr)
         for fk in self.config.get("Options.afterFunction",[]):
             self.functions[fk]()
 
@@ -998,13 +1004,12 @@ can be customized using the 'Default' configuration variable in the configuratio
     ############################################    
         
     def _list_stages(self):
-        """List stages and exit"""
-        text = "Stages:\n"
+        """List stages"""
+        text = ["Stages:"]
         for stage in self.orders:
             s = self.stages[stage]
-            text += "%(command)-20s : %(desc)s" % {'command':s.name,'desc':s.description}
-            text += "\n"
-        self.exit(msg=text)
+            text += ["%(command)-20s : %(desc)s" % {'command':s.name,'desc':s.description}]
+        self.log.info(u"\n".join(text))
     
     def _dump_full_config(self):
         """docstring for _dump_full_config"""

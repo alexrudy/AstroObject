@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5.1
+#  Version 0.5.2
 # 
 """
 :mod:`AnalyticSpectra` – Analytic Spectra and Interpolation
@@ -403,7 +403,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,AstroObjectBase.BaseFrame):
                 oldrsf = sp.interpolate.interp1d(oldwl[:-1],oldrs,bounds_error=False,fill_value=np.min(oldrs))
                 oldrsd = oldrsf(newwl)
                 delrs = newrs - oldrsd
-                if (delrs > 0).any():
+                if (delrs > 1.0).any():
                     rswi = np.argmax(delrs)
                     msg += [u"Requested R is more detailed than given R. %g -> %g" % (newrs[rswi],oldrsd[rswi])]
                     arrays[u"Requested R"] = newrs
