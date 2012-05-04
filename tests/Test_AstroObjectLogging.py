@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-29.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5.1
+#  Version 0.5.2
 # 
 
 
