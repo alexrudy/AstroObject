@@ -30,6 +30,8 @@ The AstroObject module also has a simulator framework. The simulator is designed
 
 # Release Notes
 
+* 0.5.2
+	- Bug fix for simulator functions, earlier logging starts.
 * 0.5.1
 	- Better simulator output options
 	- Refactored simulator code to use internal APIs
