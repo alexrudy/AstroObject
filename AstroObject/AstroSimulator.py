@@ -746,9 +746,6 @@ can be customized using the 'Default' configuration variable in the configuratio
         self._preConfiguration()
         self._configure()
         self._postConfiguration()
-        # Start Logging
-        self.log.configure(configuration=self.config)
-        self.log.start()
         for vstr in self.version:
             self.log.info(vstr)
         self.starting = False
@@ -997,6 +994,8 @@ can be customized using the 'Default' configuration variable in the configuratio
                 self.config[key] = value
         for cfg in self.config.get("Options.afterConfigure",[]):
             self.config.merge(cfg)
+        self.log.configure(configuration=self.config)
+        self.log.start()
         for fk in self.config.get("Options.afterFunction",[]):
             self.functions[fk]()
 
@@ -1005,13 +1004,12 @@ can be customized using the 'Default' configuration variable in the configuratio
     ############################################    
         
     def _list_stages(self):
-        """List stages and exit"""
-        text = "Stages:\n"
+        """List stages"""
+        text = ["Stages:"]
         for stage in self.orders:
             s = self.stages[stage]
-            text += "%(command)-20s : %(desc)s" % {'command':s.name,'desc':s.description}
-            text += "\n"
-        self.exit(msg=text)
+            text += ["%(command)-20s : %(desc)s" % {'command':s.name,'desc':s.description}]
+        self.log.info(u"\n".join(text))
     
     def _dump_full_config(self):
         """docstring for _dump_full_config"""
