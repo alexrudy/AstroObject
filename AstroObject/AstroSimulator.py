@@ -746,8 +746,6 @@ can be customized using the 'Default' configuration variable in the configuratio
         self._preConfiguration()
         self._configure()
         self._postConfiguration()
-        for vstr in self.version:
-            self.log.info(vstr)
         self.starting = False
                 
     def do(self,*stages):
@@ -996,6 +994,8 @@ can be customized using the 'Default' configuration variable in the configuratio
             self.config.merge(cfg)
         self.log.configure(configuration=self.config)
         self.log.start()
+        for vstr in self.version:
+            self.log.info(vstr)
         for fk in self.config.get("Options.afterFunction",[]):
             self.functions[fk]()
 
