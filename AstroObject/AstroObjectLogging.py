@@ -271,3 +271,5 @@ class LogManager(logging.getLoggerClass()):
             self.doConsole = True
 
 logging.setLoggerClass(LogManager)
+
+from logging import *
