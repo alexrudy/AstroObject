@@ -126,19 +126,20 @@ The base **stack** definition provides the normal object accessor methods. It sh
 # Standard Scipy Toolkits
 import numpy as np
 import pyfits as pf
-import scipy as sp
 
 # Standard Python Modules
-import math, logging, os, time
+import logging
+import os
+import time
 import copy
 import collections
 
-from abc import ABCMeta, abstractmethod, abstractproperty
+from abc import ABCMeta, abstractmethod
 
 # Submodules from this system
-from Utilities import *
+from Utilities import getVersion, make_decorator, validate_filename
 
-__all__ = ["BaseStack","BaseFrame","AnalyticMixin","NoHDUMixin","HDUHeaderMixin","NoDataMixin","Mixin"]
+__all__ = ["BaseStack", "BaseFrame", "AnalyticMixin", "NoHDUMixin", "HDUHeaderMixin", "NoDataMixin", "Mixin"]
 
 __version__ = getVersion()
 
@@ -181,38 +182,39 @@ class BaseFrame(Mixin):
         
         if self.metadata == None:
             self.metadata = {}
-        if isinstance(header,pf.core.Header):
+        if isinstance(header, pf.core.Header):
             self.header = header
-        elif isinstance(header,collections.Mapping):
+        elif isinstance(header, collections.Mapping):
             for key, value in header.iteritems():
-                self.header.update(key,value)
+                self.header.update(key, value)
         else:
-            assert header == None, u"%s doesn't understand the header, %s, type %s" % (self,header,type(header))
+            assert header == None, u"%s doesn't understand the header, %s, type %s" % (self, header, type(header))
             
         try:
             self.__valid__()
-            assert isinstance(self.label,(str,unicode)), u"Frame requires a label, got %s" % self.label
-        except AssertionError as e:
-            raise AttributeError(unicode(e))
+            assert isinstance(self.label, (str, unicode)), u"Frame requires a label, got %s" % self.label
+        except AssertionError as err:
+            raise AttributeError(unicode(err))
     
     @property
     def label(self):
+        """The name for this frame, an immutable property."""
         return self._label
         
-    def copy(self,label=None):
+    def copy(self, label=None):
         """Return a re-labeled copy of this object."""
         if label == None:
-            _newFrame = copy.copy(self)
+            _new_frame = copy.copy(self)
         else:
-            _oldLabel = self.label
+            _old_label = self.label
             self._label = label
-            _newFrame = copy.copy(self)
-            self._label = _oldLabel
-        _newFrame.__valid__()
-        return _newFrame
+            _new_frame = copy.copy(self)
+            self._label = _old_label
+        _new_frame.__valid__()
+        return _new_frame
     
     @abstractmethod
-    def __call__(self,**kwargs):
+    def __call__(self, **kwargs):
         """Should return the data within this frame, usually as a ``numpy`` array.
         
         :returns: None
@@ -231,7 +233,7 @@ class BaseFrame(Mixin):
         
         :returns: literal sting representation
         """
-        return "<\'%s\' labeled \'%s\'>" % (self.__class__.__name__,self.label)
+        return "<\'%s\' labeled \'%s\'>" % (self.__class__.__name__, self.label)
     
     @abstractmethod
     def __valid__(self):
@@ -239,6 +241,7 @@ class BaseFrame(Mixin):
         
         :raises: :exc:`AssertionError` when frame is invalid
         :returns: ``True``"""
+        assert isinstance(self.label, (str, unicode)), u"Frame requires a label, got %s" % self.label
         return True
     
     @property
@@ -253,7 +256,7 @@ class BaseFrame(Mixin):
                 self._valid = True
         return self._valid
     
-    def hdu(self,primary=False):
+    def hdu(self, primary=False):
         """Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.
         
         :param bool primary: Return a primary HDU
@@ -262,7 +265,7 @@ class BaseFrame(Mixin):
         return self.__setheader__(self.__hdu__(primary))
     
     @abstractmethod
-    def __setheader__(self,hdu):
+    def __setheader__(self, hdu):
         """Apply header values to a given HDU and return that HDU.
         
         :param pf.HDU HDU: Header-Data-Unit on which to add the header information.
@@ -274,7 +277,7 @@ class BaseFrame(Mixin):
 
         
     @abstractmethod
-    def __getheader__(self,hdu):
+    def __getheader__(self, hdu):
         """Extract header values from a given HDU and save them to this object.
         
         :param pf.HDU HDU: Header-Data-Unit from which to get the header information.
@@ -286,7 +289,7 @@ class BaseFrame(Mixin):
     
     
     @abstractmethod
-    def __hdu__(self,primary=False):
+    def __hdu__(self, primary=False):
         """This method returns an HDU which represents the object. The HDU should respect the object's :attr:`header` attribute, and use that dictionary to populate the headers of the HDU. 
         
         :param primary: boolean, produce a primary HDU or not
@@ -307,7 +310,7 @@ class BaseFrame(Mixin):
     
     @classmethod
     @abstractmethod    
-    def __save__(cls,data,label):
+    def __save__(cls, data, label):
         """This method should retun an instance of the parent class if the given data can be turned into an object of that class. If the data cannot be correctly cast, this method should throw an :exc:`NotImplementedError`.
         
         :param data: Data to be saved, in raw form.
@@ -318,9 +321,9 @@ class BaseFrame(Mixin):
         .. Note:: Because the :meth:`__valid__` is called when an object is initialized, it is possible to check some aspects of the provided data in this initialization function. However, this would raise an :exc:`AssertionError` not an :exc:`NotImplementedError`. To avoid this problem, it is suggested that you wrap your initialization in a try...except block like::
                 
                 try:
-                    Object = cls(HDU.data,label)
+                    Object = cls(HDU.data, label)
                 except AssertionError as AE:
-                    msg = "%s data did not validate: %s" % (cls.__name__,AE)
+                    msg = "%s data did not validate: %s" % (cls.__name__, AE)
                     raise NotImplementedError(msg)
                 
             This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like :exc:`AttributeError`) which are diffult to track and diagnose without the code in :meth:`__save__`. See :meth:`AstroImage.__save__` for an example ``__save__`` function which uses this trick, but also includes some basic data validation."""
@@ -330,7 +333,7 @@ class BaseFrame(Mixin):
     
     @classmethod
     @abstractmethod
-    def __read__(cls,HDU,label):
+    def __read__(cls, HDU, label):
         """This method should return an instance of the parent class if the given ``HDU`` can be turned into an object of that class. If this is not possible (i.e. a Table HDU is provided to an Image Frame), this method should raise an :exc:`NotImplementedError` with a message that describes the resaon the data could not be cast into this type of frame.
         
         :param data: HDU to be saved, as a ``pyfits.HDU``.
@@ -341,9 +344,9 @@ class BaseFrame(Mixin):
         .. Note:: Because the :meth:`__valid__` is called when an object is initialized, it is possible to check some aspects of the provided data in this initialization function. However, this would raise an :exc:`AssertionError` not an :exc:`NotImplementedError`. To avoid this problem, it is suggested that you wrap your initialization in a try...except block like::
                 
                 try:
-                    Object = cls(HDU.data,label)
+                    Object = cls(HDU.data, label)
                 except AssertionError as AE:
-                    msg = "%s data did not validate: %s" % (cls.__name__,AE)
+                    msg = "%s data did not validate: %s" % (cls.__name__, AE)
                     raise NotImplementedError(msg)
                 
             This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like :exc:`AttributeError`) which are diffult to track and diagnose without the code in :meth:`__read__`. See :meth:`AstroImage.__read__` for an example ``__read__`` function which uses this trick, but also includes some basic data validation.
@@ -359,8 +362,8 @@ def semiabstractmethod(txt):
         func = txt
         txt = u"Abstract method %s.%s() cannot be called."
     def decorator(func):
-        def raiser(self,*args,**kwargs):
-            msg = txt % (self,func.__name__)
+        def raiser(self, *args, **kwargs):
+            msg = txt % (self, func.__name__)
             raise NotImplementedError(msg)
         newfunc = make_decorator(func)(raiser)
         return newfunc
@@ -375,20 +378,20 @@ class HDUHeaderMixin(Mixin):
     :meth:`~BaseFrame.__getheader__` retrieves the pyfits HDU for storage in the frame.
     """
     
-    def __setheader__(self,HDU):
+    def __setheader__(self, HDU):
         """Apply header values to a given HDU and return that HDU.
         
         :param pf.HDU HDU: Header-Data-Unit on which to add the header information.
         :returns: HDU with modified header attributes.
         
         """
-        HDU.header.update('label',str(self.label))
-        HDU.header.update('object',str(self.label))
+        HDU.header.update('label', str(self.label))
+        HDU.header.update('object', str(self.label))
         for key in self.header:
-            HDU.header.update(key,self.header[key])
+            HDU.header.update(key, self.header[key])
         return HDU
         
-    def __getheader__(self,HDU):
+    def __getheader__(self, HDU):
         """Extract header values from a given HDU and save them to this object.
         
         :param pf.HDU HDU: Header-Data-Unit from which to get the header information.
@@ -417,16 +420,16 @@ class NoDataMixin(Mixin):
     
     @classmethod    
     @semiabstractmethod(u"Cannot call %s.%s() as this frame cannot contain data.")
-    def __save__(self):
+    def __save__(cls, data, label):
         """Show no data... NotImplemented"""
         pass
     
         
     def __valid__(self):
         """Require no data"""
-        if hasattr(self,'data'):
-            assert self.data == None, u"The frame %s cannot accept data, found data with type %s" % (self,type(self.data))
-        return super(NoDataMixin,self).__valid__()
+        if hasattr(self, 'data'):
+            assert self.data == None, u"The frame %s cannot accept data, found data with type %s" % (self, type(self.data))
+        return super(NoDataMixin, self).__valid__()
 
     
         
@@ -445,16 +448,16 @@ class NoHDUMixin(Mixin):
         pass
     
     @semiabstractmethod(u"Cannot call %s.%s() as this frame cannot create HDUs.")
-    def __hdu__(self,primary=False):
+    def __hdu__(self, primary=False):
         pass
 
     @classmethod    
     @semiabstractmethod(u"Cannot call %s.%s() as this frame cannot read HDUs.")
-    def __read__(cls,HDU,label):
+    def __read__(cls, HDU, label):
         pass
 
 
-class AnalyticMixin(NoHDUMixin,NoDataMixin):
+class AnalyticMixin(NoHDUMixin, NoDataMixin):
     """Mixin for purely-analytic frames. These frames do not contain actual raw data, and cannot produce HDUs. However, they are callable (and their call signature should accept a ``wavelengths`` keyword, see e.g. :class:`~.AnalyticSpectra.FlatSpectrum`).
     
     This mixin allows the developer to not implement :meth:`~BaseFrame.__getheader__`, :meth:`~BaseFrame.__setheader__`, :meth:`~BaseFrame.__hdu__`, :meth:`~BaseFrame.__read__`, :meth:`~BaseFrame.__save__`, and :meth:`~BaseFrame.__show__`. It requires that developers implement :meth:`~BaseFrame.__call__` to access data."""
@@ -465,7 +468,7 @@ class AnalyticMixin(NoHDUMixin,NoDataMixin):
     
     @classmethod
     @semiabstractmethod(u"Cannot call %s.%s() as this frame cannot be the target of a save operation.")
-    def __save__(self,data,label):
+    def __save__(cls, data, label):
         pass
     
 
@@ -478,7 +481,7 @@ class BaseStack(collections.MutableMapping):
     .. Note::
         This is object only contains Abstract data objects. In order to use this class properly, you should set the dataClasses keyword for use when storing data.
     """
-    def __init__(self,filename=None,dataClasses=None,**kwargs):
+    def __init__(self, filename=None, dataClasses=None, **kwargs):
         super(BaseStack, self).__init__(**kwargs)
         # Image data variables.
         self._frames = {}            # Storage for all of the images
@@ -487,7 +490,7 @@ class BaseStack(collections.MutableMapping):
         self.clobber = False
         self.name = False
         self.dataClasses = []
-        if isinstance(dataClasses,list):
+        if isinstance(dataClasses, list):
             self.dataClasses += dataClasses
         elif dataClasses:
             raise AttributeError(u"Can't understand data classes")
@@ -501,7 +504,7 @@ class BaseStack(collections.MutableMapping):
         :returns: string
         """
         if self.name:
-            return "<\'%s\' labeled \'%s\'>" % (self.__class__.__name__,self.name)
+            return "<\'%s\' labeled \'%s\'>" % (self.__class__.__name__, self.name)
         else:
             return super(BaseStack, self).__repr__()
     
@@ -510,15 +513,15 @@ class BaseStack(collections.MutableMapping):
         
         return self.__repr__()
     
-    def __getitem__(self,key):
+    def __getitem__(self, key):
         """Dictionary access to frames in the Object"""
         return self.frame(key)
         
-    def __setitem__(self,key,value):
+    def __setitem__(self, key, value):
         """Dictionary assignment of frames in the Object"""
-        self.save(value,key,clobber=True)
+        self.save(value, key, clobber=True)
         
-    def __delitem__(self,key):
+    def __delitem__(self, key):
         """Dictionary deletion of frames in the Object"""
         self.remove(key)
         
@@ -526,7 +529,7 @@ class BaseStack(collections.MutableMapping):
         """Dictionary iterator call."""
         return self._frames.iterkeys()
         
-    def __contains__(self,item):
+    def __contains__(self, item):
         """Dictionary contain testing"""
         return item in self._frames
         
@@ -538,7 +541,7 @@ class BaseStack(collections.MutableMapping):
     
     @property
     def framename(self):
-        """Current frame name. This will normally be the last saved **frame**, but there are some exceptions. First, explicitly using :meth:`select` will change the framename. Also, deleting the most recent frame will by default change the selected frame to the second oldest. Using the :meth:`save` function with ``save(data,select=False)`` will skip the selection of that added frame.
+        """Current frame name. This will normally be the last saved **frame**, but there are some exceptions. First, explicitly using :meth:`select` will change the framename. Also, deleting the most recent frame will by default change the selected frame to the second oldest. Using the :meth:`save` function with ``save(data, select=False)`` will skip the selection of that added frame.
         """
         return self._default_frame()
     
@@ -565,7 +568,7 @@ class BaseStack(collections.MutableMapping):
     ###############################
     # Basic Object Mode Functions #
     ###############################
-    def save(self,data,framename=None,clobber=False,select=True):
+    def save(self, data, framename=None, clobber=False, select=True):
         """Saves the given data to this object. If the data is an instance of one of the acceptable :attr:`dataClasses` then this method will simply save the data. Otherwise, it will attempt to cast the data into one of the acceptable :attr:`dataClasses` using their :meth:`__save__` mehtod.
         
         :param data: Data, typed like one of the data classes, or data which could initialize one of those classes.
@@ -577,13 +580,13 @@ class BaseStack(collections.MutableMapping):
         
         """
         # If we were passed raw data, and the dataClass can accept it, then go for it!
-        if not isinstance(data,tuple(self.dataClasses)):
+        if not isinstance(data, tuple(self.dataClasses)):
             Object = None
             for dataClass in self.dataClasses:
                 try:
-                    Object = dataClass.__save__(data,framename)
+                    Object = dataClass.__save__(data, framename)
                 except NotImplementedError as AE:
-                    LOG.log(2,u"Cannot save as %s: %s" % (dataClass,AE))
+                    LOG.log(2, u"Cannot save as %s: %s" % (dataClass, AE))
                 else:
                     break
             if Object is None:
@@ -599,18 +602,18 @@ class BaseStack(collections.MutableMapping):
             assert Object.label == framename, u"Object label improperly set by constructor"
             
         if framename in self and not (clobber or self.clobber):
-            raise KeyError(u"Cannot Duplicate State Name: \'%s\' Use this.remove(\'%s\') or clobber=True" % (framename,framename))
+            raise KeyError(u"Cannot Duplicate State Name: \'%s\' Use this.remove(\'%s\') or clobber=True" % (framename, framename))
         elif framename in self._frames:
-            LOG.log(2,u"Overwiting the frame %s" % framename)
+            LOG.log(2, u"Overwiting the frame %s" % framename)
         # Save the actual frame
         self._frames[framename] = Object
-        LOG.log(5,u"Saved frame %s" % Object)
+        LOG.log(5, u"Saved frame %s" % Object)
         # Activate the saved frame as the current frame
         if select:
             self.select(framename)
         return framename
     
-    def data(self,framename=None,**kwargs):
+    def data(self, framename=None, **kwargs):
         """Returns the raw data for the current frame. This is done through the :meth:`FITSFrame.__call__` method, which should return basic data in as raw a form as possible. The purpose of this call is to allow the user get at the most recent piece of data as easily as possible.
         
         :param string framename: the name of the frame to be retrieved.
@@ -630,7 +633,7 @@ class BaseStack(collections.MutableMapping):
     
 
     
-    def frame(self,framename=None):
+    def frame(self, framename=None):
         """Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.
         
         :param string framename: the name of the frame to be retrieved.
@@ -640,7 +643,7 @@ class BaseStack(collections.MutableMapping):
             Unlike with the :meth:`BaseStack.data` call, the object returned here should be treated as roughly immutable. That is, it is not advisable to re-use the data frame here, as Python has returned a reference to all examples of this data frame in your code::
                 
                 >>> obj = BaseStack()
-                >>> obj.save(FITSFrame(None,"Label"))
+                >>> obj.save(FITSFrame(None, "Label"))
                 >>> Frame = obj.frame()
                 >>> Frame.label = "Other"
                 >>> obj.frame().label
@@ -656,11 +659,11 @@ class BaseStack(collections.MutableMapping):
         else:
             self._key_error(framename)
     
-    def object(self,framename=None):
-        LOG.log(5,u"Method \".object()\" on %s has been depreciated. Please use \".frame()\" instead." % self)
+    def object(self, framename=None):
+        LOG.log(5, u"Method \".object()\" on %s has been depreciated. Please use \".frame()\" instead." % self)
         return self.frame(framename)
         
-    def select(self,framename):
+    def select(self, framename):
         """Sets the default frame to the given framename. Normally, the default frame is the one that was last saved.
         
         :param string framename: the name of the frame to be selected.
@@ -671,11 +674,11 @@ class BaseStack(collections.MutableMapping):
         if framename is None:
             self._framename = None # Unselect frame
             framename = self._default_frame()
-            LOG.log(2,u"Setting frame by cancelling selection and asking for default frame.")
+            LOG.log(2, u"Setting frame by cancelling selection and asking for default frame.")
         elif framename not in self:
             self._key_error(framename)
         self._framename = framename
-        LOG.log(5,u"Selected frame \'%s\'" % self.framename)
+        LOG.log(5, u"Selected frame \'%s\'" % self.framename)
         return self.framename
     
     def list(self):
@@ -686,12 +689,12 @@ class BaseStack(collections.MutableMapping):
         """
         return self._frames.keys()
     
-    def _key_error(self,framename):
+    def _key_error(self, framename):
         """Throw a keyError for the given framename."""
-        msg = u"%s: State %s does not exist.\nStates: %s" % (self,framename,self.list())
+        msg = u"%s: State %s does not exist.\nStates: %s" % (self, framename, self.list())
         raise KeyError(msg)
     
-    def _default_frame(self,frames=None):
+    def _default_frame(self, frames=None):
         """Returns the default frame name. If the currently selected frame exists, it's frame name will return. If not, the system will search for the newest frame. If no frames exist, this function will return None.
         
         :param tuple frames: Tuple of frame names from which to select the default. If not given, will use all frames.
@@ -708,7 +711,7 @@ class BaseStack(collections.MutableMapping):
         youngest = frames[np.argmin(Ages)]
         return youngest
     
-    def clear(self,delete=False):
+    def clear(self, delete=False):
         """Clears all frames from this object. Returns an empty list representing the currently known frames.
         
         :param bool delete: whether to explicitly delete frames or just stop referencing dictionary.
@@ -721,11 +724,11 @@ class BaseStack(collections.MutableMapping):
             del self._frames
         self._frames = {}
         self._framename = self._default_frame()
-        LOG.log(5,u"%s: Cleared all frames. Remaining: %s" % (self,self.list()))
+        LOG.log(5, u"%s: Cleared all frames. Remaining: %s" % (self, self.list()))
         return self.list()
     
     
-    def keep(self,*framenames,**kwargs):
+    def keep(self, *framenames, **kwargs):
         """Removes all frames except the specified frame(s) in the object.
         
         :param framenames: the framenames to be kept.
@@ -738,8 +741,8 @@ class BaseStack(collections.MutableMapping):
             if framename not in self:
                 self._key_error(framename)
             newStates[framename] = self[framename]
-        LOG.log(5,u"%s: Kept frames %s" % (self,list(framenames)))
-        if kwargs.get('delete',False):
+        LOG.log(5, u"%s: Kept frames %s" % (self, list(framenames)))
+        if kwargs.get('delete', False):
             for frame in self.keys():
                 if frame not in framenames:
                     del self._frames[frame]
@@ -748,7 +751,7 @@ class BaseStack(collections.MutableMapping):
         self._framename = self._default_frame()
         return self.list()
     
-    def remove(self,*framenames,**kwargs):
+    def remove(self, *framenames, **kwargs):
         """Removes the specified frame(s) from the object.
         
         :param framenames: the framenames to be deleted.
@@ -757,23 +760,23 @@ class BaseStack(collections.MutableMapping):
         
         """
         removed = []
-        LOG.log(2,u"%s: Requested remove %s" % (self,framenames))
+        LOG.log(2, u"%s: Requested remove %s" % (self, framenames))
         for framename in framenames:
             if framename not in self:
-                if kwargs.get('clobber',False):
-                    LOG.info(u"%s: Not removing frame %s as it does not exist" % (self,framename))
+                if kwargs.get('clobber', False):
+                    LOG.info(u"%s: Not removing frame %s as it does not exist" % (self, framename))
                 else:
                     self._key_error(framename)
-            elif kwargs.get('delete',False):
+            elif kwargs.get('delete', False):
                 del self._frames[framename]
             else:
                 self._frames.pop(framename)
             removed += [framename]
         self._framename = self._default_frame()
-        LOG.log(5,u"%s: Removed frames %s" % (self,removed))
+        LOG.log(5, u"%s: Removed frames %s" % (self, removed))
         return self.list()
     
-    def show(self,framename=None):
+    def show(self, framename=None):
         """Returns the (rendered) matplotlib plot for this object. This is a quick way to view your current data frame without doing any serious plotting work. This aims for the sensible defaults philosophy, if you don't like what you get, write a new method that uses the :meth:`data` call and plots that.
         
         :param string framename: the name of the frame to be retrieved.
@@ -787,7 +790,7 @@ class BaseStack(collections.MutableMapping):
         else:
             self._key_error(framename)
     
-    def write(self,filename=None,frames=None,primaryFrame=None,clobber=False,singleFrame=False):
+    def write(self, filename=None, frames=None, primaryFrame=None, clobber=False, singleFrame=False):
         """Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify ``frames`` then only those frames will be used. ``primaryFrame`` should be the frame of the front HDU. When not specified, the latest frame will be used. It uses the :attr:`dataClasses` :meth:`FITSFrame.__hdu__` method to return a valid HDU object for each Frame.
         
         :param string filename: the name of the file for saving.
@@ -800,10 +803,10 @@ class BaseStack(collections.MutableMapping):
         """
         if not frames:
             frames = self.list()
-            LOG.log(2,u"Saving all frames: %s" % frames)
+            LOG.log(2, u"Saving all frames: %s" % frames)
         if not primaryFrame:
             primaryFrame = self._default_frame(frames)
-            LOG.log(2,u"Set primary framename to default frame %s" % primaryFrame)
+            LOG.log(2, u"Set primary framename to default frame %s" % primaryFrame)
         if primaryFrame in frames:
             frames.remove(primaryFrame)
         if singleFrame:
@@ -811,11 +814,11 @@ class BaseStack(collections.MutableMapping):
         if not filename:
             if self.filename == None:
                 filename = primaryFrame
-                LOG.log(2,u"Set Filename from Primary State. Filename: %s" % filename)
+                LOG.log(2, u"Set Filename from Primary State. Filename: %s" % filename)
             else:
                 filename = self.filename
-                LOG.log(2,u"Set filename from Object. Filename: %s" % filename)
-        if isinstance(filename,(str,unicode)):
+                LOG.log(2, u"Set filename from Object. Filename: %s" % filename)
+        if isinstance(filename, (str, unicode)):
             filename = validate_filename(filename)
         PrimaryHDU = self[primaryFrame].hdu(primary=True)
         if len(frames) > 0:
@@ -823,11 +826,11 @@ class BaseStack(collections.MutableMapping):
             HDUList = pf.HDUList([PrimaryHDU]+HDUs)
         else:
             HDUList = pf.HDUList([PrimaryHDU])
-        HDUList.writeto(filename,clobber=clobber)
-        LOG.log(5,u"Wrote frame %s (primary) and frames %s to FITS file %s" % (primaryFrame,frames,filename))
-        return primaryFrame,frames,filename
+        HDUList.writeto(filename, clobber=clobber)
+        LOG.log(5, u"Wrote frame %s (primary) and frames %s to FITS file %s" % (primaryFrame, frames, filename))
+        return primaryFrame, frames, filename
     
-    def read(self,filename=None,framename=None,clobber=False):
+    def read(self, filename=None, framename=None, clobber=False):
         """This reader takes a FITS file, and trys to render each HDU within that FITS file as a frame in this Object. As such, it might read multiple frames. This method will return a list of Frames that it read. It uses the :attr:`dataClasses` :meth:`FITSFrame.__read__` method to return a valid Frame object for each HDU.
         
         ::
@@ -835,7 +838,7 @@ class BaseStack(collections.MutableMapping):
             >>> obj = BaseStack()
             >>> obj.read("SomeImage.fits")
             >>> obj.list()
-            ["SomeImage","SomeImage-1","SomeImage-2"]
+            ["SomeImage", "SomeImage-1", "SomeImage-2"]
             
         """
         if not filename:
@@ -848,57 +851,57 @@ class BaseStack(collections.MutableMapping):
             if framename is None and 'label' in HDU.header:
                 # We take from the "label" HDU when we aren't given explicit framenames
                 framename = HDU.header['label']
-                LOG.log(2,u"Set label for image from HDU Header: %s" % framename)
+                LOG.log(2, u"Set label for image from HDU Header: %s" % framename)
             elif framename is None:
                 # We default the framename to be the basename of the file
                 framename = os.path.basename(filename)
-                LOG.log(2,u"Set label for image from filename: %s" % framename)
+                LOG.log(2, u"Set label for image from filename: %s" % framename)
             label = framename
             if label in Labels:
                 # We don't allow repeat loading of labels
                 label = framename + "-%d" % Read
-                LOG.log(2,u"Incrementing label for multi-frame images: %s" % label)
+                LOG.log(2, u"Incrementing label for multi-frame images: %s" % label)
             label = unicode(label)
             # Iterate through our potential data classes
             for dataClass in self.dataClasses:
                 try:
-                    Object = dataClass.__read__(HDU,label)
+                    Object = dataClass.__read__(HDU, label)
                     Object.__getheader__(HDU)
                 except NotImplementedError as AE:
-                    LOG.log(2,u"Cannot read as %s: %s" % (dataClass,AE))
+                    LOG.log(2, u"Cannot read as %s: %s" % (dataClass, AE))
                 else:
                     break
             if Object == None:
-                LOG.log(8,u"Skipping HDU %s, cannot save as valid type " % HDU)
+                LOG.log(8, u"Skipping HDU %s, cannot save as valid type " % HDU)
             else:
                 Read += 1
                 Labels += [label]
-                self.save(Object,clobber=clobber)
+                self.save(Object, clobber=clobber)
         if not Read:
-            msg = u"No HDUs were saved from FITS file %s to %s" % (filename,self)
+            msg = u"No HDUs were saved from FITS file %s to %s" % (filename, self)
             raise ValueError(msg)
         
-        LOG.log(5,u"Saved frames %s" % Labels)
+        LOG.log(5, u"Saved frames %s" % Labels)
         return Labels
     
-    def fromAtFile(self,atfile):
+    def fromAtFile(self, atfile):
         """Read an atfile into this object. The name of the atfile can include a starting "@" which is stripped. The file is then loaded, and each line is assumed to contain a single fully-qualified part-name."""
         filename = atfile.lstrip("@")
         labels = []
-        with open(filename,'r') as stream:
+        with open(filename, 'r') as stream:
             for line in stream:
                 labels += self.read(line.rstrip(" \n\t"))
         return labels
       
     @classmethod  
-    def fromFile(cls,filename):
+    def fromFile(cls, filename):
         """Retrun a new object created from a filename. This method is a shortcut factory for :meth:`read`.
         
         ::
             
             >>> obj = BaseStack.fromFile("SomeImage.fits")
             >>> obj.list()
-            ["SomeImage","SomeImage-1","SomeImage-2"]
+            ["SomeImage", "SomeImage-1", "SomeImage-2"]
             
         
         """
