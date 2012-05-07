@@ -32,6 +32,10 @@ To use the logging::
 .. autoclass::
     AstroObject.AstroObjectLogging.LogManager
     :members:
+    
+.. autoclass::
+    AstroObject.AstroObjectLogging.GrowlHandler
+    :members:
 
 """
 import logging
@@ -51,7 +55,9 @@ for name,lvl in levels.iteritems():
     logging.addLevelName(lvl,name)
 
 class GrowlHandler(logging.Handler):
-    """Handler that emits growl notifications"""
+    """Handler that emits growl notifications using the gntp module.
+    
+    Growl notifications are displayed by the growl framework application on desktop computers. They can also be sent over a network to notify a remote host. This logger turns log messages into growl notifications."""
     def __init__(self,name=None):
         super(GrowlHandler, self).__init__()
         self.name = name
