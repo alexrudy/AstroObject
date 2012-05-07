@@ -126,7 +126,7 @@ The base **stack** definition provides the normal object accessor methods. It sh
 # Standard Scipy Toolkits
 import numpy as np
 import pyfits as pf
-
+    
 # Standard Python Modules
 import logging
 import os
@@ -241,7 +241,6 @@ class BaseFrame(Mixin):
         
         :raises: :exc:`AssertionError` when frame is invalid
         :returns: ``True``"""
-        assert isinstance(self.label, (str, unicode)), u"Frame requires a label, got %s" % self.label
         return True
     
     @property
