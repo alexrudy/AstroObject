@@ -6,6 +6,19 @@
 #  Created by Alexander Rudy on 2012-05-08.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
 # 
+"""
+:mod:`file.fits` - An abstraction layer for FITS Files
+======================================================
+
+This module provides a simple extraction layer class for FITS file writing. FITS files must have either the ``.fit`` or ``.fits`` extension to be detected by this module. The module reads and writes files using :mod:`pyfits`.
+
+.. autoclass::
+    FITSFile
+    :members:
+    :inherited-members:
+
+"""
+
 
 import os
 import pyfits as pf
@@ -14,7 +27,19 @@ import collections
 from . import File
 
 class FITSFile(File):
-    """A fits file implementation"""
+    """A fits file implementation which simply passes ``HDUs`` through to the :mod:`pyfits` API.
+    
+    :param string filename: The filename, which must end in ``.fit`` or ``.fits`` to be considered valid.
+    
+    =========== =======
+     extension   notes
+    =========== =======
+    ``.fits``
+    ``.fit``
+    =========== =======
+    
+    
+    """
     def __init__(self, filename=None):
         super(FITSFile, self).__init__()
         self.filename = filename
@@ -23,10 +48,15 @@ class FITSFile(File):
     __extensions__ = ['.fit','.fits']
     
     def write(self,stack,clobber=False):
-        """Write this FITS file to a file."""
+        """Write a stack to this file.
+        
+        :param HDUList stack: An HDUList to write to a file.
+        :param bool clobber: Whether to overwrite the destination file.
+        
+        """
         stack.writeto(self.filename,clobber = clobber)
         
     def open(self):
-        """Get the HDUList for this object."""
+        """Open this file and return the HDUList."""
         return pf.open(self.filename)
         

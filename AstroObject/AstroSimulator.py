@@ -141,7 +141,6 @@ The program is actually agnostic to the order of arguments. Any argument may com
 
 	Print all stages registered in the simulator. Any stage listed in the output of this function can be run.
 
-
 .. _Configuration:
 
 :program:`Simulator` Configuration Files

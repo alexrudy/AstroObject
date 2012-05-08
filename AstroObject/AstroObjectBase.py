@@ -137,9 +137,7 @@ import collections
 from abc import ABCMeta, abstractmethod
 
 # Submodules from this system
-from .file.fits import FITSFile
-from .file.plaintext import NumpyTextFile
-from .file.npy import NumpyFile
+from .file import DefaultFileClasses
 from Utilities import getVersion, make_decorator, validate_filename
 
 __all__ = ["BaseStack", "BaseFrame", "AnalyticMixin", "NoHDUMixin", "HDUHeaderMixin", "NoDataMixin", "Mixin"]
@@ -483,7 +481,7 @@ class BaseStack(collections.MutableMapping):
     .. Note::
         This is object only contains Abstract data objects. In order to use this class properly, you should set the dataClasses keyword for use when storing data.
     """
-    def __init__(self, filename=None, dataClasses=None, fileClasses=[FITSFile,NumpyTextFile,NumpyFile], **kwargs):
+    def __init__(self, filename=None, dataClasses=None, fileClasses=DefaultFileClasses, **kwargs):
         super(BaseStack, self).__init__(**kwargs)
         # Image data variables.
         self._frames = {}            # Storage for all of the images
@@ -877,16 +875,21 @@ class BaseStack(collections.MutableMapping):
             Object = None # Target variable
             if framename is None and 'label' in HDU.header:
                 # We take from the "label" HDU when we aren't given explicit framenames
-                framename = HDU.header['label']
-                LOG.log(2, u"Set label for image from HDU Header: %s" % framename)
+                label = HDU.header['label']
+                LOG.log(2, u"Set label for image from HDU Header: %s" % label)
             elif framename is None:
                 # We default the framename to be the basename of the file
-                framename = os.path.basename(filename)
-                LOG.log(2, u"Set label for image from filename: %s" % framename)
-            label = framename
+                label = os.path.basename(filename)
+                framename = label
+                LOG.log(2, u"Set label for image from filename: %s" % label)
+            else:
+                label = framename
             if label in Labels:
                 # We don't allow repeat loading of labels
-                label = framename + "-%d" % Read
+                if framename is None:
+                    label += "-%d" % Read
+                else:
+                    label = framename + "-%d" % Read
                 LOG.log(2, u"Incrementing label for multi-frame images: %s" % label)
             label = unicode(label)
             # Iterate through our potential data classes
