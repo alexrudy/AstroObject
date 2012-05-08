@@ -105,6 +105,16 @@ class test_FITSStack(equality_FITSFrame,API_BaseStack):
         AObject.save(self.VALID,self.FLABEL)
         AObject.save(self.VALID,self.FLABEL)
     
+    @nt.raises(TypeError)
+    def test_write_to_singleframe_textfile(self):
+        """write(singleFrame=True) creates single framed text files."""
+        AObject = self.OBJECT()
+        AObject.save(self.frame())
+        AObject["Other"] = self.frame()
+        PF,Fs,FN = AObject.write("test.dat",singleFrame=True,clobber=True)
+        assert Fs == []
+        assert PF == "Other"
+        
         
     @nt.raises(TypeError)
     def test_set_with_data(self):

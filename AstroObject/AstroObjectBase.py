@@ -138,6 +138,8 @@ from abc import ABCMeta, abstractmethod
 
 # Submodules from this system
 from Utilities import getVersion, make_decorator, validate_filename
+from .file.fits import FITSFile
+from .file.plaintext import PlainText
 
 __all__ = ["BaseStack", "BaseFrame", "AnalyticMixin", "NoHDUMixin", "HDUHeaderMixin", "NoDataMixin", "Mixin"]
 
@@ -489,6 +491,7 @@ class BaseStack(collections.MutableMapping):
         self.clobber = False
         self.name = False
         self.dataClasses = []
+        self.filetypes = [ FITSFile, PlainText ]
         if isinstance(dataClasses, list):
             self.dataClasses += dataClasses
         elif dataClasses:
@@ -803,7 +806,7 @@ class BaseStack(collections.MutableMapping):
         if not frames:
             frames = self.list()
             LOG.log(2, u"Saving all frames: %s" % frames)
-        if not primaryFrame:
+        if primaryFrame is None:
             primaryFrame = self._default_frame(frames)
             LOG.log(2, u"Set primary framename to default frame %s" % primaryFrame)
         if primaryFrame in frames:
@@ -816,18 +819,20 @@ class BaseStack(collections.MutableMapping):
                 LOG.log(2, u"Set Filename from Primary State. Filename: %s" % filename)
             else:
                 filename = self.filename
-                LOG.log(2, u"Set filename from Object. Filename: %s" % filename)
-        if isinstance(filename, (str, unicode)):
-            filename = validate_filename(filename)
-        PrimaryHDU = self[primaryFrame].hdu(primary=True)
-        if len(frames) > 0:
-            HDUs = [self[frame].hdu(primary=False) for frame in frames]
-            HDUList = pf.HDUList([PrimaryHDU]+HDUs)
-        else:
-            HDUList = pf.HDUList([PrimaryHDU])
-        HDUList.writeto(filename, clobber=clobber)
-        LOG.log(5, u"Wrote frame %s (primary) and frames %s to FITS file %s" % (primaryFrame, frames, filename))
-        return primaryFrame, frames, filename
+                LOG.log(2, u"Set filename from Stack. Filename: %s" % filename)
+        
+        for filetype in self.filetypes:
+            try:
+                fileObject = filetype()
+                fileObject.stack = [self[primaryFrame]] + [self[frame] for frame in frames]
+                fileObject.__write__(filename, clobber=clobber)
+            except NotImplementedError as ne:
+                LOG.log(2,"Can't write as file type: %s " % ne)
+            else:
+                LOG.log(5, u"Wrote frame %s (primary) and frames %s to FITS file %s" % (primaryFrame, frames, filename))
+                return primaryFrame, frames, filename
+        raise TypeError("Could not save file as one of the filetypes")
+        
     
     def read(self, filename=None, framename=None, clobber=False):
         """This reader takes a FITS file, and trys to render each HDU within that FITS file as a frame in this Object. As such, it might read multiple frames. This method will return a list of Frames that it read. It uses the :attr:`dataClasses` :meth:`FITSFrame.__read__` method to return a valid Frame object for each HDU.
@@ -842,10 +847,19 @@ class BaseStack(collections.MutableMapping):
         """
         if not filename:
             filename = self.filename
-        HDUList = pf.open(filename)
         Read = 0
         Labels = []
-        for HDU in HDUList:    
+        Stack = []
+        for filetype in self.filetypes:
+            try:
+                FileObject = filetype(filename)
+                Stack = FileObject.stack
+            except NotImplementedError as AE:
+                LOG.log(2,u"Can't read file as %s" % AE)
+            else:
+                break
+        
+        for HDU in Stack:    
             Object = None # Target variable
             if framename is None and 'label' in HDU.header:
                 # We take from the "label" HDU when we aren't given explicit framenames
