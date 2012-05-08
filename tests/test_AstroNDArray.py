@@ -87,7 +87,7 @@ class test_NDArrayStack(equality_ImageFrame,API_BaseStack):
         """Fixture for setting up a basic image frame"""
         self.testJPG = "Data/Hong-Kong.jpg"
         self.data = [self.testJPG]
-        self.files = ["TestFile.fits"]
+        self.files = ["TestFile.fits","TestFile.dat","TestFile.npy"]
         if not os.access(self.testJPG,os.R_OK):
             self.image = np.zeros((100,100))
             self.image[45:55,45:55] = np.ones((10,10))
