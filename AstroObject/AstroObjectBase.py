@@ -137,6 +137,8 @@ import collections
 from abc import ABCMeta, abstractmethod
 
 # Submodules from this system
+from .file.fits import FITSFile
+from .file.plaintext import NumpyTextFile
 from Utilities import getVersion, make_decorator, validate_filename
 
 __all__ = ["BaseStack", "BaseFrame", "AnalyticMixin", "NoHDUMixin", "HDUHeaderMixin", "NoDataMixin", "Mixin"]
@@ -480,7 +482,7 @@ class BaseStack(collections.MutableMapping):
     .. Note::
         This is object only contains Abstract data objects. In order to use this class properly, you should set the dataClasses keyword for use when storing data.
     """
-    def __init__(self, filename=None, dataClasses=None, **kwargs):
+    def __init__(self, filename=None, dataClasses=None, fileClasses=[FITSFile,NumpyTextFile], **kwargs):
         super(BaseStack, self).__init__(**kwargs)
         # Image data variables.
         self._frames = {}            # Storage for all of the images
@@ -495,6 +497,13 @@ class BaseStack(collections.MutableMapping):
             raise AttributeError(u"Can't understand data classes")
         if len(self.dataClasses) < 1:
             raise NotImplementedError(u"Instantiating %s without any valid data classes!" % self)
+        self.fileClasses = []
+        if isinstance(fileClasses, list):
+            self.fileClasses += fileClasses
+        elif fileClasses:
+            raise AttributeError(u"Can't understand file classes")
+        if len(self.fileClasses) < 1:
+            raise NotImplementedError(u"Instantiating %s without any valid file classes!" % self)
 
         
     def __repr__(self):
@@ -817,15 +826,23 @@ class BaseStack(collections.MutableMapping):
             else:
                 filename = self.filename
                 LOG.log(2, u"Set filename from Object. Filename: %s" % filename)
-        if isinstance(filename, (str, unicode)):
-            filename = validate_filename(filename)
+        
+        FileObject = None
+        for fileClass in self.fileClasses:
+            try:
+                FileObject = fileClass(filename)
+            except NotImplementedError as AE:
+                LOG.log(2, u"Cannot save as %s: %s" % (fileClass, AE))
+            else:
+                break
+        if FileObject is None:
+            raise TypeError(u"Object to be saved cannot be cast as %s" % self.fileClasses)
+        
+        
         PrimaryHDU = self[primaryFrame].hdu(primary=True)
-        if len(frames) > 0:
-            HDUs = [self[frame].hdu(primary=False) for frame in frames]
-            HDUList = pf.HDUList([PrimaryHDU]+HDUs)
-        else:
-            HDUList = pf.HDUList([PrimaryHDU])
-        HDUList.writeto(filename, clobber=clobber)
+        HDUs = [self[frame].hdu(primary=False) for frame in frames]
+        HDUList = pf.HDUList([PrimaryHDU]+HDUs)
+        FileObject.write(HDUList, clobber=clobber)
         LOG.log(5, u"Wrote frame %s (primary) and frames %s to FITS file %s" % (primaryFrame, frames, filename))
         return primaryFrame, frames, filename
     
@@ -842,7 +859,17 @@ class BaseStack(collections.MutableMapping):
         """
         if not filename:
             filename = self.filename
-        HDUList = pf.open(filename)
+        FileObject = None
+        for fileClass in self.fileClasses:
+            try:
+                FileObject = fileClass(filename)
+            except NotImplementedError as AE:
+                LOG.log(2, u"Cannot save as %s: %s" % (dataClass, AE))
+            else:
+                break
+        if FileObject is None:
+            raise TypeError(u"Object to be saved cannot be cast as %s" % self.fileClasses)
+        HDUList = FileObject.open()
         Read = 0
         Labels = []
         for HDU in HDUList:    

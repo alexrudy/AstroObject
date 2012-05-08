@@ -66,7 +66,7 @@ import copy
 import collections
 
 from AstroObjectBase import BaseFrame,BaseStack,HDUHeaderMixin,NoDataMixin
-
+from .file.fits import FITSFile
 # Submodules from this system
 from Utilities import *
 
@@ -126,5 +126,5 @@ class FITSFrame(HDUHeaderMixin,NoDataMixin,BaseFrame):
 class FITSStack(BaseStack):
     """This **stack** tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an **stack** class which uses only the :class:`FITSFrame` class for data. As such, it can only contain objects which are classes (or subclassses of) :class:`FITSFrame`.
     """
-    def __init__(self,dataClasses=[FITSFrame],**kwargs):
-        super(FITSStack, self).__init__(dataClasses=dataClasses,**kwargs)
+    def __init__(self,dataClasses=[FITSFrame],fileClasses=[FITSFile],**kwargs):
+        super(FITSStack, self).__init__(dataClasses=dataClasses,fileClasses=[FITSFile],**kwargs)
