@@ -46,7 +46,7 @@ class test_SpectraFrame(equality_SpectraFrame,API_General_Frame):
     
     def setup(self):
         """Fixture for setting up a basic image frame"""
-        self.files = ["TestFile.fits"]
+        self.files = ["TestFile.fits","TestFile.dat","TestFile.npy"]
         self.FRAME = AstroObject.AstroSpectra.SpectraFrame
         self.HDU = pf.PrimaryHDU
         self.imHDU = pf.ImageHDU
@@ -67,7 +67,7 @@ class test_SpectraStack(equality_SpectraFrame,API_BaseStack):
         
     def setup(self):
         """Fixture for setting up a basic image frame"""
-        self.files = ["TestFile.fits"]
+        self.files = ["TestFile.fits","TestFile.dat","TestFile.npy"]
         self.FRAME = AstroObject.AstroSpectra.SpectraFrame
         self.VALID = np.array([(np.arange(50) + 1.0) * 1e-7,np.sin(np.arange(50))+2.0])
         self.INVALID = 20

@@ -709,12 +709,20 @@ class API_BaseStack(API_Base):
         AObject = self.OBJECT()
         AObject.save(self.frame())
         AObject["Other"] = self.frame()
-        PF,Fs,FN = AObject.write("test.dat",singleFrame=True,clobber=True)
+        PF,Fs,FN = AObject.write(self.files[1],singleFrame=True,clobber=True)
+        AObject.read(self.files[1],clobber=True)        
         assert Fs == []
         assert PF == "Other"
         
-    
-        
+    def test_write_to_singleframe_numpyfile(self):
+        """write(singleFrame=True) creates single framed numpy files."""
+        AObject = self.OBJECT()
+        AObject.save(self.frame())
+        AObject["Other"] = self.frame()
+        PF,Fs,FN = AObject.write(self.files[2],singleFrame=True,clobber=True)
+        AObject.read(self.files[2],clobber=True)        
+        assert Fs == []
+        assert PF == "Other"    
     
     def test_write_clobbers_file(self):
         """write() can clobber existing files"""

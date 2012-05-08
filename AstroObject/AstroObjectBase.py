@@ -139,6 +139,7 @@ from abc import ABCMeta, abstractmethod
 # Submodules from this system
 from .file.fits import FITSFile
 from .file.plaintext import NumpyTextFile
+from .file.npy import NumpyFile
 from Utilities import getVersion, make_decorator, validate_filename
 
 __all__ = ["BaseStack", "BaseFrame", "AnalyticMixin", "NoHDUMixin", "HDUHeaderMixin", "NoDataMixin", "Mixin"]
@@ -482,7 +483,7 @@ class BaseStack(collections.MutableMapping):
     .. Note::
         This is object only contains Abstract data objects. In order to use this class properly, you should set the dataClasses keyword for use when storing data.
     """
-    def __init__(self, filename=None, dataClasses=None, fileClasses=[FITSFile,NumpyTextFile], **kwargs):
+    def __init__(self, filename=None, dataClasses=None, fileClasses=[FITSFile,NumpyTextFile,NumpyFile], **kwargs):
         super(BaseStack, self).__init__(**kwargs)
         # Image data variables.
         self._frames = {}            # Storage for all of the images
@@ -864,11 +865,11 @@ class BaseStack(collections.MutableMapping):
             try:
                 FileObject = fileClass(filename)
             except NotImplementedError as AE:
-                LOG.log(2, u"Cannot save as %s: %s" % (dataClass, AE))
+                LOG.log(2, u"Cannot read as %s: %s" % (fileClass, AE))
             else:
                 break
         if FileObject is None:
-            raise TypeError(u"Object to be saved cannot be cast as %s" % self.fileClasses)
+            raise TypeError(u"Object to be read cannot be cast as %s" % self.fileClasses)
         HDUList = FileObject.open()
         Read = 0
         Labels = []
