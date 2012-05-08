@@ -23,6 +23,9 @@ This module provides the support in AstroObject for arbitrary file format input 
     
 .. automodule::
     AstroObject.file.plaintext
+    
+.. automodule::
+    AstroObject.file.npy
 
 """
 

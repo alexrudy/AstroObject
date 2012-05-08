@@ -17,6 +17,11 @@ This module handles writing simple text files. In :mod:`AstroObject`, simple tex
     :members:
     :inherited-members:
 
+.. autoclass::
+    AstroObjectTextFile
+    :members:
+    :inherited-members:
+
 """
 import os
 import collections
