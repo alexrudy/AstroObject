@@ -38,26 +38,27 @@ To understand IRAF integration of this module, see the methods provided by :mod:
 
 """
 # Parent Modules
-import AstroObjectBase
+from .AstroObjectBase import HDUHeaderMixin, BaseFrame, BaseStack
 
 # Standard Scipy Toolkits
 import numpy as np
 import pyfits as pf
 import scipy as sp
 
-# Standard Python Libraries
-import math, copy, sys, time, logging, os
+# Python Modules
+import os
 
 # Module Utilites
-from Utilities import *
+from .util import getVersion, npArrayInfo
+from . import AstroObjectLogging as logging
 
-__all__ = ["ImageFrame","ImageStack"]
+__all__ = ["ImageFrame", "ImageStack" ]
 
 __version__ = getVersion()
 
 LOG = logging.getLogger(__name__)
 
-class ImageFrame(AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame):
+class ImageFrame(HDUHeaderMixin,BaseFrame):
     """
     A single frame of a FITS image.
     Frames are known as Header Data Units, or HDUs when written to a FITS file.
@@ -147,7 +148,7 @@ class ImageFrame(AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame):
     
 
 
-class ImageStack(AstroObjectBase.BaseStack):
+class ImageStack(BaseStack):
     """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`ImageFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.
     """
     def __init__(self, array=None,dataClasses=[ImageFrame], **kwargs):

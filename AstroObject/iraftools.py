@@ -161,7 +161,7 @@ import tempfile
 import shutil
 
 # Submodules from this system
-from .Utilities import *
+from .util import getVersion
 from .AstroObjectBase import BaseStack, Mixin
 from .AstroFITS import FITSFrame
 

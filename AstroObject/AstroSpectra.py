@@ -53,10 +53,12 @@ from scipy.spatial.distance import cdist
 from scipy.linalg import norm
 
 # Standard Python Modules
-import math, copy, sys, time, logging, os
+import os
 
 # Submodules from this system
-from Utilities import *
+from . import AstroObjectLogging as logging
+from .util import getVersion
+from .util.mpl import expandLim
 
 __all__ = ["SpectraMixin","SpectraFrame","SpectraStack"]
 

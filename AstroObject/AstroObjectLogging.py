@@ -37,10 +37,14 @@ To use the logging::
 import logging
 import logging.handlers as handlers
 
-import math, copy, sys, time, os
+import math
+import copy
+import sys
+import time
+import os
 import yaml
 
-from Utilities import *
+from .util import getVersion, ConfigurationError, update
 
 __version__ = getVersion()
 

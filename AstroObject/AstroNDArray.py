@@ -47,10 +47,10 @@ import math, logging, os, time
 import copy
 import collections
 
-from AstroObjectBase import BaseFrame,BaseStack,HDUHeaderMixin
+from .AstroObjectBase import BaseFrame,BaseStack,HDUHeaderMixin
 
 # Submodules from this system
-from Utilities import *
+from .util import getVersion
 
 __all__ = ["BaseStack","BaseFrame","AnalyticMixin","NoHDUMixin","HDUHeaderMixin","NoDataMixin"]
 

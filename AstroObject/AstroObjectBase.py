@@ -137,7 +137,7 @@ import collections
 from abc import ABCMeta, abstractmethod
 
 # Submodules from this system
-from Utilities import getVersion, make_decorator, validate_filename
+from .util import getVersion, make_decorator, validate_filename
 
 __all__ = ["BaseStack", "BaseFrame", "AnalyticMixin", "NoHDUMixin", "HDUHeaderMixin", "NoDataMixin", "Mixin"]
 

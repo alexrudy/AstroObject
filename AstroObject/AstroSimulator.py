@@ -267,13 +267,12 @@ from pkg_resources import resource_filename
 
 import multiprocessing
 
-# Dependent Modules
-from progressbar import *
-
 # Submodules from this system
 from AstroCache import *
 from AstroConfig import StructuredConfiguration, DottedConfiguration
-from Utilities import *
+
+import util.pbar as progressbar
+from util import getVersion, npArrayInfo
 
 __all__ = ["Simulator","on_collection","help","replaces","excepts","depends","include","optional","description","collect","ignore","on_instance_collection"]
 
@@ -1096,8 +1095,8 @@ can be customized using the 'Default' configuration variable in the configuratio
     
     def _start_progress_bar(self,length,color):
         """Return a progress bar object of a specified color in the standard format."""
-        widgets = [Percentage(),' ',ColorBar(color=color),' ',ETA()]
-        self.progressbar = ProgressBar(widgets=widgets,maxval=length).start()
+        widgets = [ progressbar.Percentage(),' ', progressbar.ColorBar(color=color),' ', progressbar.ETA()]
+        self.progressbar = progressbar.ProgressBar(widgets=widgets,maxval=length).start()
         self.progress = 0
         self.log.useConsole(False)
         return self.progressbar
