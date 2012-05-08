@@ -34,4 +34,4 @@ class NumpyTextFile(File):
         
     def open(self):
         """Get the HDUList for this object."""
-        return pf.PrimaryHDU(np.loadtxt(self.filename))
+        return pf.HDUList([pf.PrimaryHDU(np.loadtxt(self.filename))])
