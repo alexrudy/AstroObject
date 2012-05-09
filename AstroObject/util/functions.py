@@ -6,7 +6,18 @@
 #  Created by Alexander Rudy on 2012-05-08.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
 # 
+u"""
+:mod:`functions` — Common Astronomical functons
+-----------------------------------------------
 
+.. automethod::
+    AstroObject.util.functions.BlackBody
+    
+.. automethod::
+    AstroObject.util.functions.Gaussian
+
+
+"""
 import numpy as np
 import scipy as sp
 import scipy.constants as spconst

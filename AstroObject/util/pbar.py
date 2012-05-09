@@ -6,7 +6,23 @@
 #  Created by Alexander Rudy on 2012-05-08.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
 # 
+u"""
+:mod:`pbar` – Colored progressbar functions to extend the progressbar module
+----------------------------------------------------------------------------
 
+This module contains extensions to the progressbar module (<http://pypi.python.org/pypi/progressbar/2.2>)
+
+.. autoclass::
+    ProgressBar
+    :members:
+    :inherited-members:
+    
+.. autoclass::
+    ColorBar
+    :members:
+    :inherited-members:
+
+"""
 import progressbar
 
 import string
@@ -17,7 +33,7 @@ from progressbar import *
 
 class ProgressBar(progressbar.ProgressBar):
     def update(self, value=None):
-        'Updates the ProgressBar to a new value. Monkey Patch edition'
+        """Updates the ProgressBar to a new value. Monkey Patch edition"""
 
         if value is not None and value is not progressbar.UnknownLength:
             if (self.maxval is not progressbar.UnknownLength

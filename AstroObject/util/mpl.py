@@ -7,7 +7,24 @@
 #  Copyright 2012 Alexander Rudy. All rights reserved.
 #  Version 0.5.2
 # 
+u"""
+:mod:`mpl` – Matplotlib helpers
+-------------------------------
 
+This module provides helpers which are dependent on :mod:`matplotlib`.
+
+.. autoclass::
+    AstroObject.util.mpl.LogFormatterTeXExponent
+    :members:
+    :special-members:
+    
+.. automethod::
+    AstroObject.util.mpl.expandLim
+    
+.. automethod::
+    AstroObject.util.mpl.get_padding
+
+"""
 
 import re
 from matplotlib.ticker import LogFormatter

@@ -6,7 +6,43 @@
 #  Created by Alexander Rudy on 2012-05-08.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
 # 
+u"""
+:mod:`util` — Utility functions
+===============================
 
+Provides utilities useful in various places in the module.
+
+.. automethod::
+    AstroObject.util.getVersion
+    
+.. automethod::
+    AstroObject.util.validate_filename
+    
+.. automethod::
+    AstroObject.util.update
+    
+.. automethod::
+    AstroObject.util.func_lineno
+    
+.. automethod::
+    AstroObject.util.make_decorator
+    
+.. automethod::
+    AstroObject.util.npArrayInfo
+    
+.. automodule::
+    AstroObject.util.functions
+    
+.. automodule::
+    AstroObject.util.images
+
+.. automodule::
+    AstroObject.util.mpl
+
+.. automodule::
+    AstroObject.util.pbar
+
+"""
 from __future__ import division
 import os
 import collections

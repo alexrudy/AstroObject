@@ -13,6 +13,8 @@
 
 This module has test frameworks for all modules. The baisc hierarchy of testing frameworks is designed to mimic the basic hierarchy of the :mod:`AstroObject` module in general. There are appropriate test class mixins for all of the built-in Frame and Stack classes.
 
+In order to ensure that tests can be run correctly with this API, the API will check for the existance of all variables listed in the ``attributes`` item in each test class. This prevents running the test framework without the required variables for each sub-class.
+
 .. inheritance-diagram::
     tests.AstroTest.API_Base_Frame
     tests.AstroTest.API_HDUHeader_Frame
