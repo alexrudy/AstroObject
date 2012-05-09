@@ -271,6 +271,7 @@ from AstroCache import *
 from AstroConfig import StructuredConfiguration, DottedConfiguration
 
 import util.pbar as progressbar
+import util.terminal as terminal
 from util import getVersion, npArrayInfo
 
 __all__ = ["Simulator","on_collection","help","replaces","excepts","depends","include","optional","description","collect","ignore","on_instance_collection"]
