@@ -9,7 +9,7 @@
 
 from distribute_setup import use_setuptools
 use_setuptools()
-from setuptools import setup
+from setuptools import setup, find_packages
 
 from distutils.command.build_py import build_py as du_build_py
 from distutils.core import Command
@@ -67,7 +67,7 @@ class ao_build_py(du_build_py):
 setup(
     name = "AstroObject",
     version = versionstr,
-    packages = ['AstroObject'],
+    packages = find_packages(exclude=['tests']),
     package_data = {'':['Defaults.yaml']},
     install_requires = ['distribute','pyfits>=2.4','numpy>=1.5','scipy>=0.9',"PyYAML>=3.10",'progressbar'],
     test_suite = 'tests',
