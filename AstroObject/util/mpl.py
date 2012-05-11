@@ -8,8 +8,8 @@
 #  Version 0.5.2
 # 
 u"""
-:mod:`mpl` – Matplotlib helpers
--------------------------------
+:mod:`util.mpl` – Matplotlib helpers
+------------------------------------
 
 This module provides helpers which are dependent on :mod:`matplotlib`.
 

@@ -7,8 +7,8 @@
 #  Copyright 2012 Alexander Rudy. All rights reserved.
 # 
 u"""
-:mod:`pbar` – Colored progressbar functions to extend the progressbar module
-----------------------------------------------------------------------------
+:mod:`util.pbar` – Colored progressbar functions to extend the progressbar module
+---------------------------------------------------------------------------------
 
 This module contains extensions to the progressbar module (<http://pypi.python.org/pypi/progressbar/2.2>)
 

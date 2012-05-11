@@ -7,8 +7,8 @@
 #  Copyright 2012 Alexander Rudy. All rights reserved.
 # 
 u"""
-:mod:`images` – Functions for image manipulation
-------------------------------------------------
+:mod:`util.images` – Functions for image manipulation
+-----------------------------------------------------
 
 .. automethod:: 
     AstroObject.util.images.bin

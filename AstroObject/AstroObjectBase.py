@@ -87,6 +87,7 @@ Class Inherits From:              :class:`Mixin`        :class:`Mixin`          
 :meth:`~BaseFrame.__call__`       Abstract                                       Skipped                                      Abstract
 :meth:`~BaseFrame.__setheader__`  Abstract              Implemented                                     Skipped               *Skipped*
 :meth:`~BaseFrame.__getheader__`  Abstract              Implemented                                     Skipped               *Skipped*
+:meth:`~BaseFrame.__getlabel__`   Abstract              Implemented                                     Skipped               *Skipped*                                                  
 :meth:`~BaseFrame.__hdu__`        Abstract                                                              Skipped               *Skipped*
 :meth:`~BaseFrame.__show__`       Abstract                                       Skipped                                      *Skipped*                                  Implemented
 :meth:`~BaseFrame.__save__`       Abstract                                                                                    Skipped
@@ -287,6 +288,20 @@ class BaseFrame(Mixin):
         msg = u"Abstract Data Structure %s cannot be used for HDU Generation!" % (self)
         raise NotImplementedError(msg)
     
+    @staticmethod
+    @abstractmethod
+    def __getlabel__(HDU, default=None, explicit=None):
+        """Extract header values from a given HDU and save them to this object.
+        
+        :param pf.HDU HDU: Header-Data-Unit from which to get the header information.
+        :param string default: A default value for the label, if no other value can be extracted from the HDU.
+        :param string explicit: An explicit value for the label which should normally override any other label option. This label may be manipulated if requried.
+        :returns: A string label
+        
+        """
+        msg = u"Abstract Data Structure %s cannot be used for HDU Header Manipulation!" % (self)
+        raise NotImplementedError(msg)
+    
     
     @abstractmethod
     def __hdu__(self, primary=False):
@@ -376,6 +391,8 @@ class HDUHeaderMixin(Mixin):
     :meth:`~BaseFrame.__setheader__` applies the **frame** label to the "label" and "object" keywords, then applies all of the existing keywords to the header.
     
     :meth:`~BaseFrame.__getheader__` retrieves the pyfits HDU for storage in the frame.
+    
+    :meth:`~BaseFrame.__getlabel__` collects label information from a provided HDU.
     """
     
     def __setheader__(self, HDU):
@@ -400,7 +417,17 @@ class HDUHeaderMixin(Mixin):
         """
         self.header = HDU.header
     
-        
+    @staticmethod
+    def __getlabel__(HDU, default=None, explicit=None):
+        """Extract a label from an HDU, used when no other label is provided."""
+        if isinstance(explicit,(str,unicode)):
+            return explicit
+        if 'label' in HDU.header:
+            return HDU.header['label']
+        elif 'object' in HDU.header:
+            return HDU.header['object']
+        else:
+            return default
 
 class NoDataMixin(Mixin):
     """Mixin to allow for frames which **cannot** contain data. This mixin allows the developer to not implement :meth:`~BaseFrame.__call__` and :meth:`~BaseFrame.__show__`, both of which are only sensible methods for actual data.
@@ -445,6 +472,11 @@ class NoHDUMixin(Mixin):
     
     @semiabstractmethod(u"Cannot call %s.%s() as this frame cannot create HDUs.")
     def __setheader__(self):
+        pass
+        
+    @staticmethod
+    @semiabstractmethod(u"Cannot call %s.%s() as this frame cannot read HDUs.")
+    def __getlabel__(HDU, default=None, explicit=None):
         pass
     
     @semiabstractmethod(u"Cannot call %s.%s() as this frame cannot create HDUs.")
@@ -873,28 +905,15 @@ class BaseStack(collections.MutableMapping):
         Labels = []
         for HDU in HDUList:    
             Object = None # Target variable
-            if framename is None and 'label' in HDU.header:
-                # We take from the "label" HDU when we aren't given explicit framenames
-                label = HDU.header['label']
-                LOG.log(2, u"Set label for image from HDU Header: %s" % label)
-            elif framename is None:
-                # We default the framename to be the basename of the file
-                label = os.path.basename(filename)
-                framename = label
-                LOG.log(2, u"Set label for image from filename: %s" % label)
-            else:
-                label = framename
-            if label in Labels:
-                # We don't allow repeat loading of labels
-                if framename is None:
-                    label += "-%d" % Read
-                else:
-                    label = framename + "-%d" % Read
-                LOG.log(2, u"Incrementing label for multi-frame images: %s" % label)
-            label = unicode(label)
             # Iterate through our potential data classes
             for dataClass in self.dataClasses:
                 try:
+                    label = dataClass.__getlabel__(HDU,os.path.basename(filename),framename)
+                    if label in Labels:
+                        # We don't allow repeat loading of labels
+                        label = label + "-%d" % Read
+                        LOG.log(2, u"Incrementing label for multi-frame images: %s" % label)
+                    label = unicode(label)
                     Object = dataClass.__read__(HDU, label)
                     Object.__getheader__(HDU)
                 except NotImplementedError as AE:

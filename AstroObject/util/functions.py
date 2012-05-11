@@ -7,8 +7,8 @@
 #  Copyright 2012 Alexander Rudy. All rights reserved.
 # 
 u"""
-:mod:`functions` — Common Astronomical functons
------------------------------------------------
+:mod:`util.functions` — Common Astronomical functons
+----------------------------------------------------
 
 .. automethod::
     AstroObject.util.functions.BlackBody
