@@ -19,7 +19,6 @@ import math, copy, sys, time, logging, os
 import argparse
 
 # Submodules from this system
-from Utilities import *
 
 __all__ = ["CacheManager","Cache","NumpyCache","YAMLCache","ConfigCache"]
 

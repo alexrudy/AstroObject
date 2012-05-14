@@ -65,10 +65,10 @@ import math, logging, os, time
 import copy
 import collections
 
-from AstroObjectBase import BaseFrame,BaseStack,HDUHeaderMixin,NoDataMixin
+from .AstroObjectBase import BaseFrame,BaseStack,HDUHeaderMixin,NoDataMixin
 from .file.fits import FITSFile
 # Submodules from this system
-from Utilities import *
+from .util import getVersion, npArrayInfo
 
 __all__ = ["FITSFrame","FITSStack"]
 

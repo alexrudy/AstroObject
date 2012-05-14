@@ -15,7 +15,7 @@ from tests.AstroTest import *
 import AstroObject.AstroHDU
 
 # Utility Imports
-from AstroObject.Utilities import npArrayInfo
+from AstroObject.util import npArrayInfo
 
 # Testing Imports
 import nose.tools as nt

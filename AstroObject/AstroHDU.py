@@ -34,7 +34,7 @@ Objects for manipulating and managing HDUs directly. The :class:`HDUFrame` behav
 
 
 # Parent Modules
-import AstroObjectBase
+from .AstroObjectBase import HDUHeaderMixin, BaseFrame, BaseStack
 
 # Standard Scipy Toolkits
 import numpy as np
@@ -50,14 +50,14 @@ from scipy.linalg import norm
 import math, copy, sys, time, logging, os
 
 # Submodules from this system
-from noconflict import classmaker
-from Utilities import *
+from .util.noconflict import classmaker
+from .util import getVersion
 
 __version__ = getVersion()
 
 LOG = logging.getLogger(__name__)
 
-class HDUFrame(AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame,pf.ImageHDU):
+class HDUFrame(HDUHeaderMixin,BaseFrame,pf.ImageHDU):
     """
     A single frame of a FITS image.
     Frames are known as Header Data Units, or HDUs when written to a FITS file. This frame simply stores the HDU.
@@ -161,7 +161,7 @@ class HDUFrame(AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame,pf.Image
     
 
 
-class HDUStack(AstroObjectBase.BaseStack):
+class HDUStack(BaseStack):
     """This object tracks a number of HDU frames. This class is a simple subclass of :class:`AstroObjectBase.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. It uses only the :class:`HDUFrame` class for data.
     """
     def __init__(self, dataClasses=[HDUFrame],filename=None):

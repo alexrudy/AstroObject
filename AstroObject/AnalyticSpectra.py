@@ -128,7 +128,7 @@ These objects actually have spectral functions included.
 
 """
 # Parent Modules
-import AstroObjectBase,AstroImage,AstroSpectra
+from . import AstroObjectBase,AstroImage,AstroSpectra
 
 # Standard Scipy Toolkits
 import numpy as np
@@ -143,11 +143,12 @@ import scipy.interpolate
 import scipy.integrate
 
 # Standard Python Modules
-import math, copy, sys, time, logging, os
+import os
 import itertools
 
 # Submodules from this system
-from Utilities import *
+from . import AstroObjectLogging as logging
+from .util import getVersion, npArrayInfo
 
 __all__ = ["AnalyticSpectrum","CompositeSpectra","InterpolatedSpectrum","InterpolatedSpectrumBase","Resolver","UnitarySpectrum"]
 

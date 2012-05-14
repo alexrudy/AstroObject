@@ -23,7 +23,6 @@ from nose.plugins.skip import Skip,SkipTest
 from tests.AstroTest import *
 
 import AstroObject.AnalyticSpectra
-from AstroObject.Utilities import *
 
 class equality_AnalyticFrame(equality_Base):
     """Equality methods for FITSFrames"""

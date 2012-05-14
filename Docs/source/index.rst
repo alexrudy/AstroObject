@@ -36,10 +36,10 @@ About AstroObject
     AstroHDU
     iraftools
     AstroObject
-    file
     AstroSimulator
     AstroConfig
     AstroObjectLogging
+    file
     Utilities
     
     future
