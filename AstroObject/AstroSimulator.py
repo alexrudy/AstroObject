@@ -130,17 +130,17 @@ The program is actually agnostic to the order of arguments. Any argument may com
     Show a dependency tree for the simulator.
 	
 .. option:: --show-stages
-	
+    
     Show all of the stages ran for this simulation.    
     
 .. option:: --dump-config
-	
-	Dump the configuration to a file. Filenames are the configuration file name with ``-dump.yaml`` appended.
-
+    
+    Dump the configuration to a file. Filenames are the configuration file name with ``-dump.yaml`` appended.
+    
 .. option:: --list-stages
-
-	Print all stages registered in the simulator. Any stage listed in the output of this function can be run.
-
+    
+    Print all stages registered in the simulator. Any stage listed in the output of this function can be run.
+    
 .. _Configuration:
 
 :program:`Simulator` Configuration Files
@@ -150,7 +150,7 @@ The program is actually agnostic to the order of arguments. Any argument may com
 
 - ``Configurations``: contains a list of potential configuration files.
 - ``Configurations.Main``: The name of the primary configuration file. This default is produced by the program. Overriding it in the configuration file has essentially no effect.
-- ``Default``: The default macro to run (i.e. the default *'d argument.)
+- ``Default``: The default macro to run (i.e. the default ``*``'d argument.)
 - ``Dirs``: Directories that this simulator will use for output.
 - ``Dirs.Caches``: Location of cache files.
 - ``Dirs.Logs``: Location of log files.
