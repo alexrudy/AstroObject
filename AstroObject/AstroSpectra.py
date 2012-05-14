@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5.2
+#  Version 0.5.3
 # 
 """
 :mod:`AstroSpectra` — Raw Spectrum Management 
@@ -53,10 +53,12 @@ from scipy.spatial.distance import cdist
 from scipy.linalg import norm
 
 # Standard Python Modules
-import math, copy, sys, time, logging, os
+import os
 
 # Submodules from this system
-from Utilities import *
+from . import AstroObjectLogging as logging
+from .util import getVersion
+from .util.mpl import expandLim
 
 __all__ = ["SpectraMixin","SpectraFrame","SpectraStack"]
 

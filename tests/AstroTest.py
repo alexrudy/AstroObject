@@ -5,13 +5,15 @@
 #
 #  Created by Alexander Rudy on 2011-10-31.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5.2
+#  Version 0.5.3
 #
 """
 :mod:`AstroTest` for nosetests
 ==============================
 
 This module has test frameworks for all modules. The baisc hierarchy of testing frameworks is designed to mimic the basic hierarchy of the :mod:`AstroObject` module in general. There are appropriate test class mixins for all of the built-in Frame and Stack classes.
+
+In order to ensure that tests can be run correctly with this API, the API will check for the existance of all variables listed in the ``attributes`` item in each test class. This prevents running the test framework without the required variables for each sub-class.
 
 .. inheritance-diagram::
     tests.AstroTest.API_Base_Frame
@@ -703,7 +705,26 @@ class API_BaseStack(API_Base):
         PF,Fs,FN = AObject.write(self.files[0],singleFrame=True)
         assert Fs == []
         assert PF == "Other"
+    
+    def test_write_to_singleframe_textfile(self):
+        """write(singleFrame=True) creates single framed text files."""
+        AObject = self.OBJECT()
+        AObject.save(self.frame())
+        AObject["Other"] = self.frame()
+        PF,Fs,FN = AObject.write(self.files[1],singleFrame=True,clobber=True)
+        AObject.read(self.files[1],clobber=True)        
+        assert Fs == []
+        assert PF == "Other"
         
+    def test_write_to_singleframe_numpyfile(self):
+        """write(singleFrame=True) creates single framed numpy files."""
+        AObject = self.OBJECT()
+        AObject.save(self.frame())
+        AObject["Other"] = self.frame()
+        PF,Fs,FN = AObject.write(self.files[2],singleFrame=True,clobber=True)
+        AObject.read(self.files[2],clobber=True)        
+        assert Fs == []
+        assert PF == "Other"    
     
     def test_write_clobbers_file(self):
         """write() can clobber existing files"""

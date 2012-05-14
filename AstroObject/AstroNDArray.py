@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2012-04-18.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.5.2
+#  Version 0.5.3
 # 
 u"""
 :mod:`AstroNDArray` – Numpy Array Frames
@@ -47,10 +47,10 @@ import math, logging, os, time
 import copy
 import collections
 
-from AstroObjectBase import BaseFrame,BaseStack,HDUHeaderMixin
+from .AstroObjectBase import BaseFrame,BaseStack,HDUHeaderMixin
 
 # Submodules from this system
-from Utilities import *
+from .util import getVersion
 
 __all__ = ["BaseStack","BaseFrame","AnalyticMixin","NoHDUMixin","HDUHeaderMixin","NoDataMixin"]
 

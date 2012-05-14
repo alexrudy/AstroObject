@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5.2
+#  Version 0.5.3
 #
 """
 :mod:`AstroObjectLogging` — Structured Configuration Logging 
@@ -37,10 +37,14 @@ To use the logging::
 import logging
 import logging.handlers as handlers
 
-import math, copy, sys, time, os
+import math
+import copy
+import sys
+import time
+import os
 import yaml
 
-from Utilities import *
+from .util import getVersion, ConfigurationError, update
 
 __version__ = getVersion()
 
@@ -271,3 +275,5 @@ class LogManager(logging.getLoggerClass()):
             self.doConsole = True
 
 logging.setLoggerClass(LogManager)
+
+from logging import *

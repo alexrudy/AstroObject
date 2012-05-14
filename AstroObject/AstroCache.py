@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-22.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5.2
+#  Version 0.5.3
 # 
 
 # Standard Scipy Toolkits
@@ -19,7 +19,6 @@ import math, copy, sys, time, logging, os
 import argparse
 
 # Submodules from this system
-from Utilities import *
 
 __all__ = ["CacheManager","Cache","NumpyCache","YAMLCache","ConfigCache"]
 

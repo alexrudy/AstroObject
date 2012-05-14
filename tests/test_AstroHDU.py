@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-11-08.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5.2
+#  Version 0.5.3
 # 
 
 # Test API Imports
@@ -15,7 +15,7 @@ from tests.AstroTest import *
 import AstroObject.AstroHDU
 
 # Utility Imports
-from AstroObject.Utilities import npArrayInfo
+from AstroObject.util import npArrayInfo
 
 # Testing Imports
 import nose.tools as nt
@@ -78,7 +78,7 @@ class test_HDUStack(equality_HDUFrame,API_BaseStack):
         """Fixture for setting up a basic image frame"""
         self.testJPG = "Data/Hong-Kong.jpg"
         self.data = [self.testJPG]
-        self.files = ["TestFile.fits"]
+        self.files = ["TestFile.fits","TestFile.dat","TestFile.npy"]
         if not os.access(self.testJPG,os.R_OK):
             self.image = np.zeros((100,100))
             self.image[45:55,45:55] = np.ones((10,10))

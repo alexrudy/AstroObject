@@ -5,12 +5,12 @@
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5.2
+#  Version 0.5.3
 # 
 
 # Parent Modules
-import AstroImage,AstroSpectra,AnalyticSpectra,AstroObjectBase
-
+from .AnalyticSpectra import AnalyticSpectrum
+from .AstroObjectBase import AnalyticMixin
 # Standard Scipy Toolkits
 import numpy as np
 import pyfits as pf
@@ -22,16 +22,18 @@ from scipy.spatial.distance import cdist
 from scipy.linalg import norm
 
 # Standard Python Modules
-import math, copy, sys, time, logging, os
+import os
 
 # Submodules from this system
-from Utilities import *
+from . import AstroObjectLogging as logging
+from .util import getVersion
+from .util.functions import BlackBody, Gaussian
 
 __all__ = ["BlackBodySpectrum","GaussianSpectrum","FlatSpectrum"]
 
 __version__ = getVersion()
 
-class BlackBodySpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSpectrum):
+class BlackBodySpectrum(AnalyticMixin,AnalyticSpectrum):
     """An analytic representation of a Blackbody Spectrum at a Kelvin Tempertaure.
     
     :param float temperature: The temperature, in Kelvin, of this black body curve.
@@ -53,7 +55,7 @@ class BlackBodySpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSp
         return np.vstack((wavelengths,BlackBody(wavelengths,self.temperature)))
         
         
-class GaussianSpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSpectrum):
+class GaussianSpectrum(AnalyticMixin,AnalyticSpectrum):
     """An analytic representation of a gaussian function in spectral form.
     
     :param float mean: The center of the Gaussian, in wavelength units.
@@ -81,7 +83,7 @@ class GaussianSpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSpe
         
     
 
-class FlatSpectrum(AstroObjectBase.AnalyticMixin,AnalyticSpectra.AnalyticSpectrum):
+class FlatSpectrum(AnalyticMixin,AnalyticSpectrum):
     """An analytc form of a flat value at every wavelength.
     
     :param float value: The height of this flat spectrum, in flux units.

@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2012-04-19.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.5.2
+#  Version 0.5.3
 # 
 u"""
 :mod:`iraftools` – IRAF integration facility
@@ -161,7 +161,7 @@ import tempfile
 import shutil
 
 # Submodules from this system
-from .Utilities import *
+from .util import getVersion
 from .AstroObjectBase import BaseStack, Mixin
 from .AstroFITS import FITSFrame
 

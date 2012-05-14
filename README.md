@@ -30,6 +30,10 @@ The AstroObject module also has a simulator framework. The simulator is designed
 
 # Release Notes
 
+* 0.5.3
+	- ``util`` module which contains submodules for utiltity functions.
+	- ``file`` module which handles IO, via the FITS format, which is now the standard for format for AstroObject.
+	- ``__getlabel__`` API static method for extracting labels from HDU headers. Classes built with the ``HDUHeaderMixin`` do not need to be altered.
 * 0.5.2
 	- Bug fix for simulator functions, earlier logging starts.
 * 0.5.1

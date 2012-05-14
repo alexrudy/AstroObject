@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-28.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5.2
+#  Version 0.5.3
 # 
 
 from tests.AstroTest import *
@@ -66,7 +66,7 @@ class test_FITSFrame(equality_FITSFrame,API_NoData_Frame,API_General_Frame):
 class test_FITSStack(equality_FITSFrame,API_BaseStack):
     """AstroFITS.FITSStack"""
     def setup(self):
-        self.files = ["TestFile.fits"]
+        self.files = ["TestFile.fits","TestFile.dat","TestFile.npy"]
         self.FRAME = AstroObject.AstroFITS.FITSFrame
         self.OBJECT = AstroObject.AstroFITS.FITSStack
         self.FRAMESTR = "<'FITSFrame' labeled 'Valid'>"
@@ -105,7 +105,27 @@ class test_FITSStack(equality_FITSFrame,API_BaseStack):
         AObject.save(self.VALID,self.FLABEL)
         AObject.save(self.VALID,self.FLABEL)
     
+    @nt.raises(TypeError)
+    def test_write_to_singleframe_textfile(self):
+        """write(singleFrame=True) creates single framed text files."""
+        AObject = self.OBJECT()
+        AObject.save(self.frame())
+        AObject["Other"] = self.frame()
+        PF,Fs,FN = AObject.write("test.dat",singleFrame=True,clobber=True)
+        assert Fs == []
+        assert PF == "Other"
         
+    @nt.raises(TypeError)
+    def test_write_to_singleframe_numpyfile(self):
+        """write(singleFrame=True) creates single framed numpy files."""
+        AObject = self.OBJECT()
+        AObject.save(self.frame())
+        AObject["Other"] = self.frame()
+        PF,Fs,FN = AObject.write(self.files[2],singleFrame=True,clobber=True)
+        AObject.read(self.files[2],clobber=True)        
+        assert Fs == []
+        assert PF == "Other"    
+    
     @nt.raises(TypeError)
     def test_set_with_data(self):
         """[] fails with valid data"""

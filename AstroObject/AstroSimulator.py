@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-14.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5.2
+#  Version 0.5.3
 # 
 """
 :mod:`AstroSimulator` — Complex Task Management 
@@ -99,26 +99,48 @@ The program is actually agnostic to the order of arguments. Any argument may com
 	
 	Print the program version.
 	
-.. option:: --cf file.yaml
+.. option:: --configure Option.Key='literal value'
+
+    Apply a dotted-name style configuration item to the configure variables. The value will be set as either a python literal, or a plain string. If the value parses as a python literal, that will be used. If parsing the value as a literal fails, the string will be used. As such, strings do not need to be quoted on the command line.
+    ::
+        
+        $ sim --configure Option.Key=Value
+        
+    has the same effect as::
+        
+        try:
+            sim.config["Option.Key"] = Value
+        except:
+            sim.config["Option.Key"] = "Value"
+    
+.. option:: -c file.yaml, --config-file file.yaml
 	
 	Set the name of the configuration file to use. By default, the configuation file is called `SED.main.config.yaml`. This will be the filename used for dumping configurations with the :option:`--dump` command (Dump will append the extension ``-dump.yaml`` onto the filename to prevent overwriting exisitng configurations)
 	
-.. option:: -n,--dry-run
-	
-	Traverse all of the stages to be run, printing them as the program goes, but do not run any stages.
-	
-.. option:: --list-stages
-	
-	Print all stages registered in the simulator. Any stage listed in the output of this function can be run.
-	
-.. option:: --dump
-	
-	Dump the configuration to a file. Filenames are the configuration file name with ``-dump.yaml`` appended.
-
-.. option:: --p,--profile
+.. option:: --p, --profile
     
     Show a timing profile of the simulation, including status of stages, at the end of the simulation.
 
+.. option:: -n, --dry-run
+	
+	Traverse all of the stages to be run, printing them as the program goes, but do not run any stages.
+
+.. option:: --show-tree
+    
+    Show a dependency tree for the simulator.
+	
+.. option:: --show-stages
+    
+    Show all of the stages ran for this simulation.    
+    
+.. option:: --dump-config
+    
+    Dump the configuration to a file. Filenames are the configuration file name with ``-dump.yaml`` appended.
+    
+.. option:: --list-stages
+    
+    Print all stages registered in the simulator. Any stage listed in the output of this function can be run.
+    
 .. _Configuration:
 
 :program:`Simulator` Configuration Files
@@ -128,10 +150,13 @@ The program is actually agnostic to the order of arguments. Any argument may com
 
 - ``Configurations``: contains a list of potential configuration files.
 - ``Configurations.Main``: The name of the primary configuration file. This default is produced by the program. Overriding it in the configuration file has essentially no effect.
+- ``Default``: The default macro to run (i.e. the default ``*``'d argument.)
 - ``Dirs``: Directories that this simulator will use for output.
 - ``Dirs.Caches``: Location of cache files.
 - ``Dirs.Logs``: Location of log files.
 - ``Dirs.Partials``: Location of partial output, including a dump of the configuration.
+- ``Options``: The dictionary for storing command line options.
+- ``Options.DryRun``: Whether to skip actually executing stages.
 - ``Logging``: Configuration of the :mod:`AstroObject.AstroObjectLogging` module
 
 A simple configuration file can be found in the :ref:`SimulatorExample`.
@@ -241,13 +266,13 @@ from pkg_resources import resource_filename
 
 import multiprocessing
 
-# Dependent Modules
-from progressbar import *
-
 # Submodules from this system
 from AstroCache import *
 from AstroConfig import StructuredConfiguration, DottedConfiguration
-from Utilities import *
+
+import util.pbar as progressbar
+import util.terminal as terminal
+from util import getVersion, npArrayInfo, func_lineno
 
 __all__ = ["Simulator","on_collection","help","replaces","excepts","depends","include","optional","description","collect","ignore","on_instance_collection"]
 
@@ -456,15 +481,18 @@ class Simulator(object):
         
         Command line options are:
         
-        ================== =====================
-        CLI Option         Description
-        ================== =====================
-        ``--version``      Display version information about this module
-        ``--cf file.yaml`` Specify a configuration file
-        ``--dry-run``      Print the stages this command would have run.
-        ``--dump``         Write the current configuration to file
-        ``--stages``       Print the stages that the command will execute, do not do anything
-        ================== =====================
+        =========================================== =====================
+        CLI Option                                  Description
+        =========================================== =====================
+        ``--version``                               Display version information about this module
+        ``--configure Option.Key=Value``            Set a configuration value on the command line. 
+        ``-c file.yaml, --config-file file.yaml``   Specify a configuration file
+        ``-n, --dry-run``                           Print the stages this command would have run.
+        ``--show-tree``                             Show a dependency tree for the simulation
+        ``--show-stages``                           List all of the used stages for the simulation
+        ``--dump-config``                           Write the current configuration to file
+        ``--list-stages``                           Print the stages that the command will execute, do not do anything
+        =========================================== =====================
         
         Macros defined at this level are:
         
@@ -825,7 +853,7 @@ can be customized using the 'Default' configuration variable in the configuratio
         
         s = self.stages[stage]
         indicator = u"└>%s" if level else u"=>%s"
-        self._depTree += ["%-30s : %s" % (u"  " * level + indicator % stage,s.description)]
+        self._depTree += [u"%-30s : %s" % (u"  " * level + indicator % stage,s.description)]
         if s.macro or self.config["Options.DryRun"]:
             self.complete += [stage] + s.reps
             self.done += [stage]
@@ -838,9 +866,9 @@ can be customized using the 'Default' configuration variable in the configuratio
             s.run()
         except KeyboardInterrupt as e:
             self.log.useConsole(True)
-            self.log.critical("Keyboard Interrupt during %(stage)s... ending simulator." % {'stage':s.name})
-            self.log.critical("Last completed stage: %(stage)s" % {'stage':self.complete.pop()})
-            self.log.debug("Stages completed: %s" % self.complete)
+            self.log.critical(u"Keyboard Interrupt during %(stage)s... ending simulator." % {'stage':s.name})
+            self.log.critical(u"Last completed stage: %(stage)s" % {'stage':self.complete.pop()})
+            self.log.debug(u"Stages completed: %s" % ", ".join(self.complete))
             raise
         except s.exceptions as e:
             if self.config["Debug"]:
@@ -1067,8 +1095,8 @@ can be customized using the 'Default' configuration variable in the configuratio
     
     def _start_progress_bar(self,length,color):
         """Return a progress bar object of a specified color in the standard format."""
-        widgets = [Percentage(),' ',ColorBar(color=color),' ',ETA()]
-        self.progressbar = ProgressBar(widgets=widgets,maxval=length).start()
+        widgets = [ progressbar.Percentage(),' ', progressbar.ColorBar(color=color),' ', progressbar.ETA()]
+        self.progressbar = progressbar.ProgressBar(widgets=widgets,maxval=length).start()
         self.progress = 0
         self.log.useConsole(False)
         return self.progressbar

@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2012-02-08.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.5.2
+#  Version 0.5.3
 # 
 """
 :mod:`AstroConfig` — YAML-based Configuration Dictionaries
@@ -45,27 +45,22 @@ Structured Configurations: :class:`StructuredConfiguration`
 
 """
 # Standard Python Modules
-import math
-import copy
-import sys
-import time
-import logging
 import os
 import collections
 import re
 import yaml
 
 # Submodules from this system
-from Utilities import *
+from . import AstroObjectLogging as logging
 
 class Configuration(collections.MutableMapping):
     """Adds extra methods to dictionary for configuration"""
     
     dn = dict
-    """Deep nesting dictionary setting. This class will be used to create deep nesting structures for this dictionary."""
+    """Deep nesting dictionary setting. This class will be used to create deep nesting structures for this dictionary.""" #pylint: disable=W0105
     
     dt = dict
-    """Exctraction nesting dictionary setting. This class will be used to create deep nesting structures when this object is extracted."""
+    """Exctraction nesting dictionary setting. This class will be used to create deep nesting structures when this object is extracted.""" #pylint: disable=W0105
     
     def __init__(self, *args, **kwargs):
         super(Configuration, self).__init__()
@@ -80,15 +75,15 @@ class Configuration(collections.MutableMapping):
         """String for this object"""
         return "<Configuration %r >" % repr(self)
         
-    def __getitem__(self,key):
+    def __getitem__(self, key):
         """Dictionary getter"""
         return self._store.__getitem__(key)
         
-    def __setitem__(self,key,value):
+    def __setitem__(self, key, value):
         """Dictonary setter"""
-        return self._store.__setitem__(key,value)
+        return self._store.__setitem__(key, value)
         
-    def __delitem__(self,key):
+    def __delitem__(self, key):
         """Dictionary delete"""
         return self._store.__delitem__(key)
         
@@ -96,7 +91,7 @@ class Configuration(collections.MutableMapping):
         """Return an iterator for this dictionary"""
         return self._store.__iter__()
         
-    def __contains__(self,key):
+    def __contains__(self, key):
         """Return the contains boolean"""
         return self._store.__contains__(key)
     
@@ -104,7 +99,7 @@ class Configuration(collections.MutableMapping):
         """Length"""
         return self._store.__len__()
     
-    def update(self,other,deep=True):
+    def update(self, other, deep=True): #pylint: disable=W0221
         """Update the dictionary using :meth:`merge`.
         
         :param dict-like other: The other dictionary to be merged.
@@ -116,16 +111,17 @@ class Configuration(collections.MutableMapping):
         else:
             self._store.update(other)
     
-    def merge(self,other):
+    def merge(self, other):
         """Merge another configuration into this one (the master).
         
         :param dict-like other: The other dictionary to be merged.
         
         """
-        self._merge(self,other)
+        self._merge(self, other)
     
-    def _merge(self,d,u):
+    def _merge(self, d, u):
         """Recursive merging function for internal use."""
+        #pylint: disable=C0103
         if len(u)==0:
             return d
         for k, v in u.iteritems():
@@ -136,23 +132,23 @@ class Configuration(collections.MutableMapping):
                 d[k] = u[k]
         return d
     
-    def save(self,filename,silent=True):
+    def save(self, filename, silent=True):
         """Save this configuration as a YAML file. YAML files generally have the ``.yaml`` or ``.yml`` extension. If the filename ends in ``.dat``, the configuration will be saved as a raw dictionary literal.
         
         :param string filename: The filename on which to save the configuration.
         :param bool silent: Unused.
         
         """
-        with open(filename,"w") as stream:
+        with open(filename, "w") as stream:
             stream.write("# Configuration: %s\n" % filename)
-            if re.search(r"(\.yaml|\.yml)$",filename):
-                yaml.dump(self.store,stream,default_flow_style=False)
-            elif re.search(r"\.dat$",filename):
+            if re.search(r"(\.yaml|\.yml)$", filename):
+                yaml.dump(self.store, stream, default_flow_style=False)
+            elif re.search(r"\.dat$", filename):
                 stream.write(str(self.store))
-            else:
+            elif not silent:
                 raise ValueError("Filename Error, not (.dat,.yaml,.yml): %s" % filename)
         
-    def load(self,filename,silent=True):
+    def load(self, filename, silent=True):
         """Loads a configuration from a yaml file, and merges it into the master configuration.
         
         :param string filename: The filename to load from.
@@ -162,7 +158,7 @@ class Configuration(collections.MutableMapping):
         """
         loaded = False
         try:
-            with open(filename,"r") as stream:
+            with open(filename, "r") as stream:
                 new = yaml.load(stream)
         except IOError:
             if silent:
@@ -180,45 +176,47 @@ class Configuration(collections.MutableMapping):
         """
         return self._extract(self._store)
         
-    def _extract(self,d):
+    def _extract(self, d):
         """Internal recursive extraction method for getting dictionaries out of thi object."""
-        if not isinstance(d,collections.Mapping):
+        #pylint: disable=C0103
+        if not isinstance(d, collections.Mapping):
             return d
         e = self.dt()
         for k in d:
             v = d.get(k)
-            if isinstance(v,collections.Mapping):
+            if isinstance(v, collections.Mapping):
                 e[k] = self._extract(v)
-            elif isinstance(v,collections.Sequence) and not isinstance(v,(str,unicode)):
+            elif isinstance(v, collections.Sequence) and not isinstance(v, (str, unicode)):
                 e[k] = [ self._extract(i) for i in v ]
             else:
                 e[k] = v
         return e
         
-    def _renest(self,d):
+    def _renest(self, d):
         """Internal recurisve nesting method for deep mapping dictionary work."""
-        if not isinstance(d,collections.Mapping):
+        #pylint: disable=C0103
+        if not isinstance(d, collections.Mapping):
             return d
         e = self.dn()
         for k in d:
             v = d.get(k)
-            if isinstance(v,collections.Mapping):
+            if isinstance(v, collections.Mapping):
                 e[k] = self._renest(v)
-            elif isinstance(v,collections.Sequence) and not isinstance(v,(str,unicode)):
+            elif isinstance(v, collections.Sequence) and not isinstance(v, (str, unicode)):
                 e[k] = [ self._renest(i) for i in v ]
             else:
                 e[k] = v
         return e
     
-    def renest(self,deep_nest_type=None):
+    def renest(self, deep_nest_type=None):
         """Re-nest this object. This method applies the :attr:`dn` deep-nesting attribute to each nesting level in the configuration object.
         
         :param deep_nest_type: mapping nesting type, will set :attr:`dn`.
         
         This method does not return anything.
         """
-        if isinstance(deep_nest_type,collections.Mapping):
-            self.dn = deep_nest_type
+        if isinstance(deep_nest_type, collections.Mapping):
+            self.dn = deep_nest_type #pylint: disable=C0103
         elif deep_nest_type is not None:
             TypeError("%r is not a mapping type." % deep_nest_type)
         self._store = self._renest(self._store)
@@ -257,16 +255,16 @@ class DottedConfiguration(Configuration):
         10
         
     """
-    def _getitem(self,store,parts=[]):
+    def _getitem(self, store, parts):
         """Recursive getitem calling function."""
         key = parts.pop(0)
         if len(parts) == 0:
             return store[key]
         else:
-            store[key] = store.get(key,self.dn())
-            return self._getitem(store[key],parts)
+            store[key] = store.get(key, self.dn())
+            return self._getitem(store[key], parts)
             
-    def _setitem(self,store,parts=[],value=None):
+    def _setitem(self, store, parts, value=None):
         """Recursive setitem calling function
         
         This function handles a few things:
@@ -276,40 +274,40 @@ class DottedConfiguration(Configuration):
         - Recurses into the system."""
         key = parts.pop(0)
         if len(parts) == 0:
-            return store.__setitem__(key,value)
+            return store.__setitem__(key, value)
         else:
-            store[key] = store.get(key,self.dn())
-            return self._setitem(store[key],parts,value)
+            store[key] = store.get(key, self.dn())
+            return self._setitem(store[key], parts, value)
             
-    def _delitem(self,store,parts=[]):
+    def _delitem(self, store, parts):
         """Recursive delitem calling function"""
         key = parts.pop(0)
         if len(parts) == 0:
             return store.__delitem__(key)
         else:
-            store[key] = store.get(key,self.dn())
-            return self._delitem(store[key],parts)
+            store[key] = store.get(key, self.dn())
+            return self._delitem(store[key], parts)
         
         
-    def __getitem__(self,key):
+    def __getitem__(self, key):
         """Dictionary getter"""
         keyparts = key.split(".")
         if len(keyparts) > 1:
-            return self._getitem(self,keyparts)
+            return self._getitem(self, keyparts)
         return self._store.__getitem__(key)
         
-    def __setitem__(self,key,value):
+    def __setitem__(self, key, value):
         """Dictonary setter"""
         keyparts = key.split(".")
         if len(keyparts) > 1:
-            return self._setitem(self,keyparts,value)
-        return self._store.__setitem__(key,value)
+            return self._setitem(self, keyparts, value)
+        return self._store.__setitem__(key, value)
         
-    def __delitem__(self,key):
+    def __delitem__(self, key):
         """Dictionary delete"""
         keyparts = key.split(".")
         if len(keyparts) > 1:
-            return self._delitem(self,keyparts)        
+            return self._delitem(self, keyparts)        
         return self._store.__delitem__(key)
     
 
@@ -348,8 +346,11 @@ class StructuredConfiguration(DottedConfiguration):
         
     
     
-        
-    def setFile(self,filename=None,name=None):
+    def setFile(self, filename=None, name=None): #pylint: disable=C0103
+        """Depricated Method"""
+        return self.set_file(filename, name)
+    
+    def set_file(self, filename=None, name=None):
         """Set the default/current configuration file for this configuration.
         
         The configuration file set by this method will be used next time :meth:`load` or :meth:`save` is called with no filename.
@@ -370,7 +371,7 @@ class StructuredConfiguration(DottedConfiguration):
             self["Configurations"][name] = filename
         self["Configurations.This"] = self["Configurations"][name]
     
-    def save(self,filename=None):
+    def save(self, filename=None, silent=True):
         """Save the configuration to a YAML file. If ``filename`` is not provided, the configuration will use the file set by :meth:`setFile`.
         
         :param string filename: Destination filename.
@@ -382,7 +383,7 @@ class StructuredConfiguration(DottedConfiguration):
         return super(StructuredConfiguration, self).save(filename)
     
         
-    def load(self,filename=None,silent=True):
+    def load(self, filename=None, silent=True):
         """Load the configuration to a YAML file. If ``filename`` is not provided, the configuration will use the file set by :meth:`setFile`.
         
         :param string filename: Target filename.
@@ -391,5 +392,5 @@ class StructuredConfiguration(DottedConfiguration):
         Uses :meth:`Configuration.load`."""
         if filename == None:
             filename = self["Configurations.This"]
-        return super(StructuredConfiguration, self).load(filename,silent)
+        return super(StructuredConfiguration, self).load(filename, silent)
         

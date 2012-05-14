@@ -5,7 +5,7 @@
 #
 #  Created by Alexander Rudy on 2011-10-31.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5.2
+#  Version 0.5.3
 #
 
 # Test API Imports
@@ -88,7 +88,7 @@ class test_ImageStack(equality_ImageFrame,API_BaseStack):
         """Fixture for setting up a basic image frame"""
         self.testJPG = "Data/Hong-Kong.jpg"
         self.data = [self.testJPG]
-        self.files = ["TestFile.fits"]
+        self.files = ["TestFile.fits","TestFile.dat","TestFile.npy"]
         if not os.access(self.testJPG,os.R_OK):
             self.image = np.zeros((1000,1000))
             self.image[450:550,450:550] = np.ones((100,100))
