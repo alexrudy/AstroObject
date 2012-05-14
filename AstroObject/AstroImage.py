@@ -52,7 +52,7 @@ import os
 from .util import getVersion, npArrayInfo
 from . import AstroObjectLogging as logging
 
-__all__ = ["ImageFrame", "ImageStack" ]
+__all__ = [ "ImageFrame", "ImageStack" ]
 
 __version__ = getVersion()
 

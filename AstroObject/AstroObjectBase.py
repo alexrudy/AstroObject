@@ -219,7 +219,7 @@ class BaseFrame(Mixin):
     def __call__(self, **kwargs):
         """Should return the data within this frame, usually as a ``numpy`` array.
         
-        :returns: None
+        :returns: The data for this object.
         
         :class:`AstroImage.ImageFrame` implements this method as::
             
@@ -616,6 +616,7 @@ class BaseStack(collections.MutableMapping):
         :param bool select: Select this frame as the default reading frame.
         :raises: :exc:`TypeError` when the data cannot be cast as any dataClass
         :raises: :exc:`KeyError` when the data would overwrite an existing frame.
+        :returns string: Label of the saved frame.
         
         """
         # If we were passed raw data, and the dataClass can accept it, then go for it!

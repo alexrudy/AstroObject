@@ -272,7 +272,7 @@ from AstroConfig import StructuredConfiguration, DottedConfiguration
 
 import util.pbar as progressbar
 import util.terminal as terminal
-from util import getVersion, npArrayInfo
+from util import getVersion, npArrayInfo, func_lineno
 
 __all__ = ["Simulator","on_collection","help","replaces","excepts","depends","include","optional","description","collect","ignore","on_instance_collection"]
 
