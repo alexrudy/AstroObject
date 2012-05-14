@@ -424,8 +424,6 @@ class HDUHeaderMixin(Mixin):
             return explicit
         if 'label' in HDU.header:
             return HDU.header['label']
-        elif 'object' in HDU.header:
-            return HDU.header['object']
         else:
             return default
 
