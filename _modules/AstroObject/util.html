@@ -1,0 +1,298 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>AstroObject.util &mdash; AstroObject 0.5.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="AstroObject 0.5.3 documentation" href="../../index.html" />
+    <link rel="up" title="AstroObject" href="../AstroObject.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">AstroObject 0.5.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../AstroObject.html" accesskey="U">AstroObject</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for AstroObject.util</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c"># </span>
+<span class="c">#  __init__.py</span>
+<span class="c">#  AstroObject</span>
+<span class="c">#  </span>
+<span class="c">#  Created by Alexander Rudy on 2012-05-08.</span>
+<span class="c">#  Copyright 2012 Alexander Rudy. All rights reserved.</span>
+<span class="c"># </span>
+<span class="sd">u&quot;&quot;&quot;</span>
+<span class="sd">:mod:`util` — Utility functions</span>
+<span class="sd">===============================</span>
+
+<span class="sd">Provides utilities useful in various places in the module.</span>
+
+<span class="sd">.. automethod::</span>
+<span class="sd">    AstroObject.util.getVersion</span>
+<span class="sd">    </span>
+<span class="sd">.. automethod::</span>
+<span class="sd">    AstroObject.util.validate_filename</span>
+<span class="sd">    </span>
+<span class="sd">.. automethod::</span>
+<span class="sd">    AstroObject.util.update</span>
+<span class="sd">    </span>
+<span class="sd">.. automethod::</span>
+<span class="sd">    AstroObject.util.func_lineno</span>
+<span class="sd">    </span>
+<span class="sd">.. automethod::</span>
+<span class="sd">    AstroObject.util.make_decorator</span>
+<span class="sd">    </span>
+<span class="sd">.. automethod::</span>
+<span class="sd">    AstroObject.util.npArrayInfo</span>
+<span class="sd">    </span>
+<span class="sd">.. automodule::</span>
+<span class="sd">    AstroObject.util.functions</span>
+<span class="sd">    </span>
+<span class="sd">.. automodule::</span>
+<span class="sd">    AstroObject.util.images</span>
+
+<span class="sd">.. automodule::</span>
+<span class="sd">    AstroObject.util.mpl</span>
+
+<span class="sd">.. automodule::</span>
+<span class="sd">    AstroObject.util.pbar</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy</span> <span class="kn">as</span> <span class="nn">sp</span>
+
+<span class="kn">from</span> <span class="nn">..version</span> <span class="kn">import</span> <span class="n">version</span> <span class="k">as</span> <span class="n">versionstr</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span> <span class="s">&quot;getVersion&quot;</span><span class="p">,</span> <span class="s">&quot;validate_filename&quot;</span><span class="p">,</span> <span class="s">&quot;update&quot;</span><span class="p">,</span> <span class="s">&quot;func_lineno&quot;</span><span class="p">,</span> <span class="s">&quot;make_decorator&quot;</span><span class="p">,</span> <span class="s">&quot;npArrayInfo&quot;</span><span class="p">,</span> <span class="s">&quot;ConfigurationError&quot;</span><span class="p">]</span>
+
+<span class="n">__version__</span> <span class="o">=</span> <span class="n">versionstr</span>
+
+
+<span class="k">def</span> <span class="nf">getVersion</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Returns the version number as either a string or tuple. The version number is retrieved from the &quot;VERSION&quot; file, which should contain just the text for the version and nothing else. When the version is returned as a tuple, each component (level) of the version number is a seperate, integer element of the tuple.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">versionstr</span>
+
+<span class="k">def</span> <span class="nf">validate_filename</span><span class="p">(</span><span class="n">resourcename</span><span class="p">,</span><span class="n">extension</span><span class="o">=</span><span class="s">&quot;.fits&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Validates a string as an acceptable filename, stripping path components,etc.</span>
+<span class="sd">    </span>
+<span class="sd">    ..warning:: This function isn&#39;t very good. I wouldn&#39;t use it in its current state.&quot;&quot;&quot;</span>
+    <span class="n">dirname</span><span class="p">,</span><span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">resourcename</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">extension</span><span class="p">):</span>
+        <span class="n">filename</span> <span class="o">+=</span> <span class="n">extension</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span><span class="n">filename</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">u</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A deep update command for dictionaries.</span>
+<span class="sd">    This is because the normal dictionary.update() command does not handle nested dictionaries.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">u</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">d</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">u</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">update</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="p">{}),</span> <span class="n">v</span><span class="p">)</span>
+            <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">d</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">d</span>    
+
+<span class="k">def</span> <span class="nf">func_lineno</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get the line number of a function. First looks for</span>
+<span class="sd">    compat_co_firstlineno, then func_code.co_first_lineno.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">func</span><span class="o">.</span><span class="n">compat_co_firstlineno</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">func</span><span class="o">.</span><span class="n">func_code</span><span class="o">.</span><span class="n">co_firstlineno</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+<span class="k">def</span> <span class="nf">make_decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wraps a test decorator so as to properly replicate metadata</span>
+<span class="sd">    of the decorated function, including nose&#39;s additional stuff</span>
+<span class="sd">    (namely, setup and teardown).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">decorate</span><span class="p">(</span><span class="n">newfunc</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s">&#39;compat_func_name&#39;</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">compat_func_name</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">__name__</span>
+        <span class="n">newfunc</span><span class="o">.</span><span class="n">__dict__</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">__dict__</span>
+        <span class="n">newfunc</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">__doc__</span>
+        <span class="n">newfunc</span><span class="o">.</span><span class="n">__module__</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">__module__</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">newfunc</span><span class="p">,</span> <span class="s">&#39;compat_co_firstlineno&#39;</span><span class="p">):</span>
+            <span class="n">newfunc</span><span class="o">.</span><span class="n">compat_co_firstlineno</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">func_code</span><span class="o">.</span><span class="n">co_firstlineno</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">newfunc</span><span class="o">.</span><span class="n">__name__</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="c"># can&#39;t set func name in 2.3</span>
+            <span class="n">newfunc</span><span class="o">.</span><span class="n">compat_func_name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="k">return</span> <span class="n">newfunc</span>
+    <span class="k">return</span> <span class="n">decorate</span>
+
+<span class="k">def</span> <span class="nf">npArrayInfo</span><span class="p">(</span><span class="n">array</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Message describing this array in excruciating detail. Used in debugging arrays where we don&#39;t know what they contain. Returns a message string.</span>
+<span class="sd">    </span>
+<span class="sd">    ::</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; arr = np.array([0,1,2,3,4,5,np.nan])</span>
+<span class="sd">        &gt;&gt;&gt; print npArrayInfo(arr,&quot;Some Array&quot;)</span>
+<span class="sd">        Some Array has 7 elements with shape (7,). Range [  nan,  nan] Zeros 1 ( 14%). NaNs 1 ( 14%). </span>
+<span class="sd">        &gt;&gt;&gt; print npArrayInfo(arr[1:-1],&quot;Some Array&quot;)</span>
+<span class="sd">        Some Array has 5 elements with shape (5,). Range [    1,    5]</span>
+<span class="sd">        </span>
+<span class="sd">      </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fmtr</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">MSG</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="n">MSG</span> <span class="o">+=</span> <span class="s">&quot;</span><span class="si">%(name)s</span><span class="s"> has &quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+    <span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">array</span><span class="p">))</span>
+    
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        
+        <span class="n">MSG</span> <span class="o">+=</span> <span class="s">&quot;len </span><span class="si">%(elements)d</span><span class="s"> shaped </span><span class="si">%(shape)s</span><span class="s">. &quot;</span>
+        
+        <span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;elements&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">size</span>
+        <span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;shape&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;min&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+            <span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+            <span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;range&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;[</span><span class="si">%(min)5.5g</span><span class="s">,</span><span class="si">%(max)5.5g</span><span class="s">]&quot;</span> <span class="o">%</span> <span class="n">fmtr</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">MSG</span> <span class="o">+=</span> <span class="s">&quot;Array does not appear to be numerical! &quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">MSG</span> <span class="o">+=</span> <span class="s">&quot;Range </span><span class="si">%(range)s</span><span class="s"> &quot;</span>
+        
+        <span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;zeros&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">array</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        
+        <span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;zper&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;zeros&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;elements&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="mi">100</span>
+        
+        <span class="k">if</span> <span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;zeros&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">MSG</span> <span class="o">+=</span> <span class="s">&quot;Zeros </span><span class="si">%(zeros)d</span><span class="s"> (</span><span class="si">%(zper)3d%%</span><span class="s">). &quot;</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;nans&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">array</span><span class="p">))</span>
+            <span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;nper&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;nans&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;elements&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="mi">100</span>
+            <span class="k">if</span> <span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;nans&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">MSG</span> <span class="o">+=</span> <span class="s">&quot;NaNs </span><span class="si">%(nans)d</span><span class="s"> (</span><span class="si">%(nper)3d%%</span><span class="s">). &quot;</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="n">MSG</span> <span class="o">+=</span> <span class="s">&quot;Could not measure NaNs. &quot;</span>
+        
+        <span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;dtype&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">dtype</span>
+        
+        <span class="k">if</span> <span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;dtype&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">:</span>
+            <span class="n">MSG</span> <span class="o">+=</span> <span class="s">&quot; Data Type </span><span class="si">%(dtype)s</span><span class="s">.&quot;</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+        
+        <span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;elements&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+        <span class="n">MSG</span> <span class="o">+=</span> <span class="s">&quot; </span><span class="si">%(elements)d</span><span class="s"> elements &quot;</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;min&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+            <span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+            <span class="n">fmtr</span><span class="p">[</span><span class="s">&quot;range&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;[</span><span class="si">%(min)5.5g</span><span class="s">,</span><span class="si">%(max)5.5g</span><span class="s">]&quot;</span> <span class="o">%</span> <span class="n">fmtr</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">MSG</span> <span class="o">+=</span> <span class="s">&quot; List does not appear to contain numerical elements.&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">MSG</span> <span class="o">+=</span> <span class="s">&quot;Range </span><span class="si">%(range)s</span><span class="s"> &quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">MSG</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%(name)s</span><span class="s"> doesn&#39;t appear to be a Numpy Array! Type: </span><span class="si">%(type)s</span><span class="s">&quot;</span>
+    <span class="k">return</span> <span class="n">MSG</span> <span class="o">%</span> <span class="n">fmtr</span>
+
+
+<span class="k">class</span> <span class="nc">HDUFrameTypeError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An error caused because an HDUFrame is of the wrong type for interpretation.&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+    
+<span class="k">class</span> <span class="nc">ConfigurationError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Denotes an error caused by a bad configuration&quot;&quot;&quot;</span>
+    <span class="k">pass</span>    
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">AstroObject 0.5.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../AstroObject.html" >AstroObject</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Alexander Rudy.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

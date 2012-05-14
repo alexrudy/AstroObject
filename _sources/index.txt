@@ -6,7 +6,11 @@
 Welcome to AstroObject!
 =======================
 
-AstroObject is a library for Object-Oriented Astronomy. Currently under development at `github`_, it contains tools for object-oriented management of Spectrum Data, Image Data, and Analytic Spectrum Data. More features are planned for the future. To get a sense of the philosophy of this project, read the introduction.
+AstroObject is a library for Object-Oriented Astronomy. Currently under development at `github`_, it contains tools for object-oriented management of Spectrum Data, Image Data, and Analytic Spectrum Data. More features are planned for the future. To get a sense of the philosophy of this project, read the introduction section.
+
+AstroObject makes object-oriented astronomical data reduction easier. The systems provided in this package help to treat FITS images and other forms of raw data as objects. Critical to that mission is the notion that data are not just single images, but rather a series of images held together as they travel through the data reduction pipeline. As well, this module provides a framework for building dependency-based, flexible pipelines.
+
+The goal of this package is not to facilitate specific image or analysis operations. Very few actual operations are built-in. Rather, it provides a structure, and a background to make working with data and reduction pipelines much easier. Abstracted are notions of files, configurations, and common reduction processes, and provided are simple command line interfaces, basic object-style APIs, and sensible defaults.
 
 .. Warning::
     This module is under development. The version number |version| is very low, indicating that much of this module may be unreliable. The behavior in specific instances is not guaranteed nor should it be trusted. For more information about the development of this module, see :ref:`development`.
@@ -35,6 +39,7 @@ About AstroObject
     AstroSimulator
     AstroConfig
     AstroObjectLogging
+    file
     Utilities
     
     future

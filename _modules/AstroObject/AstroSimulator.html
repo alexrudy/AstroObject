@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,15 +7,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObject.AstroSimulator &mdash; AstroObject 0.5.1 documentation</title>
+    <title>AstroObject.AstroSimulator &mdash; AstroObject 0.5.3 documentation</title>
     
-    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5.1',
+        VERSION:     '0.5.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,8 +24,8 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5.1 documentation" href="../../index.html" />
-    <link rel="up" title="Module code" href="../index.html" /> 
+    <link rel="top" title="AstroObject 0.5.3 documentation" href="../../index.html" />
+    <link rel="up" title="AstroObject" href="../AstroObject.html" /> 
   </head>
   <body>
     <div class="related">
@@ -38,8 +37,9 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.5.1 documentation</a> &raquo;</li>
-          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li><a href="../../index.html">AstroObject 0.5.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../AstroObject.html" accesskey="U">AstroObject</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -56,7 +56,7 @@
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2011-12-14.</span>
 <span class="c">#  Copyright 2011 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.5.1</span>
+<span class="c">#  Version 0.5.3</span>
 <span class="c"># </span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">:mod:`AstroSimulator` — Complex Task Management </span>
@@ -150,25 +150,47 @@
 <span class="sd">	</span>
 <span class="sd">	Print the program version.</span>
 <span class="sd">	</span>
-<span class="sd">.. option:: --cf file.yaml</span>
+<span class="sd">.. option:: --configure Option.Key=&#39;literal value&#39;</span>
+
+<span class="sd">    Apply a dotted-name style configuration item to the configure variables. The value will be set as either a python literal, or a plain string. If the value parses as a python literal, that will be used. If parsing the value as a literal fails, the string will be used. As such, strings do not need to be quoted on the command line.</span>
+<span class="sd">    ::</span>
+<span class="sd">        </span>
+<span class="sd">        $ sim --configure Option.Key=Value</span>
+<span class="sd">        </span>
+<span class="sd">    has the same effect as::</span>
+<span class="sd">        </span>
+<span class="sd">        try:</span>
+<span class="sd">            sim.config[&quot;Option.Key&quot;] = Value</span>
+<span class="sd">        except:</span>
+<span class="sd">            sim.config[&quot;Option.Key&quot;] = &quot;Value&quot;</span>
+<span class="sd">    </span>
+<span class="sd">.. option:: -c file.yaml, --config-file file.yaml</span>
 <span class="sd">	</span>
 <span class="sd">	Set the name of the configuration file to use. By default, the configuation file is called `SED.main.config.yaml`. This will be the filename used for dumping configurations with the :option:`--dump` command (Dump will append the extension ``-dump.yaml`` onto the filename to prevent overwriting exisitng configurations)</span>
 <span class="sd">	</span>
-<span class="sd">.. option:: -n,--dry-run</span>
+<span class="sd">.. option:: --p, --profile</span>
+<span class="sd">    </span>
+<span class="sd">    Show a timing profile of the simulation, including status of stages, at the end of the simulation.</span>
+
+<span class="sd">.. option:: -n, --dry-run</span>
 <span class="sd">	</span>
 <span class="sd">	Traverse all of the stages to be run, printing them as the program goes, but do not run any stages.</span>
+
+<span class="sd">.. option:: --show-tree</span>
+<span class="sd">    </span>
+<span class="sd">    Show a dependency tree for the simulator.</span>
 <span class="sd">	</span>
-<span class="sd">.. option:: --list-stages</span>
+<span class="sd">.. option:: --show-stages</span>
 <span class="sd">	</span>
-<span class="sd">	Print all stages registered in the simulator. Any stage listed in the output of this function can be run.</span>
-<span class="sd">	</span>
-<span class="sd">.. option:: --dump</span>
+<span class="sd">    Show all of the stages ran for this simulation.    </span>
+<span class="sd">    </span>
+<span class="sd">.. option:: --dump-config</span>
 <span class="sd">	</span>
 <span class="sd">	Dump the configuration to a file. Filenames are the configuration file name with ``-dump.yaml`` appended.</span>
 
-<span class="sd">.. option:: --p,--profile</span>
-<span class="sd">    </span>
-<span class="sd">    Show a timing profile of the simulation, including status of stages, at the end of the simulation.</span>
+<span class="sd">.. option:: --list-stages</span>
+
+<span class="sd">	Print all stages registered in the simulator. Any stage listed in the output of this function can be run.</span>
 
 <span class="sd">.. _Configuration:</span>
 
@@ -179,10 +201,13 @@
 
 <span class="sd">- ``Configurations``: contains a list of potential configuration files.</span>
 <span class="sd">- ``Configurations.Main``: The name of the primary configuration file. This default is produced by the program. Overriding it in the configuration file has essentially no effect.</span>
+<span class="sd">- ``Default``: The default macro to run (i.e. the default *&#39;d argument.)</span>
 <span class="sd">- ``Dirs``: Directories that this simulator will use for output.</span>
 <span class="sd">- ``Dirs.Caches``: Location of cache files.</span>
 <span class="sd">- ``Dirs.Logs``: Location of log files.</span>
 <span class="sd">- ``Dirs.Partials``: Location of partial output, including a dump of the configuration.</span>
+<span class="sd">- ``Options``: The dictionary for storing command line options.</span>
+<span class="sd">- ``Options.DryRun``: Whether to skip actually executing stages.</span>
 <span class="sd">- ``Logging``: Configuration of the :mod:`AstroObject.AstroObjectLogging` module</span>
 
 <span class="sd">A simple configuration file can be found in the :ref:`SimulatorExample`.</span>
@@ -292,13 +317,13 @@
 
 <span class="kn">import</span> <span class="nn">multiprocessing</span>
 
-<span class="c"># Dependent Modules</span>
-<span class="kn">from</span> <span class="nn">progressbar</span> <span class="kn">import</span> <span class="o">*</span>
-
 <span class="c"># Submodules from this system</span>
 <span class="kn">from</span> <span class="nn">AstroCache</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">AstroConfig</span> <span class="kn">import</span> <span class="n">StructuredConfiguration</span><span class="p">,</span> <span class="n">DottedConfiguration</span>
-<span class="kn">from</span> <span class="nn">Utilities</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="kn">import</span> <span class="nn">util.pbar</span> <span class="kn">as</span> <span class="nn">progressbar</span>
+<span class="kn">import</span> <span class="nn">util.terminal</span> <span class="kn">as</span> <span class="nn">terminal</span>
+<span class="kn">from</span> <span class="nn">util</span> <span class="kn">import</span> <span class="n">getVersion</span><span class="p">,</span> <span class="n">npArrayInfo</span><span class="p">,</span> <span class="n">func_lineno</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;Simulator&quot;</span><span class="p">,</span><span class="s">&quot;on_collection&quot;</span><span class="p">,</span><span class="s">&quot;help&quot;</span><span class="p">,</span><span class="s">&quot;replaces&quot;</span><span class="p">,</span><span class="s">&quot;excepts&quot;</span><span class="p">,</span><span class="s">&quot;depends&quot;</span><span class="p">,</span><span class="s">&quot;include&quot;</span><span class="p">,</span><span class="s">&quot;optional&quot;</span><span class="p">,</span><span class="s">&quot;description&quot;</span><span class="p">,</span><span class="s">&quot;collect&quot;</span><span class="p">,</span><span class="s">&quot;ignore&quot;</span><span class="p">,</span><span class="s">&quot;on_instance_collection&quot;</span><span class="p">]</span>
 
@@ -507,15 +532,18 @@
 <span class="sd">        </span>
 <span class="sd">        Command line options are:</span>
 <span class="sd">        </span>
-<span class="sd">        ================== =====================</span>
-<span class="sd">        CLI Option         Description</span>
-<span class="sd">        ================== =====================</span>
-<span class="sd">        ``--version``      Display version information about this module</span>
-<span class="sd">        ``--cf file.yaml`` Specify a configuration file</span>
-<span class="sd">        ``--dry-run``      Print the stages this command would have run.</span>
-<span class="sd">        ``--dump``         Write the current configuration to file</span>
-<span class="sd">        ``--stages``       Print the stages that the command will execute, do not do anything</span>
-<span class="sd">        ================== =====================</span>
+<span class="sd">        =========================================== =====================</span>
+<span class="sd">        CLI Option                                  Description</span>
+<span class="sd">        =========================================== =====================</span>
+<span class="sd">        ``--version``                               Display version information about this module</span>
+<span class="sd">        ``--configure Option.Key=Value``            Set a configuration value on the command line. </span>
+<span class="sd">        ``-c file.yaml, --config-file file.yaml``   Specify a configuration file</span>
+<span class="sd">        ``-n, --dry-run``                           Print the stages this command would have run.</span>
+<span class="sd">        ``--show-tree``                             Show a dependency tree for the simulation</span>
+<span class="sd">        ``--show-stages``                           List all of the used stages for the simulation</span>
+<span class="sd">        ``--dump-config``                           Write the current configuration to file</span>
+<span class="sd">        ``--list-stages``                           Print the stages that the command will execute, do not do anything</span>
+<span class="sd">        =========================================== =====================</span>
 <span class="sd">        </span>
 <span class="sd">        Macros defined at this level are:</span>
 <span class="sd">        </span>
@@ -797,11 +825,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_preConfiguration</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_configure</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_postConfiguration</span><span class="p">()</span>
-        <span class="c"># Start Logging</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">configuration</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">vstr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">vstr</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">starting</span> <span class="o">=</span> <span class="bp">False</span>
                 </div>
 <div class="viewcode-block" id="Simulator.do"><a class="viewcode-back" href="../../AstroSimulator.html#AstroObject.AstroSimulator.Simulator.do">[docs]</a>    <span class="k">def</span> <span class="nf">do</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">stages</span><span class="p">):</span>
@@ -881,7 +904,7 @@
         
         <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span>
         <span class="n">indicator</span> <span class="o">=</span> <span class="s">u&quot;└&gt;</span><span class="si">%s</span><span class="s">&quot;</span> <span class="k">if</span> <span class="n">level</span> <span class="k">else</span> <span class="s">u&quot;=&gt;</span><span class="si">%s</span><span class="s">&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_depTree</span> <span class="o">+=</span> <span class="p">[</span><span class="s">&quot;</span><span class="si">%-30s</span><span class="s"> : </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="s">u&quot;  &quot;</span> <span class="o">*</span> <span class="n">level</span> <span class="o">+</span> <span class="n">indicator</span> <span class="o">%</span> <span class="n">stage</span><span class="p">,</span><span class="n">s</span><span class="o">.</span><span class="n">description</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_depTree</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;</span><span class="si">%-30s</span><span class="s"> : </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="s">u&quot;  &quot;</span> <span class="o">*</span> <span class="n">level</span> <span class="o">+</span> <span class="n">indicator</span> <span class="o">%</span> <span class="n">stage</span><span class="p">,</span><span class="n">s</span><span class="o">.</span><span class="n">description</span><span class="p">)]</span>
         <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">macro</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Options.DryRun&quot;</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">complete</span> <span class="o">+=</span> <span class="p">[</span><span class="n">stage</span><span class="p">]</span> <span class="o">+</span> <span class="n">s</span><span class="o">.</span><span class="n">reps</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">done</span> <span class="o">+=</span> <span class="p">[</span><span class="n">stage</span><span class="p">]</span>
@@ -894,9 +917,9 @@
             <span class="n">s</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">KeyboardInterrupt</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">useConsole</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s">&quot;Keyboard Interrupt during </span><span class="si">%(stage)s</span><span class="s">... ending simulator.&quot;</span> <span class="o">%</span> <span class="p">{</span><span class="s">&#39;stage&#39;</span><span class="p">:</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">})</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s">&quot;Last completed stage: </span><span class="si">%(stage)s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">{</span><span class="s">&#39;stage&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">complete</span><span class="o">.</span><span class="n">pop</span><span class="p">()})</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Stages completed: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">complete</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s">u&quot;Keyboard Interrupt during </span><span class="si">%(stage)s</span><span class="s">... ending simulator.&quot;</span> <span class="o">%</span> <span class="p">{</span><span class="s">&#39;stage&#39;</span><span class="p">:</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s">u&quot;Last completed stage: </span><span class="si">%(stage)s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">{</span><span class="s">&#39;stage&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">complete</span><span class="o">.</span><span class="n">pop</span><span class="p">()})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">u&quot;Stages completed: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="s">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">complete</span><span class="p">))</span>
             <span class="k">raise</span>
         <span class="k">except</span> <span class="n">s</span><span class="o">.</span><span class="n">exceptions</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Debug&quot;</span><span class="p">]:</span>
@@ -945,6 +968,9 @@
         
         <span class="bp">self</span><span class="o">.</span><span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
         
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span>
+        
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">progressbar</span> <span class="ow">and</span> <span class="n">color</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">level</span> <span class="o">&lt;=</span> <span class="mi">20</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_start_progress_bar</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">collection</span><span class="p">),</span><span class="n">color</span><span class="p">)</span>
             <span class="n">showBar</span> <span class="o">=</span> <span class="bp">True</span>
@@ -958,7 +984,11 @@
         <span class="k">finally</span><span class="p">:</span>       
             <span class="k">if</span> <span class="n">showBar</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_end_progress_bar</span><span class="p">()</span>
-            <span class="n">ferr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="p">))</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">collection</span><span class="p">))</span>
+                
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">collection</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">ferr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="p">))</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">collection</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ferr</span> <span class="o">=</span> <span class="mf">1.0</span>
             <span class="k">if</span> <span class="n">ferr</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">u&quot;</span><span class="si">%d%%</span><span class="s"> of iterations had errors.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ferr</span> <span class="o">*</span> <span class="mf">100.0</span><span class="p">))</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">u&quot;See the log for Errors.&quot;</span><span class="p">)</span>
@@ -1041,6 +1071,10 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">for</span> <span class="n">cfg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;Options.afterConfigure&quot;</span><span class="p">,[]):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">configuration</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">vstr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">vstr</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">fk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;Options.afterFunction&quot;</span><span class="p">,[]):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">functions</span><span class="p">[</span><span class="n">fk</span><span class="p">]()</span>
 
@@ -1049,13 +1083,12 @@
     <span class="c">############################################    </span>
         </div>
     <span class="k">def</span> <span class="nf">_list_stages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;List stages and exit&quot;&quot;&quot;</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s">&quot;Stages:</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="sd">&quot;&quot;&quot;List stages&quot;&quot;&quot;</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;Stages:&quot;</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">stage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">orders</span><span class="p">:</span>
             <span class="n">s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span>
-            <span class="n">text</span> <span class="o">+=</span> <span class="s">&quot;</span><span class="si">%(command)-20s</span><span class="s"> : </span><span class="si">%(desc)s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">{</span><span class="s">&#39;command&#39;</span><span class="p">:</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="s">&#39;desc&#39;</span><span class="p">:</span><span class="n">s</span><span class="o">.</span><span class="n">description</span><span class="p">}</span>
-            <span class="n">text</span> <span class="o">+=</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+            <span class="n">text</span> <span class="o">+=</span> <span class="p">[</span><span class="s">&quot;</span><span class="si">%(command)-20s</span><span class="s"> : </span><span class="si">%(desc)s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">{</span><span class="s">&#39;command&#39;</span><span class="p">:</span><span class="n">s</span><span class="o">.</span><span class="n">name</span><span class="p">,</span><span class="s">&#39;desc&#39;</span><span class="p">:</span><span class="n">s</span><span class="o">.</span><span class="n">description</span><span class="p">}]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">u&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
     
     <span class="k">def</span> <span class="nf">_dump_full_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;docstring for _dump_full_config&quot;&quot;&quot;</span>
@@ -1113,8 +1146,8 @@
     
     <span class="k">def</span> <span class="nf">_start_progress_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">length</span><span class="p">,</span><span class="n">color</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a progress bar object of a specified color in the standard format.&quot;&quot;&quot;</span>
-        <span class="n">widgets</span> <span class="o">=</span> <span class="p">[</span><span class="n">Percentage</span><span class="p">(),</span><span class="s">&#39; &#39;</span><span class="p">,</span><span class="n">ColorBar</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">),</span><span class="s">&#39; &#39;</span><span class="p">,</span><span class="n">ETA</span><span class="p">()]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">progressbar</span> <span class="o">=</span> <span class="n">ProgressBar</span><span class="p">(</span><span class="n">widgets</span><span class="o">=</span><span class="n">widgets</span><span class="p">,</span><span class="n">maxval</span><span class="o">=</span><span class="n">length</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="n">widgets</span> <span class="o">=</span> <span class="p">[</span> <span class="n">progressbar</span><span class="o">.</span><span class="n">Percentage</span><span class="p">(),</span><span class="s">&#39; &#39;</span><span class="p">,</span> <span class="n">progressbar</span><span class="o">.</span><span class="n">ColorBar</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">),</span><span class="s">&#39; &#39;</span><span class="p">,</span> <span class="n">progressbar</span><span class="o">.</span><span class="n">ETA</span><span class="p">()]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progressbar</span> <span class="o">=</span> <span class="n">progressbar</span><span class="o">.</span><span class="n">ProgressBar</span><span class="p">(</span><span class="n">widgets</span><span class="o">=</span><span class="n">widgets</span><span class="p">,</span><span class="n">maxval</span><span class="o">=</span><span class="n">length</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progress</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">useConsole</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">progressbar</span>
@@ -1280,8 +1313,9 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.5.1 documentation</a> &raquo;</li>
-          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+        <li><a href="../../index.html">AstroObject 0.5.3 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../AstroObject.html" >AstroObject</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

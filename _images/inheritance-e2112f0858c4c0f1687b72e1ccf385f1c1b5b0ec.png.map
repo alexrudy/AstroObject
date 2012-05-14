@@ -1,9 +1,0 @@
-<map id="inheritance23ddbd5d64" name="inheritance23ddbd5d64">
-<area shape="rect" id="node1" href="#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="260,4,375,26"/>
-<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="122,47,203,69"/>
-<area shape="rect" id="node11" href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraFrame" title="SpectraFrame" alt="" coords="269,91,366,112"/>
-<area shape="rect" id="node4" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="5,89,66,111"/>
-<area shape="rect" id="node9" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="107,89,219,111"/>
-<area shape="rect" id="node13" href="AstroObject.html#AstroObject.AstroSpectra.SpectraMixin" title="SpectraMixin" alt="" coords="119,132,207,153"/>
-<area shape="rect" id="node16" href="#AstroObject.AnalyticSpectra.InterpolatedSpectrum" title="InterpolatedSpectrum" alt="" coords="624,69,763,91"/>
-</map>

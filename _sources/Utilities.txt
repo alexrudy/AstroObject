@@ -1,3 +1,3 @@
-.. automodule:: AstroObject.Utilities
+.. automodule:: AstroObject.util
 
 

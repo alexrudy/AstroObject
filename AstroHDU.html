@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,15 +7,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>8. AstroHDU – HDU Objects and Storage &mdash; AstroObject 0.5.1 documentation</title>
+    <title>8. AstroHDU – HDU Objects and Storage &mdash; AstroObject 0.5.3 documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5.1',
+        VERSION:     '0.5.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5.1 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.5.3 documentation" href="index.html" />
     <link rel="next" title="9. iraftools – IRAF integration facility" href="iraftools.html" />
     <link rel="prev" title="7. AstroNDArray – Numpy Array Frames" href="AstroNDArray.html" /> 
   </head>
@@ -45,7 +44,7 @@
         <li class="right" >
           <a href="AstroNDArray.html" title="7. AstroNDArray – Numpy Array Frames"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5.3 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -140,7 +139,7 @@
 <p class="first admonition-title">Warning</p>
 <p>Unlike with the <tt class="xref py py-meth docutils literal"><span class="pre">BaseStack.data()</span></tt> call, the object returned here should be treated as roughly immutable. That is, it is not advisable to re-use the data frame here, as Python has returned a reference to all examples of this data frame in your code:</p>
 <div class="last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">BaseStack</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">FITSFrame</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span><span class="s">&quot;Label&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">FITSFrame</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="s">&quot;Label&quot;</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Frame</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">frame</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Frame</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s">&quot;Other&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">frame</span><span class="p">()</span><span class="o">.</span><span class="n">label</span>
@@ -157,7 +156,7 @@
 <dl class="attribute">
 <dt id="AstroObject.AstroHDU.HDUStack.framename">
 <tt class="descname">framename</tt><a class="headerlink" href="#AstroObject.AstroHDU.HDUStack.framename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Current frame name. This will normally be the last saved <strong>frame</strong>, but there are some exceptions. First, explicitly using <a class="reference internal" href="#AstroObject.AstroHDU.HDUStack.select" title="AstroObject.AstroHDU.HDUStack.select"><tt class="xref py py-meth docutils literal"><span class="pre">select()</span></tt></a> will change the framename. Also, deleting the most recent frame will by default change the selected frame to the second oldest. Using the <a class="reference internal" href="#AstroObject.AstroHDU.HDUStack.save" title="AstroObject.AstroHDU.HDUStack.save"><tt class="xref py py-meth docutils literal"><span class="pre">save()</span></tt></a> function with <tt class="docutils literal"><span class="pre">save(data,select=False)</span></tt> will skip the selection of that added frame.</p>
+<dd><p>Current frame name. This will normally be the last saved <strong>frame</strong>, but there are some exceptions. First, explicitly using <a class="reference internal" href="#AstroObject.AstroHDU.HDUStack.select" title="AstroObject.AstroHDU.HDUStack.select"><tt class="xref py py-meth docutils literal"><span class="pre">select()</span></tt></a> will change the framename. Also, deleting the most recent frame will by default change the selected frame to the second oldest. Using the <a class="reference internal" href="#AstroObject.AstroHDU.HDUStack.save" title="AstroObject.AstroHDU.HDUStack.save"><tt class="xref py py-meth docutils literal"><span class="pre">save()</span></tt></a> function with <tt class="docutils literal"><span class="pre">save(data,</span> <span class="pre">select=False)</span></tt> will skip the selection of that added frame.</p>
 </dd></dl>
 
 <dl class="method">
@@ -172,7 +171,7 @@
 <dd><p>Retrun a new object created from a filename. This method is a shortcut factory for <a class="reference internal" href="#AstroObject.AstroHDU.HDUStack.read" title="AstroObject.AstroHDU.HDUStack.read"><tt class="xref py py-meth docutils literal"><span class="pre">read()</span></tt></a>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">BaseStack</span><span class="o">.</span><span class="n">fromFile</span><span class="p">(</span><span class="s">&quot;SomeImage.fits&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
-<span class="go">[&quot;SomeImage&quot;,&quot;SomeImage-1&quot;,&quot;SomeImage-2&quot;]</span>
+<span class="go">[&quot;SomeImage&quot;, &quot;SomeImage-1&quot;, &quot;SomeImage-2&quot;]</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -219,7 +218,7 @@
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">BaseStack</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&quot;SomeImage.fits&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
-<span class="go">[&quot;SomeImage&quot;,&quot;SomeImage-1&quot;,&quot;SomeImage-2&quot;]</span>
+<span class="go">[&quot;SomeImage&quot;, &quot;SomeImage-1&quot;, &quot;SomeImage-2&quot;]</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -264,7 +263,10 @@
 <tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><p class="first"><tt class="xref py py-exc docutils literal"><span class="pre">TypeError</span></tt> when the data cannot be cast as any dataClass</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><p class="first last"><tt class="xref py py-exc docutils literal"><span class="pre">KeyError</span></tt> when the data would overwrite an existing frame.</p>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><p class="first"><tt class="xref py py-exc docutils literal"><span class="pre">KeyError</span></tt> when the data would overwrite an existing frame.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns string:</th><td class="field-body"><p class="first last">Label of the saved frame.</p>
 </td>
 </tr>
 </tbody>
@@ -441,7 +443,7 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
         <li class="right" >
           <a href="AstroNDArray.html" title="7. AstroNDArray – Numpy Array Frames"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5.3 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

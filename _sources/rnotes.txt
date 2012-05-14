@@ -1,7 +1,21 @@
 Release Notes
 =============
+* 0.5.3
+	- :mod:`~AstroObject.util` module which contains submodules for utiltity functions.
+	- :mod:`~AstroObject.file` module which handles IO, via the FITS format, which is now the standard for format for AstroObject.
+	- :meth:`~AstroObject.AstroObjectBase.BaseFrame.__getlabel__` API static method for extracting labels from HDU headers. Classes built with the :class:`~AstroObject.AstroObjectBase.HDUHeaderMixin` do not need to be altered.
+* 0.5.2
+	- Bug fix for simulator functions, earlier logging starts.
+* 0.5.1
+	- Better simulator output options
+	- Refactored simulator code to use internal APIs
+	- Naming schemes have changed: e.g. **stacks** and **frames** are more consistently used. Keyword arguments that used to be **statename** are now **framename** for more consistency. There is NO depreciation provided.
+	- Internal properties of **stacks** have been made private.
+	- There is a new crop and mask method for :class:`AstroImage.ImageStack <AstroObject.AstroImage.ImageStack>`
+	- Fixed some unicode errors in the system.
+	- Changed :mod:`IRAFTools <AstroObject.iraftools>` names
 * 0.5.0
-    - Consistent vocabulary is now in force: Two object types, **stacks** and **frames**. See :ref:`**stacks** <Stacks>` and :ref:`**frames** <Frames>`.
+    - Consistent vocabulary is now in force: Two object types, **stacks** and **frames**. See :ref:`stacks <Stacks>` and :ref:`frames <Frames>`.
     - :mod:`~AstroObject.iraftools` is included to provide access to writing and reading IRAF FITS files in a python-centric routine.
     - Testing is vastly improved.
     - Fixed some unicode errors.

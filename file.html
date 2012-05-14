@@ -1,0 +1,552 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>14. file - File IO &mdash; AstroObject 0.5.3 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="AstroObject 0.5.3 documentation" href="index.html" />
+    <link rel="next" title="15. util — Utility functions" href="Utilities.html" />
+    <link rel="prev" title="13. AstroObjectLogging — Structured Configuration Logging" href="AstroObjectLogging.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Utilities.html" title="15. util — Utility functions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="AstroObjectLogging.html" title="13. AstroObjectLogging — Structured Configuration Logging"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">AstroObject 0.5.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <span class="target" id="module-AstroObject.file"></span><div class="section" id="file-file-io">
+<h1>14. <tt class="xref py py-mod docutils literal"><span class="pre">file</span></tt> - File IO<a class="headerlink" href="#file-file-io" title="Permalink to this headline">¶</a></h1>
+<p>This module provides the support in AstroObject for arbitrary file format input and output. File-type objects are created which validate a filename internally, then read (open) or write files of varying formats. In their most basic forms, file-type objects should validate the viability of a file when they are initialized (check that the path exists, and that the filename has the proper extension), raising an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> if some feature of this file will not be able to be saved. File objects must also have a <tt class="xref py py-meth docutils literal"><span class="pre">write()</span></tt> and <tt class="xref py py-meth docutils literal"><span class="pre">open()</span></tt> to write to files.</p>
+<dl class="class">
+<dt id="AstroObject.file.File">
+<em class="property">class </em><tt class="descclassname">AstroObject.file.</tt><tt class="descname">File</tt><a class="reference internal" href="_modules/AstroObject/file.html#File"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.File" title="Permalink to this definition">¶</a></dt>
+<dd><p>A generic file object meant to facilitate writing and reading HDULists from a particular type of file. This abstract base class should be used as a template for other file writing objects.</p>
+<dl class="method">
+<dt id="AstroObject.file.File.write">
+<tt class="descname">write</tt><big>(</big><em>stack</em>, <em>clobber=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file.html#File.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.File.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write this file using the HDUList provided.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>stack</strong> (<em>HDUList</em>) &#8211; A pyfits HDU list which should be written to a file.</li>
+<li><strong>clobber</strong> (<em>bool</em>) &#8211; Whether to overwrite the file on output</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.File.open">
+<tt class="descname">open</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/file.html#File.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.File.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open this file and return an HDUList.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.File.validate_filename">
+<tt class="descname">validate_filename</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file.html#File.validate_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.File.validate_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raise an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> if the filename is not acceptalbe to this file type. Else return true.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>string</em>) &#8211; The filename to check.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> when the filename is not valid for this filetype.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True for valid extensions.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Variables:</th><td class="field-body"><strong>__extensions__</strong> &#8211; The internal array of acceptable extensions.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-AstroObject.file.fits"></span><div class="section" id="file-fits-an-abstraction-layer-for-fits-files">
+<h2>14.1. <tt class="xref py py-mod docutils literal"><span class="pre">file.fits</span></tt> - An abstraction layer for FITS Files<a class="headerlink" href="#file-fits-an-abstraction-layer-for-fits-files" title="Permalink to this headline">¶</a></h2>
+<p>This module provides a simple extraction layer class for FITS file writing. FITS files must have either the <tt class="docutils literal"><span class="pre">.fit</span></tt> or <tt class="docutils literal"><span class="pre">.fits</span></tt> extension to be detected by this module. The module reads and writes files using <tt class="xref py py-mod docutils literal"><span class="pre">pyfits</span></tt>.</p>
+<dl class="class">
+<dt id="AstroObject.file.fits.FITSFile">
+<em class="property">class </em><tt class="descclassname">AstroObject.file.fits.</tt><tt class="descname">FITSFile</tt><big>(</big><em>filename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/fits.html#FITSFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fits.FITSFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>A fits file implementation which simply passes <tt class="docutils literal"><span class="pre">HDUs</span></tt> through to the <tt class="xref py py-mod docutils literal"><span class="pre">pyfits</span></tt> API.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>string</em>) &#8211; The filename, which must end in <tt class="docutils literal"><span class="pre">.fit</span></tt> or <tt class="docutils literal"><span class="pre">.fits</span></tt> to be considered valid.</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="61%" />
+<col width="39%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">extension</th>
+<th class="head">notes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">.fits</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">.fit</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="AstroObject.file.fits.FITSFile.write">
+<tt class="descname">write</tt><big>(</big><em>stack</em>, <em>clobber=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/fits.html#FITSFile.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fits.FITSFile.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a stack to this file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>stack</strong> (<em>HDUList</em>) &#8211; An HDUList to write to a file.</li>
+<li><strong>clobber</strong> (<em>bool</em>) &#8211; Whether to overwrite the destination file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fits.FITSFile.open">
+<tt class="descname">open</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/file/fits.html#FITSFile.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fits.FITSFile.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open this file and return the HDUList.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fits.FITSFile.validate_filename">
+<tt class="descname">validate_filename</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#AstroObject.file.fits.FITSFile.validate_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raise an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> if the filename is not acceptalbe to this file type. Else return true.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>string</em>) &#8211; The filename to check.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> when the filename is not valid for this filetype.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True for valid extensions.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Variables:</th><td class="field-body"><strong>__extensions__</strong> &#8211; The internal array of acceptable extensions.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<span class="target" id="module-AstroObject.file.plaintext"></span><div class="section" id="file-plaintext-plain-text-file-writing">
+<h2>14.2. <tt class="xref py py-mod docutils literal"><span class="pre">file.plaintext</span></tt> – Plain Text File writing<a class="headerlink" href="#file-plaintext-plain-text-file-writing" title="Permalink to this headline">¶</a></h2>
+<p>This module handles writing simple text files. In <a class="reference internal" href="intro.html#module-AstroObject" title="AstroObject"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject</span></tt></a>, simple text files have the extension <tt class="docutils literal"><span class="pre">.txt</span></tt> or <tt class="docutils literal"><span class="pre">.dat</span></tt>. As well, since this module uses numpy to load and read text files, gzipped files can be read automatically as gzipped text files, with the <tt class="docutils literal"><span class="pre">.gz</span></tt> extension.</p>
+<dl class="class">
+<dt id="AstroObject.file.plaintext.NumpyTextFile">
+<em class="property">class </em><tt class="descclassname">AstroObject.file.plaintext.</tt><tt class="descname">NumpyTextFile</tt><big>(</big><em>filename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/plaintext.html#NumpyTextFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.plaintext.NumpyTextFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple text file writing using the <tt class="xref py py-mod docutils literal"><span class="pre">numpy</span></tt> text facilities. Text files write the raw data of the data component to the HDU to a simple text file.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="32%" />
+<col width="68%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">extension</th>
+<th class="head">notes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">.txt</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">.dat</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">.gz</span></tt></td>
+<td>Compressed text files.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Since text files only contain the raw HDU data, any information stored in FITS headers or otherwise held as object metadata will not be saved.</p>
+</div>
+<dl class="method">
+<dt id="AstroObject.file.plaintext.NumpyTextFile.write">
+<tt class="descname">write</tt><big>(</big><em>stack</em>, <em>clobber=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/plaintext.html#NumpyTextFile.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.plaintext.NumpyTextFile.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a stack to this file. The stack cannot have more than one HDU element. The text file will be a text representation of the HDU&#8217;s data array, and will not contain any metadata information.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>stack</strong> (<em>HDUList</em>) &#8211; An HDUList to write to a file.</li>
+<li><strong>clobber</strong> (<em>bool</em>) &#8211; Whether to overwrite the destination file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.plaintext.NumpyTextFile.open">
+<tt class="descname">open</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/file/plaintext.html#NumpyTextFile.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.plaintext.NumpyTextFile.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open this file and return the HDUList.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.plaintext.NumpyTextFile.validate_filename">
+<tt class="descname">validate_filename</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#AstroObject.file.plaintext.NumpyTextFile.validate_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raise an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> if the filename is not acceptalbe to this file type. Else return true.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>string</em>) &#8211; The filename to check.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> when the filename is not valid for this filetype.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True for valid extensions.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Variables:</th><td class="field-body"><strong>__extensions__</strong> &#8211; The internal array of acceptable extensions.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="AstroObject.file.plaintext.AstroObjectTextFile">
+<em class="property">class </em><tt class="descclassname">AstroObject.file.plaintext.</tt><tt class="descname">AstroObjectTextFile</tt><big>(</big><em>filename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/plaintext.html#AstroObjectTextFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.plaintext.AstroObjectTextFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple text file writing using the <tt class="xref py py-mod docutils literal"><span class="pre">numpy</span></tt> text facilities. Text files write the raw data of the data component to the HDU to a simple text file.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="61%" />
+<col width="39%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">extension</th>
+<th class="head">notes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">.aotxt</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">.aodat</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="AstroObject.file.plaintext.AstroObjectTextFile.write">
+<tt class="descname">write</tt><big>(</big><em>stack</em>, <em>clobber=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/plaintext.html#AstroObjectTextFile.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.plaintext.AstroObjectTextFile.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a stack to this file. The stack cannot have more than one HDU element. The text file will be a text representation of the HDU&#8217;s data array, and will not contain any metadata information.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>stack</strong> (<em>HDUList</em>) &#8211; An HDUList to write to a file.</li>
+<li><strong>clobber</strong> (<em>bool</em>) &#8211; Whether to overwrite the destination file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.plaintext.AstroObjectTextFile.open">
+<tt class="descname">open</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/file/plaintext.html#AstroObjectTextFile.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.plaintext.AstroObjectTextFile.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open this file and return the HDUList.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.plaintext.AstroObjectTextFile.validate_filename">
+<tt class="descname">validate_filename</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#AstroObject.file.plaintext.AstroObjectTextFile.validate_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raise an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> if the filename is not acceptalbe to this file type. Else return true.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>string</em>) &#8211; The filename to check.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> when the filename is not valid for this filetype.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True for valid extensions.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Variables:</th><td class="field-body"><strong>__extensions__</strong> &#8211; The internal array of acceptable extensions.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<span class="target" id="module-AstroObject.file.npy"></span><div class="section" id="file-npy-an-abstraction-layer-for-numpy-files">
+<h2>14.3. <tt class="xref py py-mod docutils literal"><span class="pre">file.npy</span></tt> — An abstraction layer for <tt class="xref py py-mod docutils literal"><span class="pre">numpy</span></tt> files<a class="headerlink" href="#file-npy-an-abstraction-layer-for-numpy-files" title="Permalink to this headline">¶</a></h2>
+<p>This module handles the writing and reading of <tt class="docutils literal"><span class="pre">.npy</span></tt> and <tt class="docutils literal"><span class="pre">.npz</span></tt> files. <tt class="docutils literal"><span class="pre">.npy</span></tt> files are single-array files, where each file will contain only one frame. <tt class="docutils literal"><span class="pre">.npz</span></tt> files are multiple-frame files. Neither format contains any metadata about the image.</p>
+<dl class="class">
+<dt id="AstroObject.file.npy.NumpyFile">
+<em class="property">class </em><tt class="descclassname">AstroObject.file.npy.</tt><tt class="descname">NumpyFile</tt><big>(</big><em>filename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/npy.html#NumpyFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.npy.NumpyFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple numpy binary file writing using the <tt class="xref py py-mod docutils literal"><span class="pre">numpy</span></tt> file facilities. Saves the raw data component to a binary <tt class="xref py py-mod docutils literal"><span class="pre">numpy</span></tt> file.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="61%" />
+<col width="39%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">extension</th>
+<th class="head">notes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">.npy</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Since <tt class="xref py py-mod docutils literal"><span class="pre">numpy</span></tt> files only contain the raw HDU data, any information stored in FITS headers or otherwise held as object metadata will not be saved.</p>
+</div>
+<dl class="method">
+<dt id="AstroObject.file.npy.NumpyFile.write">
+<tt class="descname">write</tt><big>(</big><em>stack</em>, <em>clobber=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/npy.html#NumpyFile.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.npy.NumpyFile.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a stack to this file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>stack</strong> (<em>HDUList</em>) &#8211; An HDUList to write to a file.</li>
+<li><strong>clobber</strong> (<em>bool</em>) &#8211; Whether to overwrite the destination file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.npy.NumpyFile.open">
+<tt class="descname">open</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/file/npy.html#NumpyFile.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.npy.NumpyFile.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open this file and return the HDUList.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.npy.NumpyFile.validate_filename">
+<tt class="descname">validate_filename</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#AstroObject.file.npy.NumpyFile.validate_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raise an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> if the filename is not acceptalbe to this file type. Else return true.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>string</em>) &#8211; The filename to check.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> when the filename is not valid for this filetype.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True for valid extensions.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Variables:</th><td class="field-body"><strong>__extensions__</strong> &#8211; The internal array of acceptable extensions.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="AstroObject.file.npy.NumpyZipFile">
+<em class="property">class </em><tt class="descclassname">AstroObject.file.npy.</tt><tt class="descname">NumpyZipFile</tt><big>(</big><em>filename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/npy.html#NumpyZipFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.npy.NumpyZipFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple numpy binary file writing using the <tt class="xref py py-mod docutils literal"><span class="pre">numpy</span></tt> file facilities. Saves the raw data component to a binary <tt class="xref py py-mod docutils literal"><span class="pre">numpy</span></tt> file.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="61%" />
+<col width="39%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">extension</th>
+<th class="head">notes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">.npz</span></tt></td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Since <tt class="xref py py-mod docutils literal"><span class="pre">numpy</span></tt> files only contain the raw HDU data, any information stored in FITS headers or otherwise held as object metadata will not be saved.</p>
+</div>
+<dl class="method">
+<dt id="AstroObject.file.npy.NumpyZipFile.write">
+<tt class="descname">write</tt><big>(</big><em>stack</em>, <em>clobber=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/npy.html#NumpyZipFile.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.npy.NumpyZipFile.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a stack to this file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>stack</strong> (<em>HDUList</em>) &#8211; An HDUList to write to a file.</li>
+<li><strong>clobber</strong> (<em>bool</em>) &#8211; Whether to overwrite the destination file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.npy.NumpyZipFile.open">
+<tt class="descname">open</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/file/npy.html#NumpyZipFile.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.npy.NumpyZipFile.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open this file and return the HDUList.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.npy.NumpyZipFile.validate_filename">
+<tt class="descname">validate_filename</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#AstroObject.file.npy.NumpyZipFile.validate_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Raise an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> if the filename is not acceptalbe to this file type. Else return true.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>string</em>) &#8211; The filename to check.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> when the filename is not valid for this filetype.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True for valid extensions.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Variables:</th><td class="field-body"><strong>__extensions__</strong> &#8211; The internal array of acceptable extensions.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">14. <tt class="docutils literal"><span class="pre">file</span></tt> - File IO</a><ul>
+<li><a class="reference internal" href="#file-fits-an-abstraction-layer-for-fits-files">14.1. <tt class="docutils literal"><span class="pre">file.fits</span></tt> - An abstraction layer for FITS Files</a></li>
+<li><a class="reference internal" href="#file-plaintext-plain-text-file-writing">14.2. <tt class="docutils literal"><span class="pre">file.plaintext</span></tt> – Plain Text File writing</a></li>
+<li><a class="reference internal" href="#file-npy-an-abstraction-layer-for-numpy-files">14.3. <tt class="docutils literal"><span class="pre">file.npy</span></tt> — An abstraction layer for <tt class="docutils literal"><span class="pre">numpy</span></tt> files</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="AstroObjectLogging.html"
+                        title="previous chapter">13. <tt class="docutils literal docutils literal docutils literal"><span class="pre">AstroObjectLogging</span></tt> — Structured Configuration Logging</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Utilities.html"
+                        title="next chapter">15. <tt class="docutils literal docutils literal"><span class="pre">util</span></tt> — Utility functions</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/file.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="Utilities.html" title="15. util — Utility functions"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="AstroObjectLogging.html" title="13. AstroObjectLogging — Structured Configuration Logging"
+             >previous</a> |</li>
+        <li><a href="index.html">AstroObject 0.5.3 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Alexander Rudy.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

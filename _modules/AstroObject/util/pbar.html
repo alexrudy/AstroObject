@@ -1,0 +1,203 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>AstroObject.util.pbar &mdash; AstroObject 0.5.3 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.5.3',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="AstroObject 0.5.3 documentation" href="../../../index.html" />
+    <link rel="up" title="AstroObject.util" href="../util.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">AstroObject 0.5.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../../AstroObject.html" >AstroObject</a> &raquo;</li>
+          <li><a href="../util.html" accesskey="U">AstroObject.util</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for AstroObject.util.pbar</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c"># </span>
+<span class="c">#  progressbar.py</span>
+<span class="c">#  AstroObject</span>
+<span class="c">#  </span>
+<span class="c">#  Created by Alexander Rudy on 2012-05-08.</span>
+<span class="c">#  Copyright 2012 Alexander Rudy. All rights reserved.</span>
+<span class="c"># </span>
+<span class="sd">u&quot;&quot;&quot;</span>
+<span class="sd">:mod:`util.pbar` – Colored progressbar functions to extend the progressbar module</span>
+<span class="sd">---------------------------------------------------------------------------------</span>
+
+<span class="sd">This module contains extensions to the progressbar module (&lt;http://pypi.python.org/pypi/progressbar/2.2&gt;)</span>
+
+<span class="sd">.. autoclass::</span>
+<span class="sd">    ProgressBar</span>
+<span class="sd">    :members:</span>
+<span class="sd">    :inherited-members:</span>
+<span class="sd">    </span>
+<span class="sd">.. autoclass::</span>
+<span class="sd">    ColorBar</span>
+<span class="sd">    :members:</span>
+<span class="sd">    :inherited-members:</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">progressbar</span>
+
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">terminal</span>
+
+<span class="kn">from</span> <span class="nn">progressbar</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="ProgressBar"><a class="viewcode-back" href="../../../Utilities.html#AstroObject.util.pbar.ProgressBar">[docs]</a><span class="k">class</span> <span class="nc">ProgressBar</span><span class="p">(</span><span class="n">progressbar</span><span class="o">.</span><span class="n">ProgressBar</span><span class="p">):</span>
+<div class="viewcode-block" id="ProgressBar.update"><a class="viewcode-back" href="../../../Utilities.html#AstroObject.util.pbar.ProgressBar.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Updates the ProgressBar to a new value. Monkey Patch edition&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">progressbar</span><span class="o">.</span><span class="n">UnknownLength</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maxval</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">progressbar</span><span class="o">.</span><span class="n">UnknownLength</span>
+                <span class="ow">and</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxval</span><span class="p">):</span>
+
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Value out of range&#39;</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">currval</span> <span class="o">=</span> <span class="n">value</span>
+
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_need_update</span><span class="p">():</span> <span class="k">return</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;You must call &quot;start&quot; before calling &quot;update&quot;&#39;</span><span class="p">)</span>
+
+        <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seconds_elapsed</span> <span class="o">=</span> <span class="n">now</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_update</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">currval</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_interval</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s">&#39;_lines&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fd</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lines</span> <span class="o">*</span> <span class="p">(</span><span class="n">terminal</span><span class="o">.</span><span class="n">UP</span> <span class="o">+</span> <span class="n">terminal</span><span class="o">.</span><span class="n">BOL</span> <span class="o">+</span> <span class="n">terminal</span><span class="o">.</span><span class="n">CLEAR_EOL</span><span class="p">))</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_line</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fd</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fd</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s">&#39;_lines&#39;</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_update_time</span> <span class="o">=</span> <span class="n">now</span>
+        </div>
+<div class="viewcode-block" id="ProgressBar.finish"><a class="viewcode-back" href="../../../Utilities.html#AstroObject.util.pbar.ProgressBar.finish">[docs]</a>    <span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Puts the progress bar in a finished state&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ProgressBar</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fd</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lines</span> <span class="o">*</span> <span class="p">(</span><span class="n">terminal</span><span class="o">.</span><span class="n">UP</span> <span class="o">+</span> <span class="n">terminal</span><span class="o">.</span><span class="n">BOL</span> <span class="o">+</span> <span class="n">terminal</span><span class="o">.</span><span class="n">CLEAR_EOL</span><span class="p">))</span>
+        </div></div>
+<div class="viewcode-block" id="ColorBar"><a class="viewcode-back" href="../../../Utilities.html#AstroObject.util.pbar.ColorBar">[docs]</a><span class="k">class</span> <span class="nc">ColorBar</span><span class="p">(</span><span class="n">progressbar</span><span class="o">.</span><span class="n">Bar</span><span class="p">):</span>
+    <span class="s">&#39;A progress bar which stretches to fill the line.&#39;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s">u&#39;█&#39;</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="s">&#39;|&#39;</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="s">&#39;|&#39;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s">&#39; &#39;</span><span class="p">,</span>
+                 <span class="n">fill_left</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">&quot;green&quot;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Creates a customizable progress bar.</span>
+
+<span class="sd">        marker - string or updatable object to use as a marker</span>
+<span class="sd">        left - string or updatable object to use as a left border</span>
+<span class="sd">        right - string or updatable object to use as a right border</span>
+<span class="sd">        fill - character to use for the empty part of the progress bar</span>
+<span class="sd">        fill_left - whether to fill from the left or the right</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">marker</span> <span class="o">=</span> <span class="n">marker</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left</span> <span class="o">=</span> <span class="n">left</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="n">right</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fill</span> <span class="o">=</span> <span class="n">fill</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fill_left</span> <span class="o">=</span> <span class="n">fill_left</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">terminal</span><span class="p">,</span><span class="n">color</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span><span class="n">terminal</span><span class="o">.</span><span class="n">NORMAL</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nocolor</span> <span class="o">=</span> <span class="n">terminal</span><span class="o">.</span><span class="n">NORMAL</span>
+
+
+<div class="viewcode-block" id="ColorBar.update"><a class="viewcode-back" href="../../../Utilities.html#AstroObject.util.pbar.ColorBar.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pbar</span><span class="p">,</span> <span class="n">width</span><span class="p">):</span>
+        <span class="s">&#39;Updates the progress bar and its subcomponents&#39;</span>
+
+        <span class="n">left</span><span class="p">,</span> <span class="n">marked</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">nocolor</span> <span class="o">=</span> <span class="p">(</span><span class="n">progressbar</span><span class="o">.</span><span class="n">format_updatable</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">pbar</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span>
+                               <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">marker</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nocolor</span><span class="p">))</span>
+
+        <span class="n">width</span> <span class="o">-=</span> <span class="nb">len</span><span class="p">(</span><span class="n">left</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">right</span><span class="p">)</span>
+        <span class="n">itemw</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">marker</span><span class="p">)</span>
+        <span class="c"># Marked must *always* have length of 1</span>
+        <span class="k">if</span> <span class="n">pbar</span><span class="o">.</span><span class="n">maxval</span><span class="p">:</span>
+          <span class="n">marked</span> <span class="o">*=</span> <span class="nb">int</span><span class="p">(</span><span class="n">pbar</span><span class="o">.</span><span class="n">currval</span> <span class="o">/</span> <span class="n">pbar</span><span class="o">.</span><span class="n">maxval</span> <span class="o">*</span> <span class="n">width</span> <span class="o">/</span> <span class="n">itemw</span><span class="p">)</span> 
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">marked</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+         
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fill_left</span><span class="p">:</span>            
+            <span class="k">return</span> <span class="s">&#39;</span><span class="si">%s%s%s%s%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">color</span><span class="p">,</span><span class="n">left</span><span class="p">,</span> <span class="n">marked</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fill</span><span class="p">),</span> <span class="n">right</span><span class="p">,</span> <span class="n">nocolor</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s">&#39;</span><span class="si">%s%s%s%s%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">color</span><span class="p">,</span><span class="n">left</span><span class="p">,</span> <span class="n">marked</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fill</span><span class="p">),</span> <span class="n">right</span><span class="p">,</span> <span class="n">nocolor</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">AstroObject 0.5.3 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../../AstroObject.html" >AstroObject</a> &raquo;</li>
+          <li><a href="../util.html" >AstroObject.util</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Alexander Rudy.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

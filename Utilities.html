@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,15 +7,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>14. AstroObject Utilities &mdash; AstroObject 0.5.1 documentation</title>
+    <title>15. util — Utility functions &mdash; AstroObject 0.5.3 documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5.1',
+        VERSION:     '0.5.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,9 +24,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5.1 documentation" href="index.html" />
-    <link rel="next" title="15. Development Plans" href="future.html" />
-    <link rel="prev" title="13. AstroObjectLogging — Structured Configuration Logging" href="AstroObjectLogging.html" /> 
+    <link rel="top" title="AstroObject 0.5.3 documentation" href="index.html" />
+    <link rel="next" title="16. Development Plans" href="future.html" />
+    <link rel="prev" title="14. file - File IO" href="file.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,12 +39,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="future.html" title="15. Development Plans"
+          <a href="future.html" title="16. Development Plans"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="AstroObjectLogging.html" title="13. AstroObjectLogging — Structured Configuration Logging"
+          <a href="file.html" title="14. file - File IO"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5.3 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -54,18 +53,47 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <span class="target" id="module-AstroObject.Utilities"></span><div class="section" id="astroobject-utilities">
-<h1>14. AstroObject <tt class="xref py py-mod docutils literal"><span class="pre">Utilities</span></tt><a class="headerlink" href="#astroobject-utilities" title="Permalink to this headline">¶</a></h1>
-<p>These are mostly internal module utility functions, documented here in case you find them useful. They are not guaranteed to function in any way.</p>
-<dl class="function">
-<dt id="AstroObject.Utilities.getVersion">
-<tt class="descclassname">AstroObject.Utilities.</tt><tt class="descname">getVersion</tt><big>(</big><em>rel='AstroObject.Utilities'</em>, <em>filename='VERSION'</em>, <em>getTuple=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/Utilities.html#getVersion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.Utilities.getVersion" title="Permalink to this definition">¶</a></dt>
+  <span class="target" id="module-AstroObject.util"></span><div class="section" id="util-utility-functions">
+<h1>15. <tt class="xref py py-mod docutils literal"><span class="pre">util</span></tt> — Utility functions<a class="headerlink" href="#util-utility-functions" title="Permalink to this headline">¶</a></h1>
+<p>Provides utilities useful in various places in the module.</p>
+<dl class="staticmethod">
+<dt id="AstroObject.util.getVersion">
+<em class="property">static </em><tt class="descclassname">util.</tt><tt class="descname">getVersion</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.util.getVersion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the version number as either a string or tuple. The version number is retrieved from the &#8220;VERSION&#8221; file, which should contain just the text for the version and nothing else. When the version is returned as a tuple, each component (level) of the version number is a seperate, integer element of the tuple.</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="AstroObject.Utilities.npArrayInfo">
-<tt class="descclassname">AstroObject.Utilities.</tt><tt class="descname">npArrayInfo</tt><big>(</big><em>array</em>, <em>name=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/Utilities.html#npArrayInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.Utilities.npArrayInfo" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="AstroObject.util.validate_filename">
+<em class="property">static </em><tt class="descclassname">util.</tt><tt class="descname">validate_filename</tt><big>(</big><em>resourcename</em>, <em>extension='.fits'</em><big>)</big><a class="headerlink" href="#AstroObject.util.validate_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates a string as an acceptable filename, stripping path components,etc.</p>
+<p>..warning:: This function isn&#8217;t very good. I wouldn&#8217;t use it in its current state.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="AstroObject.util.update">
+<em class="property">static </em><tt class="descclassname">util.</tt><tt class="descname">update</tt><big>(</big><em>d</em>, <em>u</em><big>)</big><a class="headerlink" href="#AstroObject.util.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>A deep update command for dictionaries.
+This is because the normal dictionary.update() command does not handle nested dictionaries.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="AstroObject.util.func_lineno">
+<em class="property">static </em><tt class="descclassname">util.</tt><tt class="descname">func_lineno</tt><big>(</big><em>func</em><big>)</big><a class="headerlink" href="#AstroObject.util.func_lineno" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the line number of a function. First looks for
+compat_co_firstlineno, then func_code.co_first_lineno.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="AstroObject.util.make_decorator">
+<em class="property">static </em><tt class="descclassname">util.</tt><tt class="descname">make_decorator</tt><big>(</big><em>func</em><big>)</big><a class="headerlink" href="#AstroObject.util.make_decorator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wraps a test decorator so as to properly replicate metadata
+of the decorated function, including nose&#8217;s additional stuff
+(namely, setup and teardown).</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="AstroObject.util.npArrayInfo">
+<em class="property">static </em><tt class="descclassname">util.</tt><tt class="descname">npArrayInfo</tt><big>(</big><em>array</em>, <em>name=None</em><big>)</big><a class="headerlink" href="#AstroObject.util.npArrayInfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Message describing this array in excruciating detail. Used in debugging arrays where we don&#8217;t know what they contain. Returns a message string.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">npArrayInfo</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span><span class="s">&quot;Some Array&quot;</span><span class="p">)</span>
@@ -76,30 +104,124 @@
 </div>
 </dd></dl>
 
-<dl class="function">
-<dt id="AstroObject.Utilities.expandLim">
-<tt class="descclassname">AstroObject.Utilities.</tt><tt class="descname">expandLim</tt><big>(</big><em>axis</em>, <em>scale=0.05</em><big>)</big><a class="reference internal" href="_modules/AstroObject/Utilities.html#expandLim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.Utilities.expandLim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Expands Axis Limits by <em>scale</em>, given present axis limits</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="AstroObject.Utilities.bin">
-<tt class="descclassname">AstroObject.Utilities.</tt><tt class="descname">bin</tt><big>(</big><em>array</em>, <em>factor</em><big>)</big><a class="reference internal" href="_modules/AstroObject/Utilities.html#bin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.Utilities.bin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bins an array by the given factor</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="AstroObject.Utilities.BlackBody">
-<tt class="descclassname">AstroObject.Utilities.</tt><tt class="descname">BlackBody</tt><big>(</big><em>wl</em>, <em>T</em><big>)</big><a class="reference internal" href="_modules/AstroObject/Utilities.html#BlackBody"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.Utilities.BlackBody" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="module-AstroObject.util.functions"></span><div class="section" id="util-functions-common-astronomical-functons">
+<h2>15.1. <tt class="xref py py-mod docutils literal"><span class="pre">util.functions</span></tt> — Common Astronomical functons<a class="headerlink" href="#util-functions-common-astronomical-functons" title="Permalink to this headline">¶</a></h2>
+<dl class="staticmethod">
+<dt id="AstroObject.util.functions.BlackBody">
+<em class="property">static </em><tt class="descclassname">functions.</tt><tt class="descname">BlackBody</tt><big>(</big><em>wl</em>, <em>T</em><big>)</big><a class="headerlink" href="#AstroObject.util.functions.BlackBody" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return black-body flux as a function of wavelength. Usese constants from Scipy Constants, and expects SI units</p>
 </dd></dl>
 
-<dl class="function">
-<dt id="AstroObject.Utilities.Gaussian">
-<tt class="descclassname">AstroObject.Utilities.</tt><tt class="descname">Gaussian</tt><big>(</big><em>x</em>, <em>mean</em>, <em>stdev</em>, <em>height</em><big>)</big><a class="reference internal" href="_modules/AstroObject/Utilities.html#Gaussian"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.Utilities.Gaussian" title="Permalink to this definition">¶</a></dt>
+<dl class="staticmethod">
+<dt id="AstroObject.util.functions.Gaussian">
+<em class="property">static </em><tt class="descclassname">functions.</tt><tt class="descname">Gaussian</tt><big>(</big><em>x</em>, <em>mean</em>, <em>stdev</em>, <em>height</em><big>)</big><a class="headerlink" href="#AstroObject.util.functions.Gaussian" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rertun a gaussian at postion x, whith mean, stdev, and height</p>
 </dd></dl>
 
+</div>
+<span class="target" id="module-AstroObject.util.images"></span><div class="section" id="util-images-functions-for-image-manipulation">
+<h2>15.2. <tt class="xref py py-mod docutils literal"><span class="pre">util.images</span></tt> – Functions for image manipulation<a class="headerlink" href="#util-images-functions-for-image-manipulation" title="Permalink to this headline">¶</a></h2>
+<dl class="staticmethod">
+<dt id="AstroObject.util.images.bin">
+<em class="property">static </em><tt class="descclassname">images.</tt><tt class="descname">bin</tt><big>(</big><em>array</em>, <em>factor</em><big>)</big><a class="headerlink" href="#AstroObject.util.images.bin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bins an array by the given factor in each axis.</p>
+</dd></dl>
+
+</div>
+<span class="target" id="module-AstroObject.util.mpl"></span><div class="section" id="util-mpl-matplotlib-helpers">
+<h2>15.3. <tt class="xref py py-mod docutils literal"><span class="pre">util.mpl</span></tt> – Matplotlib helpers<a class="headerlink" href="#util-mpl-matplotlib-helpers" title="Permalink to this headline">¶</a></h2>
+<p>This module provides helpers which are dependent on <tt class="xref py py-mod docutils literal"><span class="pre">matplotlib</span></tt>.</p>
+<dl class="class">
+<dt id="AstroObject.util.mpl.LogFormatterTeXExponent">
+<em class="property">class </em><tt class="descclassname">AstroObject.util.mpl.</tt><tt class="descname">LogFormatterTeXExponent</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/util/mpl.html#LogFormatterTeXExponent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.util.mpl.LogFormatterTeXExponent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extends pylab.LogFormatter to use
+tex notation for tick labels.</p>
+<dl class="method">
+<dt id="AstroObject.util.mpl.LogFormatterTeXExponent.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/util/mpl.html#LogFormatterTeXExponent.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.util.mpl.LogFormatterTeXExponent.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wrap call to parent class with
+change to tex notation.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.util.mpl.LogFormatterTeXExponent.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#AstroObject.util.mpl.LogFormatterTeXExponent.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="AstroObject.util.mpl.expandLim">
+<em class="property">static </em><tt class="descclassname">mpl.</tt><tt class="descname">expandLim</tt><big>(</big><em>axis</em>, <em>scale=0.05</em><big>)</big><a class="headerlink" href="#AstroObject.util.mpl.expandLim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expands Axis Limits by <em>scale</em>, given present axis limits</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="AstroObject.util.mpl.get_padding">
+<em class="property">static </em><tt class="descclassname">mpl.</tt><tt class="descname">get_padding</tt><big>(</big><em>*otherxy</em><big>)</big><a class="headerlink" href="#AstroObject.util.mpl.get_padding" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns axis values to provide 5-percent padding around the given data.</p>
+</dd></dl>
+
+</div>
+<span class="target" id="module-AstroObject.util.pbar"></span><div class="section" id="util-pbar-colored-progressbar-functions-to-extend-the-progressbar-module">
+<h2>15.4. <tt class="xref py py-mod docutils literal"><span class="pre">util.pbar</span></tt> – Colored progressbar functions to extend the progressbar module<a class="headerlink" href="#util-pbar-colored-progressbar-functions-to-extend-the-progressbar-module" title="Permalink to this headline">¶</a></h2>
+<p>This module contains extensions to the progressbar module (&lt;<a class="reference external" href="http://pypi.python.org/pypi/progressbar/2.2">http://pypi.python.org/pypi/progressbar/2.2</a>&gt;)</p>
+<dl class="class">
+<dt id="AstroObject.util.pbar.ProgressBar">
+<em class="property">class </em><tt class="descclassname">AstroObject.util.pbar.</tt><tt class="descname">ProgressBar</tt><big>(</big><em>maxval=None</em>, <em>widgets=None</em>, <em>term_width=None</em>, <em>poll=1</em>, <em>left_justify=True</em>, <em>fd=&lt;open file '&lt;stderr&gt;'</em>, <em>mode 'w' at 0x10cec6270&gt;</em><big>)</big><a class="reference internal" href="_modules/AstroObject/util/pbar.html#ProgressBar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.util.pbar.ProgressBar" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="AstroObject.util.pbar.ProgressBar.update">
+<tt class="descname">update</tt><big>(</big><em>value=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/util/pbar.html#ProgressBar.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.util.pbar.ProgressBar.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the ProgressBar to a new value. Monkey Patch edition</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.util.pbar.ProgressBar.finish">
+<tt class="descname">finish</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/util/pbar.html#ProgressBar.finish"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.util.pbar.ProgressBar.finish" title="Permalink to this definition">¶</a></dt>
+<dd><p>Puts the progress bar in a finished state</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.util.pbar.ProgressBar.percent">
+<tt class="descname">percent</tt><a class="headerlink" href="#AstroObject.util.pbar.ProgressBar.percent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the progress as a percentage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.util.pbar.ProgressBar.percentage">
+<tt class="descname">percentage</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.util.pbar.ProgressBar.percentage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the progress as a percentage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.util.pbar.ProgressBar.start">
+<tt class="descname">start</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.util.pbar.ProgressBar.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts measuring time, and prints the bar at 0%.</p>
+<p>It returns self so you can use it like this:
+&gt;&gt;&gt; pbar = ProgressBar().start()
+&gt;&gt;&gt; for i in range(100):
+...    # do something
+...    pbar.update(i+1)
+...
+&gt;&gt;&gt; pbar.finish()</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="AstroObject.util.pbar.ColorBar">
+<em class="property">class </em><tt class="descclassname">AstroObject.util.pbar.</tt><tt class="descname">ColorBar</tt><big>(</big><em>marker=u'u2588'</em>, <em>left='|'</em>, <em>right='|'</em>, <em>fill=' '</em>, <em>fill_left=True</em>, <em>color='green'</em><big>)</big><a class="reference internal" href="_modules/AstroObject/util/pbar.html#ColorBar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.util.pbar.ColorBar" title="Permalink to this definition">¶</a></dt>
+<dd><p>A progress bar which stretches to fill the line.</p>
+<dl class="method">
+<dt id="AstroObject.util.pbar.ColorBar.update">
+<tt class="descname">update</tt><big>(</big><em>pbar</em>, <em>width</em><big>)</big><a class="reference internal" href="_modules/AstroObject/util/pbar.html#ColorBar.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.util.pbar.ColorBar.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the progress bar and its subcomponents</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -108,12 +230,23 @@
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">15. <tt class="docutils literal"><span class="pre">util</span></tt> — Utility functions</a><ul>
+<li><a class="reference internal" href="#util-functions-common-astronomical-functons">15.1. <tt class="docutils literal"><span class="pre">util.functions</span></tt> — Common Astronomical functons</a></li>
+<li><a class="reference internal" href="#util-images-functions-for-image-manipulation">15.2. <tt class="docutils literal"><span class="pre">util.images</span></tt> – Functions for image manipulation</a></li>
+<li><a class="reference internal" href="#util-mpl-matplotlib-helpers">15.3. <tt class="docutils literal"><span class="pre">util.mpl</span></tt> – Matplotlib helpers</a></li>
+<li><a class="reference internal" href="#util-pbar-colored-progressbar-functions-to-extend-the-progressbar-module">15.4. <tt class="docutils literal"><span class="pre">util.pbar</span></tt> – Colored progressbar functions to extend the progressbar module</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
-  <p class="topless"><a href="AstroObjectLogging.html"
-                        title="previous chapter">13. <tt class="docutils literal docutils literal docutils literal"><span class="pre">AstroObjectLogging</span></tt> — Structured Configuration Logging</a></p>
+  <p class="topless"><a href="file.html"
+                        title="previous chapter">14. <tt class="docutils literal docutils literal"><span class="pre">file</span></tt> - File IO</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="future.html"
-                        title="next chapter">15. Development Plans</a></p>
+                        title="next chapter">16. Development Plans</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/Utilities.txt"
@@ -146,12 +279,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="future.html" title="15. Development Plans"
+          <a href="future.html" title="16. Development Plans"
              >next</a> |</li>
         <li class="right" >
-          <a href="AstroObjectLogging.html" title="13. AstroObjectLogging — Structured Configuration Logging"
+          <a href="file.html" title="14. file - File IO"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5.3 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

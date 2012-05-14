@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,15 +7,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>16. Release Notes &mdash; AstroObject 0.5.1 documentation</title>
+    <title>17. Release Notes &mdash; AstroObject 0.5.3 documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5.1',
+        VERSION:     '0.5.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,9 +24,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5.1 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.5.3 documentation" href="index.html" />
     <link rel="next" title="An Example Simulator" href="examples/simulator.html" />
-    <link rel="prev" title="15. Development Plans" href="future.html" /> 
+    <link rel="prev" title="16. Development Plans" href="future.html" /> 
   </head>
   <body>
     <div class="related">
@@ -43,9 +42,9 @@
           <a href="examples/simulator.html" title="An Example Simulator"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="future.html" title="15. Development Plans"
+          <a href="future.html" title="16. Development Plans"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5.3 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -55,12 +54,44 @@
           <div class="body">
             
   <div class="section" id="release-notes">
-<h1>16. Release Notes<a class="headerlink" href="#release-notes" title="Permalink to this headline">¶</a></h1>
+<h1>17. Release Notes<a class="headerlink" href="#release-notes" title="Permalink to this headline">¶</a></h1>
 <ul>
+<li><dl class="first docutils">
+<dt>0.5.3</dt>
+<dd><ul class="first last simple">
+<li><a class="reference internal" href="Utilities.html#module-AstroObject.util" title="AstroObject.util"><tt class="xref py py-mod docutils literal"><span class="pre">util</span></tt></a> module which contains submodules for utiltity functions.</li>
+<li><a class="reference internal" href="file.html#module-AstroObject.file" title="AstroObject.file"><tt class="xref py py-mod docutils literal"><span class="pre">file</span></tt></a> module which handles IO, via the FITS format, which is now the standard for format for AstroObject.</li>
+<li><a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame.__getlabel__" title="AstroObject.AstroObjectBase.BaseFrame.__getlabel__"><tt class="xref py py-meth docutils literal"><span class="pre">__getlabel__()</span></tt></a> API static method for extracting labels from HDU headers. Classes built with the <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="AstroObject.AstroObjectBase.HDUHeaderMixin"><tt class="xref py py-class docutils literal"><span class="pre">HDUHeaderMixin</span></tt></a> do not need to be altered.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.5.2</dt>
+<dd><ul class="first last simple">
+<li>Bug fix for simulator functions, earlier logging starts.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.5.1</dt>
+<dd><ul class="first last simple">
+<li>Better simulator output options</li>
+<li>Refactored simulator code to use internal APIs</li>
+<li>Naming schemes have changed: e.g. <strong>stacks</strong> and <strong>frames</strong> are more consistently used. Keyword arguments that used to be <strong>statename</strong> are now <strong>framename</strong> for more consistency. There is NO depreciation provided.</li>
+<li>Internal properties of <strong>stacks</strong> have been made private.</li>
+<li>There is a new crop and mask method for <a class="reference internal" href="AstroImage.html#AstroObject.AstroImage.ImageStack" title="AstroObject.AstroImage.ImageStack"><tt class="xref py py-class docutils literal"><span class="pre">AstroImage.ImageStack</span></tt></a></li>
+<li>Fixed some unicode errors in the system.</li>
+<li>Changed <a class="reference internal" href="iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">IRAFTools</span></tt></a> names</li>
+</ul>
+</dd>
+</dl>
+</li>
 <li><dl class="first docutils">
 <dt>0.5.0</dt>
 <dd><ul class="first last simple">
-<li>Consistent vocabulary is now in force: Two object types, <strong>stacks</strong> and <strong>frames</strong>. See <a class="reference internal" href="intro.html#stacks"><em>**stacks**</em></a> and <a class="reference internal" href="intro.html#frames"><em>**frames**</em></a>.</li>
+<li>Consistent vocabulary is now in force: Two object types, <strong>stacks</strong> and <strong>frames</strong>. See <a class="reference internal" href="intro.html#stacks"><em>stacks</em></a> and <a class="reference internal" href="intro.html#frames"><em>frames</em></a>.</li>
 <li><a class="reference internal" href="iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a> is included to provide access to writing and reading IRAF FITS files in a python-centric routine.</li>
 <li>Testing is vastly improved.</li>
 <li>Fixed some unicode errors.</li>
@@ -368,7 +399,7 @@
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
   <p class="topless"><a href="future.html"
-                        title="previous chapter">15. Development Plans</a></p>
+                        title="previous chapter">16. Development Plans</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="examples/simulator.html"
                         title="next chapter">An Example Simulator</a></p>
@@ -407,9 +438,9 @@
           <a href="examples/simulator.html" title="An Example Simulator"
              >next</a> |</li>
         <li class="right" >
-          <a href="future.html" title="15. Development Plans"
+          <a href="future.html" title="16. Development Plans"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5.3 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

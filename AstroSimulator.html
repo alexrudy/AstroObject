@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,15 +7,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>11. AstroSimulator — Complex Task Management &mdash; AstroObject 0.5.1 documentation</title>
+    <title>11. AstroSimulator — Complex Task Management &mdash; AstroObject 0.5.3 documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5.1',
+        VERSION:     '0.5.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5.1 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.5.3 documentation" href="index.html" />
     <link rel="next" title="12. AstroConfig — YAML-based Configuration Dictionaries" href="AstroConfig.html" />
     <link rel="prev" title="10. AstroObjectBase – AstroObject API" href="AstroObject.html" /> 
   </head>
@@ -45,7 +44,7 @@
         <li class="right" >
           <a href="AstroObject.html" title="10. AstroObjectBase – AstroObject API"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5.3 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -159,7 +158,7 @@ $ Simulator *none</pre>
 </div></blockquote>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">This means if you dump the configuration file (see <a class="reference internal" href="#cmdoption-Simulator--dump"><em class="xref std std-option">--dump</em></a>) and use that directly as your new configuration file, these options will have no effect. Therefore, it is advisable that your configuration file contain the minimum amount of detail to override the default values set in the program. However, if you wish to use these options, but always disable debug, for example, you could disable debug in your configuration file. This will make none of these flags enable debugging.</p>
+<p class="last">This means if you dump the configuration file (see <em class="xref std std-option">--dump</em>) and use that directly as your new configuration file, these options will have no effect. Therefore, it is advisable that your configuration file contain the minimum amount of detail to override the default values set in the program. However, if you wish to use these options, but always disable debug, for example, you could disable debug in your configuration file. This will make none of these flags enable debugging.</p>
 </div>
 </dd></dl>
 
@@ -180,15 +179,54 @@ $ Simulator *none</pre>
 </dd></dl>
 
 <dl class="option">
-<dt id="cmdoption-Simulator--cf">
-<tt class="descname">--cf</tt><tt class="descclassname"> file.yaml</tt><a class="headerlink" href="#cmdoption-Simulator--cf" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the name of the configuration file to use. By default, the configuation file is called <cite>SED.main.config.yaml</cite>. This will be the filename used for dumping configurations with the <a class="reference internal" href="#cmdoption-Simulator--dump"><em class="xref std std-option">--dump</em></a> command (Dump will append the extension <tt class="docutils literal"><span class="pre">-dump.yaml</span></tt> onto the filename to prevent overwriting exisitng configurations)</p>
+<dt id="cmdoption-Simulator--configure">
+<tt class="descname">--configure</tt><tt class="descclassname"> Option.Key='literal value'</tt><a class="headerlink" href="#cmdoption-Simulator--configure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a dotted-name style configuration item to the configure variables. The value will be set as either a python literal, or a plain string. If the value parses as a python literal, that will be used. If parsing the value as a literal fails, the string will be used. As such, strings do not need to be quoted on the command line.</p>
+<div class="highlight-python"><pre>$ sim --configure Option.Key=Value</pre>
+</div>
+<p>has the same effect as:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">try</span><span class="p">:</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Option.Key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Value</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s">&quot;Option.Key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;Value&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-Simulator-c">
+<tt class="descname">-c</tt><tt class="descclassname"> file.yaml</tt><tt class="descclassname">, </tt><tt class="descname">--config-file</tt><tt class="descclassname"> file.yaml</tt><a class="headerlink" href="#cmdoption-Simulator-c" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the name of the configuration file to use. By default, the configuation file is called <cite>SED.main.config.yaml</cite>. This will be the filename used for dumping configurations with the <em class="xref std std-option">--dump</em> command (Dump will append the extension <tt class="docutils literal"><span class="pre">-dump.yaml</span></tt> onto the filename to prevent overwriting exisitng configurations)</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-Simulator--p">
+<tt class="descname">--p</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--profile</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-Simulator--p" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show a timing profile of the simulation, including status of stages, at the end of the simulation.</p>
 </dd></dl>
 
 <dl class="option">
 <dt id="cmdoption-Simulator-n">
-<tt class="descname">-n</tt><tt class="descclassname">,--dry-run</tt><a class="headerlink" href="#cmdoption-Simulator-n" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">-n</tt><tt class="descclassname"></tt><tt class="descclassname">, </tt><tt class="descname">--dry-run</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-Simulator-n" title="Permalink to this definition">¶</a></dt>
 <dd><p>Traverse all of the stages to be run, printing them as the program goes, but do not run any stages.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-Simulator--show-tree">
+<tt class="descname">--show-tree</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-Simulator--show-tree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show a dependency tree for the simulator.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-Simulator--show-stages">
+<tt class="descname">--show-stages</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-Simulator--show-stages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show all of the stages ran for this simulation.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-Simulator--dump-config">
+<tt class="descname">--dump-config</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-Simulator--dump-config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump the configuration to a file. Filenames are the configuration file name with <tt class="docutils literal"><span class="pre">-dump.yaml</span></tt> appended.</p>
 </dd></dl>
 
 <dl class="option">
@@ -197,29 +235,20 @@ $ Simulator *none</pre>
 <dd><p>Print all stages registered in the simulator. Any stage listed in the output of this function can be run.</p>
 </dd></dl>
 
-<dl class="option">
-<dt id="cmdoption-Simulator--dump">
-<tt class="descname">--dump</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-Simulator--dump" title="Permalink to this definition">¶</a></dt>
-<dd><p>Dump the configuration to a file. Filenames are the configuration file name with <tt class="docutils literal"><span class="pre">-dump.yaml</span></tt> appended.</p>
-</dd></dl>
-
-<dl class="option">
-<dt id="cmdoption-Simulator--p">
-<tt class="descname">--p</tt><tt class="descclassname">,--profile</tt><a class="headerlink" href="#cmdoption-Simulator--p" title="Permalink to this definition">¶</a></dt>
-<dd><p>Show a timing profile of the simulation, including status of stages, at the end of the simulation.</p>
-</dd></dl>
-
 </div>
 <div class="section" id="simulator-configuration-files">
 <span id="configuration"></span><h2>11.2. <strong class="program">Simulator</strong> Configuration Files<a class="headerlink" href="#simulator-configuration-files" title="Permalink to this headline">¶</a></h2>
-<p><strong class="program">Simulator</strong> configuration files are YAML files which contain a dictionary structure. All values in the YAML files are basic yaml, and contain no python-specific directives. To find out what the default or current configuration is, use the <a class="reference internal" href="#cmdoption-Simulator--dump"><em class="xref std std-option">--dump</em></a> command. The file produced from this will contain a YAML structure for the configuration in use when the system started up. The various directives in the configuration file are described below. Configuration options are described using the dotted-syntax described in <a class="reference internal" href="AstroConfig.html#module-AstroObject.AstroConfig" title="AstroObject.AstroConfig"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroConfig</span></tt></a></p>
+<p><strong class="program">Simulator</strong> configuration files are YAML files which contain a dictionary structure. All values in the YAML files are basic yaml, and contain no python-specific directives. To find out what the default or current configuration is, use the <em class="xref std std-option">--dump</em> command. The file produced from this will contain a YAML structure for the configuration in use when the system started up. The various directives in the configuration file are described below. Configuration options are described using the dotted-syntax described in <a class="reference internal" href="AstroConfig.html#module-AstroObject.AstroConfig" title="AstroObject.AstroConfig"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroConfig</span></tt></a></p>
 <ul class="simple">
 <li><tt class="docutils literal"><span class="pre">Configurations</span></tt>: contains a list of potential configuration files.</li>
 <li><tt class="docutils literal"><span class="pre">Configurations.Main</span></tt>: The name of the primary configuration file. This default is produced by the program. Overriding it in the configuration file has essentially no effect.</li>
+<li><tt class="docutils literal"><span class="pre">Default</span></tt>: The default macro to run (i.e. the default <tt class="docutils literal"><span class="pre">*</span></tt>&#8216;d argument.)</li>
 <li><tt class="docutils literal"><span class="pre">Dirs</span></tt>: Directories that this simulator will use for output.</li>
 <li><tt class="docutils literal"><span class="pre">Dirs.Caches</span></tt>: Location of cache files.</li>
 <li><tt class="docutils literal"><span class="pre">Dirs.Logs</span></tt>: Location of log files.</li>
 <li><tt class="docutils literal"><span class="pre">Dirs.Partials</span></tt>: Location of partial output, including a dump of the configuration.</li>
+<li><tt class="docutils literal"><span class="pre">Options</span></tt>: The dictionary for storing command line options.</li>
+<li><tt class="docutils literal"><span class="pre">Options.DryRun</span></tt>: Whether to skip actually executing stages.</li>
 <li><tt class="docutils literal"><span class="pre">Logging</span></tt>: Configuration of the <a class="reference internal" href="AstroObjectLogging.html#module-AstroObject.AstroObjectLogging" title="AstroObject.AstroObjectLogging"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroObjectLogging</span></tt></a> module</li>
 </ul>
 <p>A simple configuration file can be found in the <a class="reference internal" href="examples/simulator.html#simulatorexample"><em>An Example Simulator</em></a>.</p>
@@ -514,8 +543,8 @@ $ Simulator *none</pre>
 <p>Command line options are:</p>
 <table border="1" class="docutils">
 <colgroup>
-<col width="21%" />
-<col width="79%" />
+<col width="39%" />
+<col width="61%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">CLI Option</th>
@@ -526,16 +555,25 @@ $ Simulator *none</pre>
 <tr class="row-even"><td><tt class="docutils literal"><span class="pre">--version</span></tt></td>
 <td>Display version information about this module</td>
 </tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">--cf</span> <span class="pre">file.yaml</span></tt></td>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">--configure</span> <span class="pre">Option.Key=Value</span></tt></td>
+<td>Set a configuration value on the command line.</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">-c</span> <span class="pre">file.yaml,</span> <span class="pre">--config-file</span> <span class="pre">file.yaml</span></tt></td>
 <td>Specify a configuration file</td>
 </tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">--dry-run</span></tt></td>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">-n,</span> <span class="pre">--dry-run</span></tt></td>
 <td>Print the stages this command would have run.</td>
 </tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">--dump</span></tt></td>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">--show-tree</span></tt></td>
+<td>Show a dependency tree for the simulation</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">--show-stages</span></tt></td>
+<td>List all of the used stages for the simulation</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">--dump-config</span></tt></td>
 <td>Write the current configuration to file</td>
 </tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">--stages</span></tt></td>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">--list-stages</span></tt></td>
 <td>Print the stages that the command will execute, do not do anything</td>
 </tr>
 </tbody>
@@ -688,10 +726,10 @@ $ Simulator *none</pre>
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="AstroObject.html"
-                        title="previous chapter">10. <tt class="docutils literal docutils literal"><span class="pre">AstroObjectBase</span></tt> – AstroObject API</a></p>
+                        title="previous chapter">10. <tt class="docutils literal"><span class="pre">AstroObjectBase</span></tt> – AstroObject API</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="AstroConfig.html"
-                        title="next chapter">12. <tt class="docutils literal docutils literal docutils literal"><span class="pre">AstroConfig</span></tt> — YAML-based Configuration Dictionaries</a></p>
+                        title="next chapter">12. <tt class="docutils literal"><span class="pre">AstroConfig</span></tt> — YAML-based Configuration Dictionaries</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/AstroSimulator.txt"
@@ -729,7 +767,7 @@ $ Simulator *none</pre>
         <li class="right" >
           <a href="AstroObject.html" title="10. AstroObjectBase – AstroObject API"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.5.3 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
