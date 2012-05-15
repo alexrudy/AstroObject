@@ -39,14 +39,8 @@ class Cache(object):
         self.reloader = reloader
         self.resaver = resaver
         self.filename = filename
-        self.modes = {
-            "read" : "r",
-            "write": "w",
-        }
         self.saving = False
-        self.loading = False
-
-        
+        self.loading = False        
         self.reset()
     
     def reset(self):
@@ -70,8 +64,7 @@ class Cache(object):
         if self.ready or not self.loading:
             return self.loaded
         try:
-            with open(self.fullpath,self.modes["read"]) as loadstream:
-                data = self.reloader(loadstream)
+            data = self.reloader(self.fullpath)
         except IOError as e:
             self.loaded = False
         else:
@@ -95,8 +88,7 @@ class Cache(object):
         
         if not self.saved and self.saving:
             try:
-                with open(self.fullpath,self.modes["write"]) as savestream:
-                    self.resaver(self.data,savestream)
+                self.resaver(self.data,self.fullpath)
             except Exception as e:
                 print e
                 self.saved = False
@@ -208,9 +200,11 @@ class CacheManager(collections.MutableMapping):
         for cache in caches:
             setattr(self._caches[cache],flag,value)
     
-    def reset(self):
+    def reset(self,*caches):
         """Reset all caches"""
-        for cache in self:
+        if len(caches) == 0:
+            caches = self.keys()
+        for cache in caches:
             self._caches[cache].reset()
     
     def close(self):
