@@ -230,8 +230,8 @@ class IRAFTools(object):
         self.IRAFFileSet = self.module.IRAFFileSet
         self._directory = None
         self._collect = {}
-        if FITSFrame not in self.object.dataClasses:
-            self.object.dataClasses += [FITSFrame]
+        if FITSFrame not in self.object.data_classes:
+            self.object.add_data_class(FITSFrame)
     
     def __del__(self):
         """Remove the reference to object, to prevent circularity"""

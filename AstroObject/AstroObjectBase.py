@@ -521,21 +521,20 @@ class BaseStack(collections.MutableMapping):
         self.filename = filename    # The filename to use for file loading and writing
         self.clobber = False
         self.name = False
-        self.dataClasses = []
+        self._dataClasses = []
         if isinstance(dataClasses, list):
-            self.dataClasses += dataClasses
+            self._dataClasses += dataClasses
         elif dataClasses:
             raise AttributeError(u"Can't understand data classes")
-        if len(self.dataClasses) < 1:
+        if len(self._dataClasses) < 1:
             raise NotImplementedError(u"Instantiating %s without any valid data classes!" % self)
-        self.fileClasses = []
+        self._fileClasses = []
         if isinstance(fileClasses, list):
-            self.fileClasses += fileClasses
+            self._fileClasses += fileClasses
         elif fileClasses:
             raise AttributeError(u"Can't understand file classes")
-        if len(self.fileClasses) < 1:
+        if len(self._fileClasses) < 1:
             raise NotImplementedError(u"Instantiating %s without any valid file classes!" % self)
-
         
     def __repr__(self):
         """String representation of this object.
@@ -603,6 +602,15 @@ class BaseStack(collections.MutableMapping):
         """
         return self.frame()
     
+    
+    @property
+    def data_classes(self):
+        """The list of acceptable data classes. This is a"""
+        return self._dataClasses
+    
+    def add_data_class(self,data_class):
+        """Insert a data class into the list of acceptable data classes for this object."""
+        self._dataClasses += [data_class]
         
     ###############################
     # Basic Object Mode Functions #
@@ -620,9 +628,9 @@ class BaseStack(collections.MutableMapping):
         
         """
         # If we were passed raw data, and the dataClass can accept it, then go for it!
-        if not isinstance(data, tuple(self.dataClasses)):
+        if not isinstance(data, tuple(self._dataClasses)):
             Object = None
-            for dataClass in self.dataClasses:
+            for dataClass in self._dataClasses:
                 try:
                     Object = dataClass.__save__(data, framename)
                 except NotImplementedError as AE:
@@ -630,7 +638,7 @@ class BaseStack(collections.MutableMapping):
                 else:
                     break
             if Object is None:
-                raise TypeError(u"Object to be saved cannot be cast as %s" % self.dataClasses)
+                raise TypeError(u"Object to be saved cannot be cast as %s" % self._dataClasses)
         elif framename is not None:
             Object = data.copy(label=framename)
         else:
@@ -860,7 +868,7 @@ class BaseStack(collections.MutableMapping):
                 LOG.log(2, u"Set filename from Object. Filename: %s" % filename)
         
         FileObject = None
-        for fileClass in self.fileClasses:
+        for fileClass in self._fileClasses:
             try:
                 FileObject = fileClass(filename)
             except NotImplementedError as AE:
@@ -868,7 +876,7 @@ class BaseStack(collections.MutableMapping):
             else:
                 break
         if FileObject is None:
-            raise TypeError(u"Object to be saved cannot be cast as %s" % self.fileClasses)
+            raise TypeError(u"Object to be saved cannot be cast as %s" % self._fileClasses)
         
         
         PrimaryHDU = self[primaryFrame].hdu(primary=True)
@@ -892,7 +900,7 @@ class BaseStack(collections.MutableMapping):
         if not filename:
             filename = self.filename
         FileObject = None
-        for fileClass in self.fileClasses:
+        for fileClass in self._fileClasses:
             try:
                 FileObject = fileClass(filename)
             except NotImplementedError as AE:
@@ -900,14 +908,14 @@ class BaseStack(collections.MutableMapping):
             else:
                 break
         if FileObject is None:
-            raise TypeError(u"Object to be read cannot be cast as %s" % self.fileClasses)
+            raise TypeError(u"Object to be read cannot be cast as %s" % self._fileClasses)
         HDUList = FileObject.open()
         Read = 0
         Labels = []
         for HDU in HDUList:    
             Object = None # Target variable
             # Iterate through our potential data classes
-            for dataClass in self.dataClasses:
+            for dataClass in self._dataClasses:
                 try:
                     label = dataClass.__getlabel__(HDU,os.path.basename(filename),framename)
                     if label in Labels:
@@ -963,7 +971,7 @@ class FrameStack(BaseStack):
     """This stack accepts any type of frame, and overrides data-saving style save methods by calling the BaseFrame save method by default, which will fail because it isn't implemented."""
     def __init__(self):
         super(FrameStack, self).__init__()
-        self.dataClasses = [BaseFrame]
+        self._dataClasses = [BaseFrame]
         
     
         
