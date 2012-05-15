@@ -154,7 +154,9 @@ class CacheManager(collections.MutableMapping):
         self._database.dn = DottedConfiguration
         self._database.load(self._database_filename)
         self._database[self.hashhex+".update"] = self._createdate.strftime(self.timeformat)
-        
+
+        self.expire()
+
         self.log.debug("Added Cache to the Database: %s" % self.hashhex)
 
     @property
@@ -162,39 +164,6 @@ class CacheManager(collections.MutableMapping):
         """Accessor method for this cache manager's current hash."""
         return self._hashhex
         
-    def expire(self,*hashhexs):
-        """Check for, and possibly clean, the given hashhexs"""
-        if len(hashhexs) is 0:
-            hashhexs = self._database.keys()
-        for hashhex in hashhexs:
-            if datetime.strptime(self._database[hashhex].get("update","2000-01-01T00:00:00"),self.timeformat) < self._expiretime:
-                self.clear(hashhex)
-    
-    def clear(self,*hashhexs):
-        """docstring for clean_cachespace"""
-        if len(hashhexs) is 0:
-            hashhexs = self._database.keys()
-        for hashhex in hashhexs:
-            ecpath = os.path.join(self._cache_basename,hashhex)
-            if os.path.exists(ecpath):
-                shutil.rmtree(ecpath)
-            if hashhex == self.hashhex:
-                os.mkdir(self._cache_dirname)
-            else:
-                del self._database[hashhex]
-            
-        return hashhexs
-    
-    def disable(self,*caches):
-        """Disable this cacheing system"""
-        self.flag('loading',False,*caches)
-        self.flag('saving',False,*caches)
-    
-    def enable(self,*caches):
-        """Disable this cacheing system"""
-        self.flag('loading',True,*caches)
-        self.flag('saving',True,*caches)
-    
     
     def __str__(self):
         """String for this cache"""
@@ -248,6 +217,40 @@ class CacheManager(collections.MutableMapping):
         """Close this cache system."""
         self._database.save(self._database_filename)
         self.log.debug("Saved Database: %s" % self._database_filename)
+        
+    def expire(self,*hashhexs):
+        """Check for, and possibly clean, the given hashhexs"""
+        if len(hashhexs) is 0:
+            hashhexs = self._database.keys()
+        for hashhex in hashhexs:
+            if datetime.strptime(self._database[hashhex].get("update","2000-01-01T00:00:00"),self.timeformat) < self._expiretime:
+                self.clear(hashhex)
+    
+    def clear(self,*hashhexs):
+        """docstring for clean_cachespace"""
+        if len(hashhexs) is 0:
+            hashhexs = self._database.keys()
+        for hashhex in hashhexs:
+            ecpath = os.path.join(self._cache_basename,hashhex)
+            if os.path.exists(ecpath):
+                shutil.rmtree(ecpath)
+            if hashhex == self.hashhex:
+                os.mkdir(self._cache_dirname)
+            else:
+                del self._database[hashhex]
+            
+        return hashhexs
+    
+    def disable(self,*caches):
+        """Disable this cacheing system"""
+        self.flag('loading',False,*caches)
+        self.flag('saving',False,*caches)
+    
+    def enable(self,*caches):
+        """Disable this cacheing system"""
+        self.flag('loading',True,*caches)
+        self.flag('saving',True,*caches)
+    
     
 def YAMLCache(regenerator,filename):
     """Return a cache object for YAML files."""
