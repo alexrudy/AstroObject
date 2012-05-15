@@ -681,12 +681,32 @@ class API_BaseStack(API_Base):
         AObject.write(self.files[0])
         AObject.read(self.files[0],clobber=True)
     
+    def test_read_from_file_single_frame_stream(self):
+        """read() succeeds from streams"""
+        AObject = self.OBJECT()
+        AObject.save(self.frame())
+        AObject.write(self.files[0])
+        with open(self.files[0],"rb") as stream:
+            AObject.read(stream,clobber=True)
+    
+    
     def test_read_from_implicit_filename(self):
         """read() succeeds with implicit filename"""
         AObject = self.OBJECT(filename=self.files[0])
         AObject.save(self.frame())
         AObject.write()
         AObject.read(clobber=True)
+        
+    def test_write_to_multiframe_stream(self):
+        """write() can write to streams"""
+        AObject = self.OBJECT()
+        AObject.save(self.frame())
+        AObject["Other"] = self.frame()
+        with open(self.files[0],"ab+") as stream:
+            PF,Fs,FN = AObject.write(stream)
+        assert Fs == [self.FLABEL]
+        assert PF == "Other"
+        
           
     def test_write_to_multiframe_file(self):
         """write() can create multiframe files"""

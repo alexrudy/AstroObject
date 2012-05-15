@@ -40,12 +40,16 @@ class FITSFile(File):
     
     
     """
-    def __init__(self, filename=None):
+    def __init__(self, thefile=None):
         super(FITSFile, self).__init__()
-        self.filename = filename
-        self.validate_filename(filename)
-     
+        self.validate(thefile)
+        if isinstance(thefile,file):
+            if not hasattr(thefile,'mode') or (not 'b' in thefile.mode):
+                raise NotImplementedError("This file is not in binary mode!")
+        self.file = thefile
+             
     __extensions__ = ['.fit','.fits']
+    __canstream__ = True
     
     def write(self,stack,clobber=False):
         """Write a stack to this file.
@@ -54,9 +58,9 @@ class FITSFile(File):
         :param bool clobber: Whether to overwrite the destination file.
         
         """
-        stack.writeto(self.filename,clobber = clobber)
+        stack.writeto(self.file,clobber = clobber)
         
     def open(self):
         """Open this file and return the HDUList."""
-        return pf.open(self.filename)
+        return pf.open(self.file)
         

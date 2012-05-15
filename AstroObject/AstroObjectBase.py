@@ -139,7 +139,7 @@ from abc import ABCMeta, abstractmethod
 
 # Submodules from this system
 from .util import getVersion, make_decorator, validate_filename
-from .file import DefaultFileClasses
+from .file import DefaultFileClasses, File
 
 __all__ = ["BaseStack", "BaseFrame", "AnalyticMixin", "NoHDUMixin", "HDUHeaderMixin", "NoDataMixin", "Mixin"]
 
@@ -535,6 +535,14 @@ class BaseStack(collections.MutableMapping):
             raise AttributeError(u"Can't understand file classes")
         if len(self.fileClasses) < 1:
             raise NotImplementedError(u"Instantiating %s without any valid file classes!" % self)
+        canstream = []
+        for fileClass in self.fileClasses:
+            if not issubclass(fileClass,File):
+                raise TypeError("File class %s invalid!" % fileClass)
+            if fileClass.__canstream__:
+                canstream += [fileClass]
+        if len(canstream) > 1:
+            raise AttributeError("Multiple File Classes can Stream: %r" % canstream)
 
         
     def __repr__(self):
@@ -909,7 +917,7 @@ class BaseStack(collections.MutableMapping):
             # Iterate through our potential data classes
             for dataClass in self.dataClasses:
                 try:
-                    label = dataClass.__getlabel__(HDU,os.path.basename(filename),framename)
+                    label = dataClass.__getlabel__(HDU,os.path.basename(FileObject.name),framename)
                     if label in Labels:
                         # We don't allow repeat loading of labels
                         label = label + "-%d" % Read
