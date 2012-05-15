@@ -42,7 +42,7 @@ class test_Simulator(API_Base):
 class test_SimulatorFunctional(object):
     """Functional tests for AstroSimulator"""
     
-    def test_BasicSimulation(self):
+    def stest_BasicSimulation(self):
         """A very simple simulation with caching"""
         SIM = AS.Simulator(name="Loggy",commandLine=False)
     

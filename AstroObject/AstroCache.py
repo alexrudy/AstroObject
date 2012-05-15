@@ -43,8 +43,9 @@ class Cache(object):
             "read" : "r",
             "write": "w",
         }
-        self.saving = True
-        self.loading = True
+        self.saving = False
+        self.loading = False
+
         
         self.reset()
     
@@ -60,6 +61,9 @@ class Cache(object):
         """Set the Filepath for this object"""
         self.filepath = filepath
         self.fullpath = os.path.join(self.filepath,self.filename)
+        self.saving = True
+        self.loading = True
+        
     
     def reload(self):
         """Reload this Cache from a file."""
