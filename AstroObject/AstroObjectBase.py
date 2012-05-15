@@ -739,7 +739,10 @@ class BaseStack(collections.MutableMapping):
     
     def _key_error(self, framename):
         """Throw a keyError for the given framename."""
-        msg = u"%s: State %s does not exist.\nStates: %s" % (self, framename, self.list())
+        if len(self.list()) < 1:
+            msg = u"%s: Stack does not have any frames." % (self)
+        else:
+            msg = u"%s: Frame %r does not exist. Frames: %s" % (self, framename, self.list())
         raise KeyError(msg)
     
     def _default_frame(self, frames=None):
