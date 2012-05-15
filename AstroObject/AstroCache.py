@@ -248,10 +248,12 @@ class CacheManager(collections.MutableMapping):
     
 def YAMLCache(regenerator,filename):
     """Return a cache object for YAML files."""
-    def resaver(data,stream):
-        yaml.dump(data,stream,default_flow_style=False)
-    def reloader(stream):
-        return yaml.load(stream)
+    def resaver(data,filename):
+        with open(filename,'w') as stream:
+            yaml.dump(data,stream,default_flow_style=False)
+    def reloader(filename):
+        with open(filename,'r') as stream:
+            return yaml.load(stream)
     return Cache(regenerator,reloader,resaver,filename)
     
 def NumpyCache(regenerater,filename):
