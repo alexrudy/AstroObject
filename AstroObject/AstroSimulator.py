@@ -272,7 +272,7 @@ from AstroConfig import StructuredConfiguration, DottedConfiguration
 
 import util.pbar as progressbar
 import util.terminal as terminal
-from util import getVersion, npArrayInfo, func_lineno
+from util import getVersion, npArrayInfo, func_lineno, make_decorator
 
 __all__ = ["Simulator","on_collection","help","replaces","excepts","depends","include","optional","description","collect","ignore","on_instance_collection"]
 
@@ -418,7 +418,11 @@ class Stage(object):
         finally:
             self.endTime = time.clock()
             self.durTime = self.endTime - self.startTime
-        
+
+class SimulatorStateError(Exception):
+    """An error due to the state of the simulator."""
+    pass
+                
 
 class Simulator(object):
     """A Simulator, used for running large segements of code with detailed logging and progress checking. Simulators have a name, the `name` parameter can be left as is to use the name of the simulator's class (mostly useful if you subclassed it!). The `commandLine` parameter can be set to False to prevent the simulator collecting arguments from `sys.argv` for use. This allows you to programatically call the simulator with the :meth:`do` method.
@@ -466,7 +470,6 @@ class Simulator(object):
         self.paused = False
         self.progressbar = False
         self.commandLine = commandLine
-        self.Caches = CacheManager()
         self._depTree = []
         
         if version==None:
@@ -530,6 +533,7 @@ can be customized using the 'Default' configuration variable in the configuratio
         
         # Parsers
         self.config_parser = self.parser.add_argument_group("configuration presets")
+        self.cache_parser = self.parser.add_argument_group("caching control")
         self.pos_stage_parser = self.parser.add_argument_group('Single Use Stages')
         self.neg_stage_parser = self.parser.add_argument_group('Remove Stages')
         self.inc_stage_parser = self.parser.add_argument_group('action stages')
@@ -539,6 +543,11 @@ can be customized using the 'Default' configuration variable in the configuratio
         
         # Operational Controls
         self.registerConfigOpts('d',{'Debug':True},help="enable debugging messages and plots")
+        
+        # Caching Controls
+        self.registerConfigOpts('-clean-cache',{'Cache':{'Clear':True},}, help="clean out caches",iscache=True)
+        self.registerConfigOpts('-clean-all-cache',{'Cache':{'ClearAll':True},}, help="clean out all caches",iscache=True)
+        self.registerConfigOpts('-no-cache',{'Cache':{'Use':False},}, help="Do not save or load from cache files",iscache=True)
         
         # Config Commands
         self.parser.add_argument('--configure',action='append',metavar="Option.Key='literal value'",help="add configuration items in the form of dotted names and value pairs: Option.Key='literal value' will set config[\"Option.Key\"] = 'literal value'",dest='literalconfig')
@@ -663,9 +672,7 @@ can be customized using the 'Default' configuration variable in the configuratio
         
         Other keyword arguments are passed to :meth:`ArgumentParser.add_argument`
         """
-        if self.running or self.starting:
-            raise ConfigureError("Cannot add macro after simulator has started!")
-
+        
         help = kwargs.pop("help",argparse.SUPPRESS)
             
         run = kwargs.pop('run','post')
@@ -680,8 +687,13 @@ can be customized using the 'Default' configuration variable in the configuratio
         
         self.functions[name] = function
         
-        self.parser.add_argument(*arguments,action='append_const',dest=runOpts[run],const=name,help=help,**kwargs)
-        
+        if len(arguments) < 1 and not self.running:
+            self.config["Options"].update({ runOpts[run] : [name] })
+        elif not self.running and not self.starting:
+            self.parser.add_argument(*arguments,action='append_const',dest=runOpts[run],const=name,help=help,**kwargs)
+        else:         
+            raise SimulatorStateError("Cannot add macro after simulator has started!")
+            
         
     def registerConfigOpts(self,argument,configuration,preconfig=True,**kwargs):
         """Registers a bulk configuration option which will be provided with the USAGE statement. This configuration option can easily override normal configuration settings. Configuration provided here will override programmatically specified configuration options. It will not override configuration provided by the configuration file. These configuration options are meant to provide alterantive *defaults*, not alternative configurations.
@@ -693,18 +705,24 @@ can be customized using the 'Default' configuration variable in the configuratio
         Other keyword arguments are passed to :meth:`ArgumentParser.add_argument`
         """
         if self.running or self.starting:
-            raise ConfigureError("Cannot add macro after simulator has started!")
+            raise SimulatorStateError("Cannot add macro after simulator has started!")
         
         if "help" not in kwargs:
             help = argparse.SUPPRESS
         else:
             help = kwargs["help"]
             del kwargs["help"]
+        
+        iscache = kwargs.pop('iscache',False)    
+        
         if preconfig:
             dest = 'beforeConfigure'
         else:
             dest = 'afterConfigure'
-        self.config_parser.add_argument("-"+argument,action='append_const',dest=dest,const=configuration,help=help,**kwargs)
+        if iscache:
+            self.cache_parser.add_argument("-"+argument,action='append_const',dest=dest,const=configuration,help=help,**kwargs)
+        else:
+            self.config_parser.add_argument("-"+argument,action='append_const',dest=dest,const=configuration,help=help,**kwargs)
         
     
     def setLongHelp(self,string):
@@ -774,6 +792,12 @@ can be customized using the 'Default' configuration variable in the configuratio
         self._preConfiguration()
         self._configure()
         self._postConfiguration()
+        # Write Configuration to Partials Directory
+        self._setupCaching()
+        if os.path.isdir(self.config["Dirs.Partials"]):
+            filename = self.dir_filename("Partials","%s.config.yaml" % self.name)
+            self.config.save(filename)
+            
         self.starting = False
                 
     def do(self,*stages):
@@ -958,22 +982,23 @@ can be customized using the 'Default' configuration variable in the configuratio
     def _parseArguments(self):
         """Parse arguments. Argumetns can be passed into this function like they would be passed to the command line. These arguments will only be parsed when the system is not in `commandLine` mode."""
         if self.commandLine:
-            Namespace = self.parser.parse_args()
-            self.config["Options"].merge(vars(Namespace))
+            Namespace = vars(self.parser.parse_args())
+            for key in Namespace.keys():
+                if Namespace[key] == None:
+                    del Namespace[key]
+            self.config["Options"].merge(Namespace)
             self.config["Options.Parsed"] = True
             self.log.log(2,"Parsed command line arguments")
         elif not self.config["Options.Parsed"]:
-            Namespace = self.parser.parse_args("")
-            self.config["Options"].merge(vars(Namespace))
+            Namespace = vars(self.parser.parse_args())
+            for key in Namespace.keys():
+                if Namespace[key] == None:
+                    del Namespace[key]
+            self.config["Options"].merge(Namespace)
             self.config["Options.Parsed"] = True
             self.log.log(2,"Parsed default line arguments")
         else:
             self.log.debug("Skipping argument parsing")
-        
-        for key in self.config["Options"].keys():
-            if self.config["Options"][key] == None:
-                del self.config["Options"][key]
-        
     
     def _preConfiguration(self):
         """Applies arguments before configuration. Only argument applied is the name of the configuration file, allowing the command line to change the configuration file name."""
@@ -998,10 +1023,7 @@ can be customized using the 'Default' configuration variable in the configuratio
         if not self.configured:
             self.log.log(8,"No configuration provided or accessed. Using defaults.")
         
-        # Write Configuration to Partials Directory
-        if os.path.isdir(self.config["Dirs.Partials"]):
-            filename = self.dir_filename("Partials","%s.config.yaml" % self.name)
-            self.config.save(filename)
+
     
             
     def _postConfiguration(self):
@@ -1026,6 +1048,29 @@ can be customized using the 'Default' configuration variable in the configuratio
             self.log.info(vstr)
         for fk in self.config.get("Options.afterFunction",[]):
             self.functions[fk]()
+
+    def _setupCaching(self):
+        """Sets up a cache variable for simulator caching functions."""
+        if self.config.get("Cache.Disable",False) :
+            return
+        cfg = self.config.store
+        del cfg["Options"]
+        del cfg["Cache"]
+        self.Caches = CacheManager(hashable = repr(cfg), destination = self.config["Dirs.Caches"], expiretime=self.config["Cache.Expire"])
+        if not self.config.get("Cache.Use",True):
+            self.Caches.flag('saving',False)
+            self.Caches.flag('loading',False)
+        if self.config.get("Cache.Clear",False):
+             self.Caches.clear(self.Caches.hashhex)
+        if self.config.get("Cache.ClearAll",False):
+            self.Caches.clear()
+        self.registerFunction(self._shutdown_caching,run='end')
+        self.log.info("Cache: %s" % self.Caches)
+        
+    def _shutdown_caching(self):
+        """docstring for finish_cache"""
+        self.Caches.close()
+    
 
     ############################################
     ### INTERNAL FUNCTION INTROSPECTION APIs ###

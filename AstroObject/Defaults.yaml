@@ -1,4 +1,6 @@
 # Configuration: Defaults.yaml
+Cache:
+  Expire: 600
 Configurations:
   Main: Simulator.yaml
   This: Simulator.yaml
