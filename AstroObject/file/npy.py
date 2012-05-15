@@ -50,6 +50,7 @@ class NumpyFile(File):
         self.file = filename
         
     __extensions__ = [ '.npy' ]
+    __canstream__ = True
     
     def write(self,stack,clobber=False):
         """Write a stack to this file.

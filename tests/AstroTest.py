@@ -687,7 +687,7 @@ class API_BaseStack(API_Base):
         AObject.save(self.frame())
         AObject.write(self.files[0])
         with open(self.files[0],"rb") as stream:
-            AObject.read(stream,clobber=True)
+            AObject.read(stream,clobber=True, filetype="FITSFile")
     
     
     def test_read_from_implicit_filename(self):
@@ -703,7 +703,7 @@ class API_BaseStack(API_Base):
         AObject.save(self.frame())
         AObject["Other"] = self.frame()
         with open(self.files[0],"ab+") as stream:
-            PF,Fs,FN = AObject.write(stream)
+            PF,Fs,FN = AObject.write(stream, filetype="FITSFile")
         assert Fs == [self.FLABEL]
         assert PF == "Other"
         
