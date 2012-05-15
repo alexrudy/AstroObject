@@ -46,7 +46,7 @@ class NumpyTextFile(File):
     .. note:: Since text files only contain the raw HDU data, any information stored in FITS headers or otherwise held as object metadata will not be saved."""
     def __init__(self, filename=None):
         super(NumpyTextFile, self).__init__()
-        self.validate_filename(filename)
+        self.validate(filename)
         self.filename = filename
 
      
@@ -81,7 +81,7 @@ class AstroObjectTextFile(File):
     """
     def __init__(self, filename=None):
         super(AstroObjectTextFile, self).__init__()
-        self.validate_filename(filename)
+        self.validate(filename)
         self.filename = filename
     
     __extensions__ = [ ".aotxt", ".aodat" ]

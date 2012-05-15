@@ -46,10 +46,11 @@ class NumpyFile(File):
     """
     def __init__(self, filename=None):
         super(NumpyFile, self).__init__()
-        self.validate_filename(filename)
-        self.filename = filename
-     
+        self.validate(filename)
+        self.file = filename
+        
     __extensions__ = [ '.npy' ]
+    __canstream__ = True
     
     def write(self,stack,clobber=False):
         """Write a stack to this file.
@@ -62,11 +63,11 @@ class NumpyFile(File):
             raise TypeError(u"Can't save multiple frames to stack.")
         if not clobber and os.path.exists(self.filename):
             raise IOError(u"Can't overwrite existing file.")
-        np.save(self.filename, stack[0].data)
+        np.save(self.file, stack[0].data)
         
     def open(self):
         """Open this file and return the HDUList."""
-        return pf.HDUList([pf.PrimaryHDU(np.load(self.filename))])
+        return pf.HDUList([pf.PrimaryHDU(np.load(self.file))])
 
 class NumpyZipFile(File):
     """Simple numpy binary file writing using the :mod:`numpy` file facilities. Saves the raw data component to a binary :mod:`numpy` file.
@@ -81,7 +82,7 @@ class NumpyZipFile(File):
     """
     def __init__(self, filename=None):
         super(NumpyZipFile, self).__init__()
-        self.validate_filename(filename)
+        self.validate(filename)
         self.filename = filename
      
     __extensions__ = [ '.npz' ]
