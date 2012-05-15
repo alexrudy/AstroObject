@@ -48,8 +48,6 @@ from .util import getVersion, ConfigurationError, update
 
 __version__ = getVersion()
 
-logging.captureWarnings(True)
-
 levels = {"LIBDEBUG":2,"LIBINFO":5,"LIBWARN":8}
 for name,lvl in levels.iteritems():
     logging.addLevelName(lvl,name)

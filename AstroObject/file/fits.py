@@ -23,6 +23,7 @@ This module provides a simple extraction layer class for FITS file writing. FITS
 import os
 import pyfits as pf
 import collections
+import warnings
 
 from . import File
 
@@ -47,14 +48,16 @@ class FITSFile(File):
      
     __extensions__ = ['.fit','.fits']
     
-    def write(self,stack,clobber=False):
+    def write(self, stack, clobber=False):
         """Write a stack to this file.
         
         :param HDUList stack: An HDUList to write to a file.
         :param bool clobber: Whether to overwrite the destination file.
         
         """
-        stack.writeto(self.filename,clobber = clobber)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            stack.writeto(self.filename, clobber = clobber)
         
     def open(self):
         """Open this file and return the HDUList."""
