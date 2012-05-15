@@ -34,14 +34,16 @@ class Test_Cache(object):
         """Generate data for this item"""
         return "Some string for now %s" % time.clock()
         
-    def save(self,data,stream):
+    def save(self,data,filename):
         """Save the data"""
-        stream.write(data)
+        with open(filename,'w') as stream:
+            stream.write(data)
     
-    def load(self,stream):
+    def load(self,filename):
         """docstring for load"""
-        for line in stream:
-            return line
+        with open(filename,'r') as stream:
+            for line in stream:
+                return line
     
     def test_call(self):
         """__call__() cache"""
@@ -50,7 +52,7 @@ class Test_Cache(object):
         self.cache.reset()
         third = self.manager["Cache"]
         self.cache.reset()
-        os.remove(self.cache.fullpath)
+        self.manager.clear()
         fourth = self.manager["Cache"]
         assert first == second and second == third
         assert first != fourth        
