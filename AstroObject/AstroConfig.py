@@ -128,6 +128,8 @@ class Configuration(collections.MutableMapping):
             if isinstance(v, collections.Mapping):
                 r = self._merge(d.get(k, self.dn()), v)
                 d[k] = r
+            elif isinstance(v, collections.Sequence) and isinstance(d.get(k,None), collections.Sequence) and not (isinstance(v,(str,unicode)) or isinstance(d.get(k,None),(str,unicode))):
+                d[k] = [ i for i in v ] + [ i for i in d[k] ]
             else:
                 d[k] = u[k]
         return d
@@ -294,7 +296,7 @@ class DottedConfiguration(Configuration):
         keyparts = key.split(".")
         if len(keyparts) > 1:
             return self._getitem(self, keyparts)
-        return self._store.__getitem__(key)
+        return self._store[key]
         
     def __setitem__(self, key, value):
         """Dictonary setter"""
