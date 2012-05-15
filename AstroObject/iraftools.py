@@ -162,7 +162,7 @@ import shutil
 
 # Submodules from this system
 from .util import getVersion
-from .AstroObjectBase import BaseStack, Mixin
+from .AstroObjectBase import BaseStack, Mixin, BaseFrame, NoHDUMixin, NoDataMixin
 from .AstroFITS import FITSFrame
 
 __version__ = getVersion()
@@ -219,19 +219,25 @@ class IRAFFileSet(object):
         return filename
         
 
+class IRAFFrame(NoHDUMixin, NoDataMixin, BaseFrame):
+    """This frame is meant to hold the place of a data frame for later use. It quite literally can't do anythign, and should never be around for long."""
+    pass
+        
+
+
 class IRAFTools(object):
     """A class for managing interaction with IRAF"""
     def __init__(self,Object):
         super(IRAFTools, self).__init__()
         if not isinstance(Object,BaseStack):
-            raise ValueError("Object must be an instance of %r" % BaseStack.__class__.__name__)
+            raise ValueError("Object must be an instance of %r" % BaseStack.__name__)
         self.object = Object
         self.module = __module__
         self.IRAFFileSet = self.module.IRAFFileSet
         self._directory = None
         self._collect = {}
-        if FITSFrame not in self.object.data_classes:
-            self.object.add_data_class(FITSFrame)
+        if IRAFFrame not in self.object.data_classes:
+            self.object.add_data_class(IRAFFrame)
     
     def __del__(self):
         """Remove the reference to object, to prevent circularity"""
@@ -311,7 +317,7 @@ class IRAFTools(object):
             raise KeyError("Cannot register frame \'%s\' for output, frame already exists in %s." % (framename,self.object))
         filename = self.set.filename(extension=extension,prefix=framename)
         os.unlink(filename)
-        self.object.save(FITSFrame(data=None,label=framename))
+        self.object.save(IRAFFrame(data=None,label=framename))
         self._collect[framename] = filename
         LOG.log(2,"Created outfile for frame %s named %s" % (framename,filename))
         return filename
@@ -334,7 +340,7 @@ class IRAFTools(object):
         filename = self.set.filename(extension=extension,prefix=framename)
         self.object.write(frames=[framename],filename=filename,clobber=True)
         if newframename not in self.object:
-            self.object.save(FITSFrame(data=None,label=newframename))
+            self.object.save(IRAFFrame(data=None,label=newframename))
         LOG.log(2,"Created modfile for frame %s named %s" % (framename,filename))
         self._collect[newframename] = filename
         return filename

@@ -944,7 +944,7 @@ can be customized using the 'Default' configuration variable in the configuratio
         if not len(collection) >= 1:
             return
         
-        if not self.progressbar and color and self.log.console.level <= 20:
+        if not self.progressbar and color and self.log.console.level >= 20:
             self._start_progress_bar(len(collection),color)
             showBar = True
         else:

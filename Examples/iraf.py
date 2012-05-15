@@ -49,4 +49,5 @@ plt.figure()
 Data.show("Basic_flat")
 plt.figure()
 Data.show("Other_flat")
+print "Showing data..."
 plt.show()
