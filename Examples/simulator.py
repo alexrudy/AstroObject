@@ -30,8 +30,15 @@ class SimpleStage(Simulator):
         self.blist = range(100000)
         self.collect()
         self.registerStage(None,"ex",description="Example Macro",dependencies=["main","other"],help="example Macro")
-        self.Caches["Random Image"] = Cache(self._cache,self._load,self._save)
-        self.Caches["Random NPY"] = NumpyCache(self._cache,filename="%s/Random.npy" % self.config["Dirs"]["Caches"])
+            
+    @include
+    @description("Set up the cache objects")
+    @help("Setup cache objects")
+    @triggers("finish-cache")
+    def setup_caches(self):
+        """Set up the caches"""
+        self.Caches["Random Image"] = Cache(self._cache,self._load,self._save,filename="Random.npy")
+        self.Caches["Random NPY"] = NumpyCache(self._cache,filename="Random.npy" )
     
     @include
     @description("The Main Stage")

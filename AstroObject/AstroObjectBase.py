@@ -424,8 +424,6 @@ class HDUHeaderMixin(Mixin):
             return explicit
         if 'label' in HDU.header:
             return HDU.header['label']
-        elif 'object' in HDU.header:
-            return HDU.header['object']
         else:
             return default
 
@@ -518,7 +516,7 @@ class BaseStack(collections.MutableMapping):
         # Image data variables.
         self._frames = {}            # Storage for all of the images
         self._framename = None       # The active frame name
-        self.filename = filename    # The filename to use for file loading and writing
+        self.filename = filename     # The filename to use for file loading and writing
         self.clobber = False
         self.name = False
         self._dataClasses = []
@@ -851,6 +849,10 @@ class BaseStack(collections.MutableMapping):
         :param bool singleFrame: Whether to save only a single frame.
         :returns: Tuple of (PrimaryFrame, Frames, Filename)
         
+        ::  
+            >>> obj.write(filename="Test.fits")
+            ('MainFrame',['OtherFrame-1','OtherFrame-2'],'Test.fits')
+        
         """
         if not frames:
             frames = self.list()
@@ -896,7 +898,6 @@ class BaseStack(collections.MutableMapping):
             
             >>> obj = BaseStack()
             >>> obj.read("SomeImage.fits")
-            >>> obj.list()
             ["SomeImage", "SomeImage-1", "SomeImage-2"]
             
         """
@@ -973,8 +974,7 @@ class BaseStack(collections.MutableMapping):
 class FrameStack(BaseStack):
     """This stack accepts any type of frame, and overrides data-saving style save methods by calling the BaseFrame save method by default, which will fail because it isn't implemented."""
     def __init__(self):
-        super(FrameStack, self).__init__()
-        self._dataClasses = [BaseFrame]
+        super(FrameStack, self).__init__(dataClasses=[BaseFrame])
         
     
         

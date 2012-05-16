@@ -274,7 +274,7 @@ import util.pbar as progressbar
 import util.terminal as terminal
 from util import getVersion, npArrayInfo, func_lineno
 
-__all__ = ["Simulator","on_collection","help","replaces","excepts","depends","include","optional","description","collect","ignore","on_instance_collection"]
+__all__ = ["Simulator","on_collection","help","replaces","excepts","depends","triggers","include","optional","description","collect","ignore","on_instance_collection"]
 
 __version__ = getVersion()
 
@@ -314,7 +314,7 @@ class Stage(object):
         A boolean flag. If it is set to true, the simulator will not raise a warning when this stage is skipped.
         
     """
-    def __init__(self,stage,name="a Stage",description=None,exceptions=None,dependencies=None,replaces=None,optional=False):
+    def __init__(self,stage,name="a Stage",description=None,exceptions=None,dependencies=None,replaces=None,triggers=None,optional=False):
         super(Stage, self).__init__()
         self._name = name
         self.macro = False
@@ -334,6 +334,7 @@ class Stage(object):
         self.description = description
         self.deps = dependencies
         self.reps = replaces
+        self.trig = triggers
         self.optional = optional
         self.startTime = None
         self.endTime = None
@@ -560,13 +561,12 @@ can be customized using the 'Default' configuration variable in the configuratio
         """Sets up the ``*all`` macro for this system, specifically, triggers the ``*all`` macro to run last."""
         self.orders.remove("all")
         self.orders += ["all"]
-
         
     #########################
     ### REGISTRATION APIs ###
     #########################    
         
-    def registerStage(self,stage,name=None,description=None,exceptions=None,include=None,help=False,dependencies=None,replaces=None,optional=False):
+    def registerStage(self,stage,name=None,description=None,exceptions=None,include=None,help=False,dependencies=None,replaces=None,triggers=None,optional=False):
         """Register a stage for operation with the simulator. The stage will then be available as a command line option, and will be operated with the simulator. Stages should be registered early in the operation of the simulator (preferably in the initialization, after the simulator class itself has initialized) so that the program is aware of the stages for running. 
         
         :keyword function stage: The function to run for this stage. Should not take any arguments
@@ -614,6 +614,13 @@ can be customized using the 'Default' configuration variable in the configuratio
             dependencies = []
         if not isinstance(dependencies,list):
             raise ValueError("Invalid type for dependencies: %s" % type(dependencies))
+        
+        if triggers == None and hasattr(stage,'triggers'):
+            triggers = stage.triggers
+        elif triggers == None:
+            triggers = []
+        if not isinstance(triggers,list):
+            raise ValueError("Invalid type for triggers: %s" % type(triggers))
             
         if replaces == None and hasattr(stage,'replaces'):
             replaces = stage.replaces  
@@ -641,7 +648,7 @@ can be customized using the 'Default' configuration variable in the configuratio
         elif include == None:
             include = False    
         
-        stageObject = Stage(stage,name=name,description=description,exceptions=exceptions,dependencies=dependencies,replaces=replaces,optional=optional)
+        stageObject = Stage(stage,name=name,description=description,exceptions=exceptions,dependencies=dependencies,replaces=replaces,triggers=triggers,optional=optional)
         self.stages[name] = stageObject
         self.orders += [name]
         self.pos_stage_parser.add_argument("+"+name,action='append_const',dest='include',const=name,help=argparse.SUPPRESS)
@@ -800,12 +807,14 @@ can be customized using the 'Default' configuration variable in the configuratio
             if self.attempt == []:
                 self.inorder = True
                 self.complete = []
-        
-        for stage in self.orders:
+        self.trigger = []
+        for stage in self.orders:            
             if stage in self.config["Options.macro"]:
                 self.execute(stage)
             elif stage in self.config["Options.include"]:
                 self.execute(stage,deps=False)
+            elif stage in self.trigger:
+                self.execute(stage,level="T")
         self.running = False
     
     
@@ -824,6 +833,8 @@ can be customized using the 'Default' configuration variable in the configuratio
             self.log.critical("Stage %s does not exist." % stage)
             self.exit(1)
         use = True
+        if stage in self.trigger:
+            use = True
         if stage in self.config["Options.exclude"]:
             use = False
         if stage in self.config["Options.include"]:
@@ -848,11 +859,17 @@ can be customized using the 'Default' configuration variable in the configuratio
                             self.log.debug(u"Stage '%s' requested by '%s' but skipped" % (dependent,stage))
                         else:
                             self.log.warning(u"Stage '%s' required by '%s' but failed to complete." % (dependent,stage))
+                            
+            self.trigger += self.stages[stage].trig
         else:
             self.log.warning(u"Explicity skipping dependents")
         
         s = self.stages[stage]
-        indicator = u"└>%s" if level else u"=>%s"
+        if level == "T":
+            indicator = u"+>%s"
+            level = 0
+        else:
+            indicator = u"└>%s" if level else u"=>%s"
         self._depTree += [u"%-30s : %s" % (u"  " * level + indicator % stage,s.description)]
         if s.macro or self.config["Options.DryRun"]:
             self.complete += [stage] + s.reps
@@ -1177,6 +1194,14 @@ def depends(*dependencies):
         func.dependencies = list(dependencies)
         return func
     return decorate
+
+def triggers(*triggers):
+    """Registers dependencies for this function"""
+    def decorate(func):
+        func.triggers = list(triggers)
+        return func
+    return decorate
+
 
 def excepts(*exceptions):
     """Registers exceptions for this function."""
