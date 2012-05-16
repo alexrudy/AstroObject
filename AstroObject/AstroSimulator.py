@@ -881,7 +881,7 @@ can be customized using the 'Default' configuration variable in the configuratio
         
         try:
             s.run()
-        except KeyboardInterrupt as e:
+        except (KeyboardInterrupt,SystemExit) as e:
             self.log.useConsole(True)
             self.log.critical(u"Keyboard Interrupt during %(stage)s... ending simulator." % {'stage':s.name})
             self.log.critical(u"Last completed stage: %(stage)s" % {'stage':self.complete.pop()})
