@@ -959,12 +959,15 @@ can be customized using the 'Default' configuration variable in the configuratio
             self.functions[fk]()
         if msg:
             self.log.info(msg)
-        self.log.info(u"Simulator %s Finished" % self.name)
+        self._reset()
         if code != 0 and self.commandLine:
+            self.log.critical("Simulator exiting abnormally: %d" % code)
             sys.exit(code)
         elif code != 0:
             self.log.critical("Simulator closing out, exit code %d" % code)
-        
+        else:
+            self.log.info(u"Simulator %s Finished" % self.name)
+            
 
     
     def map(self,function,collection=[],idfun=str,exceptions=True,color="green"):
@@ -1078,6 +1081,7 @@ can be customized using the 'Default' configuration variable in the configuratio
         if not self.logging:
             self.log.configure(configuration=self.config)
             self.log.start()
+            self.logging = True
         for vstr in self.version:
             self.log.info(vstr)
         for fk in self.config.get("Options.afterFunction",[]):
