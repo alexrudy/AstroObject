@@ -374,9 +374,16 @@ class Stage(object):
         """
         assert self.ran, "Stage %s didn't run" % self.name
         string =  u"| %(stage)21s | %(color)s%(result)6s%(normal)s | %(timestr) 12s |"
+        if self.complete:
+            color = terminal.GREEN
+        elif self.optional:
+            color = terminal.BLUE
+        else:
+            color = terminal.RED
+        
         keys = {
                 "stage": self.name,
-                "color": terminal.GREEN if self.complete else terminal.RED,
+                "color": color,
                 "normal": terminal.NORMAL,
                 "result": str(self.complete),
                 "time": datetime.timedelta(seconds=int(self.durTime)),
@@ -617,6 +624,9 @@ can be customized using the 'Default' configuration variable in the configuratio
             
         if name in self.stages:
             raise ValueError("Cannot have duplicate stage named %s" % name)
+        
+        if hasattr(stage,'optional'):
+            optional = stage.optional
         
         if exceptions == None and hasattr(stage,'exceptions'):
             exceptions = stage.exceptions
@@ -869,16 +879,18 @@ can be customized using the 'Default' configuration variable in the configuratio
             use = True
         if stage in self.attempt:
             return use
+        if stage in self.complete:
+            return use
         if not use:
             return use
         
-        self.attempt += [stage] + self.stages[stage].reps
+        self.attempt += [stage]
          
         if deps:
             
             for dependent in self.orders:
                 if dependent in self.stages[stage].deps:
-                    if dependent not in self.attempt:
+                    if dependent not in self.attempt and dependent not in self.complete:
                         self.execute(dependent,level=level+1)
                     else:
                         self._depTree += ["%-30s : (done already)" % (u"  " * (level+1) + u"└ %s" % dependent)]
@@ -928,10 +940,16 @@ can be customized using the 'Default' configuration variable in the configuratio
         except s.exceptions as e:
             if self.config["Debug"]:
                 self.log.useConsole(True)
-            self.log.error(u"Error %(name)s in stage %(stage)s:%(desc)s. Stage indicated that this error was not critical" % {'name': e.__class__.__name__, 'desc': s.description,'stage':s.name})
-            self.log.error(u"Error: %(msg)s" % {'msg':e})
-            if self.config["Debug"]:
-                raise
+            emsgA = u"Error %(name)s in stage %(stage)s:%(desc)s. Stage indicated that this error was not critical" % {'name': e.__class__.__name__, 'desc': s.description,'stage':s.name}
+            emsgB = u"Error: %(msg)s" % {'msg':e}
+            if s.optional:
+                self.log.debug(emsgA)
+                self.log.debug(emsgB)
+            else:
+                self.log.error(emsgA)
+                self.log.error(emsgB)
+                if self.config["Debug"]:
+                    raise
         except Exception as e:
             self.log.useConsole(True)
             self.log.critical(u"Error %(name)s in stage %(stage)s:'%(desc)s'!" % { 'name' : e.__class__.__name__, 'desc' : s.description, 'stage' : s.name } )
