@@ -162,6 +162,7 @@ import shutil
 
 # Submodules from this system
 from .util import getVersion
+from .file.fileset import TempFileSet
 from .AstroObjectBase import BaseStack, Mixin, BaseFrame, NoHDUMixin, NoDataMixin
 from .AstroFITS import FITSFrame
 
@@ -171,53 +172,6 @@ LOG = logging.getLogger(__name__)
 
 IRAFSet = None
 __module__ = sys.modules[__name__]
-
-class IRAFFileSet(object):
-    """An IRAF File Set"""
-    def __init__(self,directory=None):
-        super(IRAFFileSet, self).__init__()
-        self._directory = tempfile.mkdtemp()
-        if directory is not None:
-            dbase,fname = os.path.split(directory)
-            dparent = "".join(dbase.split("/")[:-1])
-            if fname is not None:
-                if os.exists(directory):
-                    self._directory = directory
-                elif os.exists(dparent):
-                    os.mkdir(directory)
-                    self._directory = directory        
-        self._files = []
-        self._open = True
-        LOG.log(2,"IRAF File Set created with directory %s" % self._directory)
-        
-    @property
-    def directory(self):
-        """Name of FileSet is open"""
-        return self._directory
-        
-    @property
-    def open(self):
-        """If the FileSet is open"""
-        return self._open
-        
-    def close(self):
-        """Close this IRAFFileSet"""
-        assert self.open, "May only close an open IRAFFileSet"
-        shutil.rmtree(self.directory)
-        LOG.log(2,"IRAF File Set closed with directory %s" % self._directory)
-        self._directory = None
-        self._open = False
-        
-    def filename(self,extension=None,prefix=None):
-        """Get a new filename for this set."""
-        assert self.open, "File objects can only be created from open sets."
-        if prefix == None:
-            prefix = 'tmp'
-        fileobj, filename = tempfile.mkstemp(suffix=extension,prefix=prefix,dir=self.directory)
-        os.close(fileobj)
-        self._files.append(filename)
-        return filename
-        
 
 class IRAFFrame(NoHDUMixin, NoDataMixin, BaseFrame):
     """This frame is meant to hold the place of a data frame for later use. It quite literally can't do anythign, and should never be around for long."""
@@ -233,7 +187,7 @@ class IRAFTools(object):
             raise ValueError("Object must be an instance of %r" % BaseStack.__name__)
         self.object = Object
         self.module = __module__
-        self.IRAFFileSet = self.module.IRAFFileSet
+        self.FileSet = self.module.TempFileSet
         self._directory = None
         self._collect = {}
         if IRAFFrame not in self.object.data_classes:
@@ -243,7 +197,7 @@ class IRAFTools(object):
         """Remove the reference to object, to prevent circularity"""
         del self.object
         del self.module
-        del self.IRAFFileSet
+        del self.FileSet
     
     @property
     def active(self):
@@ -254,7 +208,7 @@ class IRAFTools(object):
     def set(self):
         """Unique new set stored at the module level."""
         if self.module.IRAFSet is None or (not self.module.IRAFSet.open):
-            self.module.IRAFSet = self.IRAFFileSet(directory=self._directory)
+            self.module.IRAFSet = self.FileSet(base=self._directory)
         return self.module.IRAFSet
     
     def wrap(self,func):
@@ -266,21 +220,16 @@ class IRAFTools(object):
         newfunc = make_decorator(func)(newfunc)
         return newfunc
     
-    def directory(self,directory):
+    def directory(self,directory=None):
         """Set the IRAFSet directory for this object."""
-        if directory is not None:
-            dbase,fname = os.path.split(directory)
-            dparent = "".join(dbase.split("/")[:-1])
-            if fname is not None:
-                if os.exists(directory):
-                    self._directory = directory
-                elif os.exists(dparent):
-                    os.mkdir(directory)
-                    self._directory = directory
-                else:
-                    raise ValueError("Can't find directory to set: %s" % dbase)
-        else:
+        if directory is None:
             self._directory = None
+            return
+        if not os.path.exists(directory):
+            os.mkdir(directory)
+        if os.path.basename(directory) != "":
+            directory = os.path.join(directory,"")    
+        self._directory = os.path.relpath(directory)
         
     def inpfile(self,framename=None,extension='.fits',**kwargs):
         """Returns a filename for a ``fits`` file from the given framename which can be used as input for IRAF tasks. This method should be used for files which will not be modified, as modifications will not be captured by the system. For files which are input, but will be modified, use :meth:`modfile`.
@@ -389,10 +338,13 @@ class IRAFTools(object):
             return
         for framename,filename in self._collect.iteritems():
             frames = self.object.read(filename=filename,framename=framename,clobber=True)
+            self.set.updated(filename)
             LOG.log(2,"Collected file for frame %s named %s" % (framename,filename))
             LOG.log(2,"States created: %s" % frames)
         self._collect = {}
-        self.set.close()
+        if self.set.modified:
+            LOG.warning("Files remain modified by IRAF: %r" % self.set.modified)
+        self.set.close(check=False)
 
     def set_instance_methods(self):
         """Sets the instance shortcut methods on the object."""
