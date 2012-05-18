@@ -281,7 +281,7 @@ class IRAFTools(object):
             raise KeyError("Cannot register frame \'%s\' for output, frame already exists in %s." % (framename,self.object))
         filename = self.set.filename(extension=extension,prefix=framename)
         os.unlink(filename)
-        self.object.save(IRAFFrame(data=None,label=framename))
+        self.object.save(IRAFFrame(data=None,label=framename),select=False)
         self._collect[framename] = filename
         self.log.log(2,"Created outfile for frame %s named %s" % (framename,filename))
         return filename
@@ -304,7 +304,7 @@ class IRAFTools(object):
         filename = self.set.filename(extension=extension,prefix=framename)
         self.object.write(frames=[framename],filename=filename,clobber=True)
         if newframename not in self.object:
-            self.object.save(IRAFFrame(data=None,label=newframename))
+            self.object.save(IRAFFrame(data=None,label=newframename),select=False)
         self.log.log(2,"Created modfile for frame %s named %s" % (framename,filename))
         self._collect[newframename] = filename
         return filename
@@ -352,9 +352,9 @@ class IRAFTools(object):
         if not self.active:
             return
         for framename,filename in self._collect.iteritems():
-            frames = self.object.read(filename=filename,framename=framename,clobber=True)
+            frames = self.object.read(filename=filename, framename=framename, clobber=True)
             self.set.updated(filename)
-            self.log.log(2,"Collected file for frame %s named %s" % (framename,filename))
+            self.log.log(2,"Collected file for frame %s named %s" % (framename, filename))
             self.log.log(2,"States created: %s" % frames)
         self._collect = {}
         self.capture_log()
