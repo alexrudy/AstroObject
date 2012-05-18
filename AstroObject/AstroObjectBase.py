@@ -299,7 +299,7 @@ class BaseFrame(Mixin):
         :returns: A string label
         
         """
-        msg = u"Abstract Data Structure %s cannot be used for HDU Header Manipulation!" % (self)
+        msg = u"Abstract Data Structure cannot be used for HDU Header Manipulation!"
         raise NotImplementedError(msg)
     
     
@@ -894,7 +894,7 @@ class BaseStack(collections.MutableMapping):
     def read(self, filename=None, framename=None, clobber=False, select=True):
         """This reader takes a FITS file, and trys to render each HDU within that FITS file as a frame in this Object. As such, it might read multiple frames. This method will return a list of Frames that it read. It uses the :attr:`dataClasses` :meth:`FITSFrame.__read__` method to return a valid Frame object for each HDU.
         
-        :param string|stream filename: The file or filestream to read from. Shoudl be supported by :mod:`~AstroObject.file`
+        :param string|stream filename: The file or filestream to read from. Should be supported by :mod:`~AstroObject.file`.
         :param string framename: The framename to use (overrides the filename-as-framename, but not the 'LABEL' FITS keyword.)
         :param bool clobber: Whether to overwrite existing frames. Default ``False``.
         :param bool select: Whether to make the imported frames the selected ones. Default ``True``.
@@ -908,6 +908,8 @@ class BaseStack(collections.MutableMapping):
         """
         if not filename:
             filename = self.filename
+        if filename.startswith("@"):
+            return self.readAtFile(filename, framename=framename, clobber=clobber, select=select)
         FileObject = None
         for fileClass in self._fileClasses:
             try:
@@ -951,18 +953,41 @@ class BaseStack(collections.MutableMapping):
         LOG.log(5, u"Saved frames %s" % Labels)
         return Labels
     
-    def fromAtFile(self, atfile):
-        """Read an atfile into this object. The name of the atfile can include a starting "@" which is stripped. The file is then loaded, and each line is assumed to contain a single fully-qualified part-name."""
+    def readAtFile(self, atfile, framename=None, clobber=False, select=True):
+        """Read an atfile into this object. The name of the atfile can include a starting "@" which is stripped. The file is then loaded, and each line is assumed to contain a single fully-qualified part-name.
+        
+        :param string atfile: The @file to read from. Filename can start with ``@`` which will be stripped, automatically.
+        :param string framename: The framename to use (overrides the filename-as-framename, but not the 'LABEL' FITS keyword.)
+        :param bool clobber: Whether to overwrite existing frames. Default ``False``.
+        :param bool select: Whether to make the imported frames the selected ones. Default ``True``.
+        
+        """
         filename = atfile.lstrip("@")
         labels = []
         with open(filename, 'r') as stream:
             for line in stream:
-                labels += self.read(line.rstrip(" \n\t"))
+                labels += self.read(line.rstrip(" \n\t"), framename=framename, clobber=clobber, select=select)
         return labels
+    
+    @classmethod
+    def fromAtFile(self, filename, framename=None):
+        """Return a new object create from an @file. This method is a factory shortcut for :meth:`readAtFile`.
+        
+        :param string filename: The @file to be read into the object. Should be supported by :mod:`~AstroObject.file`.
+        :param string framename: The framename to use (overrides the filename-as-framename, but not the 'LABEL' FITS keyword.)
+        
+        """
+        Object = cls()
+        Object.readAtFile(atfile, framename=framename)
+        return Object
       
     @classmethod  
-    def fromFile(cls, filename):
+    def fromFile(cls, filename, framename=None):
         """Retrun a new object created from a filename. This method is a shortcut factory for :meth:`read`.
+        
+        :param string filename: The file to be read into the object. T
+        :param string framename: The framename to use (overrides the filename-as-framename, but not the 'LABEL' FITS keyword.)
+        
         
         ::
             
@@ -973,7 +998,7 @@ class BaseStack(collections.MutableMapping):
         
         """
         Object = cls()
-        Object.read(filename)
+        Object.read(filename, framename=framename)
         return Object
 
 class FrameStack(BaseStack):
