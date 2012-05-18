@@ -168,7 +168,7 @@ from .AstroFITS import FITSFrame
 
 __version__ = getVersion()
 
-LOG = logging.getLogger(__name__)
+__log__ = logging.getLogger(__name__)
 
 IRAFSet = None
 __module__ = sys.modules[__name__]
@@ -187,6 +187,7 @@ class IRAFTools(object):
             raise ValueError("Object must be an instance of %r" % BaseStack.__name__)
         self.object = Object
         self.module = __module__
+        self.log = __log__
         self.FileSet = self.module.TempFileSet
         self._directory = None
         self._collect = {}
@@ -210,6 +211,20 @@ class IRAFTools(object):
         if self.module.IRAFSet is None or (not self.module.IRAFSet.open):
             self.module.IRAFSet = self.FileSet(base=self._directory)
         return self.module.IRAFSet
+    
+    def capture_log(self,filename="logfile"):
+        """This attempts to capture a file named 'logfile' in the current working directory. If is is found, it is passed to both this module's logger and an IRAF logger."""
+        messages = 0
+        iraflog = logging.getLogger('iraf.logfile')
+        if os.path.exists(filename):
+            self.log.info("Incorporating IRAF logfile.")
+            with open(filename,"r") as logstream:
+                for logline in logstream:
+                    messages += 1
+                    self.log.log(5,logline.rstrip("\n"))
+                    iraflog.info(logline.rstrip("\n"))
+            os.remove(filename)
+        return messages
     
     def wrap(self,func):
         """Wrap the function below this with the done protocol"""
@@ -243,7 +258,7 @@ class IRAFTools(object):
             framename = self.object.framename
         filename = self.set.filename(extension=extension,prefix=framename)
         self.object.write(frames=[framename],filename=filename,clobber=True)
-        LOG.log(2,"Created infile for frame %s named %s" % (framename,filename))
+        self.log.log(2,"Created infile for frame %s named %s" % (framename,filename))
         return filename
     
     infile = inpfile
@@ -268,7 +283,7 @@ class IRAFTools(object):
         os.unlink(filename)
         self.object.save(IRAFFrame(data=None,label=framename))
         self._collect[framename] = filename
-        LOG.log(2,"Created outfile for frame %s named %s" % (framename,filename))
+        self.log.log(2,"Created outfile for frame %s named %s" % (framename,filename))
         return filename
         
     def modfile(self,framename,newframename=None,append=None,extension='.fits',**kwargs):
@@ -290,7 +305,7 @@ class IRAFTools(object):
         self.object.write(frames=[framename],filename=filename,clobber=True)
         if newframename not in self.object:
             self.object.save(IRAFFrame(data=None,label=newframename))
-        LOG.log(2,"Created modfile for frame %s named %s" % (framename,filename))
+        self.log.log(2,"Created modfile for frame %s named %s" % (framename,filename))
         self._collect[newframename] = filename
         return filename
         
@@ -308,7 +323,7 @@ class IRAFTools(object):
             for framename in framenames:
                 filename = function(framename,**kwargs)
                 stream.write("%s\n" % filename)
-        LOG.log(2,"Created atlist for frames %s named %s" % (framenames,atlist))
+        self.log.log(2,"Created atlist for frames %s named %s" % (framenames,atlist))
         return "@" + atlist
 
     def modatlist(self,*framenames,**kwargs):
@@ -339,11 +354,12 @@ class IRAFTools(object):
         for framename,filename in self._collect.iteritems():
             frames = self.object.read(filename=filename,framename=framename,clobber=True)
             self.set.updated(filename)
-            LOG.log(2,"Collected file for frame %s named %s" % (framename,filename))
-            LOG.log(2,"States created: %s" % frames)
+            self.log.log(2,"Collected file for frame %s named %s" % (framename,filename))
+            self.log.log(2,"States created: %s" % frames)
         self._collect = {}
+        self.capture_log()
         if self.set.modified:
-            LOG.warning("Files remain modified by IRAF: %r" % self.set.modified)
+            self.log.warning("Files remain modified by IRAF: %r" % self.set.modified)
         self.set.close(check=False)
 
     def set_instance_methods(self):
