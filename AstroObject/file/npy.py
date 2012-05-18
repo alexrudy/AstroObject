@@ -7,8 +7,8 @@
 #  Copyright 2012 Alexander Rudy. All rights reserved.
 # 
 u"""
-:mod:`file.npy` — An abstraction layer for :mod:`numpy` files
-=============================================================
+:class:`file.npy.NumpyFile` — An abstraction layer for :mod:`numpy` files
+=========================================================================
 
 This module handles the writing and reading of ``.npy`` and ``.npz`` files. ``.npy`` files are single-array files, where each file will contain only one frame. ``.npz`` files are multiple-frame files. Neither format contains any metadata about the image.
 
@@ -16,6 +16,9 @@ This module handles the writing and reading of ``.npy`` and ``.npz`` files. ``.n
     NumpyFile
     :members:
     :inherited-members:
+
+:class:`file.numpy.NumpyZipFile` – An abstraction for compressed :mod:`numpy` files
+===================================================================================
 
 .. autoclass::
     NumpyZipFile

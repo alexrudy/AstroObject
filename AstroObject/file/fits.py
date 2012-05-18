@@ -7,8 +7,8 @@
 #  Copyright 2012 Alexander Rudy. All rights reserved.
 # 
 """
-:mod:`file.fits` - An abstraction layer for FITS Files
-======================================================
+:class:`file.fits.FITSFile` - An abstraction layer for FITS Files
+=================================================================
 
 This module provides a simple extraction layer class for FITS file writing. FITS files must have either the ``.fit`` or ``.fits`` extension to be detected by this module. The module reads and writes files using :mod:`pyfits`.
 
