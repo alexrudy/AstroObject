@@ -27,7 +27,7 @@ class Test_Cache(object):
         """Fixtures for this test"""
         self.filename = "Time.dat"
         self.cache = Cache(self.generate,self.load,self.save,self.filename)
-        self.manager = CacheManager("SomeString","Caches",expiretime=100)
+        self.manager = CacheManager("Caches","SomeString",expiretime=100)
         self.manager["Cache"] = self.cache
         
     def generate(self):
@@ -63,7 +63,7 @@ class Test_YAMLCache(Test_Cache):
         """Fixtures for this test"""
         self.filename = "Time.yaml"
         self.cache = YAMLCache(self.generate,self.filename)
-        self.manager = CacheManager("SomeString","Caches",expiretime=100)
+        self.manager = CacheManager("Caches","SomeString",expiretime=100)
         self.manager["Cache"] = self.cache
         
         

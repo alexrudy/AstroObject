@@ -119,6 +119,11 @@ class FileSet(collections.MutableSet):
         self._autodiscover_value = value
         self._autodiscover_files()
     
+    @property
+    def date(self):
+        """Creation date for this fileset"""
+        return self._createtime
+    
     def __len__(self):
         """Number of files contained in this fileset."""
         return len(self._files)
@@ -543,7 +548,7 @@ class HashedFileSet(FileSet):
         _hash = hashlib.sha1()
         _hahs.update(hashable)
         self._hashhex = _hash.hexdigest()
-        self.move(self._prehashbase)
+        self.move(self._hashhex)
         
     def move(self,base,check=False):
         """Move this fileset to a new base location. The old directory for this fileset will be removed in its entirety. The new location will have the hashable base added to the directory by default.
@@ -553,5 +558,6 @@ class HashedFileSet(FileSet):
         
         Note that with ``check=False``, the entire old directory will be removed. This will remove even files that are not registered to the old fileset."""
         super(HashedFileSet, self).move(os.path.join(base,self.hash), check)
+        
         
         

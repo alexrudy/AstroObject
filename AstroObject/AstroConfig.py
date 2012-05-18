@@ -66,6 +66,9 @@ class Configuration(collections.MutableMapping):
         super(Configuration, self).__init__()
         self.log = logging.getLogger(__name__)
         self._store = dict(*args, **kwargs)
+    
+    name = "Configuration"
+    """The name/type of this configuration."""
         
     def __repr__(self):
         """String representation of this object"""
@@ -73,7 +76,7 @@ class Configuration(collections.MutableMapping):
         
     def __str__(self):
         """String for this object"""
-        return "<Configuration %r >" % repr(self)
+        return "<%s %r >" % (self.name,repr(self))
         
     def __getitem__(self, key):
         """Dictionary getter"""
@@ -142,7 +145,7 @@ class Configuration(collections.MutableMapping):
         
         """
         with open(filename, "w") as stream:
-            stream.write("# Configuration: %s\n" % filename)
+            stream.write("# %s: %s\n" % (self.name,filename))
             if re.search(r"(\.yaml|\.yml)$", filename):
                 yaml.dump(self.store, stream, default_flow_style=False)
             elif re.search(r"\.dat$", filename):

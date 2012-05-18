@@ -24,8 +24,9 @@ import hashlib
 import shutil
 
 # Submodules from this system
-from .AstroConfig import DottedConfiguration
+from .AstroConfig import Configuration
 from .AstroObjectLogging import logging
+from .file.fileset import FileSet, HashedFileSet
 
 __all__ = ["CacheManager","Cache","NumpyCache","YAMLCache"]
 __log__ = logging.getLogger(__name__)
@@ -111,55 +112,53 @@ class Cache(object):
             
 class CacheManager(collections.MutableMapping):
     """A cache management dictionary with some useful features."""
-    def __init__(self,hashable,destination,expiretime=100000):
+    def __init__(self, destination,  hashable, enabled=True, expiretime=100000, autodiscover=True, dbfilebase=".AOCacheDB.yml"):
         super(CacheManager, self).__init__()
         self._caches = {}
         self._flags = {}
+        self._filesets = {}
+        self._autodiscover_value = autodiscover
         self.log = __log__
-        
-        # Hash Setup
-        _hash = hashlib.sha1()
-        _hash.update(hashable)
-        self._hashhex = _hash.hexdigest()
-        
-        # Filenames
-        self._cache_basename = destination
-        if not os.path.isdir(self._cache_basename):
-            self.disable()
-            self.log.debug("Disabling Caching, Cache Base Directory '%s' not found." % self._cache_basename)
-        self._database_filename = os.path.join(self._cache_basename,"cache_database.yaml")
-        self._cache_dirname = os.path.join(self._cache_basename,self.hashhex)
-        if not os.path.isdir(self._cache_dirname):
-            os.mkdir(self._cache_dirname)
-            self.log.debug("Cache Directory Created: %s " % self._cache_dirname)
-        
         
         # Timing Information
         self.timeformat = "%Y-%m-%dT%H:%M:%S"
         self._createdate = datetime.now()
         self._expiretime = datetime.now() - timedelta(0,expiretime)
         
-        self.log.debug("Cache %s Created" % self.hashhex)
+        
+        # Filenames
+        self._cache_basename = os.path.relpath(os.path.join(destination,""))
+        self._dbfilebase = dbfilebase
+        self._dbfilename = os.path.join(self._cache_basename,self._dbfilebase)
+        
+        if (not os.path.isdir(self._cache_basename)) or (not enabled):
+            self.disable()
+            self.log.debug("Disabling Caching, Cache Base Directory '%s' not found." % self._cache_basename)
         
         # Database Setup
-        self._database = DottedConfiguration({})
-        self._database.dn = DottedConfiguration
-        self._database.load(self._database_filename)
-        self._database[self.hashhex+".update"] = self._createdate.strftime(self.timeformat)
-
-        self.expire()
-
-        self.log.debug("Added Cache to the Database: %s" % self.hashhex)
-
-    @property
-    def hashhex(self):
-        """Accessor method for this cache manager's current hash."""
-        return self._hashhex
+        self._database = Configuration({})
+        self._database.dn = Configuration
+        if self.enabled:
+            self._database.load(self._dbfilename)
         
+        # Main Hashed Fileset
+        self._fileset = HashedFileSet( base = self._cache_basename, hashable = hashable, isopen = self.enabled, persist = True, autodiscover = self._autodiscover_value, dbfilebase = self._dbfilebase, timeformat = self.timeformat)
+        self.log.debug("Cache FileSet Created: %s " % self._fileset.hash)
+        self._filesets[self._fileset.hash] = self._fileset
+        self._database[self._fileset.hash] = self._fileset.date.strftime(self.timeformat)
+        self._reload_db_filesets()
+        self.log.debug("Cache %s Created" % self.hash)
+        
+
+        
+        self.expire()
+        
+        self.log.debug("Added Cache to the Database: %s" % self.hash)
+    
     
     def __str__(self):
         """String for this cache"""
-        return self.hashhex
+        return self.hash
     
     def __getitem__(self,key):
         """Get a keyed item"""
@@ -168,9 +167,10 @@ class CacheManager(collections.MutableMapping):
     def __setitem__(self,key,value):
         """Set a keyed item"""
         if isinstance(value,Cache):
-            value.__setfilepath__(self._cache_dirname)
+            value.__setfilepath__(self.set.directory)
             self._caches[key] = value
-            self._database[self.hashhex+".Files."+key] = value.filename            
+            if value.filename not in self.set:
+                self.set.register(value.filename)
             for flag in self._flags:
                 self.flag(flag,self._flags[flag],key)
         else:
@@ -192,6 +192,29 @@ class CacheManager(collections.MutableMapping):
         """Length of the dictionary"""
         return len(self._caches)
     
+    def _reload_db_filesets(self):
+        """Get the already-created hashed file-sets which are in the base directory."""
+        for filepath in self._database:
+            if os.path.isdir(filepath) and filepath not in self._filesets:
+                self._filesets[filepath] = FileSet( base = self._cache_basename, name = filepath, persist = True, autodiscover = self._autodiscover_value, dbfilebase = self._dbfilebase, timeformat = self.timeformat )
+                self._database[filepath] = self._filesets[filepath].date.strftime(self.timeformat)
+        self._database.save(self._dbfilename)
+        
+    @property
+    def enabled(self):
+        """Check whether this fileset is enabled."""
+        return self._flags.get('loading',True) or self._flags.get('saving',True)
+    
+    @property
+    def hash(self):
+        """Accessor for set's hash method"""
+        return self.set.hash
+    
+    @property
+    def set(self):
+        """File set for the current hash."""
+        return self._fileset
+    
     def flag(self,flag,value,*caches):
         """Flag all caches"""
         if len(caches) == 0:
@@ -209,30 +232,29 @@ class CacheManager(collections.MutableMapping):
     
     def close(self):
         """Close this cache system."""
-        self._database.save(self._database_filename)
-        self.log.debug("Saved Database: %s" % self._database_filename)
+        self.expire()
+        for fs in self._filesets:
+            self._filesets[fs].close(clean = False, check = False)
+        self._database.save(self._dbfilename)
+        self.log.debug("Saved Database: %s" % self._dbfilename)
         
     def expire(self,*hashhexs):
         """Check for, and possibly clean, the given hashhexs"""
         if len(hashhexs) is 0:
             hashhexs = self._database.keys()
         for hashhex in hashhexs:
-            if datetime.strptime(self._database[hashhex].get("update","2000-01-01T00:00:00"),self.timeformat) < self._expiretime:
+            if datetime.strptime(self._database[hashhex],self.timeformat) < self._expiretime:
                 self.clear(hashhex)
+        self._database.save(self._dbfilename)
     
     def clear(self,*hashhexs):
         """docstring for clean_cachespace"""
         if len(hashhexs) is 0:
             hashhexs = self._database.keys()
         for hashhex in hashhexs:
-            ecpath = os.path.join(self._cache_basename,hashhex)
-            if os.path.exists(ecpath):
-                shutil.rmtree(ecpath)
-            if hashhex == self.hashhex:
-                os.mkdir(self._cache_dirname)
-            else:
-                del self._database[hashhex]
-            
+            self._filesets[hashhex].close(clean = hashhex == self.hash, check = False)
+            del self._database[hashhex]
+        self._database.save(self._dbfilename)
         return hashhexs
     
     def disable(self,*caches):
