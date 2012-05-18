@@ -672,7 +672,8 @@ class API_BaseStack(API_Base):
         AObject = self.OBJECT()
         AObject.save(self.frame())
         AObject.write(self.files[0])
-        AObject.read(self.files[0],framename="Other")
+        AObject.read(self.files[0],framename="Other",select=False)
+        assert AObject.framename != "Other"
     
     def test_read_from_file_single_frame_clobber(self):
         """read() succeeds on overwrite with clobber=True"""
