@@ -7,8 +7,8 @@
 #  Copyright 2012 Alexander Rudy. All rights reserved.
 # 
 u"""
-:mod:`file.plaintext` – Plain Text File writing
-===============================================
+:class:`file.plaintext.NumpyTextFile` – Plain Text File writing
+===============================================================
 
 This module handles writing simple text files. In :mod:`AstroObject`, simple text files have the extension ``.txt`` or ``.dat``. As well, since this module uses numpy to load and read text files, gzipped files can be read automatically as gzipped text files, with the ``.gz`` extension.
 
@@ -16,6 +16,11 @@ This module handles writing simple text files. In :mod:`AstroObject`, simple tex
     NumpyTextFile
     :members:
     :inherited-members:
+
+:class:`file.plaintext.AstroObjectTextFile` – Plain Text files with Headers
+===========================================================================
+
+This module writes plain-text files, but includes header information as text comments at the beginning.
 
 .. autoclass::
     AstroObjectTextFile

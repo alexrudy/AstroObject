@@ -85,6 +85,7 @@ class SimpleStage(Simulator):
     
     @include(False)
     @depends("setup-caches")
+    @triggers('raiser')
     def last(self):
         """Last Stage"""
         print "Last Stage"
