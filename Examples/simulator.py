@@ -84,8 +84,29 @@ class SimpleStage(Simulator):
     
     @include
     @excepts(Exception)
+    @optional
+    @replaces("raiser","replaced")
+    def oraiser(self):
+        """An optional function which rasies"""
+        raise Exception("Something which might sort-of be problematic")
+    
+    @include
+    @replaces("replaced")
+    def replacer(self):
+        """A function which replaces another"""
+        pass
+    
+    @include
+    def replaced(self):
+        """A function which should be repalced"""
+        print "DO NOT PRINT ME"
+        
+
+    
+    @include
+    @excepts(Exception)
     def raiser(self):
-        """A function which rasies others"""
+        """A function which rasies"""
         raise Exception("Something which might sort-of be problematic")
         
     @include(False)
