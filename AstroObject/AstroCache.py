@@ -148,11 +148,7 @@ class CacheManager(collections.MutableMapping):
         self._database[self._fileset.hash] = self._fileset.date.strftime(self.timeformat)
         self._reload_db_filesets()
         self.log.debug("Cache %s Created" % self.hash)
-        
-
-        
         self.expire()
-        
         self.log.debug("Added Cache to the Database: %s" % self.hash)
     
     
@@ -194,10 +190,14 @@ class CacheManager(collections.MutableMapping):
     
     def _reload_db_filesets(self):
         """Get the already-created hashed file-sets which are in the base directory."""
+        self.log.log(2,"Reloading Database, %r" % self._database)
+        self.log.log(2,"Filesets: %r" % self._filesets.keys())
         for filepath in self._database:
-            if os.path.isdir(filepath) and filepath not in self._filesets:
+            #TODO: Check for existance of directory before making a fileset? Or just make everything in the database.
+            if filepath not in self._filesets:
                 self._filesets[filepath] = FileSet( base = self._cache_basename, name = filepath, persist = True, autodiscover = self._autodiscover_value, dbfilebase = self._dbfilebase, timeformat = self.timeformat )
                 self._database[filepath] = self._filesets[filepath].date.strftime(self.timeformat)
+                self.log.log(2,"Reloaded fileset from database: %s" % filepath)
         self._database.save(self._dbfilename)
         
     @property

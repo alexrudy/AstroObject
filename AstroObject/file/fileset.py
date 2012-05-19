@@ -130,7 +130,7 @@ class FileSet(collections.MutableSet):
     
     def __contains__(self,filepath):
         """Check whether a filepath is contained in this fileset."""
-        return os.path.relpath(filepath) in self._files
+        return self.get_cpath(filepath) in self._files
         
     def __iter__(self):
         """Returns an iterable over all of the filepaths which are registered in this fileset."""
@@ -253,7 +253,6 @@ class FileSet(collections.MutableSet):
             if not self._open_files[fn].open:
                 del self._open_files[fn]
         return self._open_files.keys()
-    
         
     def add(self,filepath):
         """Insert filepath into the fileset. Ensures that filepaths are not duplicated in the fileset."""
@@ -262,6 +261,13 @@ class FileSet(collections.MutableSet):
     def discard(self,filepath):
         """Remove a filepath from the fileset. If the filepath exists, it will be deleted. This method will raise a :exc:`KeyError` if the filepath is not registered."""
         self.delete(filepath)
+        
+    def get_cpath(self,filename):
+        """Return the cache object-like filepath for the requested filepath. This helps ensure that calls to register, etc. will not fail."""
+        fbase, fname = os.path.split(filename)
+        if fbase == "" or os.path.relpath(fbase) == self.directory:
+            filename = fname
+        return os.path.relpath(os.path.join(self.directory,filename))
                 
     def register(self,*filenames):
         """Register filenames as a members of this fileset. Multiple filenames can be registered. They are registered by thier relative path by default.
@@ -274,10 +280,7 @@ class FileSet(collections.MutableSet):
         if not self.open:
             raise IOError("File set is not open!")
         for filename in filenames:
-            fbase, fname = os.path.split(filename)
-            if fbase == "" or os.path.relpath(fbase) == self.directory:
-                filename = fname
-            fullpath = os.path.relpath(os.path.join(self.directory,filename))
+            fullpath = self.get_cpath(filename)
             if fullpath in self._files:
                 raise KeyError("Filepath %s already exists in fileset." % filename)
             if fullpath == self._dbfilename:

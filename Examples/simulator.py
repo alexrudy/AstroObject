@@ -69,6 +69,19 @@ class SimpleStage(Simulator):
         """Acting 3"""
         self.map(np.exp,self.blist)
     
+    @excepts(IOError)
+    @optional
+    @replaces("optgenerator")
+    def optloader(self):
+        """Optional Stage Load"""
+        raise IOError
+        
+    @include
+    @depends("optloader")
+    def optgenerator(self):
+        """Optional Stage Gen"""
+        print "Generated"
+    
     @include
     @excepts(Exception)
     def raiser(self):
