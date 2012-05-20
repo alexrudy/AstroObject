@@ -92,6 +92,7 @@ class FileSet(collections.MutableSet):
         self._dbfilebase = dbfilebase
         self._createtime = datetime.now()
         self._files = Configuration({})
+        self._files.name = "%s-db" % self.__class__.__name__
         self._open_files = {}
         self._autodiscovery_in_progress = False
         self._set_directory(os.path.join(base,name))

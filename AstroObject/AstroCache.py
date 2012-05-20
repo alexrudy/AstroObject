@@ -138,6 +138,7 @@ class CacheManager(collections.MutableMapping):
         # Database Setup
         self._database = Configuration({})
         self._database.dn = Configuration
+        self._database.name = "%s-db" % self.__class__.__name__
         if self.enabled:
             self._database.load(self._dbfilename)
         
