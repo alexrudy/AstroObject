@@ -842,13 +842,14 @@ can be customized using the 'Default' configuration variable in the configuratio
             self.parser.error(u"No stages triggered to run!")
         self.trigger = []
         try:
-            for stage in self.orders:            
-                if stage in self.macro:
-                    self.execute(stage)
-                elif stage in self.include:
-                    self.execute(stage,deps=False,level="I")
-                elif stage in self.trigger:
-                    self.execute(stage,level="T")
+            for stage in self.orders:
+                if stage not in self.attempt and stage not in self.complete:            
+                    if stage in self.macro:
+                        self.execute(stage)
+                    elif stage in self.include:
+                        self.execute(stage, deps=False, level="I")
+                    elif stage in self.trigger:
+                        self.execute(stage, level="T")
         except SimulatorPause:
             self.paused = True
         else:
@@ -985,9 +986,7 @@ can be customized using the 'Default' configuration variable in the configuratio
             self.log.critical("Simulator closing out, exit code %d" % code)
         else:
             self.log.info(u"Simulator %s Finished" % self.name)
-            
-
-    
+                
     def map(self,function,collection=[],idfun=str,exceptions=True,color="green"):
         """Map a function over a given collection."""
         if exceptions == True:
