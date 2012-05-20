@@ -52,10 +52,14 @@ class Test_Cache(object):
         self.cache.reset()
         third = self.manager["Cache"]
         self.cache.reset()
-        self.manager.clear()
+        self.manager.set.delete(self.filename)
         fourth = self.manager["Cache"]
         assert first == second and second == third
-        assert first != fourth        
+        assert first != fourth
+        
+    def tearDown(self):
+        """Tear down this set of tests"""
+        self.manager.close()
     
 class Test_YAMLCache(Test_Cache):
     """AstroObject.AstroCache.YAMLCache"""

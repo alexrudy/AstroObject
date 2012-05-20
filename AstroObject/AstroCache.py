@@ -149,7 +149,6 @@ class CacheManager(collections.MutableMapping):
         self._reload_db_filesets()
         self.log.debug("Cache %s Created" % self.hash)
         self.expire()
-        self.log.debug("Added Cache to the Database: %s" % self.hash)
     
     
     def __str__(self):
@@ -233,17 +232,19 @@ class CacheManager(collections.MutableMapping):
     def close(self):
         """Close this cache system."""
         self.expire()
-        for fs in self._filesets:
+        for fs in self._database:
             self._filesets[fs].close(clean = False, check = False)
         self._database.save(self._dbfilename)
         self.log.debug("Saved Database: %s" % self._dbfilename)
         
     def expire(self,*hashhexs):
         """Check for, and possibly clean, the given hashhexs"""
+        self.log.log(2,"Caches will expire at %s" % self._expiretime.strftime(self.timeformat))
         if len(hashhexs) is 0:
             hashhexs = self._database.keys()
         for hashhex in hashhexs:
-            if datetime.strptime(self._database[hashhex],self.timeformat) < self._expiretime:
+            if datetime.strptime(self._database[hashhex],self.timeformat) < self._expiretime and hashhex != self.hash:
+                self.log.log(8,"Cache Set %s has Expired!" % hashhex)
                 self.clear(hashhex)
         self._database.save(self._dbfilename)
     
@@ -252,8 +253,9 @@ class CacheManager(collections.MutableMapping):
         if len(hashhexs) is 0:
             hashhexs = self._database.keys()
         for hashhex in hashhexs:
-            self._filesets[hashhex].close(clean = hashhex == self.hash, check = False)
-            del self._database[hashhex]
+            self._filesets[hashhex].close(clean = hashhex != self.hash, check = False)
+            if hashhex != self.hash:
+                del self._database[hashhex] 
         self._database.save(self._dbfilename)
         return hashhexs
     

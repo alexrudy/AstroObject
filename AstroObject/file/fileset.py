@@ -95,9 +95,10 @@ class FileSet(collections.MutableSet):
         self._open_files = {}
         self._autodiscovery_in_progress = False
         self._set_directory(os.path.join(base,name))
+        self._reload()
         self._open = isopen
         self.log = __log__
-        self.log.log(2,"IRAF File Set created with directory %s" % self._directory)
+        self.log.log(2,"File Set created with directory %s" % self._directory)
     
     @property
     def persist(self): #: = False
@@ -328,7 +329,7 @@ class FileSet(collections.MutableSet):
         if not self.open:
             raise IOError("File set is not open!")        
         for filepath in filepaths:
-            filepath = os.path.relpath(filepath)
+            filepath = self.get_cpath(filepath)
             if filepath in self._open_files:
                 self.close_fd(filepath)
             del self._files[filepath]
@@ -428,6 +429,8 @@ class FileSet(collections.MutableSet):
             raise IOError("May only close an open FileSet")
         if self.persist and clean:
             self.log.warning("Closing and cleaning a persistent fileset.")
+        
+        self._persist()
         
         if check and len(self.active_fd) != 0:
             self.log.debug("Active File Handles Preventing Close: %r" % self.active_fd)
