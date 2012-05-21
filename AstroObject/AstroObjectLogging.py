@@ -167,7 +167,7 @@ class LogManager(logging.getLoggerClass()):
     def configure(self,configFile=None,configuration=None):
         """Configure this logging object using a configuration dictionary. Configuration dictionaries can be provided by a YAML file or directly to the configuration argument. If both are provided, the YAML file will over-ride the explicit dictionary."""
         if self.handling:
-            raise ConfigurationError("Logger appears to be already handling")
+            return
         # Configure from Variable
         if configuration != None:
             self.config = update(self.config,configuration)
@@ -191,9 +191,9 @@ class LogManager(logging.getLoggerClass()):
     def start(self):
         """Starts this logger running, using the configuration set using :meth:`configure`. The configuration can configure a file handler and a console handler. Arbitrary configurations are not possible at this point."""
         if self.handling:
-            raise ConfigurationError("Logger appears to be already handling messages")
+            return
         if not self.running:
-            raise ConfigurationError("Logger appears to not be running. This should never happen")
+            return
         if not self.configured:
             self.log(8,"Logger appears not to be configured")
         

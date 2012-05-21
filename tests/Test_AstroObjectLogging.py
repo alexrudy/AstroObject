@@ -62,16 +62,6 @@ class test_Logger(object):
         log.start()
         assert log.handling
         assert log.configured
-    
-    @nt.raises(AOLogging.ConfigurationError)
-    def test_start_failure(self):
-        """start() failure"""
-        log = logging.getLogger(__name__+".start+failure")
-        log.configure(configuration={'logging':{'file':{'level':10}}})
-        log.start()
-        assert log.handling
-        assert log.configured
-        log.start()
         
         
         
