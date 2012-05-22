@@ -401,8 +401,9 @@ class Stage(object):
             blen = int(keys["per"] * (terminal.COLUMNS - 50) / 75)
             if blen > terminal.COLUMNS - 50:
                 blen = terminal.COLUMNS - 50
+            blen -= 1
             string += u"█" * blen
-            string += terminal.NORMAL
+            string += terminal.NORMAL + "|"
             keys["timestr"] = u"%(time)8s %(per)3d%%" % keys
         return string % keys
         
@@ -448,8 +449,8 @@ class Simulator(object):
     
     name = "Simulator"
     
-    def __init__(self,name="__class__.__name__",commandLine=True,version=None):
-        super(Simulator, self).__init__()
+    def __init__(self, name="__class__.__name__", commandLine=True, version=None, caches=True, **kwargs):
+        super(Simulator, self).__init__(**kwargs)
         self.stages = {}
         self.macros = {}
         self.functions = {}
@@ -464,6 +465,7 @@ class Simulator(object):
         self.aran = []
         self.name = name
         self.order = None
+        self.use_caches = caches
         self.config = StructuredConfiguration({})
         self.config.dn = DottedConfiguration
         self.config.load(resource_filename(__name__,"Defaults.yaml"))
@@ -769,7 +771,7 @@ can be customized using the 'Default' configuration variable in the configuratio
     ### PUBLIC OPERATION APIs ###
     #############################
     
-    def collect(self,matching=r'^(?!\_)',**kwargs):
+    def collect(self,matching=r'^(?!\_)',genericClasses=(),**kwargs):
         """Collect class methods for inclusion as simulator stages. Instance methods are collected if they do not belong to the parent :class:`Simulator` class (i.e. this method, and others like :meth:`registerStage` will not be collected.). Registered stages will default to having no dependents, to be named similar to thier own methods (``collected_stage`` becomes ``*collected-stage`` on the command line) and will use thier doc-string as the stage description. The way in which these stages are collected can be adjusted using the decorators provided in this module.
         
         To define a method as a stage with a dependent, help string, and by default inclusion, use::
@@ -792,6 +794,8 @@ can be customized using the 'Default' configuration variable in the configuratio
         
         """
         genericList = dir(Simulator)
+        for gClass in genericClasses:
+            genericList += dir(gClass)
         currentList = dir(self)
         stageList = []
         for methodname in currentList:
@@ -824,10 +828,9 @@ can be customized using the 'Default' configuration variable in the configuratio
         self._postConfiguration()
         # Write Configuration to Partials Directory
         self._setupCaching()
-        if os.path.isdir(self.config["Dirs.Partials"]):
+        if os.path.isdir(self.config["Dirs.Partials"]) and self.commandLine:
             filename = self.dir_filename("Partials","%s.config.yaml" % self.name)
             self.config.save(filename)
-            
         self.starting = False
         self.started = True
                 
@@ -876,6 +879,23 @@ can be customized using the 'Default' configuration variable in the configuratio
             self.running = False
         return self.complete
     
+    def next_stage(self,parent,dependencies=False):
+        """Return the name of the next stage"""
+        for stage in self.orders:
+            if stage not in self.attempt and stage not in self.complete:
+                if parent is not None and stage in self.stages[parent].deps:
+                    return stage
+                elif stage == parent:
+                    return stage
+                elif parent is None:
+                    if stage in self.macro:
+                        return stage
+                    if stage in self.include:
+                        return stage
+                    if stage in self.trigger:
+                        return stage
+                    
+                    
     
     def execute(self,stage,deps=True,level=0):
         """Actually exectue a particular stage. This function can be called to execute individual stages, either with or without dependencies. As such, it gives finer granularity than :func:`do`.
@@ -906,7 +926,17 @@ can be customized using the 'Default' configuration variable in the configuratio
             return use
         
         self.attempt += [stage]
-         
+        if level == "T":
+            indicator = u"->%s"
+            level = 0
+        elif level == "I":
+            indicator = u"+>%s"
+            level = 0
+        elif level == 0:
+            indicator = u"=>%s"
+        else:
+            indicator = u"└>%s"
+        
         if deps:
             
             for dependent in self.orders:
@@ -920,28 +950,18 @@ can be customized using the 'Default' configuration variable in the configuratio
                             self.log.debug(u"Stage '%s' requested by '%s' but skipped" % (dependent,stage))
                         else:
                             self.log.warning(u"Stage '%s' required by '%s' but failed to complete." % (dependent,stage))
-                            
-            self.trigger += self.stages[stage].trig
         else:
             self.log.warning(u"Explicity skipping dependents")
         
         s = self.stages[stage]
-        if level == "T":
-            indicator = u"->%s"
-            level = 0
-        elif level == "I":
-            indicator = u"+>%s"
-            level = 0
-        elif level == 0:
-            indicator = u"=>%s"
-        else:
-            indicator = u"└>%s"
         self._depTree += [u"%-30s : %s" % (u"  " * level + indicator % stage,s.description)]
         if s.macro or self.config["Options.DryRun"]:
+            self.trigger += self.stages[stage].trig
             self.complete += [stage] + s.reps
             self.done += [stage]
             return use
-        
+        elif stage in self.complete:
+            return use
         
         self.log.debug("Starting \'%s\'" % s.name)
         self.log.info(u"%s" % s.description)
@@ -978,6 +998,7 @@ can be customized using the 'Default' configuration variable in the configuratio
             raise
         else:
             self.log.debug(u"Completed '%s' and %r" % (s.name,s.reps))
+            self.trigger += self.stages[stage].trig
             self.complete += [stage] + s.reps
             self.ran += [stage]
             self.done += [stage]
@@ -1088,8 +1109,9 @@ can be customized using the 'Default' configuration variable in the configuratio
         if self.running:
             raise SimulatorStateError("Cannot configure the simulator, the simulation has already started!")
 
-        self.configured |= self.config.load()
-        self.log.debug("Updated Configuration from default file %s" % self.config["Configurations.This"])            
+        if not self.configured:
+            self.configured |= self.config.load()
+            self.log.debug("Updated Configuration from default file %s" % self.config["Configurations.This"])            
                 
         if not self.configured:
             self.log.log(8,"No configuration provided or accessed. Using defaults.")
