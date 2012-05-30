@@ -70,8 +70,6 @@ class HDUFrame(HDUHeaderMixin,BaseFrame,pf.ImageHDU):
     def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
         self.data = data
         super(HDUFrame, self).__init__(data=None, label=label, header=header, metadata=metadata, **kwargs)
-        if not isinstance(self.header,pf.Header):
-            self.header = pf.PrimaryHDU().header
         self.data = data
         try:
             self.__valid__()
