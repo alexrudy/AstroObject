@@ -23,7 +23,6 @@ def bin(array,factor):
     Aout = np.zeros(finalShape)
     
     for i in range(factor):
-        Ai = array[i::factor,i::factor]
-        Aout += Ai
-    
+        Aout += array[i::factor,i::factor]
+        
     return Aout
