@@ -63,11 +63,11 @@ class NumpyTextFile(File):
             raise TypeError(u"Can't save multiple frames to stack.")
         if not clobber and os.path.exists(self.filename):
             raise IOError(u"Can't overwrite existing file.")
-        np.savetxt(self.filename, stack[0].data)
+        np.savetxt(self.filename, stack[0].data.T)
         
     def open(self):
         """Open this file and return the HDUList."""
-        return pf.HDUList([pf.PrimaryHDU(np.loadtxt(self.filename))])
+        return pf.HDUList([pf.PrimaryHDU(np.loadtxt(self.filename,unpack=True))])
 
 class AstroObjectTextFile(File):
     """Simple text file writing using the :mod:`numpy` text facilities. Text files write the raw data of the data component to the HDU to a simple text file.
