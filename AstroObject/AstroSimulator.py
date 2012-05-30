@@ -755,7 +755,7 @@ can be customized using the 'Default' configuration variable in the configuratio
     ### PUBLIC OPERATION APIs ###
     #############################
     
-    def collect(self,matching=r'^(?!\_)',**kwargs):
+    def collect(self, matching=r'^(?!\_)', genericClasses=(), **kwargs):
         """Collect class methods for inclusion as simulator stages. Instance methods are collected if they do not belong to the parent :class:`Simulator` class (i.e. this method, and others like :meth:`registerStage` will not be collected.). Registered stages will default to having no dependents, to be named similar to thier own methods (``collected_stage`` becomes ``*collected-stage`` on the command line) and will use thier doc-string as the stage description. The way in which these stages are collected can be adjusted using the decorators provided in this module.
         
         To define a method as a stage with a dependent, help string, and by default inclusion, use::
