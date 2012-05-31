@@ -132,7 +132,7 @@ class FileSet(collections.MutableSet):
     
     def __contains__(self,filepath):
         """Check whether a filepath is contained in this fileset."""
-        return self.get_cpath(filepath) in self._files
+        return self._get_cpath(filepath) in self._files
         
     def __iter__(self):
         """Returns an iterable over all of the filepaths which are registered in this fileset."""
@@ -264,7 +264,7 @@ class FileSet(collections.MutableSet):
         """Remove a filepath from the fileset. If the filepath exists, it will be deleted. This method will raise a :exc:`KeyError` if the filepath is not registered."""
         self.delete(filepath)
         
-    def get_cpath(self,filename):
+    def _get_cpath(self,filename):
         """Return the cache object-like filepath for the requested filepath. This helps ensure that calls to register, etc. will not fail."""
         fbase, fname = os.path.split(filename)
         if fbase == "" or os.path.relpath(fbase) == self.directory:
@@ -282,7 +282,7 @@ class FileSet(collections.MutableSet):
         if not self.open:
             raise IOError("File set is not open!")
         for filename in filenames:
-            fullpath = self.get_cpath(filename)
+            fullpath = self._get_cpath(filename)
             if fullpath in self._files:
                 raise KeyError("Filepath %s already exists in fileset." % filename)
             if fullpath == self._dbfilename:
@@ -330,7 +330,7 @@ class FileSet(collections.MutableSet):
         if not self.open:
             raise IOError("File set is not open!")        
         for filepath in filepaths:
-            filepath = self.get_cpath(filepath)
+            filepath = self._get_cpath(filepath)
             if filepath in self._open_files:
                 self.close_fd(filepath)
             del self._files[filepath]
