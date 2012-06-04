@@ -178,7 +178,18 @@ class FileSet(collections.MutableSet):
             return True
         return False
         
-    
+    def _get_cpath(self,filename):
+        """Return the cache object-like filepath for the requested filepath. This helps ensure that calls to register, etc. will not fail."""
+        fbase, fname = os.path.split(filename)
+        if fbase == "" or os.path.relpath(fbase) == self.directory:
+            filename = fname
+        return os.path.normpath(os.path.join(self.directory,filename))
+        
+    def _get_bpath(self,filename):
+        """Extracts the base directory component from a filename."""
+        if filename.startswith(self.directory):
+            return filename[len(self.directory)+1:]
+        return filename
         
     def _set_directory(self,base):
         """Set the directory for this fielset from the given base name. This method ensures that the database filename attribute remains consistent."""
@@ -186,7 +197,7 @@ class FileSet(collections.MutableSet):
             os.mkdir(base)
         if os.path.basename(base) != "":
             base = os.path.join(base,"")    
-        self._directory = os.path.relpath(base)
+        self._directory = os.path.normpath(base)
         self._dbfilename = os.path.join(self.directory,self._dbfilebase)
         self._reload()
         
@@ -200,7 +211,7 @@ class FileSet(collections.MutableSet):
         for root, dirs, files in os.walk(self.directory):
             for filepath in files:
                 fullpath = os.path.join(root,filepath)
-                if fullpath not in self and os.path.relpath(fullpath) != self._dbfilename:
+                if fullpath not in self and self._get_cpath(fullpath) != self._dbfilename:
                     self.add(fullpath)
         self._autodiscovery_in_progress = False
     
@@ -225,11 +236,11 @@ class FileSet(collections.MutableSet):
         """A list of files in the fileset that have been modified since registering."""
         self._autodiscover_files()
         modified = []
-        for filepath in self._files:
-            filepath = os.path.relpath(filepath)
+        for filekey in self._files:
+            filepath = self._get_cpath(filekey)
             if os.path.exists(filepath) and not filepath == self._dbfilename:
-                if os.stat(filepath).st_mtime > self._files[filepath]:
-                    modified += [filepath]
+                if os.stat(filepath).st_mtime > self._files[filekey]:
+                    modified += [filekey]
         if len(modified) > 0:
             self._persist()
         return modified
@@ -239,11 +250,11 @@ class FileSet(collections.MutableSet):
         """A list of files in the fileset have been deleted since registering."""
         self._autodiscover_files()
         deleted = []
-        for filepath in self._files:
-            filepath = os.path.relpath(filepath)
+        for filekey in self._files:
+            filepath = self._get_cpath(filekey)
             if not os.path.exists(filepath):
-                deleted += [filepath]
-                self._files[filepath] = 0.0
+                deleted += [filekey]
+                self._files[filekey] = 0.0
         if len(deleted) > 0:
             self._persist()
         return deleted
@@ -258,18 +269,17 @@ class FileSet(collections.MutableSet):
         
     def add(self,filepath):
         """Insert filepath into the fileset. Ensures that filepaths are not duplicated in the fileset."""
-        self.register(filepath)
+        try:
+            self.register(filepath)
+        except KeyError:
+            pass
+        return
         
     def discard(self,filepath):
         """Remove a filepath from the fileset. If the filepath exists, it will be deleted. This method will raise a :exc:`KeyError` if the filepath is not registered."""
         self.delete(filepath)
         
-    def _get_cpath(self,filename):
-        """Return the cache object-like filepath for the requested filepath. This helps ensure that calls to register, etc. will not fail."""
-        fbase, fname = os.path.split(filename)
-        if fbase == "" or os.path.relpath(fbase) == self.directory:
-            filename = fname
-        return os.path.relpath(os.path.join(self.directory,filename))
+
                 
     def register(self,*filenames):
         """Register filenames as a members of this fileset. Multiple filenames can be registered. They are registered by thier relative path by default.
@@ -283,14 +293,15 @@ class FileSet(collections.MutableSet):
             raise IOError("File set is not open!")
         for filename in filenames:
             fullpath = self._get_cpath(filename)
-            if fullpath in self._files:
+            filekey = self._get_bpath(filename)
+            if filekey in self._files:
                 raise KeyError("Filepath %s already exists in fileset." % filename)
             if fullpath == self._dbfilename:
                 raise KeyError("Cannot add DB to database.")
             if os.path.exists(fullpath):
-                self._files[fullpath] = os.stat(fullpath).st_mtime
+                self._files[filekey] = os.stat(fullpath).st_mtime
             else:
-                self._files[fullpath] = 0.0
+                self._files[filekey] = 0.0
         self._persist()
         return self._files.keys()
     
@@ -331,9 +342,10 @@ class FileSet(collections.MutableSet):
             raise IOError("File set is not open!")        
         for filepath in filepaths:
             filepath = self._get_cpath(filepath)
+            filekey = self._get_bpath(filepath)
             if filepath in self._open_files:
                 self.close_fd(filepath)
-            del self._files[filepath]
+            del self._files[filekey]
             if os.path.exists(filepath):
                 os.remove(filepath)
         self._persist()
@@ -348,13 +360,14 @@ class FileSet(collections.MutableSet):
         if not self.open:
             raise IOError("File set is not open!")
         for filepath in filepaths:
-            filepath = os.path.relpath(filepath)
+            filepath = self._get_cpath(filepath)
+            filekey = self._get_bpath(filepath)
             if filepath not in self:
                 raise KeyError("Cannot update unregistered file!")
             if os.path.exists(filepath):
-                self._files[filepath] = os.stat(filepath).st_mtime
+                self._files[filekey] = os.stat(filepath).st_mtime
             else:
-                self._files[filepath] = 0.0
+                self._files[filekey] = 0.0
         self._persist()
         return self._files.keys()
     
@@ -367,6 +380,7 @@ class FileSet(collections.MutableSet):
         """
         if not self.open:
             raise IOError("File set is not open!")
+        filepath = self._get_cpath(filepath)
         if filepath not in self._open_files:
             self._open_files[filepath] = open(filepath,*args)
         elif len(args) > 1:
@@ -393,7 +407,7 @@ class FileSet(collections.MutableSet):
             
         """
         for filepath in filepaths:
-            filepath = os.path.relpath(filepath)
+            filepath = self._get_cpath(filepath)
             if self._open_files[filepath].open:
                 self._open_files[filepath].close()
             del self._open_files[filepath]
@@ -407,8 +421,15 @@ class FileSet(collections.MutableSet):
         Note that with ``check=False``, the entire old directory will be removed. This will remove even files that are not registered to the old fileset."""
         persist, self.persist = self.persist, True
         self._persist()
-        shutil.copytree(olddir,base)
-        self.close(check=check)
+        if not os.path.exists(base):
+            os.mkdir(base)
+        if os.path.basename(base) != "":
+            base = os.path.join(base,"")
+        for filekey in self.files:
+            filename = self._get_cpath(filekey)
+            newfilename = os.path.join(base,filekey)
+            shutil.copyfile(filename, newfilename)
+        self.close(check = check )
         self._set_directory(base)
         self._open = True
         self._reload()
@@ -553,9 +574,9 @@ class HashedFileSet(FileSet):
     @hash.setter    
     def hash(self,hashable):
         _hash = hashlib.sha1()
-        _hahs.update(hashable)
+        _hash.update(hashable)
         self._hashhex = _hash.hexdigest()
-        self.move(self._hashhex)
+        self.move(self._prehashbase)
         
     def move(self,base,check=False):
         """Move this fileset to a new base location. The old directory for this fileset will be removed in its entirety. The new location will have the hashable base added to the directory by default.
