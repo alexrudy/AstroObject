@@ -132,7 +132,7 @@ class FileSet(collections.MutableSet):
     
     def __contains__(self,filepath):
         """Check whether a filepath is contained in this fileset."""
-        return self._get_cpath(filepath) in self._files
+        return self._get_bpath(filepath) in self._files
         
     def __iter__(self):
         """Returns an iterable over all of the filepaths which are registered in this fileset."""
