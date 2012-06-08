@@ -86,6 +86,8 @@ class FileSet(collections.MutableSet):
     def __init__(self, base, name="", isopen=True, persist=False, autodiscover=True, timeformat="%Y-%m-%dT%H:%M:%S", dbfilebase=".AOFSdb.yml"):
         super(FileSet, self).__init__()
         # Start both mode variables as false for initialization process.
+        self._date_key = "..DATE"
+        self._open_key = "..OPEN"
         self._persistance_value = persist
         self._autodiscover_value = autodiscover
         self._timeformat = timeformat
@@ -154,15 +156,18 @@ class FileSet(collections.MutableSet):
         
     def __exit__(self, exc_type, exc_value, traceback):
         """Leave the fileset contextual state. Contextual mode ensures that the fileset is closed on departure. When using a fileset in contextual mode, changes to the files are monitored, but the fileset does not ensure all changes have been registered when the fileset closes. The fileset is guaranteed to close in the end. See :meth:`__enter__``."""
-        self.close(check=False)
+        if self.open:
+            self.close(check=False)
     
-    def _persist(self):
+    def _persist(self,isopen=True):
         """Write the persistance database to the database file in the fileset directory."""
         if not self.persist:
             return
-        self._files["Date"] = self._createtime.strftime(self._timeformat)
+        self._files[self._date_key] = self._createtime.strftime(self._timeformat)
+        self._files[self._open_key] = isopen
         self._files.save(self._dbfilename)
-        del self._files["Date"]
+        del self._files[self._date_key]
+        del self._files[self._open_key]
         
     def _reload(self):
         """Reload the persistance databse to this object. 
@@ -174,7 +179,9 @@ class FileSet(collections.MutableSet):
         if os.path.exists(self._dbfilename) and self.persist:
             self._files.load(self._dbfilename)
             os.remove(self._dbfilename)
-            self._createtime = datetime.strptime(self._files.pop("Date"),self._timeformat)
+            self._createtime = datetime.strptime(self._files.pop(self._date_key),self._timeformat)
+            if self._files.pop(self._open_key,False):
+                raise IOError("Fileset is already open, not opening co-incident file sets.")
             return True
         return False
         
@@ -263,7 +270,7 @@ class FileSet(collections.MutableSet):
     def active_fd(self):
         """Returns a list of open file descriptors for this fileset. Any file descriptors that have already been closed are removed from the fileset's registry of file descriptors."""
         for fn in self._open_files.keys():
-            if not self._open_files[fn].open:
+            if self._open_files[fn].closed:
                 del self._open_files[fn]
         return self._open_files.keys()
         
@@ -277,7 +284,11 @@ class FileSet(collections.MutableSet):
         
     def discard(self,filepath):
         """Remove a filepath from the fileset. If the filepath exists, it will be deleted. This method will raise a :exc:`KeyError` if the filepath is not registered."""
-        self.delete(filepath)
+        try:
+            self.delete(filepath)
+        except KeyError:
+            pass
+        return
         
 
                 
@@ -300,12 +311,14 @@ class FileSet(collections.MutableSet):
                 raise KeyError("Cannot add DB to database.")
             if os.path.exists(fullpath):
                 self._files[filekey] = os.stat(fullpath).st_mtime
+                self.log.debug("Registered %s as existing file" % filekey)
             else:
                 self._files[filekey] = 0.0
+                self.log.debug("Registered %s as non-existant file" % filekey)
         self._persist()
         return self._files.keys()
     
-    def filename(self,extension=None,prefix='tmp',getfd=False,**kwargs):
+    def filename(self,extension=None,prefix='tmp',getfd=False,text=True):
         """Return a temporary filename which is a member of this fileset.
         
         :param string extension: The temporary file's extension (actually appears as suffix).
@@ -316,11 +329,11 @@ class FileSet(collections.MutableSet):
         :returns filename,fileobj: File descriptor for temporary file if ``getfd=True``.
         
          """
-        fileobj, filename = tempfile.mkstemp(suffix=extension,prefix=prefix,dir=self.directory,**kwargs)
+        fileobj, filename = tempfile.mkstemp(suffix=extension,prefix=prefix,dir=self.directory,text=text)
         if getfd:
-            self._open_files[filename] = fileobj
+            self._open_files[filename] = os.fdopen(fileobj,'w')
             self.register(filename)
-            return filename, fileobj
+            return filename, self._open_files[filename]
         else:    
             os.close(fileobj)
             self.register(filename)
@@ -408,7 +421,7 @@ class FileSet(collections.MutableSet):
         """
         for filepath in filepaths:
             filepath = self._get_cpath(filepath)
-            if self._open_files[filepath].open:
+            if not self._open_files[filepath].closed:
                 self._open_files[filepath].close()
             del self._open_files[filepath]
         
@@ -452,7 +465,7 @@ class FileSet(collections.MutableSet):
         if self.persist and clean:
             self.log.warning("Closing and cleaning a persistent fileset.")
         
-        self._persist()
+        self._persist(isopen=False)
         
         if check and len(self.active_fd) != 0:
             self.log.debug("Active File Handles Preventing Close: %r" % self.active_fd)
