@@ -86,6 +86,8 @@ class FileSet(collections.MutableSet):
     def __init__(self, base, name="", isopen=True, persist=False, autodiscover=True, timeformat="%Y-%m-%dT%H:%M:%S", dbfilebase=".AOFSdb.yml"):
         super(FileSet, self).__init__()
         # Start both mode variables as false for initialization process.
+        self._date_key = "..DATE"
+        self._open_key = "..OPEN"
         self._persistance_value = persist
         self._autodiscover_value = autodiscover
         self._timeformat = timeformat
@@ -132,7 +134,7 @@ class FileSet(collections.MutableSet):
     
     def __contains__(self,filepath):
         """Check whether a filepath is contained in this fileset."""
-        return self.get_cpath(filepath) in self._files
+        return self._get_bpath(filepath) in self._files
         
     def __iter__(self):
         """Returns an iterable over all of the filepaths which are registered in this fileset."""
@@ -154,15 +156,18 @@ class FileSet(collections.MutableSet):
         
     def __exit__(self, exc_type, exc_value, traceback):
         """Leave the fileset contextual state. Contextual mode ensures that the fileset is closed on departure. When using a fileset in contextual mode, changes to the files are monitored, but the fileset does not ensure all changes have been registered when the fileset closes. The fileset is guaranteed to close in the end. See :meth:`__enter__``."""
-        self.close(check=False)
+        if self.open:
+            self.close(check=False)
     
-    def _persist(self):
+    def _persist(self,isopen=True):
         """Write the persistance database to the database file in the fileset directory."""
         if not self.persist:
             return
-        self._files["Date"] = self._createtime.strftime(self._timeformat)
+        self._files[self._date_key] = self._createtime.strftime(self._timeformat)
+        self._files[self._open_key] = isopen
         self._files.save(self._dbfilename)
-        del self._files["Date"]
+        del self._files[self._date_key]
+        del self._files[self._open_key]
         
     def _reload(self):
         """Reload the persistance databse to this object. 
@@ -174,11 +179,24 @@ class FileSet(collections.MutableSet):
         if os.path.exists(self._dbfilename) and self.persist:
             self._files.load(self._dbfilename)
             os.remove(self._dbfilename)
-            self._createtime = datetime.strptime(self._files.pop("Date"),self._timeformat)
+            self._createtime = datetime.strptime(self._files.pop(self._date_key),self._timeformat)
+            if self._files.pop(self._open_key,False):
+                raise IOError("Fileset is already open, not opening co-incident file sets.")
             return True
         return False
         
-    
+    def _get_cpath(self,filename):
+        """Return the cache object-like filepath for the requested filepath. This helps ensure that calls to register, etc. will not fail."""
+        fbase, fname = os.path.split(filename)
+        if fbase == "" or os.path.relpath(fbase) == self.directory:
+            filename = fname
+        return os.path.normpath(os.path.join(self.directory,filename))
+        
+    def _get_bpath(self,filename):
+        """Extracts the base directory component from a filename."""
+        if filename.startswith(self.directory):
+            return filename[len(self.directory)+1:]
+        return filename
         
     def _set_directory(self,base):
         """Set the directory for this fielset from the given base name. This method ensures that the database filename attribute remains consistent."""
@@ -186,7 +204,7 @@ class FileSet(collections.MutableSet):
             os.mkdir(base)
         if os.path.basename(base) != "":
             base = os.path.join(base,"")    
-        self._directory = os.path.relpath(base)
+        self._directory = os.path.normpath(base)
         self._dbfilename = os.path.join(self.directory,self._dbfilebase)
         self._reload()
         
@@ -200,7 +218,7 @@ class FileSet(collections.MutableSet):
         for root, dirs, files in os.walk(self.directory):
             for filepath in files:
                 fullpath = os.path.join(root,filepath)
-                if fullpath not in self and os.path.relpath(fullpath) != self._dbfilename:
+                if fullpath not in self and self._get_cpath(fullpath) != self._dbfilename:
                     self.add(fullpath)
         self._autodiscovery_in_progress = False
     
@@ -225,11 +243,11 @@ class FileSet(collections.MutableSet):
         """A list of files in the fileset that have been modified since registering."""
         self._autodiscover_files()
         modified = []
-        for filepath in self._files:
-            filepath = os.path.relpath(filepath)
+        for filekey in self._files:
+            filepath = self._get_cpath(filekey)
             if os.path.exists(filepath) and not filepath == self._dbfilename:
-                if os.stat(filepath).st_mtime > self._files[filepath]:
-                    modified += [filepath]
+                if os.stat(filepath).st_mtime > self._files[filekey]:
+                    modified += [filekey]
         if len(modified) > 0:
             self._persist()
         return modified
@@ -239,11 +257,11 @@ class FileSet(collections.MutableSet):
         """A list of files in the fileset have been deleted since registering."""
         self._autodiscover_files()
         deleted = []
-        for filepath in self._files:
-            filepath = os.path.relpath(filepath)
+        for filekey in self._files:
+            filepath = self._get_cpath(filekey)
             if not os.path.exists(filepath):
-                deleted += [filepath]
-                self._files[filepath] = 0.0
+                deleted += [filekey]
+                self._files[filekey] = 0.0
         if len(deleted) > 0:
             self._persist()
         return deleted
@@ -252,24 +270,27 @@ class FileSet(collections.MutableSet):
     def active_fd(self):
         """Returns a list of open file descriptors for this fileset. Any file descriptors that have already been closed are removed from the fileset's registry of file descriptors."""
         for fn in self._open_files.keys():
-            if not self._open_files[fn].open:
+            if self._open_files[fn].closed:
                 del self._open_files[fn]
         return self._open_files.keys()
         
     def add(self,filepath):
         """Insert filepath into the fileset. Ensures that filepaths are not duplicated in the fileset."""
-        self.register(filepath)
+        try:
+            self.register(filepath)
+        except KeyError:
+            pass
+        return
         
     def discard(self,filepath):
         """Remove a filepath from the fileset. If the filepath exists, it will be deleted. This method will raise a :exc:`KeyError` if the filepath is not registered."""
-        self.delete(filepath)
+        try:
+            self.delete(filepath)
+        except KeyError:
+            pass
+        return
         
-    def get_cpath(self,filename):
-        """Return the cache object-like filepath for the requested filepath. This helps ensure that calls to register, etc. will not fail."""
-        fbase, fname = os.path.split(filename)
-        if fbase == "" or os.path.relpath(fbase) == self.directory:
-            filename = fname
-        return os.path.relpath(os.path.join(self.directory,filename))
+
                 
     def register(self,*filenames):
         """Register filenames as a members of this fileset. Multiple filenames can be registered. They are registered by thier relative path by default.
@@ -282,19 +303,22 @@ class FileSet(collections.MutableSet):
         if not self.open:
             raise IOError("File set is not open!")
         for filename in filenames:
-            fullpath = self.get_cpath(filename)
-            if fullpath in self._files:
+            fullpath = self._get_cpath(filename)
+            filekey = self._get_bpath(filename)
+            if filekey in self._files:
                 raise KeyError("Filepath %s already exists in fileset." % filename)
             if fullpath == self._dbfilename:
                 raise KeyError("Cannot add DB to database.")
             if os.path.exists(fullpath):
-                self._files[fullpath] = os.stat(fullpath).st_mtime
+                self._files[filekey] = os.stat(fullpath).st_mtime
+                self.log.debug("Registered %s as existing file" % filekey)
             else:
-                self._files[fullpath] = 0.0
+                self._files[filekey] = 0.0
+                self.log.debug("Registered %s as non-existant file" % filekey)
         self._persist()
         return self._files.keys()
     
-    def filename(self,extension=None,prefix='tmp',getfd=False,**kwargs):
+    def filename(self,extension=None,prefix='tmp',getfd=False,text=True):
         """Return a temporary filename which is a member of this fileset.
         
         :param string extension: The temporary file's extension (actually appears as suffix).
@@ -305,11 +329,11 @@ class FileSet(collections.MutableSet):
         :returns filename,fileobj: File descriptor for temporary file if ``getfd=True``.
         
          """
-        fileobj, filename = tempfile.mkstemp(suffix=extension,prefix=prefix,dir=self.directory,**kwargs)
+        fileobj, filename = tempfile.mkstemp(suffix=extension,prefix=prefix,dir=self.directory,text=text)
         if getfd:
-            self._open_files[filename] = fileobj
+            self._open_files[filename] = os.fdopen(fileobj,'w')
             self.register(filename)
-            return filename, fileobj
+            return filename, self._open_files[filename]
         else:    
             os.close(fileobj)
             self.register(filename)
@@ -330,10 +354,11 @@ class FileSet(collections.MutableSet):
         if not self.open:
             raise IOError("File set is not open!")        
         for filepath in filepaths:
-            filepath = self.get_cpath(filepath)
+            filepath = self._get_cpath(filepath)
+            filekey = self._get_bpath(filepath)
             if filepath in self._open_files:
                 self.close_fd(filepath)
-            del self._files[filepath]
+            del self._files[filekey]
             if os.path.exists(filepath):
                 os.remove(filepath)
         self._persist()
@@ -348,13 +373,14 @@ class FileSet(collections.MutableSet):
         if not self.open:
             raise IOError("File set is not open!")
         for filepath in filepaths:
-            filepath = os.path.relpath(filepath)
+            filepath = self._get_cpath(filepath)
+            filekey = self._get_bpath(filepath)
             if filepath not in self:
                 raise KeyError("Cannot update unregistered file!")
             if os.path.exists(filepath):
-                self._files[filepath] = os.stat(filepath).st_mtime
+                self._files[filekey] = os.stat(filepath).st_mtime
             else:
-                self._files[filepath] = 0.0
+                self._files[filekey] = 0.0
         self._persist()
         return self._files.keys()
     
@@ -367,6 +393,7 @@ class FileSet(collections.MutableSet):
         """
         if not self.open:
             raise IOError("File set is not open!")
+        filepath = self._get_cpath(filepath)
         if filepath not in self._open_files:
             self._open_files[filepath] = open(filepath,*args)
         elif len(args) > 1:
@@ -393,8 +420,8 @@ class FileSet(collections.MutableSet):
             
         """
         for filepath in filepaths:
-            filepath = os.path.relpath(filepath)
-            if self._open_files[filepath].open:
+            filepath = self._get_cpath(filepath)
+            if not self._open_files[filepath].closed:
                 self._open_files[filepath].close()
             del self._open_files[filepath]
         
@@ -407,8 +434,15 @@ class FileSet(collections.MutableSet):
         Note that with ``check=False``, the entire old directory will be removed. This will remove even files that are not registered to the old fileset."""
         persist, self.persist = self.persist, True
         self._persist()
-        shutil.copytree(olddir,base)
-        self.close(check=check)
+        if not os.path.exists(base):
+            os.mkdir(base)
+        if os.path.basename(base) != "":
+            base = os.path.join(base,"")
+        for filekey in self.files:
+            filename = self._get_cpath(filekey)
+            newfilename = os.path.join(base,filekey)
+            shutil.copyfile(filename, newfilename)
+        self.close(check = check )
         self._set_directory(base)
         self._open = True
         self._reload()
@@ -431,7 +465,7 @@ class FileSet(collections.MutableSet):
         if self.persist and clean:
             self.log.warning("Closing and cleaning a persistent fileset.")
         
-        self._persist()
+        self._persist(isopen=False)
         
         if check and len(self.active_fd) != 0:
             self.log.debug("Active File Handles Preventing Close: %r" % self.active_fd)
@@ -553,9 +587,9 @@ class HashedFileSet(FileSet):
     @hash.setter    
     def hash(self,hashable):
         _hash = hashlib.sha1()
-        _hahs.update(hashable)
+        _hash.update(hashable)
         self._hashhex = _hash.hexdigest()
-        self.move(self._hashhex)
+        self.move(self._prehashbase)
         
     def move(self,base,check=False):
         """Move this fileset to a new base location. The old directory for this fileset will be removed in its entirety. The new location will have the hashable base added to the directory by default.
