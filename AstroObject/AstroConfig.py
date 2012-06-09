@@ -76,6 +76,27 @@ def reformat(d,nt):
         else:
             e[k] = v
     return e
+    
+def deepmerge(d,u,s):
+    """Merge deep collection-like structures.
+    
+    :param d: Deep Structure
+    :param u: Updated Structure
+    :param s: Default structure to use when a new deep structure is required.
+    
+    """
+    if len(u)==0:
+        return d
+    for k, v in u.iteritems():
+        if isinstance(v, collections.Mapping):
+            r = deepmerge(d.get(k, s()), v, s)
+            d[k] = r
+        elif isinstance(v, collections.Sequence) and isinstance(d.get(k,None), collections.Sequence) and not (isinstance(v,(str,unicode)) or isinstance(d.get(k,None),(str,unicode))):
+            d[k] = [ i for i in v ] + [ i for i in d[k] ]
+        else:
+            d[k] = u[k]
+    return d
+    
 
 
 class Configuration(collections.MutableMapping):
@@ -145,22 +166,7 @@ class Configuration(collections.MutableMapping):
         :param dict-like other: The other dictionary to be merged.
         
         """
-        self._merge(self, other)
-    
-    def _merge(self, d, u):
-        """Recursive merging function for internal use."""
-        #pylint: disable=C0103
-        if len(u)==0:
-            return d
-        for k, v in u.iteritems():
-            if isinstance(v, collections.Mapping):
-                r = self._merge(d.get(k, self.dn()), v)
-                d[k] = r
-            elif isinstance(v, collections.Sequence) and isinstance(d.get(k,None), collections.Sequence) and not (isinstance(v,(str,unicode)) or isinstance(d.get(k,None),(str,unicode))):
-                d[k] = [ i for i in v ] + [ i for i in d[k] ]
-            else:
-                d[k] = u[k]
-        return d
+        deepmerge(self, other, self.dn)
     
     def save(self, filename, silent=True):
         """Save this configuration as a YAML file. YAML files generally have the ``.yaml`` or ``.yml`` extension. If the filename ends in ``.dat``, the configuration will be saved as a raw dictionary literal.

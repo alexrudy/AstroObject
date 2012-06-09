@@ -86,8 +86,8 @@ class FileSet(collections.MutableSet):
     def __init__(self, base, name="", isopen=True, persist=False, autodiscover=True, timeformat="%Y-%m-%dT%H:%M:%S", dbfilebase=".AOFSdb.yml"):
         super(FileSet, self).__init__()
         # Start both mode variables as false for initialization process.
-        self._date_key = "..DATE"
-        self._open_key = "..OPEN"
+        self._date_key = "==DATE"
+        self._open_key = "==OPEN"
         self._persistance_value = persist
         self._autodiscover_value = autodiscover
         self._timeformat = timeformat
@@ -178,10 +178,10 @@ class FileSet(collections.MutableSet):
         """
         if os.path.exists(self._dbfilename) and self.persist:
             self._files.load(self._dbfilename)
-            os.remove(self._dbfilename)
-            self._createtime = datetime.strptime(self._files.pop(self._date_key),self._timeformat)
+            self._createtime = datetime.strptime(self._files.pop(self._date_key,self._createtime.strftime(self._timeformat)),self._timeformat)
             if self._files.pop(self._open_key,False):
-                raise IOError("Fileset is already open, not opening co-incident file sets.")
+                raise IOError("Fileset is already open, not opening co-incident file sets: %s" % self._directory)
+            os.remove(self._dbfilename)
             return True
         return False
         
@@ -194,9 +194,10 @@ class FileSet(collections.MutableSet):
         
     def _get_bpath(self,filename):
         """Extracts the base directory component from a filename."""
-        if filename.startswith(self.directory):
-            return filename[len(self.directory)+1:]
-        return filename
+        if self.directory in filename:
+            return os.path.relpath(filename,self.directory)
+        else:
+            return filename
         
     def _set_directory(self,base):
         """Set the directory for this fielset from the given base name. This method ensures that the database filename attribute remains consistent."""
@@ -330,10 +331,11 @@ class FileSet(collections.MutableSet):
         
          """
         fileobj, filename = tempfile.mkstemp(suffix=extension,prefix=prefix,dir=self.directory,text=text)
+        filekey = self._get_bpath(filename)
         if getfd:
-            self._open_files[filename] = os.fdopen(fileobj,'w')
+            self._open_files[filekey] = os.fdopen(fileobj,'w')
             self.register(filename)
-            return filename, self._open_files[filename]
+            return filename, self._open_files[filekey]
         else:    
             os.close(fileobj)
             self.register(filename)
@@ -394,11 +396,12 @@ class FileSet(collections.MutableSet):
         if not self.open:
             raise IOError("File set is not open!")
         filepath = self._get_cpath(filepath)
+        filekey = self._get_bpath(filepath)
         if filepath not in self._open_files:
-            self._open_files[filepath] = open(filepath,*args)
+            self._open_files[filekey] = open(filepath,*args)
         elif len(args) > 1:
             self.log.warning("File descriptor already open, not adjusting mode etc.")
-        return self._open_files[filepath]
+        return self._open_files[filekey]
         
     def close_fd(self,*filepaths):
         """Close the file descriptors which are open and registered to the filepaths. Multiple file paths can be passed to this function as a series of arguments.
@@ -421,9 +424,10 @@ class FileSet(collections.MutableSet):
         """
         for filepath in filepaths:
             filepath = self._get_cpath(filepath)
-            if not self._open_files[filepath].closed:
-                self._open_files[filepath].close()
-            del self._open_files[filepath]
+            filekey = self._get_bpath(filepath)
+            if not self._open_files[filekey].closed:
+                self._open_files[filekey].close()
+            del self._open_files[filekey]
         
     def move(self,base,check=False):
         """Move this fileset to a new base location. The old directory for this fileset will be removed in its entirety.
