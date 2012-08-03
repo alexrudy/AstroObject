@@ -865,14 +865,8 @@ can be customized using the 'Default' configuration variable in the configuratio
             self.parser.error(u"No stages triggered to run!")
         self.trigger = []
         try:
-            for stage in self.orders:
-                if stage not in self.attempt and stage not in self.complete:            
-                    if stage in self.macro:
-                        self.execute(stage)
-                    elif stage in self.include:
-                        self.execute(stage, deps=False, level="I")
-                    elif stage in self.trigger:
-                        self.execute(stage, level="T")
+            stage,code = self.next_stage(None,dependencies=True)
+            self.execute(stage,code=code)
         except SimulatorPause:
             self.paused = True
         else:
@@ -884,20 +878,21 @@ can be customized using the 'Default' configuration variable in the configuratio
         for stage in self.orders:
             if stage not in self.attempt and stage not in self.complete:
                 if parent is not None and stage in self.stages[parent].deps:
-                    return stage
+                    return stage,"D"
                 elif stage == parent:
-                    return stage
+                    return stage,"C"
                 elif parent is None:
                     if stage in self.macro:
-                        return stage
+                        return stage,"M"
                     if stage in self.include:
-                        return stage
+                        return stage,"I"
                     if stage in self.trigger:
-                        return stage
+                        return stage,"T"
+        return None,"F"
                     
                     
     
-    def execute(self,stage,deps=True,level=0):
+    def execute(self,stage,deps=True,level=0,code=""):
         """Actually exectue a particular stage. This function can be called to execute individual stages, either with or without dependencies. As such, it gives finer granularity than :func:`do`.
         
         :param string stage: The stage name to be exectued.
@@ -926,17 +921,18 @@ can be customized using the 'Default' configuration variable in the configuratio
             return use
         
         self.attempt += [stage]
-        if level == "T":
+        if code == "T":
             indicator = u"->%s"
             level = 0
-        elif level == "I":
+        elif code == "I":
             indicator = u"+>%s"
             level = 0
-        elif level == 0:
+        elif code == "C":
             indicator = u"=>%s"
-        else:
+        elif code == "D":
             indicator = u"└>%s"
-        
+        elif code == "M":
+            indicator = u""
         if deps:
             
             for dependent in self.orders:
