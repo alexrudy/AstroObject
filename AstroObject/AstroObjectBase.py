@@ -139,7 +139,7 @@ from abc import ABCMeta, abstractmethod
 
 # Submodules from this system
 from .util import getVersion, make_decorator, validate_filename
-from .file import DefaultFileClasses
+from .file import DefaultFileClasses, File
 
 __all__ = ["BaseStack", "BaseFrame", "AnalyticMixin", "NoHDUMixin", "HDUHeaderMixin", "NoDataMixin", "Mixin"]
 
@@ -533,6 +533,16 @@ class BaseStack(collections.MutableMapping):
             raise AttributeError(u"Can't understand file classes")
         if len(self._fileClasses) < 1:
             raise NotImplementedError(u"Instantiating %s without any valid file classes!" % self)
+        canstream = []
+        for fileClass in self._fileClasses:
+            if not issubclass(fileClass,File):
+                raise TypeError("File class %s invalid!" % fileClass)
+            if fileClass.__canstream__:
+                canstream += [fileClass]
+        if len(canstream) == 1:
+            self._can_load_stream = True
+        else:
+            self._can_load_stream = False
         
     def __repr__(self):
         """String representation of this object.
@@ -839,7 +849,39 @@ class BaseStack(collections.MutableMapping):
         else:
             self._key_error(framename)
     
-    def write(self, filename=None, frames=None, primaryFrame=None, clobber=False, singleFrame=False):
+    def _setup_file(self, filename = None, filetype = None):
+        """Sets up a file object for reading or writing, given a file-like object and optionally a filetype."""
+        if filename is None:
+            filename = self.filename
+        
+        if isinstance(filename,file) and filetype is None and not self._can_load_stream:
+            raise TypeError(u"Stack cannot read streams without explicit file type.")
+        elif isinstance(filename,file) and filetype is not None:
+            if isinstance(filetype,tuple(self._fileClasses)):
+                fileClasses = [filetype]
+            elif filetype in [ fc.__name__ for fc in self._fileClasses ]:
+                fileClasses = [{fc.__name__:fc for fc in self._fileClasses}[filetype]]
+            else:
+                raise TypeError(u"Cannot understand File Type %r" % filetype)
+        elif isinstance(filename,(str,unicode)):
+            fileClasses = self._fileClasses
+        else:
+            raise TypeError(u"Cannot understand filename %r" % filename)    
+        
+        FileObject = None
+        for fileClass in fileClasses:
+            try:
+                FileObject = fileClass(filename)
+            except NotImplementedError as AE:
+                LOG.log(2, u"Cannot save as %s: %s" % (fileClass, AE))
+            else:
+                break
+        if FileObject is None:
+            raise TypeError(u"Object to be saved cannot be cast as %s" % self._fileClasses)
+        return FileObject
+        
+    
+    def write(self, filename=None, frames=None, primaryFrame=None, clobber=False, singleFrame=False, filetype = None):
         """Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify ``frames`` then only those frames will be used. ``primaryFrame`` should be the frame of the front HDU. When not specified, the latest frame will be used. It uses the :attr:`dataClasses` :meth:`FITSFrame.__hdu__` method to return a valid HDU object for each Frame.
         
         :param string filename: the name of the file for saving.
@@ -868,22 +910,7 @@ class BaseStack(collections.MutableMapping):
             if self.filename == None:
                 filename = primaryFrame
                 LOG.log(2, u"Set Filename from Primary State. Filename: %s" % filename)
-            else:
-                filename = self.filename
-                LOG.log(2, u"Set filename from Object. Filename: %s" % filename)
-        
-        FileObject = None
-        for fileClass in self._fileClasses:
-            try:
-                FileObject = fileClass(filename)
-            except NotImplementedError as AE:
-                LOG.log(2, u"Cannot save as %s: %s" % (fileClass, AE))
-            else:
-                break
-        if FileObject is None:
-            raise TypeError(u"Object to be saved cannot be cast as %s" % self._fileClasses)
-        
-        
+        FileObject = self._setup_file(filename=filename,filetype=filetype)
         PrimaryHDU = self[primaryFrame].hdu(primary=True)
         HDUs = [self[frame].hdu(primary=False) for frame in frames]
         HDUList = pf.HDUList([PrimaryHDU]+HDUs)
@@ -891,7 +918,8 @@ class BaseStack(collections.MutableMapping):
         LOG.log(5, u"Wrote frame %s (primary) and frames %s to FITS file %s" % (primaryFrame, frames, filename))
         return primaryFrame, frames, filename
     
-    def read(self, filename=None, framename=None, clobber=False, select=True):
+
+    def read(self, filename=None, framename=None, filetype=None, clobber=False, select=True):
         """This reader takes a FITS file, and trys to render each HDU within that FITS file as a frame in this Object. As such, it might read multiple frames. This method will return a list of Frames that it read. It uses the :attr:`dataClasses` :meth:`FITSFrame.__read__` method to return a valid Frame object for each HDU.
         
         :param string|stream filename: The file or filestream to read from. Should be supported by :mod:`~AstroObject.file`.
@@ -906,20 +934,7 @@ class BaseStack(collections.MutableMapping):
             ["SomeImage", "SomeImage-1", "SomeImage-2"]
             
         """
-        if not filename:
-            filename = self.filename
-        if filename.startswith("@"):
-            return self.readAtFile(filename, framename=framename, clobber=clobber, select=select)
-        FileObject = None
-        for fileClass in self._fileClasses:
-            try:
-                FileObject = fileClass(filename)
-            except NotImplementedError as AE:
-                LOG.log(2, u"Cannot read as %s: %s" % (fileClass, AE))
-            else:
-                break
-        if FileObject is None:
-            raise TypeError(u"Object to be read cannot be cast as %s" % self._fileClasses)
+        FileObject = self._setup_file(filename=filename,filetype=filetype)
         HDUList = FileObject.open()
         Read = 0
         Labels = []
@@ -928,7 +943,7 @@ class BaseStack(collections.MutableMapping):
             # Iterate through our potential data classes
             for dataClass in self._dataClasses:
                 try:
-                    label = dataClass.__getlabel__(HDU,os.path.basename(filename),framename)
+                    label = dataClass.__getlabel__(HDU,os.path.basename(FileObject.name),framename)
                     if label in Labels:
                         # We don't allow repeat loading of labels
                         label = label + "-%d" % Read

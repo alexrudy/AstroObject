@@ -7,8 +7,8 @@
 #  Copyright 2012 Alexander Rudy. All rights reserved.
 # 
 """
-:mod:`file.fits` - An abstraction layer for FITS Files
-======================================================
+:class:`file.fits.FITSFile` - An abstraction layer for FITS Files
+=================================================================
 
 This module provides a simple extraction layer class for FITS file writing. FITS files must have either the ``.fit`` or ``.fits`` extension to be detected by this module. The module reads and writes files using :mod:`pyfits`.
 
@@ -41,12 +41,16 @@ class FITSFile(File):
     
     
     """
-    def __init__(self, filename=None):
+    def __init__(self, thefile=None):
         super(FITSFile, self).__init__()
-        self.filename = filename
-        self.validate_filename(filename)
-     
+        self.validate(thefile)
+        if isinstance(thefile,file):
+            if not hasattr(thefile,'mode') or (not 'b' in thefile.mode):
+                raise NotImplementedError("This file is not in binary mode!")
+        self.file = thefile
+             
     __extensions__ = ['.fit','.fits']
+    __canstream__ = True
     
     def write(self, stack, clobber=False):
         """Write a stack to this file.
@@ -57,9 +61,9 @@ class FITSFile(File):
         """
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            stack.writeto(self.filename, clobber = clobber)
+            stack.writeto(self.file, clobber = clobber)
         
     def open(self):
         """Open this file and return the HDUList."""
-        return pf.open(self.filename)
+        return pf.open(self.file)
         

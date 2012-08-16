@@ -48,7 +48,6 @@ import os
 import collections
 
 import numpy as np
-import scipy as sp
 
 from ..version import version as versionstr
 

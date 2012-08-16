@@ -7,8 +7,8 @@
 #  Copyright 2012 Alexander Rudy. All rights reserved.
 # 
 u"""
-:mod:`file.npy` — An abstraction layer for :mod:`numpy` files
-=============================================================
+:class:`file.npy.NumpyFile` — An abstraction layer for :mod:`numpy` files
+=========================================================================
 
 This module handles the writing and reading of ``.npy`` and ``.npz`` files. ``.npy`` files are single-array files, where each file will contain only one frame. ``.npz`` files are multiple-frame files. Neither format contains any metadata about the image.
 
@@ -16,6 +16,9 @@ This module handles the writing and reading of ``.npy`` and ``.npz`` files. ``.n
     NumpyFile
     :members:
     :inherited-members:
+
+:class:`file.numpy.NumpyZipFile` – An abstraction for compressed :mod:`numpy` files
+===================================================================================
 
 .. autoclass::
     NumpyZipFile
@@ -46,10 +49,11 @@ class NumpyFile(File):
     """
     def __init__(self, filename=None):
         super(NumpyFile, self).__init__()
-        self.validate_filename(filename)
-        self.filename = filename
-     
+        self.validate(filename)
+        self.file = filename
+        
     __extensions__ = [ '.npy' ]
+    __canstream__ = True
     
     def write(self,stack,clobber=False):
         """Write a stack to this file.
@@ -62,11 +66,11 @@ class NumpyFile(File):
             raise TypeError(u"Can't save multiple frames to stack.")
         if not clobber and os.path.exists(self.filename):
             raise IOError(u"Can't overwrite existing file.")
-        np.save(self.filename, stack[0].data)
+        np.save(self.file, stack[0].data)
         
     def open(self):
         """Open this file and return the HDUList."""
-        return pf.HDUList([pf.PrimaryHDU(np.load(self.filename))])
+        return pf.HDUList([pf.PrimaryHDU(np.load(self.file))])
 
 class NumpyZipFile(File):
     """Simple numpy binary file writing using the :mod:`numpy` file facilities. Saves the raw data component to a binary :mod:`numpy` file.
@@ -81,7 +85,7 @@ class NumpyZipFile(File):
     """
     def __init__(self, filename=None):
         super(NumpyZipFile, self).__init__()
-        self.validate_filename(filename)
+        self.validate(filename)
         self.filename = filename
      
     __extensions__ = [ '.npz' ]
