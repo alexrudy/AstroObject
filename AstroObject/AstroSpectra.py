@@ -68,6 +68,9 @@ LOG = logging.getLogger(__name__)
 
 class SpectraMixin(AstroObjectBase.Mixin):
     """Mixin to set the properties of Spectra **frames** and to provide a :meth:`~.AstroObjectBase.BaseFrame.__show__` method. Used for any spectrum **frame** which contains raw data."""
+    
+    _resolution = None
+    
     @property
     def wavelengths(self):
         """Accessor to get the wavelengths from this spectrum"""
@@ -77,6 +80,22 @@ class SpectraMixin(AstroObjectBase.Mixin):
     def flux(self):
         """Accessor to get the flux from this spectrum"""
         return self.data[1]
+        
+    @property
+    def resolution(self):
+        """The point-to-point spectral resolution"""
+        if self._resolution is None:
+            return self.wavelengths[:-1] / np.diff(self.wavelengths)
+        else:
+            return self._resolution
+            
+    @resolution.setter
+    def resolution(self,values):
+        """Set the explicit resolution"""
+        if values is None:
+            return
+        assert values.shape == self.wavelengths.shape
+        self._resolution = values
     
     def __show__(self):
         """Plots the image in this frame using matplotlib's ``imshow`` function. The color map is set to an inverted binary, as is often useful when looking at astronomical images. The figure object is returned, and can be manipulated further.
