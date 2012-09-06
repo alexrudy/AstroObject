@@ -165,10 +165,18 @@ class AnalyticSpectrum(AstroObjectBase.BaseFrame):
         
     
     """
+    _unit_scale_factors = {
+        "Angstroms" : 1e-10,
+        "Meters" : 1,
+        "Nanometers" : 1e-9,
+    }
+    
     def __init__(self,data=None,label=None,wavelengths=None,units=None,**kwargs):
         super(AnalyticSpectrum, self).__init__(data=data,label=label, **kwargs)
         self._wavelengths = wavelengths
-        self.units = units #Future will be used for enforcing unit behaviors
+        if units in self._unit_scale_factors:
+            self.units = units
+            self.data[0] *= self._unit_scale_factors[units]        
         
     def __add__(self,other):
         """Implements spectrum addition"""
@@ -323,11 +331,11 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,AstroObjectBase.BaseFrame):
         
         # Check that the units of this spectrum look like SI units, inbound and outbound.
         if np.min(oldwl) < 1e-12 or np.max(oldwl) > 1e-3:
-            msg += [u"%s: Given λ units appear wrong!"]
+            msg += [u"%s: Given λ units appear wrong!" % self]
             arrays[u"Given λ"] = oldwl
         
         if np.min(newwl) < 1e-12 or np.max(newwl) > 1e-3:
-            msg += [u"%s: Requested λ units appear wrong!"]
+            msg += [u"%s: Requested λ units appear wrong!" % self]
             arrays[u"Requested λ"] = newwl
         
         # Check that the units of the spectrum are monotonically increasing (inbound and outbound)
