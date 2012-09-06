@@ -102,11 +102,23 @@ def deepmerge(d,u,s):
 class Configuration(collections.MutableMapping):
     """Adds extra methods to dictionary for configuration"""
     
-    dn = dict
+    _dn = dict
     """Deep nesting dictionary setting. This class will be used to create deep nesting structures for this dictionary.""" #pylint: disable=W0105
     
     dt = dict
     """Exctraction nesting dictionary setting. This class will be used to create deep nesting structures when this object is extracted.""" #pylint: disable=W0105
+    
+    @property
+    def dn(self):
+        """Deep nesting attribute reader"""
+        return self._dn
+    
+    @dn.setter
+    def dn(self,new_type):
+        """Deep nesting type setter."""
+        if new_type != self._dn:
+            self._dn = new_type
+            self.renest()
     
     def __init__(self, *args, **kwargs):
         super(Configuration, self).__init__()
@@ -220,7 +232,7 @@ class Configuration(collections.MutableMapping):
         This method does not return anything.
         """
         if isinstance(deep_nest_type, collections.Mapping):
-            self.dn = deep_nest_type #pylint: disable=C0103
+            self._dn = deep_nest_type #pylint: disable=C0103
         elif deep_nest_type is not None:
             TypeError("%r is not a mapping type." % deep_nest_type)
         self._store = reformat(self._store,self.dn)
