@@ -580,9 +580,9 @@ can be customized using the 'Default' configuration variable in the configuratio
         self.registerFunction('-n','--dry-run', self._dry_run, run='post',help="run the simulation, but do not execute stages.")
         self.registerFunction('--show-tree', self._show_dep_tree, run='end',help="show a dependcy tree of all stages run.")
         self.registerFunction('--show-stages',self._show_done_stages,run='end',help="show a flat list of all stages run.")
-        self.registerFunction('--dump-config', self._dump_config,help="dump the configuration to a file, with extension .dump.yaml")
+        self.registerFunction('--dump-config', self._dump_config, help="dump the configuration to a file, with extension .dump.yaml")
         self.registerFunction('--dump-full-raw', self._dump_full_config)
-        self.registerFunction('--list-stages', self._list_stages, help="list all of the stages initialized in the simulator.")
+        self.registerFunction('--list-stages', self._list_stages, run='end', help="list all of the stages initialized in the simulator.")
         
         # Default Macro
         self.registerStage(None,"all",description="Run all stages",help="Run all stages",include=False)
@@ -868,7 +868,9 @@ can be customized using the 'Default' configuration variable in the configuratio
         self.trigger = []
         try:
             stage,code = self.next_stage(None,dependencies=True)
-            self.execute(stage,code=code)
+            while code != "F":
+                self.execute(stage,code=code)
+                stage,code = self.next_stage(None,dependencies=True)
         except SimulatorPause:
             self.paused = True
         else:
@@ -934,13 +936,15 @@ can be customized using the 'Default' configuration variable in the configuratio
         elif code == "D":
             indicator = u"└>%s"
         elif code == "M":
-            indicator = u""
+            indicator = u"*>%s"
+        else:
+            indicator = u"  %s"
         if deps:
             
             for dependent in self.orders:
                 if dependent in self.stages[stage].deps:
                     if dependent not in self.attempt and dependent not in self.complete:
-                        self.execute(dependent,level=level+1)
+                        self.execute(dependent,level=level+1,code="D")
                     else:
                         self._depTree += ["%-30s : (done already)" % (u"  " * (level+1) + u"└ %s" % dependent)]
                     if dependent not in self.complete:
