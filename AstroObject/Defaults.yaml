@@ -16,15 +16,14 @@ Dirs:
 logging:
   console:
     enable: true
-    level: null
-    message: '...%(message)s'
+    format: '...%(message)s'
   file:
     dateformat: '%Y-%m-%d-%H:%M:%S'
     enable: true
     filename: AstroObjectSim
     format: '%(asctime)s : %(levelname)-8s : %(module)-15s : %(funcName)-10s : %(message)s'
-    level: null
   growl:
     enable: false
-    level: null
     name: AstroSimulator
+AstroObjectLibrary:
+  Logging: true

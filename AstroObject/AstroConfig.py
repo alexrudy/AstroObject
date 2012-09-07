@@ -54,7 +54,50 @@ import re
 import yaml
 
 # Submodules from this system
-from . import AstroObjectLogging as logging
+import logging
+
+def reformat(d,nt):
+    """Recursive extraction method for changing the type of nested dictionary objects.
+    
+    :param mapping d: The dictionary to re-type.
+    :param mapping-type nt: The new mapping type to use.
+    
+    """
+    #pylint: disable=C0103
+    if not isinstance(d, collections.Mapping):
+        return d
+    e = nt()
+    for k in d:
+        v = d.get(k)
+        if isinstance(v, collections.Mapping):
+            e[k] = reformat(v,nt)
+        elif isinstance(v, collections.Sequence) and not isinstance(v, (str, unicode)):
+            e[k] = [ reformat(i,nt) for i in v ]
+        else:
+            e[k] = v
+    return e
+    
+def deepmerge(d,u,s):
+    """Merge deep collection-like structures.
+    
+    :param d: Deep Structure
+    :param u: Updated Structure
+    :param s: Default structure to use when a new deep structure is required.
+    
+    """
+    if len(u)==0:
+        return d
+    for k, v in u.iteritems():
+        if isinstance(v, collections.Mapping):
+            r = deepmerge(d.get(k, s()), v, s)
+            d[k] = r
+        elif isinstance(v, collections.Sequence) and isinstance(d.get(k,None), collections.Sequence) and not (isinstance(v,(str,unicode)) or isinstance(d.get(k,None),(str,unicode))):
+            d[k] = [ i for i in v ] + [ i for i in d[k] ]
+        else:
+            d[k] = u[k]
+    return d
+    
+
 
 def reformat(d,nt):
     """Recursive extraction method for changing the type of nested dictionary objects.
@@ -102,11 +145,23 @@ def deepmerge(d,u,s):
 class Configuration(collections.MutableMapping):
     """Adds extra methods to dictionary for configuration"""
     
-    dn = dict
+    _dn = dict
     """Deep nesting dictionary setting. This class will be used to create deep nesting structures for this dictionary.""" #pylint: disable=W0105
     
     dt = dict
     """Exctraction nesting dictionary setting. This class will be used to create deep nesting structures when this object is extracted.""" #pylint: disable=W0105
+    
+    @property
+    def dn(self):
+        """Deep nesting attribute reader"""
+        return self._dn
+    
+    @dn.setter
+    def dn(self,new_type):
+        """Deep nesting type setter."""
+        if new_type != self._dn:
+            self._dn = new_type
+            self.renest()
     
     def __init__(self, *args, **kwargs):
         super(Configuration, self).__init__()
@@ -220,7 +275,7 @@ class Configuration(collections.MutableMapping):
         This method does not return anything.
         """
         if isinstance(deep_nest_type, collections.Mapping):
-            self.dn = deep_nest_type #pylint: disable=C0103
+            self._dn = deep_nest_type #pylint: disable=C0103
         elif deep_nest_type is not None:
             TypeError("%r is not a mapping type." % deep_nest_type)
         self._store = reformat(self._store,self.dn)

@@ -258,7 +258,7 @@ These methods are used to implment the public-facing API. They are documented he
 
 
 # Standard Python Modules
-import math, copy, sys, time, logging, os, json, datetime
+import math, copy, sys, time, os, json, datetime
 import re
 import argparse
 import yaml
@@ -269,8 +269,10 @@ from pkg_resources import resource_filename
 import multiprocessing
 
 # Submodules from this system
-from AstroCache import *
-from AstroConfig import StructuredConfiguration, DottedConfiguration
+from .AstroCache import *
+from .AstroConfig import StructuredConfiguration, DottedConfiguration
+from . import AstroObjectLogging as logging
+from .Utilities import getVersion, make_decorator, func_lineno, ProgressBar, ColorBar
 
 import util.pbar as progressbar
 import util.terminal as terminal
@@ -1034,7 +1036,7 @@ can be customized using the 'Default' configuration variable in the configuratio
         if not len(collection) >= 1:
             return
         
-        if not self.progressbar and color and self.log.console.level >= 20:
+        if not self.progressbar and color and self.log.config["logging.console.level"] <= 20:
             self._start_progress_bar(len(collection),color)
             showBar = True
         else:
@@ -1131,10 +1133,10 @@ can be customized using the 'Default' configuration variable in the configuratio
                 self.config[key] = value
         for cfg in self.config.get("Options.afterConfigure",[]):
             self.config.merge(cfg)
-        if not self.logging:
-            self.log.configure(configuration=self.config)
-            self.log.start()
-            self.logging = True
+        self.log.configure(configuration=self.config)
+        if self.config["AstroObjectLibrary.Logging"]:
+            self.log.configure_others('AstroObject')
+        self.log.start()
         for vstr in self.version:
             self.log.info(vstr)
         for fk in self.config.get("Options.afterFunction",[]):
