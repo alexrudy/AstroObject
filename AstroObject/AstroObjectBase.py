@@ -138,7 +138,7 @@ import collections
 from abc import ABCMeta, abstractmethod
 
 # Submodules from this system
-from .util import getVersion, make_decorator, validate_filename
+from .util import getVersion, make_decorator, validate_filename, set_trace_errors
 from .file import DefaultFileClasses, File
 
 __all__ = ["BaseStack", "BaseFrame", "AnalyticMixin", "NoHDUMixin", "HDUHeaderMixin", "NoDataMixin", "Mixin"]
@@ -623,6 +623,7 @@ class BaseStack(collections.MutableMapping):
     ###############################
     # Basic Object Mode Functions #
     ###############################
+    @set_trace_errors(KeyError,TypeError)
     def save(self, data, framename=None, clobber=False, select=True):
         """Saves the given data to this object. If the data is an instance of one of the acceptable :attr:`dataClasses` then this method will simply save the data. Otherwise, it will attempt to cast the data into one of the acceptable :attr:`dataClasses` using their :meth:`__save__` mehtod.
         
@@ -669,6 +670,7 @@ class BaseStack(collections.MutableMapping):
             self.select(framename)
         return framename
     
+    @set_trace_errors(KeyError)
     def data(self, framename=None, **kwargs):
         """Returns the raw data for the current frame. This is done through the :meth:`FITSFrame.__call__` method, which should return basic data in as raw a form as possible. The purpose of this call is to allow the user get at the most recent piece of data as easily as possible.
         
@@ -688,7 +690,7 @@ class BaseStack(collections.MutableMapping):
             self._key_error(framename)
     
 
-    
+    @set_trace_errors(KeyError)
     def frame(self, framename=None):
         """Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.
         
@@ -718,7 +720,8 @@ class BaseStack(collections.MutableMapping):
     def object(self, framename=None):
         LOG.log(5, u"Method \".object()\" on %s has been depreciated. Please use \".frame()\" instead." % self)
         return self.frame(framename)
-        
+    
+    @set_trace_errors(KeyError)    
     def select(self, framename):
         """Sets the default frame to the given framename. Normally, the default frame is the one that was last saved.
         
@@ -786,7 +789,7 @@ class BaseStack(collections.MutableMapping):
         LOG.log(5, u"%s: Cleared all frames. Remaining: %s" % (self, self.list()))
         return self.list()
     
-    
+    @set_trace_errors(KeyError)
     def keep(self, *framenames, **kwargs):
         """Removes all frames except the specified frame(s) in the object.
         
@@ -810,6 +813,7 @@ class BaseStack(collections.MutableMapping):
         self._framename = self._default_frame()
         return self.list()
     
+    @set_trace_errors(KeyError)
     def remove(self, *framenames, **kwargs):
         """Removes the specified frame(s) from the object.
         
@@ -835,6 +839,7 @@ class BaseStack(collections.MutableMapping):
         LOG.log(5, u"%s: Removed frames %s" % (self, removed))
         return self.list()
     
+    @set_trace_errors(KeyError)
     def show(self, framename=None):
         """Returns the (rendered) matplotlib plot for this object. This is a quick way to view your current data frame without doing any serious plotting work. This aims for the sensible defaults philosophy, if you don't like what you get, write a new method that uses the :meth:`data` call and plots that.
         
@@ -881,6 +886,7 @@ class BaseStack(collections.MutableMapping):
         return FileObject
         
     
+    @set_trace_errors(TypeError)
     def write(self, filename=None, frames=None, primaryFrame=None, clobber=False, singleFrame=False, filetype = None):
         """Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify ``frames`` then only those frames will be used. ``primaryFrame`` should be the frame of the front HDU. When not specified, the latest frame will be used. It uses the :attr:`dataClasses` :meth:`FITSFrame.__hdu__` method to return a valid HDU object for each Frame.
         
@@ -910,15 +916,18 @@ class BaseStack(collections.MutableMapping):
             if self.filename == None:
                 filename = primaryFrame
                 LOG.log(2, u"Set Filename from Primary State. Filename: %s" % filename)
+        
+        # Move the stack trace up one notch
         FileObject = self._setup_file(filename=filename,filetype=filetype)
+        
         PrimaryHDU = self[primaryFrame].hdu(primary=True)
         HDUs = [self[frame].hdu(primary=False) for frame in frames]
         HDUList = pf.HDUList([PrimaryHDU]+HDUs)
         FileObject.write(HDUList, clobber=clobber)
         LOG.log(5, u"Wrote frame %s (primary) and frames %s to FITS file %s" % (primaryFrame, frames, filename))
         return primaryFrame, frames, filename
-    
 
+    @set_trace_errors(TypeError)
     def read(self, filename=None, framename=None, filetype=None, clobber=False, select=True):
         """This reader takes a FITS file, and trys to render each HDU within that FITS file as a frame in this Object. As such, it might read multiple frames. This method will return a list of Frames that it read. It uses the :attr:`dataClasses` :meth:`FITSFrame.__read__` method to return a valid Frame object for each HDU.
         
