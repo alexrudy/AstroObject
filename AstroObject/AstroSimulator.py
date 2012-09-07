@@ -257,7 +257,7 @@ These methods are used to implment the public-facing API. They are documented he
 
 
 # Standard Python Modules
-import math, copy, sys, time, logging, os, json, datetime
+import math, copy, sys, time, os, json, datetime
 import re
 import argparse
 import yaml
@@ -271,9 +271,10 @@ import multiprocessing
 from progressbar import *
 
 # Submodules from this system
-from AstroCache import *
-from AstroConfig import StructuredConfiguration, DottedConfiguration
-from Utilities import *
+from .AstroCache import *
+from .AstroConfig import StructuredConfiguration, DottedConfiguration
+from . import AstroObjectLogging as logging
+from .Utilities import getVersion, make_decorator, func_lineno, ProgressBar, ColorBar
 
 __all__ = ["Simulator","on_collection","help","replaces","excepts","depends","include","optional","description","collect","ignore","on_instance_collection"]
 
@@ -921,7 +922,7 @@ can be customized using the 'Default' configuration variable in the configuratio
         if not len(collection) >= 1:
             return
         
-        if not self.progressbar and color and self.log.console.level <= 20:
+        if not self.progressbar and color and self.log.config["logging.console.level"] <= 20:
             self._start_progress_bar(len(collection),color)
             showBar = True
         else:
@@ -1022,6 +1023,8 @@ can be customized using the 'Default' configuration variable in the configuratio
         for cfg in self.config.get("Options.afterConfigure",[]):
             self.config.merge(cfg)
         self.log.configure(configuration=self.config)
+        if self.config["AstroObjectLibrary.Logging"]:
+            self.log.configure_others('AstroObject')
         self.log.start()
         for vstr in self.version:
             self.log.info(vstr)

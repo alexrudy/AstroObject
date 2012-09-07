@@ -14,13 +14,13 @@ logging:
   console:
     enable: true
     format: '%(levelname)-8s... %(message)s'
-    level: 20
-    message: '...%(message)s'
+    level: 0
   file:
     dateformat: '%Y-%m-%d-%H:%M:%S'
     enable: true
     filename: RCPipeline
     format: '%(asctime)s : %(levelname)-8s : %(funcName)-20s : %(message)s'
+	level: 0
   growl:
     enable: false
     level: 20
