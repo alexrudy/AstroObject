@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-14.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5.3-p1
+#  Version 0.5.3-p2
 # 
 """
 :mod:`AstroSimulator` — Complex Task Management 
@@ -350,22 +350,31 @@ class Stage(object):
         return self._name
     
     @staticmethod
-    def table_head():
+    def table_head(term=True):
         """Table head for profiling."""
-        text  = u""
-        text += terminal.render(u"|%(BLUE)s-----------------------%(NORMAL)s|%(BLUE)s--------%(NORMAL)s|%(BLUE)s---------------%(NORMAL)s|\n")
-        text += u"|         Stage         | Passed |     Time      |\n"
-        text += terminal.render(u"|%(BLUE)s-----------------------%(NORMAL)s|%(BLUE)s--------%(NORMAL)s|%(BLUE)s---------------%(NORMAL)s|")
+        if term:
+            text  = u""
+            text += terminal.render(u"|%(BLUE)s-----------------------%(NORMAL)s|%(BLUE)s--------%(NORMAL)s|%(BLUE)s---------------%(NORMAL)s|\n")
+            text += u"|         Stage         | Passed |     Time      |\n"
+            text += terminal.render(u"|%(BLUE)s-----------------------%(NORMAL)s|%(BLUE)s--------%(NORMAL)s|%(BLUE)s---------------%(NORMAL)s|")
+        else:
+            text  = ""
+            text += "|-----------------------|--------|---------------|\n"
+            text += "|         Stage         | Passed |     Time      |\n"
+            text += "|-----------------------|--------|---------------|"
         return text
       
     @staticmethod 
-    def table_foot(total):
+    def table_foot(total,term=True):
         """Table footer for profiling."""
-        text  = terminal.render(u"|%(BLUE)s-----------------------%(NORMAL)s Total Time: ")+u"%(time)-9s"+terminal.render(u"%(BLUE)s---%(NORMAL)s|")
+        if term:
+            text = terminal.render(u"|%(BLUE)s-----------------------%(NORMAL)s Total Time: ")+u"%(time)-9s"+terminal.render(u"%(BLUE)s---%(NORMAL)s|")
+        else:
+            text = "|----------------------- Total Time: "+"%(time)-9s"+"---|"
         text = text % {"time":datetime.timedelta(seconds=int(total))}
         return text
         
-    def table_row(self,total=None):
+    def table_row(self,total=None,term=True):
         """Return a profiling string table row.
         ::
             
@@ -390,9 +399,12 @@ class Stage(object):
                 "result": str(self.complete),
                 "time": datetime.timedelta(seconds=int(self.durTime)),
             }
+        if not term:
+            keys["color"] = ""
+            keys["normal"] = ""
         if total == None or total == 0:
             keys["timestr"] = u"% 12s" % keys["time"]            
-        else:
+        elif term:
             keys["per"] = ( self.durTime / total ) * 100.0
             if keys["per"] > 50:
                 string += terminal.RED
@@ -406,6 +418,9 @@ class Stage(object):
             blen -= 1
             string += u"█" * blen
             string += terminal.NORMAL + "|"
+            keys["timestr"] = u"%(time)8s %(per)3d%%" % keys
+        else:
+            keys["per"] = ( self.durTime / total ) * 100.0
             keys["timestr"] = u"%(time)8s %(per)3d%%" % keys
         return string % keys
         
@@ -577,6 +592,7 @@ can be customized using the 'Default' configuration variable in the configuratio
         self.parser.add_argument('--configure',action='append',metavar="Option.Key='literal value'",help="add configuration items in the form of dotted names and value pairs: Option.Key='literal value' will set config[\"Option.Key\"] = 'literal value'",dest='literalconfig')
         self.parser.add_argument('-c','--config-file',action='store',dest='config',type=str,help="use the specified configuration file",metavar="file.yaml")
         self.registerFunction('-p','--profile',self._show_profile,run='end',help="show a simulation profile")
+        self.registerFunction('-pp','--print-profile',self._print_profile,run='end')
         self.registerFunction('-n','--dry-run', self._dry_run, run='post',help="run the simulation, but do not execute stages.")
         self.registerFunction('--show-tree', self._show_dep_tree, run='end',help="show a dependcy tree of all stages run.")
         self.registerFunction('--show-stages',self._show_done_stages,run='end',help="show a flat list of all stages run.")
@@ -1214,6 +1230,20 @@ can be customized using the 'Default' configuration variable in the configuratio
         text = u"Dependency Tree, request order:\n"
         text += "\n".join(self._depTree)
         self.log.info(text)
+    
+    def _print_profile(self):
+        """Print a profile with no terminal fun."""
+        total = sum([ self.stages[stage].durTime for stage in self.aran])
+        
+        text = ["Simulation profile:"]
+        text += [Stage.table_head(term=False)]
+        
+        for stage in self.aran:
+            text += [self.stages[stage].table_row(total,term=False)]
+            
+        text += [Stage.table_foot(total,term=False)]
+        
+        print "\n".join(text)
         
     def _show_profile(self):
         """Show the profile of the simulation"""
@@ -1227,7 +1257,7 @@ can be customized using the 'Default' configuration variable in the configuratio
             text += [self.stages[stage].table_row(total)]
             
         text += [Stage.table_foot(total)]
-            
+        
         self.log.info(u"\n".join(text))
             
     
