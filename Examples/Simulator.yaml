@@ -1,0 +1,10 @@
+logging:
+  file:
+    enable: True
+    level: 1
+  console:
+    enable: True
+    level: 20
+  growl:
+    enable: True
+    level: 30

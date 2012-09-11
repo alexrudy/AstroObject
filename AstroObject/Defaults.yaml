@@ -17,6 +17,7 @@ logging:
   console:
     enable: true
     format: '...%(message)s'
+    level: 20
   file:
     dateformat: '%Y-%m-%d-%H:%M:%S'
     enable: true
@@ -25,5 +26,4 @@ logging:
   growl:
     enable: false
     name: AstroSimulator
-AstroObjectLibrary:
-  Logging: true
+Logger: 'AstroObject'

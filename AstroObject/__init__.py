@@ -19,6 +19,7 @@ __version__ = versionstr
 __all__ = ['AnalyticSpectra','AstroImage','AstroObjectBase','AstroSpectra','AstroObjectLogging','Utilities']
 
 
-LOG = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
 
 
