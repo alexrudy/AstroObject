@@ -47,6 +47,7 @@ import sys
 import time
 import os
 import yaml
+import collections
 
 from Utilities import *
 from .AstroConfig import StructuredConfiguration, DottedConfiguration
@@ -56,13 +57,12 @@ from .util import getVersion, ConfigurationError, update
 __version__ = getVersion()
 __libdebug__ = False # Toggles PRINTED debugger messages for this module, for dev purposes only.
 
-logging.captureWarnings(True)
 
 levels = {"LIBDEBUG":2,"LIBINFO":5,"LIBWARN":8}
 for name,lvl in levels.iteritems():
     logging.addLevelName(lvl,name)
     
-def _ldbprint(msg):
+def __dbg_print__(msg):
     """Print statements for debugging mode."""
     if __libdebug__:
         print msg
@@ -132,17 +132,45 @@ class ConsoleFilter(logging.Filter):
         
     def filter(self,record):
         """Filter this record based on whether the console is on."""
-        _ldbprint("-Filtering Console Active?:%s" % self.on)
+        __dbg_print__("-Filtering Console Active?:%s" % self.on)
         if self.on:
             return True
         else:
             self.messages.append(record)
             return False
-            
-class ManyTargetBuffer(handlers.MemoryHandler):
-    """docstring for ManyTargetBuffer"""
+
+class RedirectionHandler(logging.Handler):
+    """docstring for ManyTargetHandler"""
+    
+    def __init__(self, *targets):
+        super(RedirectionHandler, self).__init__()
+        self._targets = []
+        self._targets += list(*targets)
+
+    def setTarget(self,target):
+        """Add another target to the handler"""
+        self._targets += [target]
+                
+    def handle(self,record):
+        """Handle this record by redirecting"""
+        if len(self._targets) > 0:
+            for target in self._targets:
+                if isinstance(target,(logging.Handler,logging.Logger)):
+                    if record.levelno >= target.level:
+                        target.handle(record)
+                elif isinstance(target,str):
+                    tlogger = logging.getLogger(target)
+                    tlogger.handler(record)
+
+    def close(self):
+        """Close the handler"""
+        super(RedirectionHandler, self).close()
+        self._targets = []            
+
+class ManyTargetHandler(handlers.MemoryHandler):
+    """docstring for ManyTargetHandler"""
     def __init__(self, capacity, flushLevel=logging.ERROR, target=None, targets=None):
-        super(ManyTargetBuffer, self).__init__(capacity, flushLevel, target)
+        super(ManyTargetHandler, self).__init__(capacity, flushLevel, target)
         if isinstance(self.target,logging.Handler):
             self._targets = [self.target]
         else:
@@ -157,51 +185,44 @@ class ManyTargetBuffer(handlers.MemoryHandler):
                 
     def flush(self):
         """Flush out this handler"""
-        _ldbprint("Flushing Buffer")
+        __dbg_print__("Flushing Buffer")
         if len(self._targets) > 0:
-            _ldbprint( "Flushing %d to %r" % (len(self.buffer),self._targets))
+            __dbg_print__( "Flushing %d to %r" % (len(self.buffer),self._targets))
             for record in self.buffer:
                 for target in self._targets:
                     if record.levelno >= target.level:
-                        _ldbprint( "Flushing to %s" % target)
+                        __dbg_print__( "Flushing to %s" % target)
                         target.handle(record)
             self.buffer = []
         else:
-            _ldbprint( "WARNING: FLUSHING TO NO TARGET")
+            __dbg_print__( "WARNING: FLUSHING TO NO TARGET")
     
     def close(self):
         """Close the handler"""
-        super(ManyTargetBuffer, self).close()
-        self._targets = None
+        super(ManyTargetHandler, self).close()
+        self._targets = []
         
-        
+_ConsoleFilter = ConsoleFilter()
 
-class LogManager(logging.getLoggerClass()):
+class AstroLogger(logging.getLoggerClass()):
     """A customized logging class. This class is automatically used whenever you are using an AstroObject module elsewhere in your program. It subsumes other logging classes, regardless of the situation. This logger provides many specialized functions useful for logging, but can be used just like a normal logger. By default, the logger starts in buffering mode, collecting messages until it is configured. The configuration then allows it to write messages to the console and to a log file."""
     
     def __init__(self,name):
-        super(LogManager,self).__init__(name)
+        super(AstroLogger,self).__init__(name)
         self.name = name
-        _ldbprint("--Starting %s" % self.name)
+        __dbg_print__("--Starting %s" % self.name)
         self.configured = False
-        self.running = False
         self.handling = False
-        self.doConsole = False        
-        self.messages = {}
+        self.buffering = False      
+        self._config.dn = DottedConfiguration
         self._handlers = {}
         self._filters = {}
-        self._filters["console"] = ConsoleFilter()
-        self._other_loggers = []
-        self.setLevel(1)        
-        self._config.dn = DottedConfiguration
-        self._config["logging.buffer.enable"] = True
-        self.setup_handlers()
-        self.running = True
-        _ldbprint("Launched %s" % self.name)
+        self._filters["console"] = _ConsoleFilter
+        __dbg_print__("Launched %s" % self.name)
     
     handlerClasses = {
         'growl' : GrowlHandler,
-        'buffer': ManyTargetBuffer,
+        'buffer': ManyTargetHandler,
         'null'  : logging.NullHandler,
         'file'  : handlers.TimedRotatingFileHandler,
         'console' : logging.StreamHandler,
@@ -245,10 +266,20 @@ class LogManager(logging.getLoggerClass()):
         """A read only element that is the configuration for this system."""
         return StructuredConfiguration(self._config.store)
             
-    def configure(self,configFile=None,configuration=None,filters=None):
+    def configure_from_file(self,filename):
+        """docstring for configure_from_file"""
+        __dbg_print__( "--Configure %s " % self.name)
+        
+        self.configured |= self._config.load(filename)
+                    
+        if not self.configured:
+            self.log(8,"No configuration provided or accessed. Using defaults.")
+        __dbg_print__("--END Configure %s" % self.name)
+        
+    def configure(self,configuration=None):
         """Configure this logging object using a configuration dictionary. Configuration dictionaries can be provided by a YAML file or directly to the configuration argument. If both are provided, the YAML file will over-ride the explicit dictionary."""
         
-        _ldbprint( "--Configure %s " % self.name)
+        __dbg_print__( "--Configure %s " % self.name)
         
         # Configure from Variable
         if configuration != None:
@@ -256,38 +287,23 @@ class LogManager(logging.getLoggerClass()):
             self.debug("Updated Configuration from variable")            
             self.configured |= True
         
-        # Configure from File
-        if configFile != None:
-            self.debug("Updated Configuration from file")            
-            self.configured |= self._config.load(configFile)
-        
-        # Configure from configuration
-        self.debug("Updated Configuration from structure")            
-        self.configured |= self._config.load()
-        
-        if filters is not None:
-            self._filters = filters
-        
         if not self.configured:
             self.log(8,"No configuration provided or accessed. Using defaults.")
-        _ldbprint("--END Configure %s" % self.name)
+        __dbg_print__("--END Configure %s" % self.name)
     
     def start(self):
         """Starts this logger running, using the configuration set using :meth:`configure`. The configuration can configure a file handler and a console handler. Arbitrary configurations are not possible at this point."""
-        _ldbprint( "--Starting Handlers in %s" % self.name)
+        __dbg_print__( "--Starting Handlers in %s" % self.name)
         self.setup_handlers()
-        if 'buffer' in self._handlers:
+        if self.buffering:
             for key in self._handlers:
                 if key is not 'buffer':
-                    _ldbprint("-Buffer Targeting %s in %s" % (key,self.name))
+                    __dbg_print__("-Buffer Targeting %s in %s" % (key,self.name))
                     self._handlers['buffer'].setTarget(self._handlers[key])
-        
             self._config["logging.buffer.enable"] = False
             self.setup_handler('buffer')
-        if len(self._other_loggers) > 0:
-            self.start_others(*self._other_loggers)
-            
-        _ldbprint("--- LOG LEVEL %s %s" % (self.name, self.getEffectiveLevel()))
+            self.buffering = False       
+        __dbg_print__("--- LOG LEVEL %s %s" % (self.name, self.getEffectiveLevel()))
     
     def setup_handlers(self,*handlers):
         """Sets up the handlers based on the configuration"""
@@ -306,76 +322,60 @@ class LogManager(logging.getLoggerClass()):
         level = hconfig.pop('level',None)
         format = hconfig.pop('format',None)
         dateformat = hconfig.pop('dateformat',None)
-            
         if "filename" in hconfig:
             if not os.path.exists(self._config["Dirs.Logs"]):
                 enable = False
             hconfig["filename"] = "%(Logs)s/%(filename)s.log" % dict(filename=hconfig["filename"],**self._config["Dirs"])
-            _ldbprint("Set handler filename %s for %s in %s" % (hconfig["filename"],handler,self.name))
-                
-        # Create the handler object from the configuration
-        if not ( handler in self._handlers and self._handlers[handler].enabled ) and enable:
+        
+        # Short Circuit for options not taken.
+        if not enable:
+            if handler in self._handlers:
+                hobject = self._handlers[handler]
+                self.removeHandler(hobject)
+                hobject.close()
+                del self._handlers[handler]
+                self.log(2,"Deactivating Handler %s: Deleted." % handler)
+                # Flag that we aren't handling, if there are no handlers left.
+                if len(self._handlers.keys()) == 0:
+                    self.handling = False
+                return
+            else:
+                self.log(2,"Deactivating Handler %s: Does not exist." % handler)
+                return
+        elif handler in self._handlers:
+            self.log(2,"Activating Handler %s: Already active." % handler)
+        else:
+            # Create the handler object from the configuration
             if handler in self.handlerClasses:
                 self._handlers[handler] = self.handlerClasses[handler](**hconfig)
             else:
                 self._handlers[handler] = getattr(logging,handler)(**hconfig)
-            self._handlers[handler].enabled = False
-            _ldbprint("-Created %s in %s"  % (handler,self.name))
-        elif (handler not in self._handlers) and (not enable):
-            _ldbprint("-Skipping Handler %s in %s"  % (handler,self.name))
-            return
-            
+            self.log(2,"Activating Handler %s: Handler created" % handler)
+        
+        hobject = self._handlers[handler]
         # Set the level of the handler object
         if level is not None:
-            self._handlers[handler].setLevel(level)
+            hobject.setLevel(level)
+            if level < self.level:
+                self.setLevel(level)
         else:
-            self._handlers[handler].setLevel(self.level)
-        _ldbprint("Handler %s's level is %s in %s" % (handler,self._handlers[handler].level,self.name))    
+            hobject.setLevel(self.level)
+        self.log(2,"Setting Handler %s Level: %d" % (handler,hobject.level))    
         
         # Format the handler object
         if format is not None:
             formatter = logging.Formatter(fmt=format,datefmt=dateformat)
-            self._handlers[handler].setFormatter(formatter)
+            hobject.setFormatter(formatter)
+            self.log(2,"Applying Handler %s Formatter" % handler)
             
         # Apply a console filter if this handler passes to streams
-        if isinstance(self._handlers[handler],logging.StreamHandler) and self._handlers[handler].stream == sys.stderr:
-            self._handlers[handler].addFilter(self._filters["console"])
+        if isinstance(hobject,logging.StreamHandler) and hobject.stream == sys.stderr:
+            hobject.addFilter(self._filters["console"])
+            self.log(2,"Applying Handler %s Console Filter" % handler)
             
         # Enable and Activate the Handler
-        if enable and not self._handlers[handler].enabled:
-            self.addHandler(self._handlers[handler])
-            self.handling = True
-            _ldbprint("Set up and enabled %s in %s" % (handler,self.name))
-            self._handlers[handler].enabled = enable
-        elif (not enable) and self._handlers[handler].enabled:
-            self.removeHandler(self._handlers[handler])
-            self._handlers[handler].flush()
-            self._handlers[handler].enabled = enable
-            del self._handlers[handler]
-            if len(self._handlers) == 0:
-                self.handling = False
-            _ldbprint("Deleted %s in %s" % (handler,self.name))
-        else:
-            _ldbprint("No status change to %s in %s" % (handler,self.name))
-            self._handlers[handler].enabled = enable
-        
-    def configure_others(self,*loggers):
-        """Configure other loggers"""
-        if len(loggers) == 0:
-            loggers = ['root']
-        for logger in loggers:
-            log_object = logging.getLogger(logger)
-            log_object.configure(configuration = self.config, filters = self._filters)
-        if not self.handling:
-            self._other_loggers += loggers
-    
-    def start_others(self,*loggers):
-        """docstring for start_others"""
-        if len(loggers) == 0:
-            loggers = ['root']
-        for logger in loggers:
-            log_object = logging.getLogger(logger)
-            log_object.configure(configuration = self.config)
+        self.addHandler(self._handlers[handler])
+        self.handling = True
             
     def useConsole(self,use=None):
         """Turn on or off the console logging. Specify the parameter `use` to force console logging into one state or the other. If the `use` parameter is not given, console logging will be toggled."""
@@ -383,8 +383,18 @@ class LogManager(logging.getLoggerClass()):
             self._filters["console"].on = not self._filters["console"].on
         else:
             self._filters["console"].on = use
-        _ldbprint("Console is now: %s for %s" % (self._filters["console"].on,self.name))
+        __dbg_print__("Console is now: %s for %s" % (self._filters["console"].on,self.name))
+        
+    def init_buffer(self):
+        """Sets up an initialization buffer"""
+        self._config["logging.buffer.enable"] = True
+        self.setup_handlers('buffer')
+        self.setLevel(1)
+        self.buffering = True
 
-logging.setLoggerClass(LogManager)
+logging.setLoggerClass(AstroLogger)
+logging.captureWarnings(True)
+logging.getLogger('py.warnings').addHandler(RedirectionHandler(__name__))
+
 
 from logging import *

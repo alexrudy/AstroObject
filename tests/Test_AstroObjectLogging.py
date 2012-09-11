@@ -26,11 +26,9 @@ class test_Logger(object):
     def test_LoggerInit(self):
         """logging.getLogger(__name__)"""
         log = logging.getLogger(__name__+".init")
-        assert isinstance(log,AOLogging.LogManager)
+        assert isinstance(log,AOLogging.AstroLogger)
         assert not log.configured
-        assert log.running
-        assert not log.doConsole
-        assert log.getEffectiveLevel() == 1
+        assert log.getEffectiveLevel() == 0
         assert not log.config["logging"]["file"]["enable"]
     
     def test_configure(self):

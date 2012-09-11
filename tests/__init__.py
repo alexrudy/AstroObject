@@ -14,5 +14,5 @@ __config__ = "logging.yaml"
 
 
 LOG = logging.getLogger("AstroObject")
-LOG.configure(configFile = __config__ )
+LOG.configure_from_file(filename = __config__ )
 LOG.start()

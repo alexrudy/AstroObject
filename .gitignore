@@ -30,6 +30,8 @@ eggs/*
 Logs/*
 Caches/*
 Data/*
+Examples/Caches/*
+Examples/Logs/*
 
 # Documentation
 Docs/build/*

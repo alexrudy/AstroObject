@@ -277,6 +277,7 @@ from .Utilities import getVersion, make_decorator, func_lineno, ProgressBar, Col
 import util.pbar as progressbar
 import util.terminal as terminal
 from util import getVersion, npArrayInfo, func_lineno, make_decorator
+print __name__
 
 __all__ = ["Simulator","on_collection","help","replaces","excepts","depends","triggers","include","optional","description","collect","ignore","on_instance_collection"]
 
@@ -480,26 +481,31 @@ class Simulator(object):
         self.done = [] # Stages and dependents which have been checked
         self.ran = [] # Stages and dependents which have been executed
         self.aran = []
-        self.name = name
         self.order = None
         self.use_caches = caches
-        self.config = StructuredConfiguration({})
-        self.config.dn = DottedConfiguration
-        self.config.load(resource_filename(__name__,"Defaults.yaml"))
         
+        self.name = name        
         if name == "__class__.__name__":
             self.name = self.__class__.__name__
         if isinstance(name,str):
             self.name = self.name.encode('utf-8')
-        self.log = logging.getLogger(self.name)
+        
+        self.log = logging.getLogger("%s.%s" % (__name__,self.name))
         self.logging = False
+        logging.getLogger(__name__.split(".")[0]).init_buffer()
+        
+        self.config = StructuredConfiguration({})
+        self.config.dn = DottedConfiguration
+        self.config.load(resource_filename(__name__,"Defaults.yaml"))
+        
+        
         # The following are boolean state values for the simulator
         self._reset()
         self.commandLine = commandLine
         self._depTree = []
         
         if version==None:
-            self.version = [u"AstroObject: " + __version__]
+            self.version = [u"%s: " % __name__.split(".")[0] + __version__]
         else:
             self.version = [self.name + u": " + version,u"AstroObject: " + __version__]
         
@@ -1139,24 +1145,30 @@ can be customized using the 'Default' configuration variable in the configuratio
             
     def _postConfiguration(self):
         """Apply arguments after configuration. The arguments applied here flesh out macros, and copy data from the configuration system into the operations system."""
+        # Fix configuration lists
         if not isinstance(self.config.get("Options.exclude",False),list):
             self.config["Options.exclude"] = []
         if not isinstance(self.config.get("Options.include",False),list):
             self.config["Options.include"] = []
         if not isinstance(self.config.get("Options.macro",False),list):
             self.config["Options.macro"] = []
+        
+        # Handler command line literal configurations.
         for item in self.config.get("Options.literalconfig",[]):    
             key,value = item.split("=")
             try:
                 self.config[key] = literal_eval(value)
             except:
                 self.config[key] = value
+        
+        # Handle post configuration updates
         for cfg in self.config.get("Options.afterConfigure",[]):
             self.config.merge(cfg)
-        self.log.configure(configuration=self.config)
-        if self.config["AstroObjectLibrary.Logging"]:
-            self.log.configure_others('AstroObject')
-        self.log.start()
+        
+        logger = logging.getLogger(self.config["Logger"])
+        logger.configure(configuration=self.config)
+        logger.start()
+        
         for vstr in self.version:
             self.log.info(vstr)
         for fk in self.config.get("Options.afterFunction",[]):
