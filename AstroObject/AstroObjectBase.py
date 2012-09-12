@@ -667,7 +667,7 @@ class BaseStack(collections.MutableMapping):
         LOG.log(5, u"Saved frame %s" % Object)
         # Activate the saved frame as the current frame
         if select:
-            self.select(framename)
+            self._select(framename)
         return framename
     
     @set_trace_errors(KeyError)
@@ -721,6 +721,16 @@ class BaseStack(collections.MutableMapping):
         LOG.log(5, u"Method \".object()\" on %s has been depreciated. Please use \".frame()\" instead." % self)
         return self.frame(framename)
     
+    def _select(self, framename):
+        """Private, silent select mode. The parent select() function will issuee messages for everything. This one wont."""
+        if framename is None:
+            self._framename = None # Unselect frame
+            framename = self._default_frame()
+        elif framename not in self:
+            self._key_error(framename)
+        self._framename = framename
+        return self.framename
+    
     @set_trace_errors(KeyError)    
     def select(self, framename):
         """Sets the default frame to the given framename. Normally, the default frame is the one that was last saved.
@@ -731,12 +741,8 @@ class BaseStack(collections.MutableMapping):
         
         """
         if framename is None:
-            self._framename = None # Unselect frame
-            framename = self._default_frame()
             LOG.log(2, u"Setting frame by cancelling selection and asking for default frame.")
-        elif framename not in self:
-            self._key_error(framename)
-        self._framename = framename
+        self._select(framename)
         LOG.log(5, u"Selected frame \'%s\'" % self.framename)
         return self.framename
     

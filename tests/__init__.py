@@ -10,7 +10,7 @@
 
 from AstroObject.AstroObjectLogging import *
 
-__config__ = "logging.yaml"
+__config__ = "tests/logging.yaml"
 
 
 LOG = logging.getLogger("AstroObject")
