@@ -147,7 +147,7 @@ class SpectraMixin(AstroObjectBase.Mixin):
         
     def logarize(self):
         """Apply a logarithmic scale to this spectrum"""
-        new_wavelengths = np.logspace(np.min(self.wavelengths),np.max(self.wavelengths),self.wavelengths.size)
+        new_wavelengths = np.logspace(np.log10(np.min(self.wavelengths)),np.log10(np.max(self.wavelengths)),self.wavelengths.size)
         new_resolutions = new_wavelengths[:-1] / np.diff(new_wavelengths)
         new_resolutions = np.hstack((new_resolutions,new_resolutions[-1]))
         from .util.functions import Resample

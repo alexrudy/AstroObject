@@ -17,7 +17,7 @@ from AstroObject.AnalyticSpectra import InterpolatedSpectrum,GaussianSpectrum,Fl
 from AstroObject.AstroSpectra import SpectraStack
 
 LOG = logging.getLogger('AstroObject')
-LOG.configure()
+LOG.configure(configFile='Examples/config.yml')
 LOG.start()
 
 WAVELENGTHS = ((np.arange(98)+1)/2.0 + 1.0) * 1e-7
@@ -31,6 +31,7 @@ OBJECT = SpectraStack()
 OBJECT["Raw Data"] = VALID
 OBJECT.show()
 OBJECT["Interpolated"] = InterpolatedSpectrum(VALID,label="Interpolated")
+OBJECT["Interpolated"].logarize()
 OBJECT.show()
 OBJECT["Post Interpolation"] = OBJECT.frame()(wavelengths=WAVELENGTHS)
 OBJECT.show()
@@ -42,6 +43,7 @@ OBJECT["Integrated"] = OBJECT.frame("Interpolated")(wavelengths=WAVELENGTHS[1:],
 OBJECT.show()
 OBJECT["Integrated Quad"] = OBJECT.frame("Interpolated")(wavelengths=WAVELENGTHS[1:],resolution=HIGH_R,method='integrate_quad')
 OBJECT.show()
+OBJECT["Interpolated"].linearize()
 OBJECT["R and Integrated"] = OBJECT.frame("Interpolated")(wavelengths=WAVELENGTHS[1:],resolution=HIGH_R,method='resolve_and_integrate')
 OBJECT.show()
 OBJECT["Integrated LR"] = OBJECT.frame("Interpolated")(wavelengths=WAVELENGTHS_LOWR[1:],resolution=LOWR,method='integrate')
