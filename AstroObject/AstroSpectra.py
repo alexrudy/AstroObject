@@ -135,6 +135,24 @@ class SpectraMixin(AstroObjectBase.Mixin):
     def x_is_log(self, logbase=10, tol=1e-10):
         """Whether the x-axis is approximately logarithmic"""
         return np.std(self.dlogx(logbase = logbase)) < tol
+        
+    def linearize(self):
+        """Linearize this spectrum"""
+        new_wavelengths = np.linspace(np.min(self.wavelengths),np.max(self.wavelengths),self.wavelengths.size)
+        new_resolutions = new_wavelengths[:-1] / np.diff(new_wavelengths)
+        new_resolutions = np.hstack((new_resolutions,new_resolutions[-1]))
+        from .util.functions import Resample
+        new_flux = Resample(self.wavelengths,self.flux,new_wavelengths,new_resolutions)
+        self.data = np.vstack((new_wavelengths,new_flux))
+        
+    def logarize(self):
+        """Apply a logarithmic scale to this spectrum"""
+        new_wavelengths = np.logspace(np.min(self.wavelengths),np.max(self.wavelengths),self.wavelengths.size)
+        new_resolutions = new_wavelengths[:-1] / np.diff(new_wavelengths)
+        new_resolutions = np.hstack((new_resolutions,new_resolutions[-1]))
+        from .util.functions import Resample
+        new_flux = Resample(self.wavelengths,self.flux,new_wavelengths,new_resolutions)
+        self.data = np.vstack((new_wavelengths,new_flux))
     
 
 class SpectraFrame(SpectraMixin,AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame):
