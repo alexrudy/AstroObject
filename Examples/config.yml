@@ -3,7 +3,6 @@ logging:
     enable: true
     format: '%(levelname)-8s... %(message)s'
     level: 20
-    message: '...%(message)s'
   file:
     dateformat: '%Y-%m-%d-%H:%M:%S'
     enable: true

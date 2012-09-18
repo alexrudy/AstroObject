@@ -18,7 +18,7 @@ from AstroObject.AstroSpectra import SpectraStack
 from AstroObject.util import npArrayInfo
 
 LOG = logging.getLogger('AstroObject')
-LOG.configure(configFile='Examples/config.yml')
+LOG.configure_from_file('Examples/config.yml')
 LOG.start()
 
 WAVELENGTHS = ((np.arange(98)+1)/2.0 + 1.0) * 1e-7
