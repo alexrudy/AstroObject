@@ -57,7 +57,7 @@ import os
 
 # Submodules from this system
 from . import AstroObjectLogging as logging
-from .util import getVersion
+from .util import getVersion, npArrayInfo
 from .util.mpl import expandLim
 
 __all__ = ["SpectraMixin","SpectraFrame","SpectraStack"]
@@ -70,6 +70,32 @@ class SpectraMixin(AstroObjectBase.Mixin):
     """Mixin to set the properties of Spectra **frames** and to provide a :meth:`~.AstroObjectBase.BaseFrame.__show__` method. Used for any spectrum **frame** which contains raw data."""
     
     _resolution = None
+
+    def __hdu__(self, primary=False):
+        """Returns an HDU to represent this frame. If this frame is linear, (see :meth:`x_is_linear`), the output will be an HDU with just the flux, and keyword hearders which describe the wavelength."""
+        if not self.x_is_linear():
+            return super(SpectraMixin, self).__hdu__(primary)
+        CRVAL = self.wavelengths[0]
+        CDELT = np.mean(self.dx())
+        if primary:
+            HDU = pf.PrimaryHDU(self.flux)
+        else:
+            HDU = pf.ImageHDU(self.flux)
+        HDU.update('CRVAL',CRVAL)
+        HDU.update('CDELT',CDELT)
+    
+    @classmethod
+    def __read__(cls,HDU,label):
+        """Read into this frame type."""
+        Object = super(SpectraMixin, cls).__read__(HDU, label)
+        if "CRVAL" in HDU.header and "CDELT" in HDU.header:
+            CRVAL = HDU.header['CRVAL']
+            CDELT = HDU.header['CDELT']
+            CRMAX = CRVAL + CDELT * HDU.data.shape[0]
+            wavelengths = np.arange(CRVAL,CRMAX,CDELT)
+            Object.data = np.vstack((wavelengths,Object.data))
+        return Object
+        
     
     @property
     def wavelengths(self):
@@ -80,22 +106,28 @@ class SpectraMixin(AstroObjectBase.Mixin):
     def flux(self):
         """Accessor to get the flux from this spectrum"""
         return self.data[1]
-        
+    
     @property
     def resolution(self):
-        """The point-to-point spectral resolution"""
-        if self._resolution is None:
-            return self.wavelengths[:-1] / np.diff(self.wavelengths)
-        else:
+        """Spectral resolution"""
+        if hasattr(self,'_resolution') and self._resolution is not None:
             return self._resolution
-            
+        from .util.functions import GetResolution
+        return GetResolution(self.wavelengths,matched=True)
+        
     @resolution.setter
     def resolution(self,values):
         """Set the explicit resolution"""
         if values is None:
+            self._resolution = None
             return
         assert values.shape == self.wavelengths.shape
         self._resolution = values
+
+    
+    def __info__(self):
+        """Return information about this spectrum."""
+        return [ self.label, npArrayInfo(self.wavelengths,u"̵λ"), npArrayInfo(self.flux,u"flux"), npArrayInfo(self.resolution,u"R") ]
     
     def __show__(self):
         """Plots the image in this frame using matplotlib's ``imshow`` function. The color map is set to an inverted binary, as is often useful when looking at astronomical images. The figure object is returned, and can be manipulated further.
@@ -111,8 +143,49 @@ class SpectraMixin(AstroObjectBase.Mixin):
         plt.axis(expandLim(plt.axis()))
         plt.gca().ticklabel_format(style="sci",scilimits=(3,3))
         return plt.gca()
+     
+    def dx(self):
+        """x-axis spacing (usually wavelengths, but could be energy etc.)"""
+        return np.diff(self.wavelengths)
+        
+    def dlogx(self, logbase=10):
+        """x-axis logarithmix spacing."""
+        return np.log(self.wavelengths)/np.log(logbase)
+        
+    def x_is_linear(self, tol=1e-10):
+        """Whether the x-axis is approximately linear"""
+        return np.std(self.dx()) < tol
+        
+    def x_is_log(self, logbase=10, tol=1e-10):
+        """Whether the x-axis is approximately logarithmic"""
+        return np.std(self.dlogx(logbase = logbase)) < tol
+        
+    def linearize(self, strict = False):
+        """Linearize this spectrum"""
+        new_wavelengths = np.linspace(np.min(self.wavelengths),np.max(self.wavelengths),self.wavelengths.size)
+        from .util.functions import GetResolution, Resample, CapResolution, ConserveResolution
+        new_resolutions = GetResolution(new_wavelengths)
+        if not strict:
+            new_resolutions = CapResolution(self.resolution,new_resolutions)
+        elif strict and not ConserveResolution(self.resolution,new_resolutions):
+            raise Exception("Resolution not conserved!")
+        new_flux = Resample(self.wavelengths,self.flux,new_wavelengths,new_resolutions)
+        self.data = np.vstack((new_wavelengths,new_flux))
+        
+    def logarize(self, strict = False):
+        """Apply a logarithmic scale to this spectrum"""
+        new_wavelengths = np.logspace(np.log10(np.min(self.wavelengths)),np.log10(np.max(self.wavelengths)),self.wavelengths.size)
+        from .util.functions import GetResolution, Resample, CapResolution, ConserveResolution
+        new_resolutions = GetResolution(new_wavelengths)
+        if not strict:
+            new_resolutions = CapResolution(self.resolution,new_resolutions)
+        elif strict and not ConserveResolution(self.resolution,new_resolutions):
+            raise Exception("Resolution not conserved!")
+        new_flux = Resample(self.wavelengths,self.flux,new_wavelengths,new_resolutions)
+        self.data = np.vstack((new_wavelengths,new_flux))
+    
 
-class SpectraFrame(AstroObjectBase.HDUHeaderMixin,SpectraMixin,AstroObjectBase.BaseFrame):
+class SpectraFrame(SpectraMixin,AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame):
     """A single frame of a spectrum. This will save the spectrum as an image, with the first row having flux, and second row having the wavelength equivalent. Further rows can accomodate further spectral frames when stored to a FITS image. However, the frame only accepts a single spectrum."""
     def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
         self.data = data # The image data
