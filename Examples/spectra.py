@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 from AstroObject.AstroObjectLogging import *
 from AstroObject.AnalyticSpectra import InterpolatedSpectrum,GaussianSpectrum,FlatSpectrum,BlackBodySpectrum,UnitarySpectrum,Resolver
 from AstroObject.AstroSpectra import SpectraStack
+from AstroObject.util import npArrayInfo
 
 LOG = logging.getLogger('AstroObject')
 LOG.configure(configFile='Examples/config.yml')
@@ -30,28 +31,25 @@ OBJECT = SpectraStack()
 
 OBJECT["Raw Data"] = VALID
 OBJECT.show()
-OBJECT["Interpolated"] = InterpolatedSpectrum(VALID,label="Interpolated")
-OBJECT["Interpolated"].logarize()
+for line in OBJECT["Raw Data"].__info__():
+    print line
+OBJECT["Raw Data"].logarize()
+OBJECT["Logarized"] = OBJECT["Raw Data"]
+for line in OBJECT["Logarized"].__info__():
+    print line
 OBJECT.show()
-OBJECT["Post Interpolation"] = OBJECT.frame()(wavelengths=WAVELENGTHS)
+OBJECT["Raw Data"].linearize()
+OBJECT["Linearized"] = OBJECT["Raw Data"]
+for line in OBJECT["Linearized"].__info__():
+    print line
 OBJECT.show()
-OBJECT["Resampled"] = OBJECT.frame("Interpolated")(wavelengths=WAVELENGTHS_LOWR[1:],resolution=LOWR,method='resample')
-OBJECT.show()
-plt.legend()
-plt.figure(2)
-OBJECT["Integrated"] = OBJECT.frame("Interpolated")(wavelengths=WAVELENGTHS[1:],resolution=HIGH_R,method='integrate')
-OBJECT.show()
-OBJECT["Integrated Quad"] = OBJECT.frame("Interpolated")(wavelengths=WAVELENGTHS[1:],resolution=HIGH_R,method='integrate_quad')
-OBJECT.show()
-OBJECT["Interpolated"].linearize()
-OBJECT["R and Integrated"] = OBJECT.frame("Interpolated")(wavelengths=WAVELENGTHS[1:],resolution=HIGH_R,method='resolve_and_integrate')
-OBJECT.show()
-OBJECT["Integrated LR"] = OBJECT.frame("Interpolated")(wavelengths=WAVELENGTHS_LOWR[1:],resolution=LOWR,method='integrate')
-OBJECT.show()
-OBJECT["Integrated Quad LR"] = OBJECT.frame("Interpolated")(wavelengths=WAVELENGTHS_LOWR[1:],resolution=LOWR,method='integrate_quad')
-OBJECT.show()
-OBJECT["R and Integrated LR"] = OBJECT.frame("Interpolated")(wavelengths=WAVELENGTHS_LOWR[1:],resolution=LOWR,method='resolve_and_integrate')
-OBJECT.show()
-
+try:
+    for line in OBJECT["Raw Data"].__info__():
+        print line
+    OBJECT["Raw Data"].logarize(strict=True)
+    OBJECT["Logarized Strict"] = OBJECT["Raw Data"]
+    OBJECT.show()
+except Exception, e:
+    print e
 plt.legend()
 plt.show()

@@ -37,6 +37,29 @@ def Gaussian(x,mean,stdev,height):
     """Rertun a gaussian at postion x, whith mean, stdev, and height"""
     return height*np.exp(-(x-mean)**2.0/(2.0*stdev**2.0))
 
+def GetResolution(wavelengths,matched=True):
+    """Return the resolution from a set of wavelengths"""
+    resolutions = wavelengths[:-1] / np.diff(wavelengths)
+    if matched:
+        resolutions = np.hstack((resolutions,resolutions[-1]))
+    return resolutions
+    
+def ConserveResolution(given_resolution,target_resolution):
+    """docstring for ConserveResolution"""
+    given_interp_f = sp.interpolate.interp1d(np.arange(given_resolution.size),given_resolution,bounds_error=False,fill_value=np.min(given_resolution))
+    given_resolution_d = given_interp_f(np.arange(target_resolution.size))
+    return not (target_resolution > given_resolution_d).any()
+    
+
+def CapResolution(given_resolution,target_resolution):
+    """Cap the target resolution so that it does not exceed the given resolution."""
+    given_interp_f = sp.interpolate.interp1d(np.arange(given_resolution.size),given_resolution,bounds_error=False,fill_value=np.min(given_resolution))
+    given_resolution_d = given_interp_f(np.arange(target_resolution.size))
+    delta_resolution = target_resolution > given_resolution_d
+    target_resolution[delta_resolution] = given_resolution_d[delta_resolution]
+    return target_resolution
+    
+    
 def Resample(old_wavelengths,flux,new_wavelengths,resolution=None):
     """Gaussian resampling of a spectrum"""
     if resolution is None:

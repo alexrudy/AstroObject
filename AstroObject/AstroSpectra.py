@@ -104,10 +104,16 @@ class SpectraMixin(AstroObjectBase.Mixin):
     def flux(self):
         """Accessor to get the flux from this spectrum"""
         return self.data[1]
+    
+    @property
+    def resolution(self,matched=True):
+        """Spectral resolution"""
+        from .util.functions import GetResolution
+        return GetResolution(self.wavelengths,matched)
         
     def __info__(self):
         """Return information about this spectrum."""
-        return [ self.label, npArrayInfo(self.wavelengths,u"̵λ"), npArrayInfo(self.flux,u"flux") ]
+        return [ self.label, npArrayInfo(self.wavelengths,u"̵λ"), npArrayInfo(self.flux,u"flux"), npArrayInfo(self.resolution,u"R") ]
     
     def __show__(self):
         """Plots the image in this frame using matplotlib's ``imshow`` function. The color map is set to an inverted binary, as is often useful when looking at astronomical images. The figure object is returned, and can be manipulated further.
@@ -140,21 +146,27 @@ class SpectraMixin(AstroObjectBase.Mixin):
         """Whether the x-axis is approximately logarithmic"""
         return np.std(self.dlogx(logbase = logbase)) < tol
         
-    def linearize(self):
+    def linearize(self, strict = False):
         """Linearize this spectrum"""
         new_wavelengths = np.linspace(np.min(self.wavelengths),np.max(self.wavelengths),self.wavelengths.size)
-        new_resolutions = new_wavelengths[:-1] / np.diff(new_wavelengths)
-        new_resolutions = np.hstack((new_resolutions,new_resolutions[-1]))
-        from .util.functions import Resample
+        from .util.functions import GetResolution, Resample, CapResolution, ConserveResolution
+        new_resolutions = GetResolution(new_wavelengths)
+        if not strict:
+            new_resolutions = CapResolution(self.resolution,new_resolutions)
+        elif strict and not ConserveResolution(self.resolution,new_resolutions):
+            raise Exception("Resolution not conserved!")
         new_flux = Resample(self.wavelengths,self.flux,new_wavelengths,new_resolutions)
         self.data = np.vstack((new_wavelengths,new_flux))
         
-    def logarize(self):
+    def logarize(self, strict = False):
         """Apply a logarithmic scale to this spectrum"""
         new_wavelengths = np.logspace(np.log10(np.min(self.wavelengths)),np.log10(np.max(self.wavelengths)),self.wavelengths.size)
-        new_resolutions = new_wavelengths[:-1] / np.diff(new_wavelengths)
-        new_resolutions = np.hstack((new_resolutions,new_resolutions[-1]))
-        from .util.functions import Resample
+        from .util.functions import GetResolution, Resample, CapResolution, ConserveResolution
+        new_resolutions = GetResolution(new_wavelengths)
+        if not strict:
+            new_resolutions = CapResolution(self.resolution,new_resolutions)
+        elif strict and not ConserveResolution(self.resolution,new_resolutions):
+            raise Exception("Resolution not conserved!")
         new_flux = Resample(self.wavelengths,self.flux,new_wavelengths,new_resolutions)
         self.data = np.vstack((new_wavelengths,new_flux))
     
