@@ -57,7 +57,7 @@ import os
 
 # Submodules from this system
 from . import AstroObjectLogging as logging
-from .util import getVersion
+from .util import getVersion, npArrayInfo
 from .util.mpl import expandLim
 
 __all__ = ["SpectraMixin","SpectraFrame","SpectraStack"]
@@ -104,6 +104,10 @@ class SpectraMixin(AstroObjectBase.Mixin):
     def flux(self):
         """Accessor to get the flux from this spectrum"""
         return self.data[1]
+        
+    def __info__(self):
+        """Return information about this spectrum."""
+        return [ self.label, npArrayInfo(self.wavelengths,u"̵λ"), npArrayInfo(self.flux,u"flux") ]
     
     def __show__(self):
         """Plots the image in this frame using matplotlib's ``imshow`` function. The color map is set to an inverted binary, as is often useful when looking at astronomical images. The figure object is returned, and can be manipulated further.
