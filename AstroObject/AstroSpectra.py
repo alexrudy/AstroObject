@@ -106,11 +106,18 @@ class SpectraMixin(AstroObjectBase.Mixin):
         return self.data[1]
     
     @property
-    def resolution(self,matched=True):
+    def resolution(self):
         """Spectral resolution"""
+        if hasattr(self,'_resolution'):
+            return self._resolution
         from .util.functions import GetResolution
-        return GetResolution(self.wavelengths,matched)
+        return GetResolution(self.wavelengths,matched=True)
         
+    @resolution.setter
+    def resolution(self,resolution):
+        """Sets the fixed resolution of this object."""
+        self._resolution = resolution
+    
     def __info__(self):
         """Return information about this spectrum."""
         return [ self.label, npArrayInfo(self.wavelengths,u"̵λ"), npArrayInfo(self.flux,u"flux"), npArrayInfo(self.resolution,u"R") ]
