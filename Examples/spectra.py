@@ -33,6 +33,8 @@ OBJECT["Raw Data"] = VALID
 OBJECT.show()
 for line in OBJECT["Raw Data"].__info__():
     print line
+for line in OBJECT.info("Raw Data"):
+    print line
 OBJECT["Raw Data"].logarize()
 OBJECT["Logarized"] = OBJECT["Raw Data"]
 for line in OBJECT["Logarized"].__info__():

@@ -610,6 +610,23 @@ class BaseStack(collections.MutableMapping):
         """
         return self.frame()
     
+    def __getattr__(self,name):
+        """Provides a passthrough for functions that we haven't named yet."""
+        def __attr_method(*framenames):
+            method = '__' + name + '__'
+            rvals = []
+            if len(framenames) > 1:
+                framenames = tuple(self._default_frame())
+            for framename in framenames:
+                if framename != None and framename in self:
+                    rvals += [getattr(self[framename],method)()]
+                else:
+                    self._key_error(framename)
+            if len(rvals) == 1:
+                return rvals[0]
+            else:
+                return tuple(rvals)
+        return __attr_method
     
     @property
     def data_classes(self):
