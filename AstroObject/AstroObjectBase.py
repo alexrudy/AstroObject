@@ -615,8 +615,9 @@ class BaseStack(collections.MutableMapping):
         def __attr_method(*framenames):
             method = '__' + name + '__'
             rvals = []
-            if len(framenames) > 1:
-                framenames = tuple(self._default_frame())
+            framenames = list(*framenames)
+            if len(framenames) < 1:
+                framenames = [self._default_frame()]
             for framename in framenames:
                 if framename != None and framename in self:
                     rvals += [getattr(self[framename],method)()]
@@ -624,6 +625,8 @@ class BaseStack(collections.MutableMapping):
                     self._key_error(framename)
             if len(rvals) == 1:
                 return rvals[0]
+            elif len(rvals) == 0:
+                return None
             else:
                 return tuple(rvals)
         return __attr_method
@@ -861,21 +864,6 @@ class BaseStack(collections.MutableMapping):
         self._framename = self._default_frame()
         LOG.log(5, u"%s: Removed frames %s" % (self, removed))
         return self.list()
-    
-    @set_trace_errors(KeyError)
-    def show(self, framename=None):
-        """Returns the (rendered) matplotlib plot for this object. This is a quick way to view your current data frame without doing any serious plotting work. This aims for the sensible defaults philosophy, if you don't like what you get, write a new method that uses the :meth:`data` call and plots that.
-        
-        :param string framename: the name of the frame to be retrieved.
-        
-        """
-        # Load the current stat if no frame provided
-        if not framename:
-            framename = self._default_frame()
-        if framename != None and framename in self:
-            return self[framename].__show__()
-        else:
-            self._key_error(framename)
     
     def _setup_file(self, filename = None, filetype = None):
         """Sets up a file object for reading or writing, given a file-like object and optionally a filetype."""
