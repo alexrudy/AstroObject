@@ -611,24 +611,44 @@ class BaseStack(collections.MutableMapping):
         return self.frame()
     
     def __getattr__(self,name):
-        """Provides a passthrough for functions that we haven't named yet."""
+        """Provides a passthrough for functions that we haven't named yet.
+        
+        This allows *stacks* to call methods defined within *frames*. Most frames define a :meth:`~BaseFrame.__show__`. This method can be called using :meth:`show` with the following syntax::
+            
+            >>> Stack.show("SomeFrameName")
+            
+        The special syntax can take as many framenames as desired as arguments, and will call the named method on each one. So::
+            
+            >>> Stack.show("FrameA","FrameB","FrameC")
+            
+        will call the :meth:`~BaseFrame.__show__` method on each frame.
+        
+        """
         def __attr_method(*framenames):
+            # Set up frame method name (as string)
             method = '__' + name + '__'
+            # Initialize return values
             rvals = []
+            
             framenames = list(*framenames)
             if len(framenames) < 1:
                 framenames = [self._default_frame()]
+                
+            # Execute the desired method everywhere
             for framename in framenames:
                 if framename != None and framename in self:
-                    rvals += [getattr(self[framename],method)()]
+                    rvals += [ getattr(self[framename],method)() ]
                 else:
                     self._key_error(framename)
+            
+            # Return the appropriate value
             if len(rvals) == 1:
                 return rvals[0]
             elif len(rvals) == 0:
                 return None
             else:
                 return tuple(rvals)
+                
         return __attr_method
     
     @property
