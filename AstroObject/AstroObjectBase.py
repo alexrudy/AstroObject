@@ -508,6 +508,16 @@ class BaseStack(collections.MutableMapping):
     :param filename: String name of default file for reading and writing with :meth:`read` and :meth:`write`.
     :param dataClasses: An array of classes which constitute valid save classes for this object.
     
+    *Stacks* have special attribute characteristics which allow them to reach the full *frame* API. *Stacks* can call methods defined within *frames*. Most frames define a :meth:`~BaseFrame.__show__`. This method can be called using :meth:`show` with the following syntax::
+            
+        >>> Stack.show("SomeFrameName")
+            
+    The special syntax can take as many framenames as desired as arguments, and will call the named method on each one. So::
+            
+        >>> Stack.show("FrameA","FrameB","FrameC")
+            
+    will call the :meth:`~BaseFrame.__show__` method on each frame.
+    
     .. Note::
         This is object only contains Abstract data objects. In order to use this class properly, you should set the dataClasses keyword for use when storing data.
     """
