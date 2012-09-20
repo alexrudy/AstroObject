@@ -16,7 +16,7 @@ from version import version as versionstr
 
 __version__ = versionstr
 
-__all__ = ['AnalyticSpectra','AstroImage','AstroObjectBase','AstroSpectra','AstroObjectLogging','Utilities']
+__all__ = ['AnalyticSpectra','AstroImage','AstroObjectBase','AstroSpectra','AstroObjectLogging','util']
 
 
 logger = logging.getLogger(__name__)

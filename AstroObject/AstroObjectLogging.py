@@ -61,7 +61,6 @@ import os
 import yaml
 import collections
 
-from Utilities import *
 from .AstroConfig import StructuredConfiguration, DottedConfiguration
 from logging import *
 from .util import getVersion, ConfigurationError, update

@@ -272,7 +272,6 @@ import multiprocessing
 from .AstroCache import *
 from .AstroConfig import StructuredConfiguration, DottedConfiguration
 from . import AstroObjectLogging as logging
-from .Utilities import getVersion, make_decorator, func_lineno, ProgressBar, ColorBar
 
 import util.pbar as progressbar
 import util.terminal as terminal
