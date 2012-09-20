@@ -276,7 +276,6 @@ from . import AstroObjectLogging as logging
 import util.pbar as progressbar
 import util.terminal as terminal
 from util import getVersion, npArrayInfo, func_lineno, make_decorator
-print __name__
 
 __all__ = ["Simulator","on_collection","help","replaces","excepts","depends","triggers","include","optional","description","collect","ignore","on_instance_collection"]
 
