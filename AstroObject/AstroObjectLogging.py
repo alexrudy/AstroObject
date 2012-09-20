@@ -30,13 +30,25 @@ To use the logging::
 	
 
 .. autoclass::
-    AstroObject.AstroObjectLogging.LogManager
+    AstroObject.AstroObjectLogging.AstroLogger
     :members:
     
 .. autoclass::
     AstroObject.AstroObjectLogging.GrowlHandler
     :members:
-
+    
+.. autoclass::
+    AstroObject.AstroObjectLogging.ConsoleFilter
+    :members:
+    
+.. autoclass::
+    AstroObject.AstroObjectLogging.RedirectionHandler
+    :members:
+    
+.. autoclass::
+    AstroObject.AstroObjectLogging.ManyTargetHandler
+    :members:
+    
 """
 import logging
 import logging.handlers as handlers
