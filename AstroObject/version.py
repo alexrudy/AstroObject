@@ -20,9 +20,9 @@ from __future__ import division,with_statement
 
 #these components can be changed for new versions
 major = 0
-minor = 5
-bugfix = 3
-patch = 2
+minor = 6
+bugfix = 0
+patch = None
 isdev = True
 devstr = None
 
@@ -173,7 +173,12 @@ def _get_git_devstr(sha=False):
 
     currdir = path.abspath(path.split(__file__)[0])
     try:
-        p = Popen(['git','rev-list','HEAD'],cwd=currdir,
+        args = ['git','rev-list']
+        if sha:
+            args += ['--max-count=1']
+        args += ['HEAD']
+            
+        p = Popen(args,cwd=currdir,
                   stdout=PIPE,stderr=PIPE,stdin=PIPE)
         stdout,stderr = p.communicate()
     except OSError:

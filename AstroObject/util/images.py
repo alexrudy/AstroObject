@@ -19,5 +19,6 @@ import numpy as np
 def bin(array,factor):
     """Bins an array by the given factor in each axis."""
     Aout = np.zeros(tuple((np.array(array.shape) / factor).astype(np.int)), dtype=array.dtype)
-    [ Aout += array[i::factor,i::factor] for i in range(factor) ]
+    for i in range(factor):
+        Aout += array[i::factor,i::factor]
     return Aout

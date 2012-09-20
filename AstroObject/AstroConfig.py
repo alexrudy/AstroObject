@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2012-02-08.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.5.3-p2
+#  Version 0.6.0
 # 
 """
 :mod:`AstroConfig` — YAML-based Configuration Dictionaries
@@ -17,6 +17,9 @@ This module provides structured, YAML based, deep dictionary configuration objec
     AstroObject.AstroConfig.Configuration
     AstroObject.AstroConfig.StructuredConfiguration
     :parts: 1
+    
+.. autofunction::
+    AstroObject.AstroConfig.reformat
 
 Basic Configurations: :class:`Configuration`
 --------------------------------------------
@@ -51,21 +54,122 @@ import re
 import yaml
 
 # Submodules from this system
-from . import AstroObjectLogging as logging
+import logging
+
+def reformat(d,nt):
+    """Recursive extraction method for changing the type of nested dictionary objects.
+    
+    :param mapping d: The dictionary to re-type.
+    :param mapping-type nt: The new mapping type to use.
+    
+    """
+    #pylint: disable=C0103
+    if not isinstance(d, collections.Mapping):
+        return d
+    e = nt()
+    for k in d:
+        v = d.get(k)
+        if isinstance(v, collections.Mapping):
+            e[k] = reformat(v,nt)
+        elif isinstance(v, collections.Sequence) and not isinstance(v, (str, unicode)):
+            e[k] = [ reformat(i,nt) for i in v ]
+        else:
+            e[k] = v
+    return e
+    
+def deepmerge(d,u,s):
+    """Merge deep collection-like structures.
+    
+    :param d: Deep Structure
+    :param u: Updated Structure
+    :param s: Default structure to use when a new deep structure is required.
+    
+    """
+    if len(u)==0:
+        return d
+    for k, v in u.iteritems():
+        if isinstance(v, collections.Mapping):
+            r = deepmerge(d.get(k, s()), v, s)
+            d[k] = r
+        elif isinstance(v, collections.Sequence) and isinstance(d.get(k,None), collections.Sequence) and not (isinstance(v,(str,unicode)) or isinstance(d.get(k,None),(str,unicode))):
+            d[k] = [ i for i in v ] + [ i for i in d[k] ]
+        else:
+            d[k] = u[k]
+    return d
+    
+
+
+def reformat(d,nt):
+    """Recursive extraction method for changing the type of nested dictionary objects.
+    
+    :param mapping d: The dictionary to re-type.
+    :param mapping-type nt: The new mapping type to use.
+    
+    """
+    #pylint: disable=C0103
+    if not isinstance(d, collections.Mapping):
+        return d
+    e = nt()
+    for k in d:
+        v = d.get(k)
+        if isinstance(v, collections.Mapping):
+            e[k] = reformat(v,nt)
+        elif isinstance(v, collections.Sequence) and not isinstance(v, (str, unicode)):
+            e[k] = [ reformat(i,nt) for i in v ]
+        else:
+            e[k] = v
+    return e
+    
+def deepmerge(d,u,s):
+    """Merge deep collection-like structures.
+    
+    :param d: Deep Structure
+    :param u: Updated Structure
+    :param s: Default structure to use when a new deep structure is required.
+    
+    """
+    if len(u)==0:
+        return d
+    for k, v in u.iteritems():
+        if isinstance(v, collections.Mapping):
+            r = deepmerge(d.get(k, s()), v, s)
+            d[k] = r
+        elif isinstance(v, collections.Sequence) and isinstance(d.get(k,None), collections.Sequence) and not (isinstance(v,(str,unicode)) or isinstance(d.get(k,None),(str,unicode))):
+            d[k] = [ i for i in v ] + [ i for i in d[k] ]
+        else:
+            d[k] = u[k]
+    return d
+    
+
 
 class Configuration(collections.MutableMapping):
     """Adds extra methods to dictionary for configuration"""
     
-    dn = dict
+    _dn = dict
     """Deep nesting dictionary setting. This class will be used to create deep nesting structures for this dictionary.""" #pylint: disable=W0105
     
     dt = dict
     """Exctraction nesting dictionary setting. This class will be used to create deep nesting structures when this object is extracted.""" #pylint: disable=W0105
     
+    @property
+    def dn(self):
+        """Deep nesting attribute reader"""
+        return self._dn
+    
+    @dn.setter
+    def dn(self,new_type):
+        """Deep nesting type setter."""
+        if new_type != self._dn:
+            self._dn = new_type
+            self.renest()
+    
     def __init__(self, *args, **kwargs):
         super(Configuration, self).__init__()
         self.log = logging.getLogger(__name__)
         self._store = dict(*args, **kwargs)
+    
+    name = "Configuration"
+    """The name/type of this configuration."""
         
     def __repr__(self):
         """String representation of this object"""
@@ -73,7 +177,7 @@ class Configuration(collections.MutableMapping):
         
     def __str__(self):
         """String for this object"""
-        return "<Configuration %r >" % repr(self)
+        return "<%s %r >" % (self.name,repr(self))
         
     def __getitem__(self, key):
         """Dictionary getter"""
@@ -117,20 +221,7 @@ class Configuration(collections.MutableMapping):
         :param dict-like other: The other dictionary to be merged.
         
         """
-        self._merge(self, other)
-    
-    def _merge(self, d, u):
-        """Recursive merging function for internal use."""
-        #pylint: disable=C0103
-        if len(u)==0:
-            return d
-        for k, v in u.iteritems():
-            if isinstance(v, collections.Mapping):
-                r = self._merge(d.get(k, self.dn()), v)
-                d[k] = r
-            else:
-                d[k] = u[k]
-        return d
+        deepmerge(self, other, self.dn)
     
     def save(self, filename, silent=True):
         """Save this configuration as a YAML file. YAML files generally have the ``.yaml`` or ``.yml`` extension. If the filename ends in ``.dat``, the configuration will be saved as a raw dictionary literal.
@@ -140,7 +231,7 @@ class Configuration(collections.MutableMapping):
         
         """
         with open(filename, "w") as stream:
-            stream.write("# Configuration: %s\n" % filename)
+            stream.write("# %s: %s\n" % (self.name,filename))
             if re.search(r"(\.yaml|\.yml)$", filename):
                 yaml.dump(self.store, stream, default_flow_style=False)
             elif re.search(r"\.dat$", filename):
@@ -174,39 +265,7 @@ class Configuration(collections.MutableMapping):
     def store(self):
         """Dictionary representing this configuration. This property should be used if you wish to have a 'true' dictionary object. It is used internally to write this configuration to a YAML file.
         """
-        return self._extract(self._store)
-        
-    def _extract(self, d):
-        """Internal recursive extraction method for getting dictionaries out of thi object."""
-        #pylint: disable=C0103
-        if not isinstance(d, collections.Mapping):
-            return d
-        e = self.dt()
-        for k in d:
-            v = d.get(k)
-            if isinstance(v, collections.Mapping):
-                e[k] = self._extract(v)
-            elif isinstance(v, collections.Sequence) and not isinstance(v, (str, unicode)):
-                e[k] = [ self._extract(i) for i in v ]
-            else:
-                e[k] = v
-        return e
-        
-    def _renest(self, d):
-        """Internal recurisve nesting method for deep mapping dictionary work."""
-        #pylint: disable=C0103
-        if not isinstance(d, collections.Mapping):
-            return d
-        e = self.dn()
-        for k in d:
-            v = d.get(k)
-            if isinstance(v, collections.Mapping):
-                e[k] = self._renest(v)
-            elif isinstance(v, collections.Sequence) and not isinstance(v, (str, unicode)):
-                e[k] = [ self._renest(i) for i in v ]
-            else:
-                e[k] = v
-        return e
+        return reformat(self._store,self.dt)
     
     def renest(self, deep_nest_type=None):
         """Re-nest this object. This method applies the :attr:`dn` deep-nesting attribute to each nesting level in the configuration object.
@@ -216,10 +275,10 @@ class Configuration(collections.MutableMapping):
         This method does not return anything.
         """
         if isinstance(deep_nest_type, collections.Mapping):
-            self.dn = deep_nest_type #pylint: disable=C0103
+            self._dn = deep_nest_type #pylint: disable=C0103
         elif deep_nest_type is not None:
             TypeError("%r is not a mapping type." % deep_nest_type)
-        self._store = self._renest(self._store)
+        self._store = reformat(self._store,self.dn)
         
     def extract(self):
         """Extract the dictionary from this object.
@@ -292,9 +351,12 @@ class DottedConfiguration(Configuration):
     def __getitem__(self, key):
         """Dictionary getter"""
         keyparts = key.split(".")
-        if len(keyparts) > 1:
-            return self._getitem(self, keyparts)
-        return self._store.__getitem__(key)
+        try:
+            if len(keyparts) > 1:
+                return self._getitem(self, keyparts)
+            return self._store[key]
+        except KeyError:
+            raise KeyError('%s' % key)
         
     def __setitem__(self, key, value):
         """Dictonary setter"""

@@ -18,3 +18,15 @@ I've been searching for a good, robust way to do image binning, but haven't foun
 Analytic Convolutions
 *********************
 I'd like to develop a *fast* analytic way to do spectral convolutions. Managing individual spectra is okay, but handling a spectra that has a non-zero PSF, and hence is 2-D, is difficult. Generalizing this approach in the library is something I hope to do if I can figure this out.
+
+Nearterm development
+====================
+
+Logging Framework
+*****************
+
+Shift logging framework logic as follows:
+- Apply buffers to 'root' logger.
+- Apply 'null' handlers to 'AstroObject' logger
+- Configuration should apply to root logger. Logger class should facilitate access to root loggers.
+- AstroSimulator should correctly configure low level logging

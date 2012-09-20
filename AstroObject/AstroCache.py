@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-22.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5.3-p2
+#  Version 0.6.0
 # 
 
 # Standard Scipy Toolkits
@@ -15,24 +15,33 @@ import scipy as sp
 import yaml
 
 # Standard Python Modules
-import math, copy, sys, time, logging, os
-import argparse
+import sys
+from datetime import timedelta, datetime
+import logging
+import os
+import collections
+import hashlib
+import shutil
 
 # Submodules from this system
+from .AstroConfig import Configuration
+from .AstroObjectLogging import logging
+from .file.fileset import FileSet, HashedFileSet
 
-__all__ = ["CacheManager","Cache","NumpyCache","YAMLCache","ConfigCache"]
-
+__all__ = ["CacheManager","Cache","NumpyCache","YAMLCache"]
+__log__ = logging.getLogger(__name__)
 
     
 class Cache(object):
     """A caching object"""
-    def __init__(self, regenerater, reloader, resaver):
+    def __init__(self, regenerater, reloader, resaver, filename):
         super(Cache, self).__init__()
         self.regenerater = regenerater
         self.reloader = reloader
         self.resaver = resaver
-        self.enabled = True
-        self.saving = True
+        self.filename = filename
+        self.saving = False
+        self.loading = False        
         self.reset()
     
     def reset(self):
@@ -43,13 +52,20 @@ class Cache(object):
         self.saved = False
         self.ready = False
         
+    def __setfilepath__(self,filepath):
+        """Set the Filepath for this object"""
+        self.filepath = filepath
+        self.fullpath = os.path.join(self.filepath,self.filename)
+        self.saving = True
+        self.loading = True
+        
     
     def reload(self):
         """Reload this Cache from a file."""
-        if self.ready or not self.enabled:
+        if self.ready or not self.loading:
             return self.loaded
         try:
-            data = self.reloader()
+            data = self.reloader(self.fullpath)
         except IOError as e:
             self.loaded = False
         else:
@@ -73,7 +89,7 @@ class Cache(object):
         
         if not self.saved and self.saving:
             try:
-                self.resaver(self.data)
+                self.resaver(self.data,self.fullpath)
             except Exception as e:
                 print e
                 self.saved = False
@@ -86,7 +102,7 @@ class Cache(object):
         """Return the data"""
         if self.ready:
             return self.data
-        elif self.enabled and self.reload():
+        elif self.loading and self.reload():
             return self.data
         elif self.regenerate():
             return self.data
@@ -94,87 +110,179 @@ class Cache(object):
             raise CacheError("Unable to load cache.")
             
             
-class CacheManager(dict):
+class CacheManager(collections.MutableMapping):
     """A cache management dictionary with some useful features."""
-    def __init__(self, *args, **kwargs):
+    def __init__(self, destination,  hashable, enabled=True, expiretime=100000, autodiscover=True, dbfilebase=".AOCacheDB.yml"):
         super(CacheManager, self).__init__()
-        self.caches = dict(*args,**kwargs)
-
+        self._caches = {}
+        self._flags = {}
+        self._filesets = {}
+        self._autodiscover_value = autodiscover
+        self.log = __log__
+        
+        # Timing Information
+        self.timeformat = "%Y-%m-%dT%H:%M:%S"
+        self._createdate = datetime.now()
+        self._expiretime = datetime.now() - timedelta(0,expiretime)
+        
+        
+        # Filenames
+        self._cache_basename = os.path.relpath(os.path.join(destination,""))
+        self._dbfilebase = dbfilebase
+        self._dbfilename = os.path.join(self._cache_basename,self._dbfilebase)
+        
+        if (not os.path.isdir(self._cache_basename)) or (not enabled):
+            self.disable()
+            self.log.debug("Disabling Caching, Cache Base Directory '%s' not found." % self._cache_basename)
+        
+        # Database Setup
+        self._database = Configuration({})
+        self._database.dn = Configuration
+        self._database.name = "%s-db" % self.__class__.__name__
+        if self.enabled:
+            self._database.load(self._dbfilename)
+        
+        # Main Hashed Fileset
+        self._fileset = HashedFileSet( base = self._cache_basename, hashable = hashable, isopen = self.enabled, persist = True, autodiscover = self._autodiscover_value, dbfilebase = self._dbfilebase, timeformat = self.timeformat)
+        self.log.debug("Cache FileSet Created: %s " % self._fileset.hash)
+        self._filesets[self._fileset.hash] = self._fileset
+        self._database[self._fileset.hash] = self._fileset.date.strftime(self.timeformat)
+        self._reload_db_filesets()
+        self.log.debug("Cache %s Created" % self.hash)
+        self.expire()
+    
+    
+    def __str__(self):
+        """String for this cache"""
+        return self.hash
+    
     def __getitem__(self,key):
         """Get a keyed item"""
-        return self.caches[key]()
+        return self._caches[key]()
         
     def __setitem__(self,key,value):
         """Set a keyed item"""
         if isinstance(value,Cache):
-            self.caches[key] = value
+            value.__setfilepath__(self.set.directory)
+            self._caches[key] = value
+            if value.filename not in self.set:
+                self.set.register(value.filename)
+            for flag in self._flags:
+                self.flag(flag,self._flags[flag],key)
         else:
             raise TypeError("Dictionary accepts %s, given %s" % (type(Cache),type(value)))
     
     def __delitem__(self,key):
         """Delete item"""
-        del self.caches[key]
+        del self._caches[key]
         
     def __iter__(self):
         """Dictionary iterator call."""
-        return self.caches.iterkeys()
+        return self._caches.iterkeys()
         
     def __contains__(self,item):
         """Dictionary contain testing"""
-        return item in self.caches
+        return item in self._caches
         
-    def keys(self):
-        """Dictionary keys"""
-        return self.caches.keys()
+    def __len__(self):
+        """Length of the dictionary"""
+        return len(self._caches)
+    
+    def _reload_db_filesets(self):
+        """Get the already-created hashed file-sets which are in the base directory."""
+        self.log.log(2,"Reloading Database, %r" % self._database)
+        self.log.log(2,"Filesets: %r" % self._filesets.keys())
+        for filepath in self._database:
+            #TODO: Check for existance of directory before making a fileset? Or just make everything in the database.
+            if filepath not in self._filesets:
+                self._filesets[filepath] = FileSet( base = self._cache_basename, name = filepath, persist = True, autodiscover = self._autodiscover_value, dbfilebase = self._dbfilebase, timeformat = self.timeformat )
+                self._database[filepath] = self._filesets[filepath].date.strftime(self.timeformat)
+                self.log.log(2,"Reloaded fileset from database: %s" % filepath)
+        self._database.save(self._dbfilename)
+        
+    @property
+    def enabled(self):
+        """Check whether this fileset is enabled."""
+        return self._flags.get('loading',True) or self._flags.get('saving',True)
+    
+    @property
+    def hash(self):
+        """Accessor for set's hash method"""
+        return self.set.hash
+    
+    @property
+    def set(self):
+        """File set for the current hash."""
+        return self._fileset
     
     def flag(self,flag,value,*caches):
         """Flag all caches"""
-        if caches == None:
-            caches = self.list()
+        if len(caches) == 0:
+            caches = self.keys()
+            self._flags[flag] = value
         for cache in caches:
-            setattr(self.caches[cache],flag,value)
+            setattr(self._caches[cache],flag,value)
     
-    def reset(self):
+    def reset(self,*caches):
         """Reset all caches"""
-        for cache in self:
-            self.caches[cache].reset()
-            
-    def check(self,key):
-        """Check a cache for validity"""
-        cache = self.caches[key]
-        try:
-            loaded = cache.reloader()
-        except IOError as e:
-            return False
-        generated = cache.regenerater()
-        try:
-            result = loaded == generated
-        except Exception as e:
-            return False
-        return result
+        if len(caches) == 0:
+            caches = self.keys()
+        for cache in caches:
+            self._caches[cache].reset()
+    
+    def close(self):
+        """Close this cache system."""
+        self.expire()
+        for fs in self._database:
+            self._filesets[fs].close(clean = False, check = False)
+        self._database.save(self._dbfilename)
+        self.log.debug("Saved Database: %s" % self._dbfilename)
+        
+    def expire(self,*hashhexs):
+        """Check for, and possibly clean, the given hashhexs"""
+        self.log.log(2,"Caches will expire at %s" % self._expiretime.strftime(self.timeformat))
+        if len(hashhexs) is 0:
+            hashhexs = self._database.keys()
+        for hashhex in hashhexs:
+            if datetime.strptime(self._database[hashhex],self.timeformat) < self._expiretime and hashhex != self.hash:
+                self.log.log(8,"Cache Set %s has Expired!" % hashhex)
+                self.clear(hashhex)
+        self._database.save(self._dbfilename)
+    
+    def clear(self,*hashhexs):
+        """docstring for clean_cachespace"""
+        if len(hashhexs) is 0:
+            hashhexs = self._database.keys()
+        for hashhex in hashhexs:
+            self._filesets[hashhex].close(clean = hashhex != self.hash, check = False)
+            if hashhex != self.hash:
+                del self._database[hashhex] 
+        self._database.save(self._dbfilename)
+        return hashhexs
+    
+    def disable(self,*caches):
+        """Disable this cacheing system"""
+        self.flag('loading',False,*caches)
+        self.flag('saving',False,*caches)
+    
+    def enable(self,*caches):
+        """Disable this cacheing system"""
+        self.flag('loading',True,*caches)
+        self.flag('saving',True,*caches)
+    
     
 def YAMLCache(regenerator,filename):
     """Return a cache object for YAML files."""
-    def resaver(data):
-        with open(filename,"w") as stream:
+    def resaver(data,filename):
+        with open(filename,'w') as stream:
             yaml.dump(data,stream,default_flow_style=False)
-    def reloader():
-        with open(filename,"r") as stream:
+    def reloader(filename):
+        with open(filename,'r') as stream:
             return yaml.load(stream)
-    return Cache(regenerator,reloader,resaver)
-    
-def ConfigCache(config,filename):
-    """Return a cache object for AstroObject.AstroConfig.Config objects"""
-    regenerater = lambda : config
-    def resaver(data):
-        data.save(filename)
-    def reloader():
-        config.load(filename,silent=False)
-        return config
-    return Cache(regenerater,reloader,resaver)
+    return Cache(regenerator,reloader,resaver,filename)
     
 def NumpyCache(regenerater,filename):
     """Return a cache object for Numpy Arrays"""
-    resaver = lambda data: np.save(filename,data)
-    reloader = lambda : np.load(filename)
-    return Cache(regenerater,reloader,resaver)
+    resaver = lambda data, stream: np.save(stream,data)
+    reloader = lambda stream: np.load(stream)
+    return Cache(regenerater,reloader,resaver,filename)

@@ -15,9 +15,11 @@ import matplotlib.pyplot as plt
 from AstroObject.AstroObjectLogging import *
 from AstroObject.AnalyticSpectra import InterpolatedSpectrum,GaussianSpectrum,FlatSpectrum,BlackBodySpectrum,UnitarySpectrum,Resolver
 from AstroObject.AstroSpectra import SpectraStack
+from AstroObject.util import npArrayInfo
+from AstroObject.util.functions import get_resolution_spectrum
 
 LOG = logging.getLogger('AstroObject')
-LOG.configure()
+LOG.configure_from_file('Examples/config.yml')
 LOG.start()
 
 WAVELENGTHS = ((np.arange(98)+1)/2.0 + 1.0) * 1e-7
@@ -28,28 +30,41 @@ VALID = np.array([(np.arange(50) + 1.0) * 1e-7, np.sin(np.arange(50)/2.0)+2.0 + 
 
 OBJECT = SpectraStack()
 
-OBJECT["Raw Data"] = VALID
+OBJECT.read("Examples/SNIa.R1000.dat")
+OBJECT["Interpolateable"] = InterpolatedSpectrum(OBJECT.d,"Interpolateable")
+wl, rs = get_resolution_spectrum(np.min(OBJECT.f.wavelengths),np.max(OBJECT.f.wavelengths),200)
+OBJECT["Raw Data"] = OBJECT.f(wavelengths = wl, resolution = rs, method = 'resample')
 OBJECT.show()
-OBJECT["Interpolated"] = InterpolatedSpectrum(VALID,label="Interpolated")
+wl, rs = get_resolution_spectrum(np.min(OBJECT.f.wavelengths),np.max(OBJECT.f.wavelengths),50)
+OBJECT["Low Res Data"] = OBJECT["Interpolateable"](wavelengths = wl, resolution = rs, method = 'resample')
 OBJECT.show()
-OBJECT["Post Interpolation"] = OBJECT.frame()(wavelengths=WAVELENGTHS)
+for line in OBJECT.info():
+    print line
+print "Valid:",OBJECT.valid()
+OBJECT["Raw Data"].logarize()
+OBJECT["Logarized"] = OBJECT["Raw Data"]
+for line in OBJECT.info():
+    print line
+print "Valid:",OBJECT.valid()
 OBJECT.show()
-OBJECT["Resampled"] = OBJECT.frame("Interpolated")(wavelengths=WAVELENGTHS_LOWR[1:],resolution=LOWR,method='resample')
+OBJECT["Raw Data"].linearize()
+OBJECT["Linearized"] = OBJECT["Raw Data"]
+for line in OBJECT.info():
+    print line
+print "Valid:",OBJECT.valid()
 OBJECT.show()
-plt.legend()
-plt.figure(2)
-OBJECT["Integrated"] = OBJECT.frame("Interpolated")(wavelengths=WAVELENGTHS[1:],resolution=HIGH_R,method='integrate')
-OBJECT.show()
-OBJECT["Integrated Quad"] = OBJECT.frame("Interpolated")(wavelengths=WAVELENGTHS[1:],resolution=HIGH_R,method='integrate_quad')
-OBJECT.show()
-OBJECT["R and Integrated"] = OBJECT.frame("Interpolated")(wavelengths=WAVELENGTHS[1:],resolution=HIGH_R,method='resolve_and_integrate')
-OBJECT.show()
-OBJECT["Integrated LR"] = OBJECT.frame("Interpolated")(wavelengths=WAVELENGTHS_LOWR[1:],resolution=LOWR,method='integrate')
-OBJECT.show()
-OBJECT["Integrated Quad LR"] = OBJECT.frame("Interpolated")(wavelengths=WAVELENGTHS_LOWR[1:],resolution=LOWR,method='integrate_quad')
-OBJECT.show()
-OBJECT["R and Integrated LR"] = OBJECT.frame("Interpolated")(wavelengths=WAVELENGTHS_LOWR[1:],resolution=LOWR,method='resolve_and_integrate')
-OBJECT.show()
-
-plt.legend()
+try:
+    for line in OBJECT.info():
+        print line
+    print "Valid:",OBJECT.valid()
+    print "Is Log:",OBJECT.f.x_is_log()
+    print "Is Linear:",OBJECT.f.x_is_linear()
+    print "dx, dlogx:",np.mean(OBJECT.f.dx()),np.mean(OBJECT.f.dlogx())
+    OBJECT["Raw Data"].logarize(strict=True)
+    OBJECT["Logarized Strict"] = OBJECT["Raw Data"]
+    OBJECT.show()
+except Exception, e:
+    print e
+plt.legend(loc=2)
+plt.title("Wavelength Scale Tests")
 plt.show()

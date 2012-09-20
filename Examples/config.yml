@@ -1,0 +1,14 @@
+logging:
+  console:
+    enable: true
+    format: '%(levelname)-8s... %(message)s'
+    level: 20
+  file:
+    dateformat: '%Y-%m-%d-%H:%M:%S'
+    enable: true
+    filename: AstroObjectExamples
+    format: '%(asctime)s : %(levelname)-8s : %(funcName)-20s : %(message)s'
+  growl:
+    enable: false
+    level: 20
+    name: RC Pipeline

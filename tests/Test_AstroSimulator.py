@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2012-01-11.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.5.3-p2
+#  Version 0.6.0
 # 
 
 
@@ -42,7 +42,7 @@ class test_Simulator(API_Base):
 class test_SimulatorFunctional(object):
     """Functional tests for AstroSimulator"""
     
-    def test_BasicSimulation(self):
+    def stest_BasicSimulation(self):
         """A very simple simulation with caching"""
         SIM = AS.Simulator(name="Loggy",commandLine=False)
     

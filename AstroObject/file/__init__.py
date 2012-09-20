@@ -26,6 +26,9 @@ This module provides the support in AstroObject for arbitrary file format input 
     
 .. automodule::
     AstroObject.file.npy
+    
+.. automodule::
+    AstroObject.file.fileset
 
 """
 
@@ -39,6 +42,9 @@ class File(object):
     
     __extensions__ = []
     """Extensions which can be used for this file type."""
+    
+    __canstream__ = False
+    """Whether this file type can accept streams."""
     
     @abstractmethod
     def write(self, stack, clobber=False):
@@ -55,20 +61,42 @@ class File(object):
         """Open this file and return an HDUList."""
         raise NotImplementedError
     
-    def validate_filename(self, filename):
+    def validate(self, thefile):
         """Raise an :exc:`NotImplementedError` if the filename is not acceptalbe to this file type. Else return true.
         
-        :param string filename: The filename to check.
+        :param string|stream thefile: The filename to check, or filestream to check.
         :raises: :exc:`NotImplementedError` when the filename is not valid for this filetype.
         :returns: True for valid extensions.
         :var __extensions__: The internal array of acceptable extensions.
         
         """
-        filename, extension = os.path.splitext(filename)
-        if extension.lower() not in self.__extensions__:
-            msg = "Filename '%s' does not have a valid extension. (Use %r)" % (filename, self.__extensions__)
-            raise NotImplementedError(msg)
-        return True
+        if isinstance(thefile,file):
+            if hasattr(thefile,'name'):
+                self.name = thefile.name
+                basename, extension = os.path.splitext(self.name)
+                if extension.lower() not in self.__extensions__:
+                    msg = "File stream name '%s' does not have a valid extension. (Use %r)" % (self.name, self.__extensions__)
+                    raise NotImplementedError(msg)                
+            else:
+                self.name = "<UNDEFINED STREAM>"
+            if thefile.closed:
+                msg = "Cannot use Stream %s as it is closed." % name
+                raise NotImplementedError(msg)
+            if not self.__canstream__:
+                msg = "File type %s cannot use file streams." % self.__class__.__name__
+                raise NotImplementedError(msg)
+            return True
+        elif isinstance(thefile,(str,unicode)):
+            filename, extension = os.path.splitext(thefile)
+            if extension.lower() not in self.__extensions__:
+                msg = "Filename '%s' does not have a valid extension. (Use %r)" % (thefile, self.__extensions__)
+                raise NotImplementedError(msg)
+            self.name = thefile
+            return True
+        else:
+            raise TypeError("Unkown File Type %s" % type(thefile))
+        
+        
         
 from .fits import FITSFile
 from .npy import NumpyFile, NumpyZipFile

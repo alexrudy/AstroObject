@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2012-03-17.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.5.3-p2
+#  Version 0.6.0
 # 
 
 # Python Imports
@@ -79,14 +79,46 @@ class Test_Configuration(object):
         print cfg, self.cfgC
         assert cfg == self.cfgC
 
+class Test_DottedConfiguration(Test_Configuration):
+    """AstroObject.AstroConfig.DottedConfiguration"""
+    def setUp(self):
+        """docstring for setUp"""
+        self.cfgA = {"Hi":{"A":1,"B":2,"D":{"A":1},},}
+        self.cfgB = {"Hi":{"A":3,"C":4,},}
+        self.cfgC = {"Hi":{"A":3,"B":2,"C":4,"D":{"A":1},},} #Should be a merge of A and B
+        self.Class = DottedConfiguration
+    
+    
+    def test_dottedread(self):
+        """access dotted configuration items"""
+        cfg = self.Class(self.cfgA)
+        assert 2 == cfg["Hi.B"]
+        assert 1 == cfg["Hi.A"]
+        assert 1 == cfg["Hi.D.A"]
+        assert 1 == cfg["Hi"]["D"]["A"]
+    
+    @nt.raises(KeyError)
+    def test_dottedread_nested(self):
+        """access fails for nested dotted reads"""
+        cfg = self.Class(self.cfgA)
+        assert 1 == cfg["Hi.D.A"]
+        assert 1 == cfg["Hi"]["D.A"]
+        
+    def test_dottedread_fixnest(self):
+        """access succeeds for nested dotted reads after changing nesting mode."""
+        cfg = self.Class(self.cfgA)
+        assert 1 == cfg["Hi.D.A"]
+        cfg.dn = DottedConfiguration
+        assert cfg["Hi"]["D.A"] == 1
+        
 
-class Test_StructuredConfiguration(Test_Configuration):
+class Test_StructuredConfiguration(Test_DottedConfiguration):
     """AstroObject.AstroConfig.StructuredConfiguration"""
     def setUp(self):
         """docstring for setUp"""
-        self.cfgA = {"Hi":{"A":1,"B":2,},}
+        self.cfgA = {"Hi":{"A":1,"B":2,"D":{"A":1},},}
         self.cfgB = {"Hi":{"A":3,"C":4,},}
-        self.cfgC = {"Hi":{"A":3,"B":2,"C":4,},"Configurations":{"This":"AO.config.yaml"},} #Should be a merge of A and B
+        self.cfgC = {"Hi":{"A":3,"B":2,"C":4,"D":{"A":1},},"Configurations":{"This":"AO.config.yaml"},} #Should be a merge of A and B
         self.Class = StructuredConfiguration
     
     def test_setFile(self):

@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5.3-p2
+#  Version 0.6.0
 # 
 u"""
 .. _AstroObjectAPI:
@@ -138,8 +138,8 @@ import collections
 from abc import ABCMeta, abstractmethod
 
 # Submodules from this system
-from .util import getVersion, make_decorator, validate_filename
-from .file import DefaultFileClasses
+from .util import getVersion, make_decorator, validate_filename, set_trace_errors
+from .file import DefaultFileClasses, File
 
 __all__ = ["BaseStack", "BaseFrame", "AnalyticMixin", "NoHDUMixin", "HDUHeaderMixin", "NoDataMixin", "Mixin"]
 
@@ -299,7 +299,7 @@ class BaseFrame(Mixin):
         :returns: A string label
         
         """
-        msg = u"Abstract Data Structure %s cannot be used for HDU Header Manipulation!" % (self)
+        msg = u"Abstract Data Structure cannot be used for HDU Header Manipulation!"
         raise NotImplementedError(msg)
     
     
@@ -508,6 +508,16 @@ class BaseStack(collections.MutableMapping):
     :param filename: String name of default file for reading and writing with :meth:`read` and :meth:`write`.
     :param dataClasses: An array of classes which constitute valid save classes for this object.
     
+    *Stacks* have special attribute characteristics which allow them to reach the full *frame* API. *Stacks* can call methods defined within *frames*. Most frames define a :meth:`~BaseFrame.__show__`. This method can be called using :meth:`show` with the following syntax::
+            
+        >>> Stack.show("SomeFrameName")
+            
+    The special syntax can take as many framenames as desired as arguments, and will call the named method on each one. So::
+            
+        >>> Stack.show("FrameA","FrameB","FrameC")
+            
+    will call the :meth:`~BaseFrame.__show__` method on each frame.
+    
     .. Note::
         This is object only contains Abstract data objects. In order to use this class properly, you should set the dataClasses keyword for use when storing data.
     """
@@ -516,24 +526,33 @@ class BaseStack(collections.MutableMapping):
         # Image data variables.
         self._frames = {}            # Storage for all of the images
         self._framename = None       # The active frame name
-        self.filename = filename    # The filename to use for file loading and writing
+        self.filename = filename     # The filename to use for file loading and writing
         self.clobber = False
         self.name = False
-        self.dataClasses = []
+        self._dataClasses = []
         if isinstance(dataClasses, list):
-            self.dataClasses += dataClasses
+            self._dataClasses += dataClasses
         elif dataClasses:
             raise AttributeError(u"Can't understand data classes")
-        if len(self.dataClasses) < 1:
+        if len(self._dataClasses) < 1:
             raise NotImplementedError(u"Instantiating %s without any valid data classes!" % self)
-        self.fileClasses = []
+        self._fileClasses = []
         if isinstance(fileClasses, list):
-            self.fileClasses += fileClasses
+            self._fileClasses += fileClasses
         elif fileClasses:
             raise AttributeError(u"Can't understand file classes")
-        if len(self.fileClasses) < 1:
+        if len(self._fileClasses) < 1:
             raise NotImplementedError(u"Instantiating %s without any valid file classes!" % self)
-
+        canstream = []
+        for fileClass in self._fileClasses:
+            if not issubclass(fileClass,File):
+                raise TypeError("File class %s invalid!" % fileClass)
+            if fileClass.__canstream__:
+                canstream += [fileClass]
+        if len(canstream) == 1:
+            self._can_load_stream = True
+        else:
+            self._can_load_stream = False
         
     def __repr__(self):
         """String representation of this object.
@@ -601,10 +620,60 @@ class BaseStack(collections.MutableMapping):
         """
         return self.frame()
     
+    def __getattr__(self,name):
+        """Provides a passthrough for functions that we haven't named yet.
+        
+        This allows *stacks* to call methods defined within *frames*. Most frames define a :meth:`~BaseFrame.__show__`. This method can be called using :meth:`show` with the following syntax::
+            
+            >>> Stack.show("SomeFrameName")
+            
+        The special syntax can take as many framenames as desired as arguments, and will call the named method on each one. So::
+            
+            >>> Stack.show("FrameA","FrameB","FrameC")
+            
+        will call the :meth:`~BaseFrame.__show__` method on each frame.
+        
+        """
+        def __attr_method(*framenames):
+            # Set up frame method name (as string)
+            method = '__' + name + '__'
+            # Initialize return values
+            rvals = []
+            
+            framenames = list(*framenames)
+            if len(framenames) < 1:
+                framenames = [self._default_frame()]
+                
+            # Execute the desired method everywhere
+            for framename in framenames:
+                if framename != None and framename in self:
+                    rvals += [ getattr(self[framename],method)() ]
+                else:
+                    self._key_error(framename)
+            
+            # Return the appropriate value
+            if len(rvals) == 1:
+                return rvals[0]
+            elif len(rvals) == 0:
+                return None
+            else:
+                return tuple(rvals)
+                
+        return __attr_method
+    
+    @property
+    def data_classes(self):
+        """The list of acceptable data classes. This is a"""
+        return self._dataClasses
+    
+    def add_data_class(self,data_class):
+        """Insert a data class into the list of acceptable data classes for this object."""
+        self._dataClasses += [data_class]
         
     ###############################
     # Basic Object Mode Functions #
     ###############################
+    @set_trace_errors(KeyError,TypeError)
     def save(self, data, framename=None, clobber=False, select=True):
         """Saves the given data to this object. If the data is an instance of one of the acceptable :attr:`dataClasses` then this method will simply save the data. Otherwise, it will attempt to cast the data into one of the acceptable :attr:`dataClasses` using their :meth:`__save__` mehtod.
         
@@ -618,9 +687,9 @@ class BaseStack(collections.MutableMapping):
         
         """
         # If we were passed raw data, and the dataClass can accept it, then go for it!
-        if not isinstance(data, tuple(self.dataClasses)):
+        if not isinstance(data, tuple(self._dataClasses)):
             Object = None
-            for dataClass in self.dataClasses:
+            for dataClass in self._dataClasses:
                 try:
                     Object = dataClass.__save__(data, framename)
                 except NotImplementedError as AE:
@@ -628,7 +697,7 @@ class BaseStack(collections.MutableMapping):
                 else:
                     break
             if Object is None:
-                raise TypeError(u"Object to be saved cannot be cast as %s" % self.dataClasses)
+                raise TypeError(u"Object to be saved cannot be cast as %s" % self._dataClasses)
         elif framename is not None:
             Object = data.copy(label=framename)
         else:
@@ -648,9 +717,10 @@ class BaseStack(collections.MutableMapping):
         LOG.log(5, u"Saved frame %s" % Object)
         # Activate the saved frame as the current frame
         if select:
-            self.select(framename)
+            self._select(framename)
         return framename
     
+    @set_trace_errors(KeyError)
     def data(self, framename=None, **kwargs):
         """Returns the raw data for the current frame. This is done through the :meth:`FITSFrame.__call__` method, which should return basic data in as raw a form as possible. The purpose of this call is to allow the user get at the most recent piece of data as easily as possible.
         
@@ -670,7 +740,7 @@ class BaseStack(collections.MutableMapping):
             self._key_error(framename)
     
 
-    
+    @set_trace_errors(KeyError)
     def frame(self, framename=None):
         """Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.
         
@@ -700,7 +770,18 @@ class BaseStack(collections.MutableMapping):
     def object(self, framename=None):
         LOG.log(5, u"Method \".object()\" on %s has been depreciated. Please use \".frame()\" instead." % self)
         return self.frame(framename)
-        
+    
+    def _select(self, framename):
+        """Private, silent select mode. The parent select() function will issuee messages for everything. This one wont."""
+        if framename is None:
+            self._framename = None # Unselect frame
+            framename = self._default_frame()
+        elif framename not in self:
+            self._key_error(framename)
+        self._framename = framename
+        return self.framename
+    
+    @set_trace_errors(KeyError)    
     def select(self, framename):
         """Sets the default frame to the given framename. Normally, the default frame is the one that was last saved.
         
@@ -710,12 +791,8 @@ class BaseStack(collections.MutableMapping):
         
         """
         if framename is None:
-            self._framename = None # Unselect frame
-            framename = self._default_frame()
             LOG.log(2, u"Setting frame by cancelling selection and asking for default frame.")
-        elif framename not in self:
-            self._key_error(framename)
-        self._framename = framename
+        self._select(framename)
         LOG.log(5, u"Selected frame \'%s\'" % self.framename)
         return self.framename
     
@@ -729,7 +806,10 @@ class BaseStack(collections.MutableMapping):
     
     def _key_error(self, framename):
         """Throw a keyError for the given framename."""
-        msg = u"%s: State %s does not exist.\nStates: %s" % (self, framename, self.list())
+        if len(self.list()) < 1:
+            msg = u"%s: Stack does not have any frames." % (self)
+        else:
+            msg = u"%s: Frame %r does not exist. Frames: %s" % (self, framename, self.list())
         raise KeyError(msg)
     
     def _default_frame(self, frames=None):
@@ -765,7 +845,7 @@ class BaseStack(collections.MutableMapping):
         LOG.log(5, u"%s: Cleared all frames. Remaining: %s" % (self, self.list()))
         return self.list()
     
-    
+    @set_trace_errors(KeyError)
     def keep(self, *framenames, **kwargs):
         """Removes all frames except the specified frame(s) in the object.
         
@@ -789,6 +869,7 @@ class BaseStack(collections.MutableMapping):
         self._framename = self._default_frame()
         return self.list()
     
+    @set_trace_errors(KeyError)
     def remove(self, *framenames, **kwargs):
         """Removes the specified frame(s) from the object.
         
@@ -814,21 +895,40 @@ class BaseStack(collections.MutableMapping):
         LOG.log(5, u"%s: Removed frames %s" % (self, removed))
         return self.list()
     
-    def show(self, framename=None):
-        """Returns the (rendered) matplotlib plot for this object. This is a quick way to view your current data frame without doing any serious plotting work. This aims for the sensible defaults philosophy, if you don't like what you get, write a new method that uses the :meth:`data` call and plots that.
+    def _setup_file(self, filename = None, filetype = None):
+        """Sets up a file object for reading or writing, given a file-like object and optionally a filetype."""
+        if filename is None:
+            filename = self.filename
         
-        :param string framename: the name of the frame to be retrieved.
-        
-        """
-        # Load the current stat if no frame provided
-        if not framename:
-            framename = self._default_frame()
-        if framename != None and framename in self:
-            return self[framename].__show__()
+        if isinstance(filename,file) and filetype is None and not self._can_load_stream:
+            raise TypeError(u"Stack cannot read streams without explicit file type.")
+        elif isinstance(filename,file) and filetype is not None:
+            if isinstance(filetype,tuple(self._fileClasses)):
+                fileClasses = [filetype]
+            elif filetype in [ fc.__name__ for fc in self._fileClasses ]:
+                fileClasses = [{fc.__name__:fc for fc in self._fileClasses}[filetype]]
+            else:
+                raise TypeError(u"Cannot understand File Type %r" % filetype)
+        elif isinstance(filename,(str,unicode)):
+            fileClasses = self._fileClasses
         else:
-            self._key_error(framename)
+            raise TypeError(u"Cannot understand filename %r" % filename)    
+        
+        FileObject = None
+        for fileClass in fileClasses:
+            try:
+                FileObject = fileClass(filename)
+            except NotImplementedError as AE:
+                LOG.log(2, u"Cannot save as %s: %s" % (fileClass, AE))
+            else:
+                break
+        if FileObject is None:
+            raise TypeError(u"Object to be saved cannot be cast as %s" % self._fileClasses)
+        return FileObject
+        
     
-    def write(self, filename=None, frames=None, primaryFrame=None, clobber=False, singleFrame=False):
+    @set_trace_errors(TypeError)
+    def write(self, filename=None, frames=None, primaryFrame=None, clobber=False, singleFrame=False, filetype = None):
         """Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify ``frames`` then only those frames will be used. ``primaryFrame`` should be the frame of the front HDU. When not specified, the latest frame will be used. It uses the :attr:`dataClasses` :meth:`FITSFrame.__hdu__` method to return a valid HDU object for each Frame.
         
         :param string filename: the name of the file for saving.
@@ -837,6 +937,10 @@ class BaseStack(collections.MutableMapping):
         :param bool clobber: Whether to overwrite the destination file or not.
         :param bool singleFrame: Whether to save only a single frame.
         :returns: Tuple of (PrimaryFrame, Frames, Filename)
+        
+        ::  
+            >>> obj.write(filename="Test.fits")
+            ('MainFrame',['OtherFrame-1','OtherFrame-2'],'Test.fits')
         
         """
         if not frames:
@@ -853,21 +957,9 @@ class BaseStack(collections.MutableMapping):
             if self.filename == None:
                 filename = primaryFrame
                 LOG.log(2, u"Set Filename from Primary State. Filename: %s" % filename)
-            else:
-                filename = self.filename
-                LOG.log(2, u"Set filename from Object. Filename: %s" % filename)
         
-        FileObject = None
-        for fileClass in self.fileClasses:
-            try:
-                FileObject = fileClass(filename)
-            except NotImplementedError as AE:
-                LOG.log(2, u"Cannot save as %s: %s" % (fileClass, AE))
-            else:
-                break
-        if FileObject is None:
-            raise TypeError(u"Object to be saved cannot be cast as %s" % self.fileClasses)
-        
+        # Move the stack trace up one notch
+        FileObject = self._setup_file(filename=filename,filetype=filetype)
         
         PrimaryHDU = self[primaryFrame].hdu(primary=True)
         HDUs = [self[frame].hdu(primary=False) for frame in frames]
@@ -875,39 +967,33 @@ class BaseStack(collections.MutableMapping):
         FileObject.write(HDUList, clobber=clobber)
         LOG.log(5, u"Wrote frame %s (primary) and frames %s to FITS file %s" % (primaryFrame, frames, filename))
         return primaryFrame, frames, filename
-    
-    def read(self, filename=None, framename=None, clobber=False):
+
+    @set_trace_errors(TypeError)
+    def read(self, filename=None, framename=None, filetype=None, clobber=False, select=True):
         """This reader takes a FITS file, and trys to render each HDU within that FITS file as a frame in this Object. As such, it might read multiple frames. This method will return a list of Frames that it read. It uses the :attr:`dataClasses` :meth:`FITSFrame.__read__` method to return a valid Frame object for each HDU.
+        
+        :param string|stream filename: The file or filestream to read from. Should be supported by :mod:`~AstroObject.file`.
+        :param string framename: The framename to use (overrides the filename-as-framename, but not the 'LABEL' FITS keyword.)
+        :param bool clobber: Whether to overwrite existing frames. Default ``False``.
+        :param bool select: Whether to make the imported frames the selected ones. Default ``True``.
         
         ::
             
             >>> obj = BaseStack()
             >>> obj.read("SomeImage.fits")
-            >>> obj.list()
             ["SomeImage", "SomeImage-1", "SomeImage-2"]
             
         """
-        if not filename:
-            filename = self.filename
-        FileObject = None
-        for fileClass in self.fileClasses:
-            try:
-                FileObject = fileClass(filename)
-            except NotImplementedError as AE:
-                LOG.log(2, u"Cannot read as %s: %s" % (fileClass, AE))
-            else:
-                break
-        if FileObject is None:
-            raise TypeError(u"Object to be read cannot be cast as %s" % self.fileClasses)
+        FileObject = self._setup_file(filename=filename,filetype=filetype)
         HDUList = FileObject.open()
         Read = 0
         Labels = []
         for HDU in HDUList:    
             Object = None # Target variable
             # Iterate through our potential data classes
-            for dataClass in self.dataClasses:
+            for dataClass in self._dataClasses:
                 try:
-                    label = dataClass.__getlabel__(HDU,os.path.basename(filename),framename)
+                    label = dataClass.__getlabel__(HDU,os.path.basename(FileObject.name),framename)
                     if label in Labels:
                         # We don't allow repeat loading of labels
                         label = label + "-%d" % Read
@@ -924,7 +1010,7 @@ class BaseStack(collections.MutableMapping):
             else:
                 Read += 1
                 Labels += [label]
-                self.save(Object, clobber=clobber)
+                self.save(Object, clobber=clobber, select=select)
         if not Read:
             msg = u"No HDUs were saved from FITS file %s to %s" % (filename, self)
             raise ValueError(msg)
@@ -932,18 +1018,41 @@ class BaseStack(collections.MutableMapping):
         LOG.log(5, u"Saved frames %s" % Labels)
         return Labels
     
-    def fromAtFile(self, atfile):
-        """Read an atfile into this object. The name of the atfile can include a starting "@" which is stripped. The file is then loaded, and each line is assumed to contain a single fully-qualified part-name."""
+    def readAtFile(self, atfile, framename=None, clobber=False, select=True):
+        """Read an atfile into this object. The name of the atfile can include a starting "@" which is stripped. The file is then loaded, and each line is assumed to contain a single fully-qualified part-name.
+        
+        :param string atfile: The @file to read from. Filename can start with ``@`` which will be stripped, automatically.
+        :param string framename: The framename to use (overrides the filename-as-framename, but not the 'LABEL' FITS keyword.)
+        :param bool clobber: Whether to overwrite existing frames. Default ``False``.
+        :param bool select: Whether to make the imported frames the selected ones. Default ``True``.
+        
+        """
         filename = atfile.lstrip("@")
         labels = []
         with open(filename, 'r') as stream:
             for line in stream:
-                labels += self.read(line.rstrip(" \n\t"))
+                labels += self.read(line.rstrip(" \n\t"), framename=framename, clobber=clobber, select=select)
         return labels
+    
+    @classmethod
+    def fromAtFile(self, filename, framename=None):
+        """Return a new object create from an @file. This method is a factory shortcut for :meth:`readAtFile`.
+        
+        :param string filename: The @file to be read into the object. Should be supported by :mod:`~AstroObject.file`.
+        :param string framename: The framename to use (overrides the filename-as-framename, but not the 'LABEL' FITS keyword.)
+        
+        """
+        Object = cls()
+        Object.readAtFile(atfile, framename=framename)
+        return Object
       
     @classmethod  
-    def fromFile(cls, filename):
+    def fromFile(cls, filename, framename=None):
         """Retrun a new object created from a filename. This method is a shortcut factory for :meth:`read`.
+        
+        :param string filename: The file to be read into the object. T
+        :param string framename: The framename to use (overrides the filename-as-framename, but not the 'LABEL' FITS keyword.)
+        
         
         ::
             
@@ -954,14 +1063,13 @@ class BaseStack(collections.MutableMapping):
         
         """
         Object = cls()
-        Object.read(filename)
+        Object.read(filename, framename=framename)
         return Object
 
 class FrameStack(BaseStack):
     """This stack accepts any type of frame, and overrides data-saving style save methods by calling the BaseFrame save method by default, which will fail because it isn't implemented."""
     def __init__(self):
-        super(FrameStack, self).__init__()
-        self.dataClasses = [BaseFrame]
+        super(FrameStack, self).__init__(dataClasses=[BaseFrame])
         
     
         

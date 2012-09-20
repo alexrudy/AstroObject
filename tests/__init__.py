@@ -5,14 +5,14 @@
 #  
 #  Created by Alexander Rudy on 2012-03-17.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.5.3-p2
+#  Version 0.6.0
 # 
 
 from AstroObject.AstroObjectLogging import *
 
-__config__ = "logging.yaml"
+__config__ = "tests/logging.yaml"
 
 
 LOG = logging.getLogger("AstroObject")
-LOG.configure(configFile = __config__ )
+LOG.configure_from_file(filename = __config__ )
 LOG.start()

@@ -30,13 +30,20 @@ class SimpleStage(Simulator):
         self.blist = range(100000)
         self.collect()
         self.registerStage(None,"ex",description="Example Macro",dependencies=["main","other"],help="example Macro")
-        self.Caches["Random Image"] = Cache(self._cache,self._load,self._save)
-        self.Caches["Random NPY"] = NumpyCache(self._cache,filename="%s/Random.npy" % self.config["Dirs"]["Caches"])
+
+    
+    @include
+    @description("Set up the cache objects")
+    @help("Setup cache objects")
+    def setup_caches(self):
+        """Set up the caches"""
+        self.Caches["Random Image"] = Cache(self._cache,self._load,self._save,filename="Random.npy")
+        self.Caches["Random NPY"] = NumpyCache(self._cache,filename="Random.npy" )
     
     @include
     @description("The Main Stage")
     @help("Manage the main stage")
-    @depends("other","last")
+    @depends("other","last","setup-caches")
     def main_stage(self):
         print "Hello from %s Object" % self.name
         img = self.Caches["Random Image"]
@@ -62,13 +69,57 @@ class SimpleStage(Simulator):
         """Acting 3"""
         self.map(np.exp,self.blist)
     
+    @depends("optloader","optgenerator")
+    def opto(self):
+        """Opto controller"""
+        print "Controller"
+    
+    @excepts(IOError)
+    @optional
+    @replaces("optgenerator")
+    def optloader(self):
+        """Optional Stage Load"""
+        # raise IOError
+        print "Loaded"
+        
+    @triggers("optsaver")
+    def optgenerator(self):
+        """Optional Stage Gen"""
+        print "Generated"
+    
+    def optsaver(self):
+        """Optional Stage Saver"""
+        print "Saved"
+    
+    @include
+    @excepts(Exception)
+    @optional
+    @replaces("raiser","replaced")
+    def oraiser(self):
+        """An optional function which rasies"""
+        raise Exception("Something which might sort-of be problematic")
+    
+    @include
+    @replaces("replaced")
+    def replacer(self):
+        """A function which replaces another"""
+        pass
+    
+    @include
+    def replaced(self):
+        """A function which should be repalced"""
+        print "DO NOT PRINT ME"
+        
+
+    
     @include
     @excepts(Exception)
     def raiser(self):
-        """A function which rasies others"""
+        """A function which rasies"""
         raise Exception("Something which might sort-of be problematic")
         
     @include(False)
+    @depends("setup-caches")
     def other(self):
         """Other Stage"""
         print "Hello from %s Stage" % "other"
@@ -76,25 +127,27 @@ class SimpleStage(Simulator):
         print img[1,1]
     
     @include(False)
+    @depends("setup-caches")
+    @triggers('raiser')
     def last(self):
         """Last Stage"""
         print "Last Stage"
         img = self.Caches["Random Image"]
         print img[0,0]
     
-    def _save(self,data):
+    def _save(self,data,stream):
         """Saves some cache data"""
-        np.save("%s/Random.npy" % self.config["Dirs"]["Caches"],data)
+        np.save(stream,data)
         
     def _cache(self):
         """Cache this image"""
         return np.random.normal(10,2,(1000,1000))
         
-    def _load(self):
+    def _load(self,stream):
         """Load the image"""
-        return np.load("%s/Random.npy" % self.config["Dirs"]["Caches"])
+        return np.load(stream)
         
 
 if __name__ == '__main__':
-    Sim = SimpleStage(commandLine=True)
+    Sim = SimpleStage(commandLine=True, name="AstroObject")
     Sim.run()
