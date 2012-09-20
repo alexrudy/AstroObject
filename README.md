@@ -30,6 +30,15 @@ The AstroObject module also has a simulator framework. The simulator is designed
 
 # Release Notes
 
+* 0.6.0
+	- ``fileset`` module which allows for controlled filesets
+	- **stacks** have a new API for accessing frame functions. Simply, any undefined function on the **stack** will be passed to the frame as ``__function__``. So the ``show()`` method is now using this to call ``__show__()`` on underlying **frames**.
+	- New caching & logging modules. (NOTE: Caching still has performance issues, and logging is still not-ideal.)
+	- Configuration module has been entirely re-written for reliability
+	- Cleaned up logging, messaging, and error reporting in the base API
+	- File saving and writing has been re-written to handle new file types and streams
+	- Simulator improvements: Triggering stages, Caching Stages, customized automatic collection.
+	- AstroSpectra have properties and introspection methods
 * 0.5.3
 	- ``util`` module which contains submodules for utiltity functions.
 	- ``file`` module which handles IO, via the FITS format, which is now the standard for format for AstroObject.
