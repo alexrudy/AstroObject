@@ -15,6 +15,21 @@ u"""
     
 .. automethod::
     AstroObject.util.functions.Gaussian
+    
+.. automethod::
+    AstroObject.util.functions.GetResolution
+    
+.. automethod::
+    AstroObject.util.functions.ConserveResolution
+    
+.. automethod::
+    AstroObject.util.functions.CapResolution
+    
+.. automethod::
+    AstroObject.util.functions.get_resolution_spectrum
+    
+.. automethod::
+    AstroObject.util.functions.Resample
 
 
 """
@@ -38,21 +53,38 @@ def Gaussian(x,mean,stdev,height):
     return height*np.exp(-(x-mean)**2.0/(2.0*stdev**2.0))
 
 def GetResolution(wavelengths,matched=True):
-    """Return the resolution from a set of wavelengths"""
+    """Return the resolution from a set of wavelengths.
+    
+    :param wavelengths: an array of wavelengths
+    :param bool matched: return resolution elements aligned with wavelengths (return n object. Otherwise, return n-1 objects, for the resolution at the center of each wavelength bin)
+    :return: An array of resolutions
+    
+    """
+    wavelengths = np.asarray(wavelengths)
     resolutions = wavelengths[:-1] / np.diff(wavelengths)
     if matched:
         resolutions = np.hstack((resolutions,resolutions[-1]))
     return resolutions
     
 def ConserveResolution(given_resolution,target_resolution):
-    """docstring for ConserveResolution"""
+    """Test whether a target resolution is less than a given resolution.
+    
+    :param given_resolution: the resolution to test against
+    :param target_resolution: the resolution for testing
+    
+    """
     given_interp_f = sp.interpolate.interp1d(np.arange(given_resolution.size),given_resolution,bounds_error=False,fill_value=np.min(given_resolution))
     given_resolution_d = given_interp_f(np.arange(target_resolution.size))
     return not (target_resolution > given_resolution_d).any()
     
 
 def CapResolution(given_resolution,target_resolution):
-    """Cap the target resolution so that it does not exceed the given resolution."""
+    """Cap the target resolution so that it does not exceed the given resolution.
+    
+    :param given_resolution: The resolution to cap at.
+    :param target_resolution: The output resolution, which will be clipped at the interpolated ``given_resolution``.
+    
+    """
     given_interp_f = sp.interpolate.interp1d(np.arange(given_resolution.size),given_resolution,bounds_error=False,fill_value=np.min(given_resolution))
     given_resolution_d = given_interp_f(np.arange(target_resolution.size))
     delta_resolution = target_resolution > given_resolution_d
@@ -61,7 +93,14 @@ def CapResolution(given_resolution,target_resolution):
 
 
 def get_resolution_spectrum(minwl,maxwl,resolution):
-    """docstring for get_resolution_spectrum"""
+    """Return a constant resolution spectrum.
+    
+    :param float minwl: The starting wavelength.
+    :param float maxwl: The ending wavelength.
+    :param float resolution: The constant resolution
+    :returns: Tuple of (wavelegnths, resolutions)
+    
+    """
         
     dwl = [minwl]
     new_wl = minwl
@@ -75,7 +114,12 @@ def get_resolution_spectrum(minwl,maxwl,resolution):
     return dense_wavelengths, dense_resolution 
     
 def Resample(old_wavelengths,flux,new_wavelengths,resolution=None):
-    """Gaussian resampling of a spectrum"""
+    """Gaussian resampling of a spectrum.
+    
+    :param array old_wavelengths: The original wavelength data for resampling.
+    :param array flux: The flux of the spectrum at each wavelength.
+    :param array new_wavelengths: The requested wavelengths.
+    :param array resolution: The requesting resolution (only provided if the requesting resolution should not be determined by the requesting wavelengths.)"""
     if resolution is None:
         resolution = new_wavelenghts[:-1] / np.diff(new_wavelengths)
         new_wavelengths = new_wavelengths[:-1]
