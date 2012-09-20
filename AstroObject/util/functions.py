@@ -17,13 +17,13 @@ u"""
     AstroObject.util.functions.Gaussian
     
 .. automethod::
-    AstroObject.util.functions.GetResolution
+    AstroObject.util.functions.get_resolution
     
 .. automethod::
-    AstroObject.util.functions.ConserveResolution
+    AstroObject.util.functions.conserve_resolution
     
 .. automethod::
-    AstroObject.util.functions.CapResolution
+    AstroObject.util.functions.cap_resolution
     
 .. automethod::
     AstroObject.util.functions.get_resolution_spectrum
@@ -52,7 +52,7 @@ def Gaussian(x,mean,stdev,height):
     """Rertun a gaussian at postion x, whith mean, stdev, and height"""
     return height*np.exp(-(x-mean)**2.0/(2.0*stdev**2.0))
 
-def GetResolution(wavelengths,matched=True):
+def get_resolution(wavelengths,matched=True):
     """Return the resolution from a set of wavelengths.
     
     :param wavelengths: an array of wavelengths
@@ -66,7 +66,7 @@ def GetResolution(wavelengths,matched=True):
         resolutions = np.hstack((resolutions,resolutions[-1]))
     return resolutions
     
-def ConserveResolution(given_resolution,target_resolution):
+def conserve_resolution(given_resolution,target_resolution):
     """Test whether a target resolution is less than a given resolution.
     
     :param given_resolution: the resolution to test against
@@ -78,7 +78,7 @@ def ConserveResolution(given_resolution,target_resolution):
     return not (target_resolution > given_resolution_d).any()
     
 
-def CapResolution(given_resolution,target_resolution):
+def cap_resolution(given_resolution,target_resolution):
     """Cap the target resolution so that it does not exceed the given resolution.
     
     :param given_resolution: The resolution to cap at.
@@ -119,11 +119,12 @@ def Resample(old_wavelengths,flux,new_wavelengths,resolution=None):
     :param array old_wavelengths: The original wavelength data for resampling.
     :param array flux: The flux of the spectrum at each wavelength.
     :param array new_wavelengths: The requested wavelengths.
-    :param array resolution: The requesting resolution (only provided if the requesting resolution should not be determined by the requesting wavelengths.)"""
+    :param array resolution: The requesting resolution (only provided if the requesting resolution should not be determined by the requesting wavelengths.)
+    
+    """
     if resolution is None:
-        resolution = new_wavelenghts[:-1] / np.diff(new_wavelengths)
-        new_wavelengths = new_wavelengths[:-1]
-        
+        resolution = get_resolution(new_wavelengths)
+                
     # The main resampling function.
     # A two dimensional grid is used (instead of two for-loops). The grid stretches across wavelength (data), wavelength (requested). The 
     # standard deviation of the blurring gaussian corresponds point-for-point to the requested wavelengths. As such, we will have columns which
