@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to AstroObject! &mdash; AstroObject 0.5.3 documentation</title>
+    <title>Welcome to AstroObject! &mdash; AstroObject 0.6 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5.3',
+        VERSION:     '0.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5.3 documentation" href="#" />
+    <link rel="top" title="AstroObject 0.6 documentation" href="#" />
     <link rel="next" title="1. Introduction to AstroObject" href="intro.html" /> 
   </head>
   <body>
@@ -40,7 +40,7 @@
         <li class="right" >
           <a href="intro.html" title="1. Introduction to AstroObject"
              accesskey="N">next</a> |</li>
-        <li><a href="#">AstroObject 0.5.3 documentation</a> &raquo;</li> 
+        <li><a href="#">AstroObject 0.6 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -56,7 +56,7 @@
 <p>The goal of this package is not to facilitate specific image or analysis operations. Very few actual operations are built-in. Rather, it provides a structure, and a background to make working with data and reduction pipelines much easier. Abstracted are notions of files, configurations, and common reduction processes, and provided are simple command line interfaces, basic object-style APIs, and sensible defaults.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">This module is under development. The version number 0.5 is very low, indicating that much of this module may be unreliable. The behavior in specific instances is not guaranteed nor should it be trusted. For more information about the development of this module, see <a class="reference internal" href="installation.html#development"><em>Development of AstroObject</em></a>.</p>
+<p class="last">This module is under development. The version number 0.6 is very low, indicating that much of this module may be unreliable. The behavior in specific instances is not guaranteed nor should it be trusted. For more information about the development of this module, see <a class="reference internal" href="installation.html#development"><em>Development of AstroObject</em></a>.</p>
 </div>
 </div>
 <div class="section" id="about-astroobject">
@@ -145,9 +145,12 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="AstroObjectLogging.html">13. <tt class="docutils literal"><span class="pre">AstroObjectLogging</span></tt> — Structured Configuration Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="file.html">14. <tt class="docutils literal"><span class="pre">file</span></tt> - File IO</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="file.html#file-fits-an-abstraction-layer-for-fits-files">14.1. <tt class="docutils literal"><span class="pre">file.fits</span></tt> - An abstraction layer for FITS Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="file.html#file-plaintext-plain-text-file-writing">14.2. <tt class="docutils literal"><span class="pre">file.plaintext</span></tt> – Plain Text File writing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="file.html#file-npy-an-abstraction-layer-for-numpy-files">14.3. <tt class="docutils literal"><span class="pre">file.npy</span></tt> — An abstraction layer for <tt class="docutils literal"><span class="pre">numpy</span></tt> files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file.html#file-fits-fitsfile-an-abstraction-layer-for-fits-files">14.1. <tt class="docutils literal"><span class="pre">file.fits.FITSFile</span></tt> - An abstraction layer for FITS Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file.html#file-plaintext-numpytextfile-plain-text-file-writing">14.2. <tt class="docutils literal"><span class="pre">file.plaintext.NumpyTextFile</span></tt> – Plain Text File writing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file.html#file-plaintext-astroobjecttextfile-plain-text-files-with-headers">14.3. <tt class="docutils literal"><span class="pre">file.plaintext.AstroObjectTextFile</span></tt> – Plain Text files with Headers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file.html#file-npy-numpyfile-an-abstraction-layer-for-numpy-files">14.4. <tt class="docutils literal"><span class="pre">file.npy.NumpyFile</span></tt> — An abstraction layer for <tt class="docutils literal"><span class="pre">numpy</span></tt> files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file.html#file-numpy-numpyzipfile-an-abstraction-for-compressed-numpy-files">14.5. <tt class="docutils literal"><span class="pre">file.numpy.NumpyZipFile</span></tt> – An abstraction for compressed <tt class="docutils literal"><span class="pre">numpy</span></tt> files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="file.html#file-fileset-file-group-management">14.6. <tt class="docutils literal"><span class="pre">file.fileset</span></tt> – File Group management</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Utilities.html">15. <tt class="docutils literal"><span class="pre">util</span></tt> — Utility functions</a><ul>
@@ -164,7 +167,11 @@
 <li class="toctree-l2"><a class="reference internal" href="future.html#analytic-convolutions">16.4. Analytic Convolutions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="rnotes.html">17. Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="future.html#nearterm-development">17. Nearterm development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="future.html#logging-framework">17.1. Logging Framework</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rnotes.html">18. Release Notes</a></li>
 </ul>
 </div>
 </div>
@@ -255,7 +262,7 @@
         <li class="right" >
           <a href="intro.html" title="1. Introduction to AstroObject"
              >next</a> |</li>
-        <li><a href="#">AstroObject 0.5.3 documentation</a> &raquo;</li> 
+        <li><a href="#">AstroObject 0.6 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

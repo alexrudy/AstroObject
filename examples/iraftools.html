@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Walkthrough of a basic iraftools script &mdash; AstroObject 0.5.3 documentation</title>
+    <title>Walkthrough of a basic iraftools script &mdash; AstroObject 0.6 documentation</title>
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.5.3',
+        VERSION:     '0.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5.3 documentation" href="../index.html" />
+    <link rel="top" title="AstroObject 0.6 documentation" href="../index.html" />
     <link rel="next" title="Example Spectral Data Script" href="spectra.html" />
     <link rel="prev" title="An Example Simulator" href="simulator.html" /> 
   </head>
@@ -44,7 +44,7 @@
         <li class="right" >
           <a href="simulator.html" title="An Example Simulator"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">AstroObject 0.5.3 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -215,21 +215,24 @@
 <span class="n">ImageStack</span> <span class="o">=</span> <span class="n">UseIRAFTools</span><span class="p">(</span><span class="n">ImageStack</span><span class="p">)</span>
 
 <span class="n">Data</span> <span class="o">=</span> <span class="n">ImageStack</span><span class="p">()</span>
+<span class="n">Data</span><span class="o">.</span><span class="n">iraf</span><span class="o">.</span><span class="n">directory</span><span class="p">(</span><span class="s">&quot;Caches/&quot;</span><span class="p">)</span>
 
 <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1000</span><span class="p">))</span>
 <span class="n">image</span><span class="p">[</span><span class="mi">450</span><span class="p">:</span><span class="mi">550</span><span class="p">,</span><span class="mi">450</span><span class="p">:</span><span class="mi">550</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span>
+<span class="n">image</span><span class="p">[</span><span class="mi">490</span><span class="p">:</span><span class="mi">510</span><span class="p">,</span><span class="mi">490</span><span class="p">:</span><span class="mi">510</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">))</span> <span class="o">*</span> <span class="mf">0.5</span>
 <span class="n">flat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1000</span><span class="p">,</span><span class="mi">1000</span><span class="p">))</span>
-<span class="n">flat</span> <span class="p">[</span><span class="mi">490</span><span class="p">:</span><span class="mi">510</span><span class="p">,</span><span class="mi">490</span><span class="p">:</span><span class="mi">510</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">))</span> <span class="o">*</span> <span class="mf">0.5</span>
+<span class="n">flat</span><span class="p">[</span><span class="mi">490</span><span class="p">:</span><span class="mi">510</span><span class="p">,</span><span class="mi">490</span><span class="p">:</span><span class="mi">510</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">20</span><span class="p">,</span><span class="mi">20</span><span class="p">))</span> <span class="o">*</span> <span class="mf">0.5</span>
 
 <span class="n">Data</span><span class="p">[</span><span class="s">&quot;Basic&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">image</span>
 <span class="n">Data</span><span class="p">[</span><span class="s">&quot;Other&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">image</span>
 <span class="n">Data</span><span class="p">[</span><span class="s">&quot;Flat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">flat</span>
+<span class="n">Data</span><span class="p">[</span><span class="s">&quot;Final&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">image</span> <span class="o">/</span> <span class="p">(</span><span class="n">flat</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">flat</span><span class="p">))</span>
 
 <span class="n">iraf</span><span class="o">.</span><span class="n">ccdproc</span><span class="p">(</span>
     <span class="n">Data</span><span class="o">.</span><span class="n">imodat</span><span class="p">(</span><span class="s">&quot;Basic&quot;</span><span class="p">,</span><span class="s">&quot;Other&quot;</span><span class="p">,</span><span class="n">append</span> <span class="o">=</span> <span class="s">&quot;_flat&quot;</span><span class="p">),</span> 
     <span class="n">ccdtype</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">fixpix</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">overscan</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">trim</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
     <span class="n">zerocor</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">darkcor</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">flatcor</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> 
-    <span class="n">flat</span> <span class="o">=</span> <span class="n">Data</span><span class="o">.</span><span class="n">iin</span><span class="p">(</span><span class="s">&quot;Flat&quot;</span><span class="p">))</span>
+    <span class="n">flat</span> <span class="o">=</span> <span class="n">Data</span><span class="o">.</span><span class="n">imod</span><span class="p">(</span><span class="s">&quot;Flat&quot;</span><span class="p">,</span><span class="n">append</span><span class="o">=</span><span class="s">&quot;_flat&quot;</span><span class="p">))</span>
 <span class="n">Data</span><span class="o">.</span><span class="n">idone</span><span class="p">()</span>
 
 <span class="n">Data</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s">&quot;Basic&quot;</span><span class="p">)</span>
@@ -239,6 +242,11 @@
 <span class="n">Data</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s">&quot;Basic_flat&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
 <span class="n">Data</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s">&quot;Other_flat&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">Data</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s">&quot;Flat_flat&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">Data</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s">&quot;Final&quot;</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&quot;Showing data...&quot;</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -299,7 +307,7 @@
         <li class="right" >
           <a href="simulator.html" title="An Example Simulator"
              >previous</a> |</li>
-        <li><a href="../index.html">AstroObject 0.5.3 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

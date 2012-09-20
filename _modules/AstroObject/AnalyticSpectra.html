@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObject.AnalyticSpectra &mdash; AstroObject 0.5.3 documentation</title>
+    <title>AstroObject.AnalyticSpectra &mdash; AstroObject 0.6 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5.3',
+        VERSION:     '0.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5.3 documentation" href="../../index.html" />
+    <link rel="top" title="AstroObject 0.6 documentation" href="../../index.html" />
     <link rel="up" title="AstroObject" href="../AstroObject.html" /> 
   </head>
   <body>
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.5.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.6 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li>
           <li><a href="../AstroObject.html" accesskey="U">AstroObject</a> &raquo;</li> 
       </ul>
@@ -56,7 +56,7 @@
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2011-10-12.</span>
 <span class="c">#  Copyright 2011 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.5.3</span>
+<span class="c">#  Version 0.6.0</span>
 <span class="c"># </span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">:mod:`AnalyticSpectra` – Analytic Spectra and Interpolation</span>
@@ -216,10 +216,18 @@
 <span class="sd">        </span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_unit_scale_factors</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&quot;Angstroms&quot;</span> <span class="p">:</span> <span class="mf">1e-10</span><span class="p">,</span>
+        <span class="s">&quot;Meters&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s">&quot;Nanometers&quot;</span> <span class="p">:</span> <span class="mf">1e-9</span><span class="p">,</span>
+    <span class="p">}</span>
+    
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">wavelengths</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">units</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">AnalyticSpectrum</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_wavelengths</span> <span class="o">=</span> <span class="n">wavelengths</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">units</span> <span class="c">#Future will be used for enforcing unit behaviors</span>
+        <span class="k">if</span> <span class="n">units</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unit_scale_factors</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">units</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unit_scale_factors</span><span class="p">[</span><span class="n">units</span><span class="p">]</span>        
         
     <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Implements spectrum addition&quot;&quot;&quot;</span>
@@ -374,11 +382,11 @@
         
         <span class="c"># Check that the units of this spectrum look like SI units, inbound and outbound.</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">oldwl</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-12</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">oldwl</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-3</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;</span><span class="si">%s</span><span class="s">: Given λ units appear wrong!&quot;</span><span class="p">]</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;</span><span class="si">%s</span><span class="s">: Given λ units appear wrong!&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="p">]</span>
             <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Given λ&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldwl</span>
         
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">newwl</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-12</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">newwl</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-3</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;</span><span class="si">%s</span><span class="s">: Requested λ units appear wrong!&quot;</span><span class="p">]</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">[</span><span class="s">u&quot;</span><span class="si">%s</span><span class="s">: Requested λ units appear wrong!&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="p">]</span>
             <span class="n">arrays</span><span class="p">[</span><span class="s">u&quot;Requested λ&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">newwl</span>
         
         <span class="c"># Check that the units of the spectrum are monotonically increasing (inbound and outbound)</span>
@@ -1029,7 +1037,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.5.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.6 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li>
           <li><a href="../AstroObject.html" >AstroObject</a> &raquo;</li> 
       </ul>

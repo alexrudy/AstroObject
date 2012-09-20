@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObject.file.fits &mdash; AstroObject 0.5.3 documentation</title>
+    <title>AstroObject.file.fits &mdash; AstroObject 0.6 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.5.3',
+        VERSION:     '0.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5.3 documentation" href="../../../index.html" />
+    <link rel="top" title="AstroObject 0.6 documentation" href="../../../index.html" />
     <link rel="up" title="AstroObject.file" href="../file.html" /> 
   </head>
   <body>
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">AstroObject 0.5.3 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">AstroObject 0.6 documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
           <li><a href="../../AstroObject.html" >AstroObject</a> &raquo;</li>
           <li><a href="../file.html" accesskey="U">AstroObject.file</a> &raquo;</li> 
@@ -59,8 +59,8 @@
 <span class="c">#  Copyright 2012 Alexander Rudy. All rights reserved.</span>
 <span class="c"># </span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">:mod:`file.fits` - An abstraction layer for FITS Files</span>
-<span class="sd">======================================================</span>
+<span class="sd">:class:`file.fits.FITSFile` - An abstraction layer for FITS Files</span>
+<span class="sd">=================================================================</span>
 
 <span class="sd">This module provides a simple extraction layer class for FITS file writing. FITS files must have either the ``.fit`` or ``.fits`` extension to be detected by this module. The module reads and writes files using :mod:`pyfits`.</span>
 
@@ -75,6 +75,7 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pyfits</span> <span class="kn">as</span> <span class="nn">pf</span>
 <span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">File</span>
 
@@ -92,25 +93,31 @@
 <span class="sd">    </span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thefile</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">FITSFile</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">validate_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-     
+        <span class="bp">self</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">thefile</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thefile</span><span class="p">,</span><span class="nb">file</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">thefile</span><span class="p">,</span><span class="s">&#39;mode&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="s">&#39;b&#39;</span> <span class="ow">in</span> <span class="n">thefile</span><span class="o">.</span><span class="n">mode</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;This file is not in binary mode!&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file</span> <span class="o">=</span> <span class="n">thefile</span>
+             
     <span class="n">__extensions__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;.fit&#39;</span><span class="p">,</span><span class="s">&#39;.fits&#39;</span><span class="p">]</span>
+    <span class="n">__canstream__</span> <span class="o">=</span> <span class="bp">True</span>
     
-<div class="viewcode-block" id="FITSFile.write"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fits.FITSFile.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">stack</span><span class="p">,</span><span class="n">clobber</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="FITSFile.write"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fits.FITSFile.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stack</span><span class="p">,</span> <span class="n">clobber</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Write a stack to this file.</span>
 <span class="sd">        </span>
 <span class="sd">        :param HDUList stack: An HDUList to write to a file.</span>
 <span class="sd">        :param bool clobber: Whether to overwrite the destination file.</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">stack</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span><span class="n">clobber</span> <span class="o">=</span> <span class="n">clobber</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s">&quot;ignore&quot;</span><span class="p">)</span>
+            <span class="n">stack</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="n">clobber</span> <span class="o">=</span> <span class="n">clobber</span><span class="p">)</span>
         </div>
 <div class="viewcode-block" id="FITSFile.open"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fits.FITSFile.open">[docs]</a>    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Open this file and return the HDUList.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">pf</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pf</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file</span><span class="p">)</span>
         </div></div>
 </pre></div>
 
@@ -145,7 +152,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">AstroObject 0.5.3 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">AstroObject 0.6 documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
           <li><a href="../../AstroObject.html" >AstroObject</a> &raquo;</li>
           <li><a href="../file.html" >AstroObject.file</a> &raquo;</li> 

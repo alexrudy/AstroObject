@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObject.AstroObjectBase &mdash; AstroObject 0.5.3 documentation</title>
+    <title>AstroObject.AstroObjectBase &mdash; AstroObject 0.6 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5.3',
+        VERSION:     '0.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5.3 documentation" href="../../index.html" />
+    <link rel="top" title="AstroObject 0.6 documentation" href="../../index.html" />
     <link rel="up" title="AstroObject" href="../AstroObject.html" /> 
   </head>
   <body>
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.5.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.6 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li>
           <li><a href="../AstroObject.html" accesskey="U">AstroObject</a> &raquo;</li> 
       </ul>
@@ -56,7 +56,7 @@
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2011-10-12.</span>
 <span class="c">#  Copyright 2011 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.5.3</span>
+<span class="c">#  Version 0.6.0</span>
 <span class="c"># </span>
 <span class="sd">u&quot;&quot;&quot;</span>
 <span class="sd">.. _AstroObjectAPI:</span>
@@ -189,8 +189,8 @@
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
 
 <span class="c"># Submodules from this system</span>
-<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">getVersion</span><span class="p">,</span> <span class="n">make_decorator</span><span class="p">,</span> <span class="n">validate_filename</span>
-<span class="kn">from</span> <span class="nn">.file</span> <span class="kn">import</span> <span class="n">DefaultFileClasses</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">getVersion</span><span class="p">,</span> <span class="n">make_decorator</span><span class="p">,</span> <span class="n">validate_filename</span><span class="p">,</span> <span class="n">set_trace_errors</span>
+<span class="kn">from</span> <span class="nn">.file</span> <span class="kn">import</span> <span class="n">DefaultFileClasses</span><span class="p">,</span> <span class="n">File</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;BaseStack&quot;</span><span class="p">,</span> <span class="s">&quot;BaseFrame&quot;</span><span class="p">,</span> <span class="s">&quot;AnalyticMixin&quot;</span><span class="p">,</span> <span class="s">&quot;NoHDUMixin&quot;</span><span class="p">,</span> <span class="s">&quot;HDUHeaderMixin&quot;</span><span class="p">,</span> <span class="s">&quot;NoDataMixin&quot;</span><span class="p">,</span> <span class="s">&quot;Mixin&quot;</span><span class="p">]</span>
 
@@ -350,7 +350,7 @@
 <span class="sd">        :returns: A string label</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">u&quot;Abstract Data Structure </span><span class="si">%s</span><span class="s"> cannot be used for HDU Header Manipulation!&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">u&quot;Abstract Data Structure cannot be used for HDU Header Manipulation!&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     
     </div>
@@ -475,8 +475,6 @@
             <span class="k">return</span> <span class="n">explicit</span>
         <span class="k">if</span> <span class="s">&#39;label&#39;</span> <span class="ow">in</span> <span class="n">HDU</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">HDU</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;label&#39;</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="s">&#39;object&#39;</span> <span class="ow">in</span> <span class="n">HDU</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">HDU</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;object&#39;</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">default</span>
 </div>
@@ -561,6 +559,16 @@
 <span class="sd">    :param filename: String name of default file for reading and writing with :meth:`read` and :meth:`write`.</span>
 <span class="sd">    :param dataClasses: An array of classes which constitute valid save classes for this object.</span>
 <span class="sd">    </span>
+<span class="sd">    *Stacks* have special attribute characteristics which allow them to reach the full *frame* API. *Stacks* can call methods defined within *frames*. Most frames define a :meth:`~BaseFrame.__show__`. This method can be called using :meth:`show` with the following syntax::</span>
+<span class="sd">            </span>
+<span class="sd">        &gt;&gt;&gt; Stack.show(&quot;SomeFrameName&quot;)</span>
+<span class="sd">            </span>
+<span class="sd">    The special syntax can take as many framenames as desired as arguments, and will call the named method on each one. So::</span>
+<span class="sd">            </span>
+<span class="sd">        &gt;&gt;&gt; Stack.show(&quot;FrameA&quot;,&quot;FrameB&quot;,&quot;FrameC&quot;)</span>
+<span class="sd">            </span>
+<span class="sd">    will call the :meth:`~BaseFrame.__show__` method on each frame.</span>
+<span class="sd">    </span>
 <span class="sd">    .. Note::</span>
 <span class="sd">        This is object only contains Abstract data objects. In order to use this class properly, you should set the dataClasses keyword for use when storing data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -569,24 +577,33 @@
         <span class="c"># Image data variables.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_frames</span> <span class="o">=</span> <span class="p">{}</span>            <span class="c"># Storage for all of the images</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_framename</span> <span class="o">=</span> <span class="bp">None</span>       <span class="c"># The active frame name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>    <span class="c"># The filename to use for file loading and writing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>     <span class="c"># The filename to use for file loading and writing</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clobber</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="bp">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dataClasses</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dataClasses</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataClasses</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dataClasses</span> <span class="o">+=</span> <span class="n">dataClasses</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dataClasses</span> <span class="o">+=</span> <span class="n">dataClasses</span>
         <span class="k">elif</span> <span class="n">dataClasses</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">u&quot;Can&#39;t understand data classes&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataClasses</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataClasses</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">u&quot;Instantiating </span><span class="si">%s</span><span class="s"> without any valid data classes!&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fileClasses</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fileClasses</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fileClasses</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">fileClasses</span> <span class="o">+=</span> <span class="n">fileClasses</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fileClasses</span> <span class="o">+=</span> <span class="n">fileClasses</span>
         <span class="k">elif</span> <span class="n">fileClasses</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">u&quot;Can&#39;t understand file classes&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fileClasses</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fileClasses</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">u&quot;Instantiating </span><span class="si">%s</span><span class="s"> without any valid file classes!&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="p">)</span>
-
+        <span class="n">canstream</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">fileClass</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fileClasses</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">fileClass</span><span class="p">,</span><span class="n">File</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;File class </span><span class="si">%s</span><span class="s"> invalid!&quot;</span> <span class="o">%</span> <span class="n">fileClass</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">fileClass</span><span class="o">.</span><span class="n">__canstream__</span><span class="p">:</span>
+                <span class="n">canstream</span> <span class="o">+=</span> <span class="p">[</span><span class="n">fileClass</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">canstream</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_can_load_stream</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_can_load_stream</span> <span class="o">=</span> <span class="bp">False</span>
         
     <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;String representation of this object.</span>
@@ -653,11 +670,61 @@
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">()</span>
+    </div>
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Provides a passthrough for functions that we haven&#39;t named yet.</span>
+<span class="sd">        </span>
+<span class="sd">        This allows *stacks* to call methods defined within *frames*. Most frames define a :meth:`~BaseFrame.__show__`. This method can be called using :meth:`show` with the following syntax::</span>
+<span class="sd">            </span>
+<span class="sd">            &gt;&gt;&gt; Stack.show(&quot;SomeFrameName&quot;)</span>
+<span class="sd">            </span>
+<span class="sd">        The special syntax can take as many framenames as desired as arguments, and will call the named method on each one. So::</span>
+<span class="sd">            </span>
+<span class="sd">            &gt;&gt;&gt; Stack.show(&quot;FrameA&quot;,&quot;FrameB&quot;,&quot;FrameC&quot;)</span>
+<span class="sd">            </span>
+<span class="sd">        will call the :meth:`~BaseFrame.__show__` method on each frame.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">__attr_method</span><span class="p">(</span><span class="o">*</span><span class="n">framenames</span><span class="p">):</span>
+            <span class="c"># Set up frame method name (as string)</span>
+            <span class="n">method</span> <span class="o">=</span> <span class="s">&#39;__&#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s">&#39;__&#39;</span>
+            <span class="c"># Initialize return values</span>
+            <span class="n">rvals</span> <span class="o">=</span> <span class="p">[]</span>
+            
+            <span class="n">framenames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="o">*</span><span class="n">framenames</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">framenames</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">framenames</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_frame</span><span class="p">()]</span>
+                
+            <span class="c"># Execute the desired method everywhere</span>
+            <span class="k">for</span> <span class="n">framename</span> <span class="ow">in</span> <span class="n">framenames</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">framename</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">framename</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+                    <span class="n">rvals</span> <span class="o">+=</span> <span class="p">[</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">framename</span><span class="p">],</span><span class="n">method</span><span class="p">)()</span> <span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_key_error</span><span class="p">(</span><span class="n">framename</span><span class="p">)</span>
+            
+            <span class="c"># Return the appropriate value</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rvals</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">rvals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">rvals</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">rvals</span><span class="p">)</span>
+                
+        <span class="k">return</span> <span class="n">__attr_method</span>
     
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="BaseStack.data_classes"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.data_classes">[docs]</a>    <span class="k">def</span> <span class="nf">data_classes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The list of acceptable data classes. This is a&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataClasses</span>
+    </div>
+<div class="viewcode-block" id="BaseStack.add_data_class"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.add_data_class">[docs]</a>    <span class="k">def</span> <span class="nf">add_data_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data_class</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Insert a data class into the list of acceptable data classes for this object.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dataClasses</span> <span class="o">+=</span> <span class="p">[</span><span class="n">data_class</span><span class="p">]</span>
         
     <span class="c">###############################</span>
     <span class="c"># Basic Object Mode Functions #</span>
     <span class="c">###############################</span></div>
+    <span class="nd">@set_trace_errors</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span><span class="ne">TypeError</span><span class="p">)</span>
 <div class="viewcode-block" id="BaseStack.save"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">framename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">clobber</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Saves the given data to this object. If the data is an instance of one of the acceptable :attr:`dataClasses` then this method will simply save the data. Otherwise, it will attempt to cast the data into one of the acceptable :attr:`dataClasses` using their :meth:`__save__` mehtod.</span>
 <span class="sd">        </span>
@@ -671,9 +738,9 @@
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># If we were passed raw data, and the dataClass can accept it, then go for it!</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataClasses</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataClasses</span><span class="p">)):</span>
             <span class="n">Object</span> <span class="o">=</span> <span class="bp">None</span>
-            <span class="k">for</span> <span class="n">dataClass</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataClasses</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">dataClass</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataClasses</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">Object</span> <span class="o">=</span> <span class="n">dataClass</span><span class="o">.</span><span class="n">__save__</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">framename</span><span class="p">)</span>
                 <span class="k">except</span> <span class="ne">NotImplementedError</span> <span class="k">as</span> <span class="n">AE</span><span class="p">:</span>
@@ -681,7 +748,7 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">break</span>
             <span class="k">if</span> <span class="n">Object</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">u&quot;Object to be saved cannot be cast as </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataClasses</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">u&quot;Object to be saved cannot be cast as </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataClasses</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">framename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="n">Object</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">framename</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -701,9 +768,10 @@
         <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s">u&quot;Saved frame </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">Object</span><span class="p">)</span>
         <span class="c"># Activate the saved frame as the current frame</span>
         <span class="k">if</span> <span class="n">select</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">framename</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_select</span><span class="p">(</span><span class="n">framename</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">framename</span>
     </div>
+    <span class="nd">@set_trace_errors</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">)</span>
 <div class="viewcode-block" id="BaseStack.data"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">framename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the raw data for the current frame. This is done through the :meth:`FITSFrame.__call__` method, which should return basic data in as raw a form as possible. The purpose of this call is to allow the user get at the most recent piece of data as easily as possible.</span>
 <span class="sd">        </span>
@@ -722,8 +790,8 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_key_error</span><span class="p">(</span><span class="n">framename</span><span class="p">)</span>
     
-
-    </div>
+</div>
+    <span class="nd">@set_trace_errors</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">)</span>
 <div class="viewcode-block" id="BaseStack.frame"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.frame">[docs]</a>    <span class="k">def</span> <span class="nf">frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">framename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.</span>
 <span class="sd">        </span>
@@ -753,7 +821,18 @@
     <span class="k">def</span> <span class="nf">object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">framename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s">u&quot;Method </span><span class="se">\&quot;</span><span class="s">.object()</span><span class="se">\&quot;</span><span class="s"> on </span><span class="si">%s</span><span class="s"> has been depreciated. Please use </span><span class="se">\&quot;</span><span class="s">.frame()</span><span class="se">\&quot;</span><span class="s"> instead.&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">framename</span><span class="p">)</span>
-        
+    
+    <span class="k">def</span> <span class="nf">_select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">framename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Private, silent select mode. The parent select() function will issuee messages for everything. This one wont.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">framename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_framename</span> <span class="o">=</span> <span class="bp">None</span> <span class="c"># Unselect frame</span>
+            <span class="n">framename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_frame</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">framename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_key_error</span><span class="p">(</span><span class="n">framename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_framename</span> <span class="o">=</span> <span class="n">framename</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">framename</span>
+    
+    <span class="nd">@set_trace_errors</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">)</span>    
 <div class="viewcode-block" id="BaseStack.select"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.select">[docs]</a>    <span class="k">def</span> <span class="nf">select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">framename</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets the default frame to the given framename. Normally, the default frame is the one that was last saved.</span>
 <span class="sd">        </span>
@@ -763,12 +842,8 @@
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">framename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_framename</span> <span class="o">=</span> <span class="bp">None</span> <span class="c"># Unselect frame</span>
-            <span class="n">framename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_frame</span><span class="p">()</span>
             <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">u&quot;Setting frame by cancelling selection and asking for default frame.&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">framename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_key_error</span><span class="p">(</span><span class="n">framename</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_framename</span> <span class="o">=</span> <span class="n">framename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_select</span><span class="p">(</span><span class="n">framename</span><span class="p">)</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s">u&quot;Selected frame </span><span class="se">\&#39;</span><span class="si">%s</span><span class="se">\&#39;</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">framename</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">framename</span>
     </div>
@@ -782,7 +857,10 @@
     </div>
     <span class="k">def</span> <span class="nf">_key_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">framename</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Throw a keyError for the given framename.&quot;&quot;&quot;</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">u&quot;</span><span class="si">%s</span><span class="s">: State </span><span class="si">%s</span><span class="s"> does not exist.</span><span class="se">\n</span><span class="s">States: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">framename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">())</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">())</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">u&quot;</span><span class="si">%s</span><span class="s">: Stack does not have any frames.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">u&quot;</span><span class="si">%s</span><span class="s">: Frame </span><span class="si">%r</span><span class="s"> does not exist. Frames: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">framename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">())</span>
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
     
     <span class="k">def</span> <span class="nf">_default_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frames</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
@@ -817,8 +895,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_framename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_frame</span><span class="p">()</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s">u&quot;</span><span class="si">%s</span><span class="s">: Cleared all frames. Remaining: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()))</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
-    
     </div>
+    <span class="nd">@set_trace_errors</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">)</span>
 <div class="viewcode-block" id="BaseStack.keep"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.keep">[docs]</a>    <span class="k">def</span> <span class="nf">keep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">framenames</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Removes all frames except the specified frame(s) in the object.</span>
 <span class="sd">        </span>
@@ -842,6 +920,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_framename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_frame</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
     </div>
+    <span class="nd">@set_trace_errors</span><span class="p">(</span><span class="ne">KeyError</span><span class="p">)</span>
 <div class="viewcode-block" id="BaseStack.remove"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.remove">[docs]</a>    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">framenames</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Removes the specified frame(s) from the object.</span>
 <span class="sd">        </span>
@@ -867,21 +946,40 @@
         <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s">u&quot;</span><span class="si">%s</span><span class="s">: Removed frames </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">removed</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
     </div>
-<div class="viewcode-block" id="BaseStack.show"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">framename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the (rendered) matplotlib plot for this object. This is a quick way to view your current data frame without doing any serious plotting work. This aims for the sensible defaults philosophy, if you don&#39;t like what you get, write a new method that uses the :meth:`data` call and plots that.</span>
-<span class="sd">        </span>
-<span class="sd">        :param string framename: the name of the frame to be retrieved.</span>
-<span class="sd">        </span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c"># Load the current stat if no frame provided</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">framename</span><span class="p">:</span>
-            <span class="n">framename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_frame</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">framename</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">framename</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">framename</span><span class="p">]</span><span class="o">.</span><span class="n">__show__</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">_setup_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">filetype</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets up a file object for reading or writing, given a file-like object and optionally a filetype.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
+        
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="nb">file</span><span class="p">)</span> <span class="ow">and</span> <span class="n">filetype</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_can_load_stream</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">u&quot;Stack cannot read streams without explicit file type.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="nb">file</span><span class="p">)</span> <span class="ow">and</span> <span class="n">filetype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filetype</span><span class="p">,</span><span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fileClasses</span><span class="p">)):</span>
+                <span class="n">fileClasses</span> <span class="o">=</span> <span class="p">[</span><span class="n">filetype</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">filetype</span> <span class="ow">in</span> <span class="p">[</span> <span class="n">fc</span><span class="o">.</span><span class="n">__name__</span> <span class="k">for</span> <span class="n">fc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fileClasses</span> <span class="p">]:</span>
+                <span class="n">fileClasses</span> <span class="o">=</span> <span class="p">[{</span><span class="n">fc</span><span class="o">.</span><span class="n">__name__</span><span class="p">:</span><span class="n">fc</span> <span class="k">for</span> <span class="n">fc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fileClasses</span><span class="p">}[</span><span class="n">filetype</span><span class="p">]]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">u&quot;Cannot understand File Type </span><span class="si">%r</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">filetype</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,(</span><span class="nb">str</span><span class="p">,</span><span class="nb">unicode</span><span class="p">)):</span>
+            <span class="n">fileClasses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fileClasses</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_key_error</span><span class="p">(</span><span class="n">framename</span><span class="p">)</span>
-    </div>
-<div class="viewcode-block" id="BaseStack.write"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">frames</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">primaryFrame</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">clobber</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">singleFrame</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">u&quot;Cannot understand filename </span><span class="si">%r</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>    
+        
+        <span class="n">FileObject</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">for</span> <span class="n">fileClass</span> <span class="ow">in</span> <span class="n">fileClasses</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">FileObject</span> <span class="o">=</span> <span class="n">fileClass</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">NotImplementedError</span> <span class="k">as</span> <span class="n">AE</span><span class="p">:</span>
+                <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">u&quot;Cannot save as </span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fileClass</span><span class="p">,</span> <span class="n">AE</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">FileObject</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">u&quot;Object to be saved cannot be cast as </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fileClasses</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">FileObject</span>
+        
+    
+    <span class="nd">@set_trace_errors</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">)</span>
+<div class="viewcode-block" id="BaseStack.write"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">frames</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">primaryFrame</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">clobber</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">singleFrame</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">filetype</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify ``frames`` then only those frames will be used. ``primaryFrame`` should be the frame of the front HDU. When not specified, the latest frame will be used. It uses the :attr:`dataClasses` :meth:`FITSFrame.__hdu__` method to return a valid HDU object for each Frame.</span>
 <span class="sd">        </span>
 <span class="sd">        :param string filename: the name of the file for saving.</span>
@@ -890,6 +988,10 @@
 <span class="sd">        :param bool clobber: Whether to overwrite the destination file or not.</span>
 <span class="sd">        :param bool singleFrame: Whether to save only a single frame.</span>
 <span class="sd">        :returns: Tuple of (PrimaryFrame, Frames, Filename)</span>
+<span class="sd">        </span>
+<span class="sd">        ::  </span>
+<span class="sd">            &gt;&gt;&gt; obj.write(filename=&quot;Test.fits&quot;)</span>
+<span class="sd">            (&#39;MainFrame&#39;,[&#39;OtherFrame-1&#39;,&#39;OtherFrame-2&#39;],&#39;Test.fits&#39;)</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">frames</span><span class="p">:</span>
@@ -906,21 +1008,9 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="n">filename</span> <span class="o">=</span> <span class="n">primaryFrame</span>
                 <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">u&quot;Set Filename from Primary State. Filename: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
-                <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">u&quot;Set filename from Object. Filename: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
         
-        <span class="n">FileObject</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="k">for</span> <span class="n">fileClass</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fileClasses</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">FileObject</span> <span class="o">=</span> <span class="n">fileClass</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">NotImplementedError</span> <span class="k">as</span> <span class="n">AE</span><span class="p">:</span>
-                <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">u&quot;Cannot save as </span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fileClass</span><span class="p">,</span> <span class="n">AE</span><span class="p">))</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">break</span>
-        <span class="k">if</span> <span class="n">FileObject</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">u&quot;Object to be saved cannot be cast as </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">fileClasses</span><span class="p">)</span>
-        
+        <span class="c"># Move the stack trace up one notch</span>
+        <span class="n">FileObject</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setup_file</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span><span class="n">filetype</span><span class="o">=</span><span class="n">filetype</span><span class="p">)</span>
         
         <span class="n">PrimaryHDU</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">primaryFrame</span><span class="p">]</span><span class="o">.</span><span class="n">hdu</span><span class="p">(</span><span class="n">primary</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
         <span class="n">HDUs</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="p">[</span><span class="n">frame</span><span class="p">]</span><span class="o">.</span><span class="n">hdu</span><span class="p">(</span><span class="n">primary</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">]</span>
@@ -928,39 +1018,33 @@
         <span class="n">FileObject</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">HDUList</span><span class="p">,</span> <span class="n">clobber</span><span class="o">=</span><span class="n">clobber</span><span class="p">)</span>
         <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s">u&quot;Wrote frame </span><span class="si">%s</span><span class="s"> (primary) and frames </span><span class="si">%s</span><span class="s"> to FITS file </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">primaryFrame</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">primaryFrame</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="n">filename</span>
-    </div>
-<div class="viewcode-block" id="BaseStack.read"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">framename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">clobber</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+</div>
+    <span class="nd">@set_trace_errors</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">)</span>
+<div class="viewcode-block" id="BaseStack.read"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">framename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">filetype</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">clobber</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;This reader takes a FITS file, and trys to render each HDU within that FITS file as a frame in this Object. As such, it might read multiple frames. This method will return a list of Frames that it read. It uses the :attr:`dataClasses` :meth:`FITSFrame.__read__` method to return a valid Frame object for each HDU.</span>
+<span class="sd">        </span>
+<span class="sd">        :param string|stream filename: The file or filestream to read from. Should be supported by :mod:`~AstroObject.file`.</span>
+<span class="sd">        :param string framename: The framename to use (overrides the filename-as-framename, but not the &#39;LABEL&#39; FITS keyword.)</span>
+<span class="sd">        :param bool clobber: Whether to overwrite existing frames. Default ``False``.</span>
+<span class="sd">        :param bool select: Whether to make the imported frames the selected ones. Default ``True``.</span>
 <span class="sd">        </span>
 <span class="sd">        ::</span>
 <span class="sd">            </span>
 <span class="sd">            &gt;&gt;&gt; obj = BaseStack()</span>
 <span class="sd">            &gt;&gt;&gt; obj.read(&quot;SomeImage.fits&quot;)</span>
-<span class="sd">            &gt;&gt;&gt; obj.list()</span>
 <span class="sd">            [&quot;SomeImage&quot;, &quot;SomeImage-1&quot;, &quot;SomeImage-2&quot;]</span>
 <span class="sd">            </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
-            <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span>
-        <span class="n">FileObject</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="k">for</span> <span class="n">fileClass</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fileClasses</span><span class="p">:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">FileObject</span> <span class="o">=</span> <span class="n">fileClass</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">NotImplementedError</span> <span class="k">as</span> <span class="n">AE</span><span class="p">:</span>
-                <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">u&quot;Cannot read as </span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">fileClass</span><span class="p">,</span> <span class="n">AE</span><span class="p">))</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">break</span>
-        <span class="k">if</span> <span class="n">FileObject</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">u&quot;Object to be read cannot be cast as </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">fileClasses</span><span class="p">)</span>
+        <span class="n">FileObject</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setup_file</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span><span class="n">filetype</span><span class="o">=</span><span class="n">filetype</span><span class="p">)</span>
         <span class="n">HDUList</span> <span class="o">=</span> <span class="n">FileObject</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
         <span class="n">Read</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">Labels</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">HDU</span> <span class="ow">in</span> <span class="n">HDUList</span><span class="p">:</span>    
             <span class="n">Object</span> <span class="o">=</span> <span class="bp">None</span> <span class="c"># Target variable</span>
             <span class="c"># Iterate through our potential data classes</span>
-            <span class="k">for</span> <span class="n">dataClass</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataClasses</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">dataClass</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataClasses</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">label</span> <span class="o">=</span> <span class="n">dataClass</span><span class="o">.</span><span class="n">__getlabel__</span><span class="p">(</span><span class="n">HDU</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span><span class="n">framename</span><span class="p">)</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="n">dataClass</span><span class="o">.</span><span class="n">__getlabel__</span><span class="p">(</span><span class="n">HDU</span><span class="p">,</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">FileObject</span><span class="o">.</span><span class="n">name</span><span class="p">),</span><span class="n">framename</span><span class="p">)</span>
                     <span class="k">if</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">Labels</span><span class="p">:</span>
                         <span class="c"># We don&#39;t allow repeat loading of labels</span>
                         <span class="n">label</span> <span class="o">=</span> <span class="n">label</span> <span class="o">+</span> <span class="s">&quot;-</span><span class="si">%d</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">Read</span>
@@ -977,7 +1061,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">Read</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="n">Labels</span> <span class="o">+=</span> <span class="p">[</span><span class="n">label</span><span class="p">]</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">Object</span><span class="p">,</span> <span class="n">clobber</span><span class="o">=</span><span class="n">clobber</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">Object</span><span class="p">,</span> <span class="n">clobber</span><span class="o">=</span><span class="n">clobber</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="n">select</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">Read</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s">u&quot;No HDUs were saved from FITS file </span><span class="si">%s</span><span class="s"> to </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -985,18 +1069,41 @@
         <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s">u&quot;Saved frames </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">Labels</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Labels</span>
     </div>
-<div class="viewcode-block" id="BaseStack.fromAtFile"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.fromAtFile">[docs]</a>    <span class="k">def</span> <span class="nf">fromAtFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atfile</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Read an atfile into this object. The name of the atfile can include a starting &quot;@&quot; which is stripped. The file is then loaded, and each line is assumed to contain a single fully-qualified part-name.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="BaseStack.readAtFile"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.readAtFile">[docs]</a>    <span class="k">def</span> <span class="nf">readAtFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atfile</span><span class="p">,</span> <span class="n">framename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">clobber</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read an atfile into this object. The name of the atfile can include a starting &quot;@&quot; which is stripped. The file is then loaded, and each line is assumed to contain a single fully-qualified part-name.</span>
+<span class="sd">        </span>
+<span class="sd">        :param string atfile: The @file to read from. Filename can start with ``@`` which will be stripped, automatically.</span>
+<span class="sd">        :param string framename: The framename to use (overrides the filename-as-framename, but not the &#39;LABEL&#39; FITS keyword.)</span>
+<span class="sd">        :param bool clobber: Whether to overwrite existing frames. Default ``False``.</span>
+<span class="sd">        :param bool select: Whether to make the imported frames the selected ones. Default ``True``.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">filename</span> <span class="o">=</span> <span class="n">atfile</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s">&quot;@&quot;</span><span class="p">)</span>
         <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">stream</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">:</span>
-                <span class="n">labels</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot; </span><span class="se">\n\t</span><span class="s">&quot;</span><span class="p">))</span>
+                <span class="n">labels</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot; </span><span class="se">\n\t</span><span class="s">&quot;</span><span class="p">),</span> <span class="n">framename</span><span class="o">=</span><span class="n">framename</span><span class="p">,</span> <span class="n">clobber</span><span class="o">=</span><span class="n">clobber</span><span class="p">,</span> <span class="n">select</span><span class="o">=</span><span class="n">select</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">labels</span>
+    </div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="BaseStack.fromAtFile"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.fromAtFile">[docs]</a>    <span class="k">def</span> <span class="nf">fromAtFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">framename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a new object create from an @file. This method is a factory shortcut for :meth:`readAtFile`.</span>
+<span class="sd">        </span>
+<span class="sd">        :param string filename: The @file to be read into the object. Should be supported by :mod:`~AstroObject.file`.</span>
+<span class="sd">        :param string framename: The framename to use (overrides the filename-as-framename, but not the &#39;LABEL&#39; FITS keyword.)</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Object</span> <span class="o">=</span> <span class="n">cls</span><span class="p">()</span>
+        <span class="n">Object</span><span class="o">.</span><span class="n">readAtFile</span><span class="p">(</span><span class="n">atfile</span><span class="p">,</span> <span class="n">framename</span><span class="o">=</span><span class="n">framename</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Object</span>
       </div>
     <span class="nd">@classmethod</span>  
-<div class="viewcode-block" id="BaseStack.fromFile"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.fromFile">[docs]</a>    <span class="k">def</span> <span class="nf">fromFile</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseStack.fromFile"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroObjectBase.BaseStack.fromFile">[docs]</a>    <span class="k">def</span> <span class="nf">fromFile</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">framename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Retrun a new object created from a filename. This method is a shortcut factory for :meth:`read`.</span>
+<span class="sd">        </span>
+<span class="sd">        :param string filename: The file to be read into the object. T</span>
+<span class="sd">        :param string framename: The framename to use (overrides the filename-as-framename, but not the &#39;LABEL&#39; FITS keyword.)</span>
+<span class="sd">        </span>
 <span class="sd">        </span>
 <span class="sd">        ::</span>
 <span class="sd">            </span>
@@ -1007,14 +1114,13 @@
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Object</span> <span class="o">=</span> <span class="n">cls</span><span class="p">()</span>
-        <span class="n">Object</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">Object</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">framename</span><span class="o">=</span><span class="n">framename</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Object</span>
 </div></div>
 <span class="k">class</span> <span class="nc">FrameStack</span><span class="p">(</span><span class="n">BaseStack</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;This stack accepts any type of frame, and overrides data-saving style save methods by calling the BaseFrame save method by default, which will fail because it isn&#39;t implemented.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">FrameStack</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dataClasses</span> <span class="o">=</span> <span class="p">[</span><span class="n">BaseFrame</span><span class="p">]</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FrameStack</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">dataClasses</span><span class="o">=</span><span class="p">[</span><span class="n">BaseFrame</span><span class="p">])</span>
         
     
         
@@ -1051,7 +1157,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.5.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.6 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li>
           <li><a href="../AstroObject.html" >AstroObject</a> &raquo;</li> 
       </ul>

@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>14. file - File IO &mdash; AstroObject 0.5.3 documentation</title>
+    <title>14. file - File IO &mdash; AstroObject 0.6 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5.3',
+        VERSION:     '0.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5.3 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.6 documentation" href="index.html" />
     <link rel="next" title="15. util — Utility functions" href="Utilities.html" />
     <link rel="prev" title="13. AstroObjectLogging — Structured Configuration Logging" href="AstroObjectLogging.html" /> 
   </head>
@@ -44,7 +44,7 @@
         <li class="right" >
           <a href="AstroObjectLogging.html" title="13. AstroObjectLogging — Structured Configuration Logging"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5.3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -85,14 +85,14 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.file.File.validate_filename">
-<tt class="descname">validate_filename</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file.html#File.validate_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.File.validate_filename" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.file.File.validate">
+<tt class="descname">validate</tt><big>(</big><em>thefile</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file.html#File.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.File.validate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Raise an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> if the filename is not acceptalbe to this file type. Else return true.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>string</em>) &#8211; The filename to check.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>thefile</strong> (<em>string|stream</em>) &#8211; The filename to check, or filestream to check.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> when the filename is not valid for this filetype.</td>
 </tr>
@@ -106,12 +106,12 @@
 
 </dd></dl>
 
-<span class="target" id="module-AstroObject.file.fits"></span><div class="section" id="file-fits-an-abstraction-layer-for-fits-files">
-<h2>14.1. <tt class="xref py py-mod docutils literal"><span class="pre">file.fits</span></tt> - An abstraction layer for FITS Files<a class="headerlink" href="#file-fits-an-abstraction-layer-for-fits-files" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-AstroObject.file.fits"></span><div class="section" id="file-fits-fitsfile-an-abstraction-layer-for-fits-files">
+<h2>14.1. <tt class="xref py py-class docutils literal"><span class="pre">file.fits.FITSFile</span></tt> - An abstraction layer for FITS Files<a class="headerlink" href="#file-fits-fitsfile-an-abstraction-layer-for-fits-files" title="Permalink to this headline">¶</a></h2>
 <p>This module provides a simple extraction layer class for FITS file writing. FITS files must have either the <tt class="docutils literal"><span class="pre">.fit</span></tt> or <tt class="docutils literal"><span class="pre">.fits</span></tt> extension to be detected by this module. The module reads and writes files using <tt class="xref py py-mod docutils literal"><span class="pre">pyfits</span></tt>.</p>
 <dl class="class">
 <dt id="AstroObject.file.fits.FITSFile">
-<em class="property">class </em><tt class="descclassname">AstroObject.file.fits.</tt><tt class="descname">FITSFile</tt><big>(</big><em>filename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/fits.html#FITSFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fits.FITSFile" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">AstroObject.file.fits.</tt><tt class="descname">FITSFile</tt><big>(</big><em>thefile=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/fits.html#FITSFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fits.FITSFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>A fits file implementation which simply passes <tt class="docutils literal"><span class="pre">HDUs</span></tt> through to the <tt class="xref py py-mod docutils literal"><span class="pre">pyfits</span></tt> API.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -165,14 +165,14 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.file.fits.FITSFile.validate_filename">
-<tt class="descname">validate_filename</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#AstroObject.file.fits.FITSFile.validate_filename" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.file.fits.FITSFile.validate">
+<tt class="descname">validate</tt><big>(</big><em>thefile</em><big>)</big><a class="headerlink" href="#AstroObject.file.fits.FITSFile.validate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Raise an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> if the filename is not acceptalbe to this file type. Else return true.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>string</em>) &#8211; The filename to check.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>thefile</strong> (<em>string|stream</em>) &#8211; The filename to check, or filestream to check.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> when the filename is not valid for this filetype.</td>
 </tr>
@@ -187,8 +187,8 @@
 </dd></dl>
 
 </div>
-<span class="target" id="module-AstroObject.file.plaintext"></span><div class="section" id="file-plaintext-plain-text-file-writing">
-<h2>14.2. <tt class="xref py py-mod docutils literal"><span class="pre">file.plaintext</span></tt> – Plain Text File writing<a class="headerlink" href="#file-plaintext-plain-text-file-writing" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-AstroObject.file.plaintext"></span><div class="section" id="file-plaintext-numpytextfile-plain-text-file-writing">
+<h2>14.2. <tt class="xref py py-class docutils literal"><span class="pre">file.plaintext.NumpyTextFile</span></tt> – Plain Text File writing<a class="headerlink" href="#file-plaintext-numpytextfile-plain-text-file-writing" title="Permalink to this headline">¶</a></h2>
 <p>This module handles writing simple text files. In <a class="reference internal" href="intro.html#module-AstroObject" title="AstroObject"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject</span></tt></a>, simple text files have the extension <tt class="docutils literal"><span class="pre">.txt</span></tt> or <tt class="docutils literal"><span class="pre">.dat</span></tt>. As well, since this module uses numpy to load and read text files, gzipped files can be read automatically as gzipped text files, with the <tt class="docutils literal"><span class="pre">.gz</span></tt> extension.</p>
 <dl class="class">
 <dt id="AstroObject.file.plaintext.NumpyTextFile">
@@ -245,14 +245,14 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.file.plaintext.NumpyTextFile.validate_filename">
-<tt class="descname">validate_filename</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#AstroObject.file.plaintext.NumpyTextFile.validate_filename" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.file.plaintext.NumpyTextFile.validate">
+<tt class="descname">validate</tt><big>(</big><em>thefile</em><big>)</big><a class="headerlink" href="#AstroObject.file.plaintext.NumpyTextFile.validate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Raise an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> if the filename is not acceptalbe to this file type. Else return true.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>string</em>) &#8211; The filename to check.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>thefile</strong> (<em>string|stream</em>) &#8211; The filename to check, or filestream to check.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> when the filename is not valid for this filetype.</td>
 </tr>
@@ -266,6 +266,10 @@
 
 </dd></dl>
 
+</div>
+<div class="section" id="file-plaintext-astroobjecttextfile-plain-text-files-with-headers">
+<h2>14.3. <tt class="xref py py-class docutils literal"><span class="pre">file.plaintext.AstroObjectTextFile</span></tt> – Plain Text files with Headers<a class="headerlink" href="#file-plaintext-astroobjecttextfile-plain-text-files-with-headers" title="Permalink to this headline">¶</a></h2>
+<p>This module writes plain-text files, but includes header information as text comments at the beginning.</p>
 <dl class="class">
 <dt id="AstroObject.file.plaintext.AstroObjectTextFile">
 <em class="property">class </em><tt class="descclassname">AstroObject.file.plaintext.</tt><tt class="descname">AstroObjectTextFile</tt><big>(</big><em>filename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/plaintext.html#AstroObjectTextFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.plaintext.AstroObjectTextFile" title="Permalink to this definition">¶</a></dt>
@@ -314,14 +318,14 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.file.plaintext.AstroObjectTextFile.validate_filename">
-<tt class="descname">validate_filename</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#AstroObject.file.plaintext.AstroObjectTextFile.validate_filename" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.file.plaintext.AstroObjectTextFile.validate">
+<tt class="descname">validate</tt><big>(</big><em>thefile</em><big>)</big><a class="headerlink" href="#AstroObject.file.plaintext.AstroObjectTextFile.validate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Raise an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> if the filename is not acceptalbe to this file type. Else return true.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>string</em>) &#8211; The filename to check.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>thefile</strong> (<em>string|stream</em>) &#8211; The filename to check, or filestream to check.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> when the filename is not valid for this filetype.</td>
 </tr>
@@ -336,8 +340,8 @@
 </dd></dl>
 
 </div>
-<span class="target" id="module-AstroObject.file.npy"></span><div class="section" id="file-npy-an-abstraction-layer-for-numpy-files">
-<h2>14.3. <tt class="xref py py-mod docutils literal"><span class="pre">file.npy</span></tt> — An abstraction layer for <tt class="xref py py-mod docutils literal"><span class="pre">numpy</span></tt> files<a class="headerlink" href="#file-npy-an-abstraction-layer-for-numpy-files" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-AstroObject.file.npy"></span><div class="section" id="file-npy-numpyfile-an-abstraction-layer-for-numpy-files">
+<h2>14.4. <tt class="xref py py-class docutils literal"><span class="pre">file.npy.NumpyFile</span></tt> — An abstraction layer for <tt class="xref py py-mod docutils literal"><span class="pre">numpy</span></tt> files<a class="headerlink" href="#file-npy-numpyfile-an-abstraction-layer-for-numpy-files" title="Permalink to this headline">¶</a></h2>
 <p>This module handles the writing and reading of <tt class="docutils literal"><span class="pre">.npy</span></tt> and <tt class="docutils literal"><span class="pre">.npz</span></tt> files. <tt class="docutils literal"><span class="pre">.npy</span></tt> files are single-array files, where each file will contain only one frame. <tt class="docutils literal"><span class="pre">.npz</span></tt> files are multiple-frame files. Neither format contains any metadata about the image.</p>
 <dl class="class">
 <dt id="AstroObject.file.npy.NumpyFile">
@@ -388,14 +392,14 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.file.npy.NumpyFile.validate_filename">
-<tt class="descname">validate_filename</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#AstroObject.file.npy.NumpyFile.validate_filename" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.file.npy.NumpyFile.validate">
+<tt class="descname">validate</tt><big>(</big><em>thefile</em><big>)</big><a class="headerlink" href="#AstroObject.file.npy.NumpyFile.validate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Raise an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> if the filename is not acceptalbe to this file type. Else return true.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>string</em>) &#8211; The filename to check.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>thefile</strong> (<em>string|stream</em>) &#8211; The filename to check, or filestream to check.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> when the filename is not valid for this filetype.</td>
 </tr>
@@ -409,6 +413,9 @@
 
 </dd></dl>
 
+</div>
+<div class="section" id="file-numpy-numpyzipfile-an-abstraction-for-compressed-numpy-files">
+<h2>14.5. <tt class="xref py py-class docutils literal"><span class="pre">file.numpy.NumpyZipFile</span></tt> – An abstraction for compressed <tt class="xref py py-mod docutils literal"><span class="pre">numpy</span></tt> files<a class="headerlink" href="#file-numpy-numpyzipfile-an-abstraction-for-compressed-numpy-files" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="AstroObject.file.npy.NumpyZipFile">
 <em class="property">class </em><tt class="descclassname">AstroObject.file.npy.</tt><tt class="descname">NumpyZipFile</tt><big>(</big><em>filename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/npy.html#NumpyZipFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.npy.NumpyZipFile" title="Permalink to this definition">¶</a></dt>
@@ -458,14 +465,14 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.file.npy.NumpyZipFile.validate_filename">
-<tt class="descname">validate_filename</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#AstroObject.file.npy.NumpyZipFile.validate_filename" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.file.npy.NumpyZipFile.validate">
+<tt class="descname">validate</tt><big>(</big><em>thefile</em><big>)</big><a class="headerlink" href="#AstroObject.file.npy.NumpyZipFile.validate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Raise an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> if the filename is not acceptalbe to this file type. Else return true.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>string</em>) &#8211; The filename to check.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>thefile</strong> (<em>string|stream</em>) &#8211; The filename to check, or filestream to check.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> when the filename is not valid for this filetype.</td>
 </tr>
@@ -480,6 +487,849 @@
 </dd></dl>
 
 </div>
+<span class="target" id="module-AstroObject.file.fileset"></span><div class="section" id="file-fileset-file-group-management">
+<h2>14.6. <tt class="xref py py-mod docutils literal"><span class="pre">file.fileset</span></tt> – File Group management<a class="headerlink" href="#file-fileset-file-group-management" title="Permalink to this headline">¶</a></h2>
+<p>File sets are groups of monitored files, held in a single directory. They can return a list of modified files in the directory, as well as files that have gone missing. File sets can either monitor only files which are explicitly registered with the fileset, or can autodiscover new files. Filesets can clean themselves up, deleting all member files in the fileset.</p>
+<div class="section" id="fileset-generic-fileset">
+<h3>14.6.1. <a class="reference internal" href="#AstroObject.file.fileset.FileSet" title="AstroObject.file.fileset.FileSet"><tt class="xref py py-class docutils literal"><span class="pre">FileSet</span></tt></a> – Generic Fileset<a class="headerlink" href="#fileset-generic-fileset" title="Permalink to this headline">¶</a></h3>
+<p>A fileset which simply uses a <tt class="docutils literal"><span class="pre">base/name</span></tt> explicit directory structure.</p>
+<dl class="class">
+<dt id="AstroObject.file.fileset.FileSet">
+<em class="property">class </em><tt class="descclassname">AstroObject.file.fileset.</tt><tt class="descname">FileSet</tt><big>(</big><em>base</em>, <em>name=''</em>, <em>isopen=True</em>, <em>persist=False</em>, <em>autodiscover=True</em>, <em>timeformat='%Y-%m-%dT%H:%M:%S'</em>, <em>dbfilebase='.AOFSdb.yml'</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/fileset.html#FileSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.FileSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>A set of files to be monitored. The set of files must all be contained in a single parent directory. The file set will monitor the registered files for changes and modifications, and will notify (using <tt class="xref py py-exc docutils literal"><span class="pre">IOError</span></tt>) the program if the fileset attempts to close with remianing modifications.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>base</strong> (<em>string</em>) &#8211; The base directory name for use with this file set.</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this particular fileset. Filesets are stored in <tt class="docutils literal"><span class="pre">base/name/</span></tt></li>
+<li><strong>isopen</strong> (<em>bool</em>) &#8211; Whether to start the fileset as open. Closed filesets are read-only objects.</li>
+<li><strong>persist</strong> (<em>bool</em>) &#8211; Whether this fileset should try to persist across instantiations.</li>
+<li><strong>autodiscover</strong> (<em>bool</em>) &#8211; Whether this fileset should check the directory for new files automatically, and register those files.</li>
+<li><strong>timeformat</strong> (<em>string</em>) &#8211; The format string for the <tt class="xref py py-mod docutils literal"><span class="pre">datetime</span></tt> module to use when writing/reading from the database. There is no reason to need to change this default, but it is supported just in case.</li>
+<li><strong>dbfilebase</strong> (<em>string</em>) &#8211; The base name of the persistance database. By default it is <tt class="docutils literal"><span class="pre">.AOFSdb.yml</span></tt>. If this filename <em>could</em> conflict with other files you might add to the file-set, you might want to change it to a non-conflicting filename. Files should have the <tt class="docutils literal"><span class="pre">.yml,.yaml</span></tt> extension.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Persistance</strong>:</p>
+<p>Persistant filesets will remember thier state using a database file between application instances. If the fileset is supposed to persist, it will write a database file to the fileset directory. The database file records the currently known modification times for each registered file. The database file will be automatically loaded when the fielset is created, or the directory is changed (with <a class="reference internal" href="#AstroObject.file.fileset.FileSet.move" title="AstroObject.file.fileset.FileSet.move"><tt class="xref py py-meth docutils literal"><span class="pre">move()</span></tt></a>). The database will also be automatically written whenever changes occur.</p>
+<p>If the load on the program is too heavy due to constant file-set access and modification, you can toggle the persistance mode using the <a class="reference internal" href="#AstroObject.file.fileset.FileSet.persist" title="AstroObject.file.fileset.FileSet.persist"><tt class="xref py py-attr docutils literal"><span class="pre">persist</span></tt></a> attribute. The database is only ever loaded when the fileset is initialized.</p>
+<p><strong>Autodiscovery</strong>:</p>
+<p>If the fileset has autodiscovery enabled, most method calls will cause the fileset to examine its container directory for new files. New files in the container directory which are not registered members of the fileset will be added to the fileset.</p>
+<p>If the load on the program is too heavy due to constant file-set access and modification, you can toggle the autodiscovery mode using the <a class="reference internal" href="#AstroObject.file.fileset.FileSet.autodiscover" title="AstroObject.file.fileset.FileSet.autodiscover"><tt class="xref py py-attr docutils literal"><span class="pre">autodiscover</span></tt></a> attribute.</p>
+<p><strong>Closed vs. Open Filesets</strong>:
+Closed filesets are read-only filesets. If the fileset is closed, it will have a directory, but files cannot be registered or unregistered. Calling the <a class="reference internal" href="#AstroObject.file.fileset.FileSet.close" title="AstroObject.file.fileset.FileSet.close"><tt class="xref py py-meth docutils literal"><span class="pre">close()</span></tt></a> will normally close <strong>and</strong> delete the fileset, unless <tt class="docutils literal"><span class="pre">clean=False</span></tt> is passed to the close method.</p>
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.FileSet.persist">
+<tt class="descname">persist</tt><a class="reference internal" href="_modules/AstroObject/file/fileset.html#FileSet.persist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.FileSet.persist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable or disable persistance of this fileset. Must be (bool). If the fileset is initialized with <tt class="docutils literal"><span class="pre">persist=False</span></tt> (the default), then the database will not be reloaded, and will instead be overwritten.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.FileSet.autodiscover">
+<tt class="descname">autodiscover</tt><a class="reference internal" href="_modules/AstroObject/file/fileset.html#FileSet.autodiscover"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.FileSet.autodiscover" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable or disable autodiscovery of new files in this fileset. Must be (bool).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.FileSet.date">
+<tt class="descname">date</tt><a class="reference internal" href="_modules/AstroObject/file/fileset.html#FileSet.date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.FileSet.date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creation date for this fileset</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.FileSet.files">
+<tt class="descname">files</tt><a class="reference internal" href="_modules/AstroObject/file/fileset.html#FileSet.files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.FileSet.files" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of all of the files registered to this fileset.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.FileSet.directory">
+<tt class="descname">directory</tt><a class="reference internal" href="_modules/AstroObject/file/fileset.html#FileSet.directory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.FileSet.directory" title="Permalink to this definition">¶</a></dt>
+<dd><p>The directory name for this fileset. This is a read-only attribute. To change the directory a fileset is stored in, use <a class="reference internal" href="#AstroObject.file.fileset.FileSet.move" title="AstroObject.file.fileset.FileSet.move"><tt class="xref py py-meth docutils literal"><span class="pre">move()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.FileSet.open">
+<tt class="descname">open</tt><a class="reference internal" href="_modules/AstroObject/file/fileset.html#FileSet.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.FileSet.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether this fileset is open or not. Closed filesets are read-only objects, and cannot be re-opened.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.FileSet.modified">
+<tt class="descname">modified</tt><a class="reference internal" href="_modules/AstroObject/file/fileset.html#FileSet.modified"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.FileSet.modified" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of files in the fileset that have been modified since registering.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.FileSet.deleted">
+<tt class="descname">deleted</tt><a class="reference internal" href="_modules/AstroObject/file/fileset.html#FileSet.deleted"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.FileSet.deleted" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of files in the fileset have been deleted since registering.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.FileSet.active_fd">
+<tt class="descname">active_fd</tt><a class="reference internal" href="_modules/AstroObject/file/fileset.html#FileSet.active_fd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.FileSet.active_fd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of open file descriptors for this fileset. Any file descriptors that have already been closed are removed from the fileset&#8217;s registry of file descriptors.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.FileSet.add">
+<tt class="descname">add</tt><big>(</big><em>filepath</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/fileset.html#FileSet.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.FileSet.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert filepath into the fileset. Ensures that filepaths are not duplicated in the fileset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.FileSet.discard">
+<tt class="descname">discard</tt><big>(</big><em>filepath</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/fileset.html#FileSet.discard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.FileSet.discard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a filepath from the fileset. If the filepath exists, it will be deleted. This method will raise a <tt class="xref py py-exc docutils literal"><span class="pre">KeyError</span></tt> if the filepath is not registered.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.FileSet.register">
+<tt class="descname">register</tt><big>(</big><em>*filenames</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/fileset.html#FileSet.register"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.FileSet.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register filenames as a members of this fileset. Multiple filenames can be registered. They are registered by thier relative path by default.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filename</strong> (<em>string</em>) &#8211; A path to a file to be registered. The path must contain no directory, or contain only the fileset directory, or be provided as a relative path from the base of the fileset directory.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
+<li><strong>KeyError</strong> &#8211; If the file is already registered.</li>
+<li><strong>IOError</strong> &#8211; If the fileset is closed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A list of all registered files in this fileset.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.FileSet.filename">
+<tt class="descname">filename</tt><big>(</big><em>extension=None</em>, <em>prefix='tmp'</em>, <em>getfd=False</em>, <em>text=True</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/fileset.html#FileSet.filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.FileSet.filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a temporary filename which is a member of this fileset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>extension</strong> (<em>string</em>) &#8211; The temporary file&#8217;s extension (actually appears as suffix).</li>
+<li><strong>prefix</strong> (<em>string</em>) &#8211; The temporary file&#8217;s prefix. Defualts to <tt class="docutils literal"><span class="pre">tmp</span></tt>.</li>
+<li><strong>getfd</strong> (<em>bool</em>) &#8211; Whether to return an open file descriptor to this file as well as the filename.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Keywords :</th><td class="field-body"><p class="first">Keyword arguments to pass to <tt class="xref py py-func docutils literal"><span class="pre">tempfile.mkstemp()</span></tt></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Returns filename:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">Relative path filename for the temporary file.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns filename,fileobj:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first last">File descriptor for temporary file if <tt class="docutils literal"><span class="pre">getfd=True</span></tt>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.FileSet.delete">
+<tt class="descname">delete</tt><big>(</big><em>*filepaths</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/fileset.html#FileSet.delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.FileSet.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove filepaths from the fileset, and delete the underlying file. Multiple filepaths can be passed in as arguments. This method will raise a <tt class="xref py py-exc docutils literal"><span class="pre">KeyError</span></tt> if the filepath is not registered. To delete all files in the fileset, use:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fileset</span> <span class="o">=</span> <span class="n">FileSet</span><span class="p">(</span><span class="s">&quot;File&quot;</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;Data&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;file1.txt&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;file2.txt&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="o">*</span><span class="n">fileset</span><span class="o">.</span><span class="n">files</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of files in this fileset.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.FileSet.updated">
+<tt class="descname">updated</tt><big>(</big><em>*filepaths</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/fileset.html#FileSet.updated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.FileSet.updated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark the given filepaths as updated. Multiple filepaths can be passed in as arguments. This method will raise a <tt class="xref py py-exc docutils literal"><span class="pre">KeyError</span></tt> if the filepath is not registered.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of files in this fileset.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.FileSet.open_fd">
+<tt class="descname">open_fd</tt><big>(</big><em>filepath</em>, <em>*args</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/fileset.html#FileSet.open_fd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.FileSet.open_fd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a file descriptor for the given filepath. The file descriptor will be return and monitored by this fileset. If the fileset attempts to close, it will ensure that all attached file descriptors are closed. This is a safer way to get file-descriptors to use over a long period of time. Any other arguments passed to this method will be used for the call to <a class="reference internal" href="#AstroObject.file.fileset.FileSet.open" title="AstroObject.file.fileset.FileSet.open"><tt class="xref py py-func docutils literal"><span class="pre">open()</span></tt></a> as the file mode, etc.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method has not been tested with context managers yet, and should not be used as such.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.FileSet.close_fd">
+<tt class="descname">close_fd</tt><big>(</big><em>*filepaths</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/fileset.html#FileSet.close_fd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.FileSet.close_fd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close the file descriptors which are open and registered to the filepaths. Multiple file paths can be passed to this function as a series of arguments.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fileset</span> <span class="o">=</span> <span class="n">FileSet</span><span class="p">(</span><span class="s">&quot;File&quot;</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;Data&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">open_fd</span><span class="p">(</span><span class="s">&quot;file1.txt&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">open_fd</span><span class="p">(</span><span class="s">&quot;file2.txt&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">close_fd</span><span class="p">(</span><span class="s">&quot;file1.txt&quot;</span><span class="p">,</span><span class="s">&quot;file2.txt&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To close all open file descriptors in this fileset:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fileset</span> <span class="o">=</span> <span class="n">FileSet</span><span class="p">(</span><span class="s">&quot;File&quot;</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;Data&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">open_fd</span><span class="p">(</span><span class="s">&quot;file1.txt&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">open_fd</span><span class="p">(</span><span class="s">&quot;file2.txt&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">close_fd</span><span class="p">(</span><span class="o">*</span><span class="n">fileset</span><span class="o">.</span><span class="n">active_fd</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.FileSet.move">
+<tt class="descname">move</tt><big>(</big><em>base</em>, <em>check=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/fileset.html#FileSet.move"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.FileSet.move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move this fileset to a new base location. The old directory for this fileset will be removed in its entirety.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>base</strong> (<em>string</em>) &#8211; The new base directory to be used.</li>
+<li><strong>check</strong> (<em>bool</em>) &#8211; Whether to check the old directory for modifications/additions before moving.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Note that with <tt class="docutils literal"><span class="pre">check=False</span></tt>, the entire old directory will be removed. This will remove even files that are not registered to the old fileset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.FileSet.close">
+<tt class="descname">close</tt><big>(</big><em>check=True</em>, <em>clean=True</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/fileset.html#FileSet.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.FileSet.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close this fileset, rendering it as a read-only object. By default, close also deletes all registered files and the persistance database.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>check</strong> (<em>bool</em>) &#8211; Whether to ensure that all files have not been modified. Default <tt class="docutils literal"><span class="pre">True</span></tt>.</li>
+<li><strong>clean</strong> (<em>bool</em>) &#8211; Whether to delete all registered files from the system. Default <tt class="docutils literal"><span class="pre">True</span></tt>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>If you want to use this fileset as a read-only fileset, call <tt class="docutils literal"><span class="pre">fileset.close(check=False,clean=False)</span></tt>.</p>
+<p>With <tt class="docutils literal"><span class="pre">check=True</span></tt>, the close method will first ensure that there are no open file descriptors. Then it will ensure that there are no modified files. With <tt class="docutils literal"><span class="pre">check=False</span></tt>, it will close any open registered file descriptors. With <tt class="docutils literal"><span class="pre">clean=True</span></tt>, it will delete all registered files. If the directory still contains files after all registered files are removed, it will remain. If <tt class="docutils literal"><span class="pre">clean=True</span></tt> and <tt class="docutils literal"><span class="pre">check=False</span></tt>, it will delete all files in the fileset directory, regardless of whether they have been registered. Closing a fileset with <tt class="docutils literal"><span class="pre">clean=True</span></tt> will prevent that fileset from persisting.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.FileSet.clear">
+<tt class="descname">clear</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.FileSet.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is slow (creates N new iterators!) but effective.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.FileSet.pop">
+<tt class="descname">pop</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.FileSet.pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the popped value.  Raise KeyError if empty.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.FileSet.remove">
+<tt class="descname">remove</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.FileSet.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove an element. If not a member, raise a KeyError.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="tempfileset-temporary-file-set">
+<h3>14.6.2. <a class="reference internal" href="#AstroObject.file.fileset.TempFileSet" title="AstroObject.file.fileset.TempFileSet"><tt class="xref py py-class docutils literal"><span class="pre">TempFileSet</span></tt></a> – Temporary File Set<a class="headerlink" href="#tempfileset-temporary-file-set" title="Permalink to this headline">¶</a></h3>
+<p>A fileset which uses temporary directories for the fileset. Can use the system temporary file directory as the file base.</p>
+<dl class="class">
+<dt id="AstroObject.file.fileset.TempFileSet">
+<em class="property">class </em><tt class="descclassname">AstroObject.file.fileset.</tt><tt class="descname">TempFileSet</tt><big>(</big><em>base=None</em>, <em>name='tmp'</em>, <em>persist=False</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/fileset.html#TempFileSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.TempFileSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>A set of files to be monitored in a temporary directory. The set of files must all be contained in a single parent directory. The file set will monitor the registered files for changes and modifications, and will notify (using <tt class="xref py py-exc docutils literal"><span class="pre">IOError</span></tt>) the program if the fileset attempts to close with remianing modifications.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>base</strong> (<em>string</em>) &#8211; The base directory name for use with this file set. If <tt class="docutils literal"><span class="pre">None</span></tt>, will use the operating systems temporary directory.</li>
+<li><strong>name</strong> (<em>string</em>) &#8211; The name of this particular fileset. Filesets are stored in <tt class="docutils literal"><span class="pre">base/name/</span></tt></li>
+<li><strong>isopen</strong> (<em>bool</em>) &#8211; Whether to start the fileset as open. Closed filesets are read-only objects.</li>
+<li><strong>persist</strong> (<em>bool</em>) &#8211; Whether this fileset should try to persist across instantiations. Persistance is not supported in operating system temporary directories.</li>
+<li><strong>autodiscover</strong> (<em>bool</em>) &#8211; Whether this fileset should check the directory for new files automatically, and register those files.</li>
+<li><strong>timeformat</strong> (<em>string</em>) &#8211; The format string for the <tt class="xref py py-mod docutils literal"><span class="pre">datetime</span></tt> module to use when writing/reading from the database. There is no reason to need to change this default, but it is supported just in case.</li>
+<li><strong>dbfilebase</strong> (<em>string</em>) &#8211; The base name of the persistance database. By default it is <tt class="docutils literal"><span class="pre">.AOFSdb.yml</span></tt>. If this filename <em>could</em> conflict with other files you might add to the file-set, you might want to change it to a non-conflicting filename. Files should have the <tt class="docutils literal"><span class="pre">.yml,.yaml</span></tt> extension.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Persistance</strong>:</p>
+<p>Persistant filesets will remember thier state using a database file between application instances. If the fileset is supposed to persist, it will write a database file to the fileset directory. The database file records the currently known modification times for each registered file. The database file will be automatically loaded when the fielset is created, or the directory is changed (with <a class="reference internal" href="#AstroObject.file.fileset.TempFileSet.move" title="AstroObject.file.fileset.TempFileSet.move"><tt class="xref py py-meth docutils literal"><span class="pre">move()</span></tt></a>). The database will also be automatically written whenever changes occur.</p>
+<p>If the load on the program is too heavy due to constant file-set access and modification, you can toggle the persistance mode using the <a class="reference internal" href="#AstroObject.file.fileset.TempFileSet.persist" title="AstroObject.file.fileset.TempFileSet.persist"><tt class="xref py py-attr docutils literal"><span class="pre">persist</span></tt></a> attribute. The database is only ever loaded when the fileset is initialized.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Persistance is not supported when the temporary fileset is initialized with <tt class="docutils literal"><span class="pre">base=None</span></tt>, as persistance is not supported in operating system level temporary directories. This is to prevent stray temporary file directories from appearing in difficult-to-find locations.</p>
+</div>
+<p><strong>Autodiscovery</strong>:</p>
+<p>If the fileset has autodiscovery enabled, most method calls will cause the fileset to examine its container directory for new files. New files in the container directory which are not registered members of the fileset will be added to the fileset.</p>
+<p>If the load on the program is too heavy due to constant file-set access and modification, you can toggle the autodiscovery mode using the <a class="reference internal" href="#AstroObject.file.fileset.TempFileSet.autodiscover" title="AstroObject.file.fileset.TempFileSet.autodiscover"><tt class="xref py py-attr docutils literal"><span class="pre">autodiscover</span></tt></a> attribute.</p>
+<p><strong>Closed vs. Open Filesets</strong>:</p>
+<p>Closed filesets are read-only filesets. If the fileset is closed, it will have a directory, but files cannot be registered or unregistered. Calling the <a class="reference internal" href="#AstroObject.file.fileset.TempFileSet.close" title="AstroObject.file.fileset.TempFileSet.close"><tt class="xref py py-meth docutils literal"><span class="pre">close()</span></tt></a> will normally close <strong>and</strong> delete the fileset, unless <tt class="docutils literal"><span class="pre">clean=False</span></tt> is passed to the close method.</p>
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.TempFileSet.persist">
+<tt class="descname">persist</tt><a class="reference internal" href="_modules/AstroObject/file/fileset.html#TempFileSet.persist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.TempFileSet.persist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable or disable persistance of this fileset. Must be (bool). If the fileset is initialized with <tt class="docutils literal"><span class="pre">persist=False</span></tt> (the default), then the database will not be reloaded, and will instead be overwritten.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Persistance is not supported when the temporary fileset is initialized with <tt class="docutils literal"><span class="pre">base=None</span></tt>, as persistance is not supported in operating system level temporary directories. This is to prevent stray temporary file directories from appearing in difficult-to-find locations.</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.TempFileSet.active_fd">
+<tt class="descname">active_fd</tt><a class="headerlink" href="#AstroObject.file.fileset.TempFileSet.active_fd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of open file descriptors for this fileset. Any file descriptors that have already been closed are removed from the fileset&#8217;s registry of file descriptors.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.TempFileSet.add">
+<tt class="descname">add</tt><big>(</big><em>filepath</em><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.TempFileSet.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert filepath into the fileset. Ensures that filepaths are not duplicated in the fileset.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.TempFileSet.autodiscover">
+<tt class="descname">autodiscover</tt><a class="headerlink" href="#AstroObject.file.fileset.TempFileSet.autodiscover" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable or disable autodiscovery of new files in this fileset. Must be (bool).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.TempFileSet.clear">
+<tt class="descname">clear</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.TempFileSet.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is slow (creates N new iterators!) but effective.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.TempFileSet.close">
+<tt class="descname">close</tt><big>(</big><em>check=True</em>, <em>clean=True</em><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.TempFileSet.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close this fileset, rendering it as a read-only object. By default, close also deletes all registered files and the persistance database.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>check</strong> (<em>bool</em>) &#8211; Whether to ensure that all files have not been modified. Default <tt class="docutils literal"><span class="pre">True</span></tt>.</li>
+<li><strong>clean</strong> (<em>bool</em>) &#8211; Whether to delete all registered files from the system. Default <tt class="docutils literal"><span class="pre">True</span></tt>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>If you want to use this fileset as a read-only fileset, call <tt class="docutils literal"><span class="pre">fileset.close(check=False,clean=False)</span></tt>.</p>
+<p>With <tt class="docutils literal"><span class="pre">check=True</span></tt>, the close method will first ensure that there are no open file descriptors. Then it will ensure that there are no modified files. With <tt class="docutils literal"><span class="pre">check=False</span></tt>, it will close any open registered file descriptors. With <tt class="docutils literal"><span class="pre">clean=True</span></tt>, it will delete all registered files. If the directory still contains files after all registered files are removed, it will remain. If <tt class="docutils literal"><span class="pre">clean=True</span></tt> and <tt class="docutils literal"><span class="pre">check=False</span></tt>, it will delete all files in the fileset directory, regardless of whether they have been registered. Closing a fileset with <tt class="docutils literal"><span class="pre">clean=True</span></tt> will prevent that fileset from persisting.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.TempFileSet.close_fd">
+<tt class="descname">close_fd</tt><big>(</big><em>*filepaths</em><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.TempFileSet.close_fd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close the file descriptors which are open and registered to the filepaths. Multiple file paths can be passed to this function as a series of arguments.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fileset</span> <span class="o">=</span> <span class="n">FileSet</span><span class="p">(</span><span class="s">&quot;File&quot;</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;Data&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">open_fd</span><span class="p">(</span><span class="s">&quot;file1.txt&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">open_fd</span><span class="p">(</span><span class="s">&quot;file2.txt&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">close_fd</span><span class="p">(</span><span class="s">&quot;file1.txt&quot;</span><span class="p">,</span><span class="s">&quot;file2.txt&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To close all open file descriptors in this fileset:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fileset</span> <span class="o">=</span> <span class="n">FileSet</span><span class="p">(</span><span class="s">&quot;File&quot;</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;Data&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">open_fd</span><span class="p">(</span><span class="s">&quot;file1.txt&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">open_fd</span><span class="p">(</span><span class="s">&quot;file2.txt&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">close_fd</span><span class="p">(</span><span class="o">*</span><span class="n">fileset</span><span class="o">.</span><span class="n">active_fd</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.TempFileSet.date">
+<tt class="descname">date</tt><a class="headerlink" href="#AstroObject.file.fileset.TempFileSet.date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creation date for this fileset</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.TempFileSet.delete">
+<tt class="descname">delete</tt><big>(</big><em>*filepaths</em><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.TempFileSet.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove filepaths from the fileset, and delete the underlying file. Multiple filepaths can be passed in as arguments. This method will raise a <tt class="xref py py-exc docutils literal"><span class="pre">KeyError</span></tt> if the filepath is not registered. To delete all files in the fileset, use:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fileset</span> <span class="o">=</span> <span class="n">FileSet</span><span class="p">(</span><span class="s">&quot;File&quot;</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;Data&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;file1.txt&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;file2.txt&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="o">*</span><span class="n">fileset</span><span class="o">.</span><span class="n">files</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of files in this fileset.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.TempFileSet.deleted">
+<tt class="descname">deleted</tt><a class="headerlink" href="#AstroObject.file.fileset.TempFileSet.deleted" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of files in the fileset have been deleted since registering.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.TempFileSet.directory">
+<tt class="descname">directory</tt><a class="headerlink" href="#AstroObject.file.fileset.TempFileSet.directory" title="Permalink to this definition">¶</a></dt>
+<dd><p>The directory name for this fileset. This is a read-only attribute. To change the directory a fileset is stored in, use <a class="reference internal" href="#AstroObject.file.fileset.TempFileSet.move" title="AstroObject.file.fileset.TempFileSet.move"><tt class="xref py py-meth docutils literal"><span class="pre">move()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.TempFileSet.discard">
+<tt class="descname">discard</tt><big>(</big><em>filepath</em><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.TempFileSet.discard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a filepath from the fileset. If the filepath exists, it will be deleted. This method will raise a <tt class="xref py py-exc docutils literal"><span class="pre">KeyError</span></tt> if the filepath is not registered.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.TempFileSet.filename">
+<tt class="descname">filename</tt><big>(</big><em>extension=None</em>, <em>prefix='tmp'</em>, <em>getfd=False</em>, <em>text=True</em><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.TempFileSet.filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a temporary filename which is a member of this fileset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>extension</strong> (<em>string</em>) &#8211; The temporary file&#8217;s extension (actually appears as suffix).</li>
+<li><strong>prefix</strong> (<em>string</em>) &#8211; The temporary file&#8217;s prefix. Defualts to <tt class="docutils literal"><span class="pre">tmp</span></tt>.</li>
+<li><strong>getfd</strong> (<em>bool</em>) &#8211; Whether to return an open file descriptor to this file as well as the filename.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Keywords :</th><td class="field-body"><p class="first">Keyword arguments to pass to <tt class="xref py py-func docutils literal"><span class="pre">tempfile.mkstemp()</span></tt></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Returns filename:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">Relative path filename for the temporary file.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns filename,fileobj:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first last">File descriptor for temporary file if <tt class="docutils literal"><span class="pre">getfd=True</span></tt>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.TempFileSet.files">
+<tt class="descname">files</tt><a class="headerlink" href="#AstroObject.file.fileset.TempFileSet.files" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of all of the files registered to this fileset.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.TempFileSet.modified">
+<tt class="descname">modified</tt><a class="headerlink" href="#AstroObject.file.fileset.TempFileSet.modified" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of files in the fileset that have been modified since registering.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.TempFileSet.move">
+<tt class="descname">move</tt><big>(</big><em>base</em>, <em>check=False</em><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.TempFileSet.move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move this fileset to a new base location. The old directory for this fileset will be removed in its entirety.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>base</strong> (<em>string</em>) &#8211; The new base directory to be used.</li>
+<li><strong>check</strong> (<em>bool</em>) &#8211; Whether to check the old directory for modifications/additions before moving.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Note that with <tt class="docutils literal"><span class="pre">check=False</span></tt>, the entire old directory will be removed. This will remove even files that are not registered to the old fileset.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.TempFileSet.open">
+<tt class="descname">open</tt><a class="headerlink" href="#AstroObject.file.fileset.TempFileSet.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether this fileset is open or not. Closed filesets are read-only objects, and cannot be re-opened.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.TempFileSet.open_fd">
+<tt class="descname">open_fd</tt><big>(</big><em>filepath</em>, <em>*args</em><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.TempFileSet.open_fd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a file descriptor for the given filepath. The file descriptor will be return and monitored by this fileset. If the fileset attempts to close, it will ensure that all attached file descriptors are closed. This is a safer way to get file-descriptors to use over a long period of time. Any other arguments passed to this method will be used for the call to <a class="reference internal" href="#AstroObject.file.fileset.TempFileSet.open" title="AstroObject.file.fileset.TempFileSet.open"><tt class="xref py py-func docutils literal"><span class="pre">open()</span></tt></a> as the file mode, etc.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method has not been tested with context managers yet, and should not be used as such.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.TempFileSet.pop">
+<tt class="descname">pop</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.TempFileSet.pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the popped value.  Raise KeyError if empty.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.TempFileSet.register">
+<tt class="descname">register</tt><big>(</big><em>*filenames</em><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.TempFileSet.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register filenames as a members of this fileset. Multiple filenames can be registered. They are registered by thier relative path by default.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filename</strong> (<em>string</em>) &#8211; A path to a file to be registered. The path must contain no directory, or contain only the fileset directory, or be provided as a relative path from the base of the fileset directory.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
+<li><strong>KeyError</strong> &#8211; If the file is already registered.</li>
+<li><strong>IOError</strong> &#8211; If the fileset is closed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A list of all registered files in this fileset.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.TempFileSet.remove">
+<tt class="descname">remove</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.TempFileSet.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove an element. If not a member, raise a KeyError.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.TempFileSet.updated">
+<tt class="descname">updated</tt><big>(</big><em>*filepaths</em><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.TempFileSet.updated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark the given filepaths as updated. Multiple filepaths can be passed in as arguments. This method will raise a <tt class="xref py py-exc docutils literal"><span class="pre">KeyError</span></tt> if the filepath is not registered.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of files in this fileset.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="hashedfileset-hahsed-file-set">
+<h3>14.6.3. <a class="reference internal" href="#AstroObject.file.fileset.HashedFileSet" title="AstroObject.file.fileset.HashedFileSet"><tt class="xref py py-class docutils literal"><span class="pre">HashedFileSet</span></tt></a> – Hahsed File Set<a class="headerlink" href="#hashedfileset-hahsed-file-set" title="Permalink to this headline">¶</a></h3>
+<p>A fileset that uses an SHA1 hash to set the name of the directory for use. Files are saved in <tt class="docutils literal"><span class="pre">base/hash</span></tt> directories. The hash can be updated, which will move the entire fileset to a new <tt class="docutils literal"><span class="pre">base/hash</span></tt> directory location.</p>
+<dl class="class">
+<dt id="AstroObject.file.fileset.HashedFileSet">
+<em class="property">class </em><tt class="descclassname">AstroObject.file.fileset.</tt><tt class="descname">HashedFileSet</tt><big>(</big><em>base</em>, <em>hashable='AstroObject.file.fileset'</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/fileset.html#HashedFileSet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.HashedFileSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>A set of files to be monitored contained in a directory with an SHA1 hash name. The file set will monitor the registered files for changes and modifications, and will notify (using <tt class="xref py py-exc docutils literal"><span class="pre">IOError</span></tt>) the program if the fileset attempts to close with remianing modifications.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>base</strong> (<em>string</em>) &#8211; The base directory name for use with this file set.</li>
+<li><strong>hashable</strong> (<em>string</em>) &#8211; The string to be used for the SHA1 hash folder name.</li>
+<li><strong>isopen</strong> (<em>bool</em>) &#8211; Whether to start the fileset as open. Closed filesets are read-only objects.</li>
+<li><strong>persist</strong> (<em>bool</em>) &#8211; Whether this fileset should try to persist across instantiations.</li>
+<li><strong>autodiscover</strong> (<em>bool</em>) &#8211; Whether this fileset should check the directory for new files automatically, and register those files.</li>
+<li><strong>timeformat</strong> (<em>string</em>) &#8211; The format string for the <tt class="xref py py-mod docutils literal"><span class="pre">datetime</span></tt> module to use when writing/reading from the database. There is no reason to need to change this default, but it is supported just in case.</li>
+<li><strong>dbfilebase</strong> (<em>string</em>) &#8211; The base name of the persistance database. By default it is <tt class="docutils literal"><span class="pre">.AOFSdb.yml</span></tt>. If this filename <em>could</em> conflict with other files you might add to the file-set, you might want to change it to a non-conflicting filename. Files should have the <tt class="docutils literal"><span class="pre">.yml,.yaml</span></tt> extension.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Persistance</strong>:</p>
+<p>Persistant filesets will remember thier state using a database file between application instances. If the fileset is supposed to persist, it will write a database file to the fileset directory. The database file records the currently known modification times for each registered file. The database file will be automatically loaded when the fielset is created, or the directory is changed (with <a class="reference internal" href="#AstroObject.file.fileset.HashedFileSet.move" title="AstroObject.file.fileset.HashedFileSet.move"><tt class="xref py py-meth docutils literal"><span class="pre">move()</span></tt></a>). The database will also be automatically written whenever changes occur.</p>
+<p>If the load on the program is too heavy due to constant file-set access and modification, you can toggle the persistance mode using the <a class="reference internal" href="#AstroObject.file.fileset.HashedFileSet.persist" title="AstroObject.file.fileset.HashedFileSet.persist"><tt class="xref py py-attr docutils literal"><span class="pre">persist</span></tt></a> attribute. The database is only ever loaded when the fileset is initialized.</p>
+<p><strong>Autodiscovery</strong>:</p>
+<p>If the fileset has autodiscovery enabled, most method calls will cause the fileset to examine its container directory for new files. New files in the container directory which are not registered members of the fileset will be added to the fileset.</p>
+<p>If the load on the program is too heavy due to constant file-set access and modification, you can toggle the autodiscovery mode using the <a class="reference internal" href="#AstroObject.file.fileset.HashedFileSet.autodiscover" title="AstroObject.file.fileset.HashedFileSet.autodiscover"><tt class="xref py py-attr docutils literal"><span class="pre">autodiscover</span></tt></a> attribute.</p>
+<p><strong>Closed vs. Open Filesets</strong>:
+Closed filesets are read-only filesets. If the fileset is closed, it will have a directory, but files cannot be registered or unregistered. Calling the <a class="reference internal" href="#AstroObject.file.fileset.HashedFileSet.close" title="AstroObject.file.fileset.HashedFileSet.close"><tt class="xref py py-meth docutils literal"><span class="pre">close()</span></tt></a> will normally close <strong>and</strong> delete the fileset, unless <tt class="docutils literal"><span class="pre">clean=False</span></tt> is passed to the close method.</p>
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.HashedFileSet.active_fd">
+<tt class="descname">active_fd</tt><a class="headerlink" href="#AstroObject.file.fileset.HashedFileSet.active_fd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of open file descriptors for this fileset. Any file descriptors that have already been closed are removed from the fileset&#8217;s registry of file descriptors.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.HashedFileSet.add">
+<tt class="descname">add</tt><big>(</big><em>filepath</em><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.HashedFileSet.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert filepath into the fileset. Ensures that filepaths are not duplicated in the fileset.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.HashedFileSet.autodiscover">
+<tt class="descname">autodiscover</tt><a class="headerlink" href="#AstroObject.file.fileset.HashedFileSet.autodiscover" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable or disable autodiscovery of new files in this fileset. Must be (bool).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.HashedFileSet.clear">
+<tt class="descname">clear</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.HashedFileSet.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is slow (creates N new iterators!) but effective.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.HashedFileSet.close">
+<tt class="descname">close</tt><big>(</big><em>check=True</em>, <em>clean=True</em><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.HashedFileSet.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close this fileset, rendering it as a read-only object. By default, close also deletes all registered files and the persistance database.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>check</strong> (<em>bool</em>) &#8211; Whether to ensure that all files have not been modified. Default <tt class="docutils literal"><span class="pre">True</span></tt>.</li>
+<li><strong>clean</strong> (<em>bool</em>) &#8211; Whether to delete all registered files from the system. Default <tt class="docutils literal"><span class="pre">True</span></tt>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>If you want to use this fileset as a read-only fileset, call <tt class="docutils literal"><span class="pre">fileset.close(check=False,clean=False)</span></tt>.</p>
+<p>With <tt class="docutils literal"><span class="pre">check=True</span></tt>, the close method will first ensure that there are no open file descriptors. Then it will ensure that there are no modified files. With <tt class="docutils literal"><span class="pre">check=False</span></tt>, it will close any open registered file descriptors. With <tt class="docutils literal"><span class="pre">clean=True</span></tt>, it will delete all registered files. If the directory still contains files after all registered files are removed, it will remain. If <tt class="docutils literal"><span class="pre">clean=True</span></tt> and <tt class="docutils literal"><span class="pre">check=False</span></tt>, it will delete all files in the fileset directory, regardless of whether they have been registered. Closing a fileset with <tt class="docutils literal"><span class="pre">clean=True</span></tt> will prevent that fileset from persisting.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.HashedFileSet.close_fd">
+<tt class="descname">close_fd</tt><big>(</big><em>*filepaths</em><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.HashedFileSet.close_fd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close the file descriptors which are open and registered to the filepaths. Multiple file paths can be passed to this function as a series of arguments.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fileset</span> <span class="o">=</span> <span class="n">FileSet</span><span class="p">(</span><span class="s">&quot;File&quot;</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;Data&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">open_fd</span><span class="p">(</span><span class="s">&quot;file1.txt&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">open_fd</span><span class="p">(</span><span class="s">&quot;file2.txt&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">close_fd</span><span class="p">(</span><span class="s">&quot;file1.txt&quot;</span><span class="p">,</span><span class="s">&quot;file2.txt&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To close all open file descriptors in this fileset:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fileset</span> <span class="o">=</span> <span class="n">FileSet</span><span class="p">(</span><span class="s">&quot;File&quot;</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;Data&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">open_fd</span><span class="p">(</span><span class="s">&quot;file1.txt&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">open_fd</span><span class="p">(</span><span class="s">&quot;file2.txt&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">close_fd</span><span class="p">(</span><span class="o">*</span><span class="n">fileset</span><span class="o">.</span><span class="n">active_fd</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.HashedFileSet.date">
+<tt class="descname">date</tt><a class="headerlink" href="#AstroObject.file.fileset.HashedFileSet.date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creation date for this fileset</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.HashedFileSet.delete">
+<tt class="descname">delete</tt><big>(</big><em>*filepaths</em><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.HashedFileSet.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove filepaths from the fileset, and delete the underlying file. Multiple filepaths can be passed in as arguments. This method will raise a <tt class="xref py py-exc docutils literal"><span class="pre">KeyError</span></tt> if the filepath is not registered. To delete all files in the fileset, use:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">fileset</span> <span class="o">=</span> <span class="n">FileSet</span><span class="p">(</span><span class="s">&quot;File&quot;</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;Data&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;file1.txt&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;file2.txt&quot;</span><span class="p">)</span>
+<span class="n">fileset</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="o">*</span><span class="n">fileset</span><span class="o">.</span><span class="n">files</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of files in this fileset.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.HashedFileSet.deleted">
+<tt class="descname">deleted</tt><a class="headerlink" href="#AstroObject.file.fileset.HashedFileSet.deleted" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of files in the fileset have been deleted since registering.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.HashedFileSet.directory">
+<tt class="descname">directory</tt><a class="headerlink" href="#AstroObject.file.fileset.HashedFileSet.directory" title="Permalink to this definition">¶</a></dt>
+<dd><p>The directory name for this fileset. This is a read-only attribute. To change the directory a fileset is stored in, use <a class="reference internal" href="#AstroObject.file.fileset.HashedFileSet.move" title="AstroObject.file.fileset.HashedFileSet.move"><tt class="xref py py-meth docutils literal"><span class="pre">move()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.HashedFileSet.discard">
+<tt class="descname">discard</tt><big>(</big><em>filepath</em><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.HashedFileSet.discard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a filepath from the fileset. If the filepath exists, it will be deleted. This method will raise a <tt class="xref py py-exc docutils literal"><span class="pre">KeyError</span></tt> if the filepath is not registered.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.HashedFileSet.filename">
+<tt class="descname">filename</tt><big>(</big><em>extension=None</em>, <em>prefix='tmp'</em>, <em>getfd=False</em>, <em>text=True</em><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.HashedFileSet.filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a temporary filename which is a member of this fileset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>extension</strong> (<em>string</em>) &#8211; The temporary file&#8217;s extension (actually appears as suffix).</li>
+<li><strong>prefix</strong> (<em>string</em>) &#8211; The temporary file&#8217;s prefix. Defualts to <tt class="docutils literal"><span class="pre">tmp</span></tt>.</li>
+<li><strong>getfd</strong> (<em>bool</em>) &#8211; Whether to return an open file descriptor to this file as well as the filename.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Keywords :</th><td class="field-body"><p class="first">Keyword arguments to pass to <tt class="xref py py-func docutils literal"><span class="pre">tempfile.mkstemp()</span></tt></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Returns filename:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first">Relative path filename for the temporary file.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Returns filename,fileobj:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first last">File descriptor for temporary file if <tt class="docutils literal"><span class="pre">getfd=True</span></tt>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.HashedFileSet.files">
+<tt class="descname">files</tt><a class="headerlink" href="#AstroObject.file.fileset.HashedFileSet.files" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of all of the files registered to this fileset.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.HashedFileSet.modified">
+<tt class="descname">modified</tt><a class="headerlink" href="#AstroObject.file.fileset.HashedFileSet.modified" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of files in the fileset that have been modified since registering.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.HashedFileSet.open">
+<tt class="descname">open</tt><a class="headerlink" href="#AstroObject.file.fileset.HashedFileSet.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether this fileset is open or not. Closed filesets are read-only objects, and cannot be re-opened.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.HashedFileSet.open_fd">
+<tt class="descname">open_fd</tt><big>(</big><em>filepath</em>, <em>*args</em><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.HashedFileSet.open_fd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a file descriptor for the given filepath. The file descriptor will be return and monitored by this fileset. If the fileset attempts to close, it will ensure that all attached file descriptors are closed. This is a safer way to get file-descriptors to use over a long period of time. Any other arguments passed to this method will be used for the call to <a class="reference internal" href="#AstroObject.file.fileset.HashedFileSet.open" title="AstroObject.file.fileset.HashedFileSet.open"><tt class="xref py py-func docutils literal"><span class="pre">open()</span></tt></a> as the file mode, etc.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method has not been tested with context managers yet, and should not be used as such.</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.HashedFileSet.persist">
+<tt class="descname">persist</tt><a class="headerlink" href="#AstroObject.file.fileset.HashedFileSet.persist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable or disable persistance of this fileset. Must be (bool). If the fileset is initialized with <tt class="docutils literal"><span class="pre">persist=False</span></tt> (the default), then the database will not be reloaded, and will instead be overwritten.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.HashedFileSet.pop">
+<tt class="descname">pop</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.HashedFileSet.pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the popped value.  Raise KeyError if empty.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.HashedFileSet.register">
+<tt class="descname">register</tt><big>(</big><em>*filenames</em><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.HashedFileSet.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register filenames as a members of this fileset. Multiple filenames can be registered. They are registered by thier relative path by default.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filename</strong> (<em>string</em>) &#8211; A path to a file to be registered. The path must contain no directory, or contain only the fileset directory, or be provided as a relative path from the base of the fileset directory.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><ul class="first simple">
+<li><strong>KeyError</strong> &#8211; If the file is already registered.</li>
+<li><strong>IOError</strong> &#8211; If the fileset is closed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A list of all registered files in this fileset.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.HashedFileSet.remove">
+<tt class="descname">remove</tt><big>(</big><em>value</em><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.HashedFileSet.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove an element. If not a member, raise a KeyError.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.HashedFileSet.updated">
+<tt class="descname">updated</tt><big>(</big><em>*filepaths</em><big>)</big><a class="headerlink" href="#AstroObject.file.fileset.HashedFileSet.updated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mark the given filepaths as updated. Multiple filepaths can be passed in as arguments. This method will raise a <tt class="xref py py-exc docutils literal"><span class="pre">KeyError</span></tt> if the filepath is not registered.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of files in this fileset.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.file.fileset.HashedFileSet.hash">
+<tt class="descname">hash</tt><a class="reference internal" href="_modules/AstroObject/file/fileset.html#HashedFileSet.hash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.HashedFileSet.hash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the hexadecimal hash digest (the SHA1 which becomes the directory name). If set, set the hashable string, and it will update the hashhex to the new value, and move the fileset to that new location using <a class="reference internal" href="#AstroObject.file.fileset.HashedFileSet.move" title="AstroObject.file.fileset.HashedFileSet.move"><tt class="xref py py-meth docutils literal"><span class="pre">move()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.file.fileset.HashedFileSet.move">
+<tt class="descname">move</tt><big>(</big><em>base</em>, <em>check=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/file/fileset.html#HashedFileSet.move"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.file.fileset.HashedFileSet.move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move this fileset to a new base location. The old directory for this fileset will be removed in its entirety. The new location will have the hashable base added to the directory by default.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>base</strong> (<em>string</em>) &#8211; The new base directory to be used.</li>
+<li><strong>check</strong> (<em>bool</em>) &#8211; Whether to check the old directory for modifications/additions before moving.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Note that with <tt class="docutils literal"><span class="pre">check=False</span></tt>, the entire old directory will be removed. This will remove even files that are not registered to the old fileset.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
 </div>
 
 
@@ -491,9 +1341,17 @@
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">14. <tt class="docutils literal"><span class="pre">file</span></tt> - File IO</a><ul>
-<li><a class="reference internal" href="#file-fits-an-abstraction-layer-for-fits-files">14.1. <tt class="docutils literal"><span class="pre">file.fits</span></tt> - An abstraction layer for FITS Files</a></li>
-<li><a class="reference internal" href="#file-plaintext-plain-text-file-writing">14.2. <tt class="docutils literal"><span class="pre">file.plaintext</span></tt> – Plain Text File writing</a></li>
-<li><a class="reference internal" href="#file-npy-an-abstraction-layer-for-numpy-files">14.3. <tt class="docutils literal"><span class="pre">file.npy</span></tt> — An abstraction layer for <tt class="docutils literal"><span class="pre">numpy</span></tt> files</a></li>
+<li><a class="reference internal" href="#file-fits-fitsfile-an-abstraction-layer-for-fits-files">14.1. <tt class="docutils literal"><span class="pre">file.fits.FITSFile</span></tt> - An abstraction layer for FITS Files</a></li>
+<li><a class="reference internal" href="#file-plaintext-numpytextfile-plain-text-file-writing">14.2. <tt class="docutils literal"><span class="pre">file.plaintext.NumpyTextFile</span></tt> – Plain Text File writing</a></li>
+<li><a class="reference internal" href="#file-plaintext-astroobjecttextfile-plain-text-files-with-headers">14.3. <tt class="docutils literal"><span class="pre">file.plaintext.AstroObjectTextFile</span></tt> – Plain Text files with Headers</a></li>
+<li><a class="reference internal" href="#file-npy-numpyfile-an-abstraction-layer-for-numpy-files">14.4. <tt class="docutils literal"><span class="pre">file.npy.NumpyFile</span></tt> — An abstraction layer for <tt class="docutils literal"><span class="pre">numpy</span></tt> files</a></li>
+<li><a class="reference internal" href="#file-numpy-numpyzipfile-an-abstraction-for-compressed-numpy-files">14.5. <tt class="docutils literal"><span class="pre">file.numpy.NumpyZipFile</span></tt> – An abstraction for compressed <tt class="docutils literal"><span class="pre">numpy</span></tt> files</a></li>
+<li><a class="reference internal" href="#file-fileset-file-group-management">14.6. <tt class="docutils literal"><span class="pre">file.fileset</span></tt> – File Group management</a><ul>
+<li><a class="reference internal" href="#fileset-generic-fileset">14.6.1. <tt class="docutils literal"><span class="pre">FileSet</span></tt> – Generic Fileset</a></li>
+<li><a class="reference internal" href="#tempfileset-temporary-file-set">14.6.2. <tt class="docutils literal"><span class="pre">TempFileSet</span></tt> – Temporary File Set</a></li>
+<li><a class="reference internal" href="#hashedfileset-hahsed-file-set">14.6.3. <tt class="docutils literal"><span class="pre">HashedFileSet</span></tt> – Hahsed File Set</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -541,7 +1399,7 @@
         <li class="right" >
           <a href="AstroObjectLogging.html" title="13. AstroObjectLogging — Structured Configuration Logging"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5.3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>15. util — Utility functions &mdash; AstroObject 0.5.3 documentation</title>
+    <title>15. util — Utility functions &mdash; AstroObject 0.6 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5.3',
+        VERSION:     '0.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5.3 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.6 documentation" href="index.html" />
     <link rel="next" title="16. Development Plans" href="future.html" />
     <link rel="prev" title="14. file - File IO" href="file.html" /> 
   </head>
@@ -44,7 +44,7 @@
         <li class="right" >
           <a href="file.html" title="14. file - File IO"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5.3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -73,7 +73,19 @@
 <dt id="AstroObject.util.update">
 <em class="property">static </em><tt class="descclassname">util.</tt><tt class="descname">update</tt><big>(</big><em>d</em>, <em>u</em><big>)</big><a class="headerlink" href="#AstroObject.util.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>A deep update command for dictionaries.
-This is because the normal dictionary.update() command does not handle nested dictionaries.</p>
+This replaces the normal <tt class="docutils literal"><span class="pre">dict.update()</span></tt> command, which does not handle nested dictionaries.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>d</strong> &#8211; The original dictionary</li>
+<li><strong>u</strong> &#8211; The new valued dictionary</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -116,6 +128,105 @@ of the decorated function, including nose&#8217;s additional stuff
 <dt id="AstroObject.util.functions.Gaussian">
 <em class="property">static </em><tt class="descclassname">functions.</tt><tt class="descname">Gaussian</tt><big>(</big><em>x</em>, <em>mean</em>, <em>stdev</em>, <em>height</em><big>)</big><a class="headerlink" href="#AstroObject.util.functions.Gaussian" title="Permalink to this definition">¶</a></dt>
 <dd><p>Rertun a gaussian at postion x, whith mean, stdev, and height</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="AstroObject.util.functions.get_resolution">
+<em class="property">static </em><tt class="descclassname">functions.</tt><tt class="descname">get_resolution</tt><big>(</big><em>wavelengths</em>, <em>matched=True</em><big>)</big><a class="headerlink" href="#AstroObject.util.functions.get_resolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the resolution from a set of wavelengths.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>wavelengths</strong> &#8211; an array of wavelengths</li>
+<li><strong>matched</strong> (<em>bool</em>) &#8211; return resolution elements aligned with wavelengths (return n object. Otherwise, return n-1 objects, for the resolution at the center of each wavelength bin)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An array of resolutions</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="AstroObject.util.functions.conserve_resolution">
+<em class="property">static </em><tt class="descclassname">functions.</tt><tt class="descname">conserve_resolution</tt><big>(</big><em>given_resolution</em>, <em>target_resolution</em><big>)</big><a class="headerlink" href="#AstroObject.util.functions.conserve_resolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test whether a target resolution is less than a given resolution.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>given_resolution</strong> &#8211; the resolution to test against</li>
+<li><strong>target_resolution</strong> &#8211; the resolution for testing</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="AstroObject.util.functions.cap_resolution">
+<em class="property">static </em><tt class="descclassname">functions.</tt><tt class="descname">cap_resolution</tt><big>(</big><em>given_resolution</em>, <em>target_resolution</em><big>)</big><a class="headerlink" href="#AstroObject.util.functions.cap_resolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cap the target resolution so that it does not exceed the given resolution.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>given_resolution</strong> &#8211; The resolution to cap at.</li>
+<li><strong>target_resolution</strong> &#8211; The output resolution, which will be clipped at the interpolated <tt class="docutils literal"><span class="pre">given_resolution</span></tt>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="AstroObject.util.functions.get_resolution_spectrum">
+<em class="property">static </em><tt class="descclassname">functions.</tt><tt class="descname">get_resolution_spectrum</tt><big>(</big><em>minwl</em>, <em>maxwl</em>, <em>resolution</em><big>)</big><a class="headerlink" href="#AstroObject.util.functions.get_resolution_spectrum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a constant resolution spectrum.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>minwl</strong> (<em>float</em>) &#8211; The starting wavelength.</li>
+<li><strong>maxwl</strong> (<em>float</em>) &#8211; The ending wavelength.</li>
+<li><strong>resolution</strong> (<em>float</em>) &#8211; The constant resolution</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Tuple of (wavelegnths, resolutions)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="AstroObject.util.functions.Resample">
+<em class="property">static </em><tt class="descclassname">functions.</tt><tt class="descname">Resample</tt><big>(</big><em>old_wavelengths</em>, <em>flux</em>, <em>new_wavelengths</em>, <em>resolution=None</em><big>)</big><a class="headerlink" href="#AstroObject.util.functions.Resample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gaussian resampling of a spectrum.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>old_wavelengths</strong> (<em>array</em>) &#8211; The original wavelength data for resampling.</li>
+<li><strong>flux</strong> (<em>array</em>) &#8211; The flux of the spectrum at each wavelength.</li>
+<li><strong>new_wavelengths</strong> (<em>array</em>) &#8211; The requested wavelengths.</li>
+<li><strong>resolution</strong> (<em>array</em>) &#8211; The requesting resolution (only provided if the requesting resolution should not be determined by the requesting wavelengths.)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -169,7 +280,7 @@ change to tex notation.</p>
 <p>This module contains extensions to the progressbar module (&lt;<a class="reference external" href="http://pypi.python.org/pypi/progressbar/2.2">http://pypi.python.org/pypi/progressbar/2.2</a>&gt;)</p>
 <dl class="class">
 <dt id="AstroObject.util.pbar.ProgressBar">
-<em class="property">class </em><tt class="descclassname">AstroObject.util.pbar.</tt><tt class="descname">ProgressBar</tt><big>(</big><em>maxval=None</em>, <em>widgets=None</em>, <em>term_width=None</em>, <em>poll=1</em>, <em>left_justify=True</em>, <em>fd=&lt;open file '&lt;stderr&gt;'</em>, <em>mode 'w' at 0x10cec6270&gt;</em><big>)</big><a class="reference internal" href="_modules/AstroObject/util/pbar.html#ProgressBar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.util.pbar.ProgressBar" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">AstroObject.util.pbar.</tt><tt class="descname">ProgressBar</tt><big>(</big><em>maxval=None</em>, <em>widgets=None</em>, <em>term_width=None</em>, <em>poll=1</em>, <em>left_justify=True</em>, <em>fd=&lt;open file '&lt;stderr&gt;'</em>, <em>mode 'w' at 0x10faba270&gt;</em><big>)</big><a class="reference internal" href="_modules/AstroObject/util/pbar.html#ProgressBar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.util.pbar.ProgressBar" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="AstroObject.util.pbar.ProgressBar.update">
 <tt class="descname">update</tt><big>(</big><em>value=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/util/pbar.html#ProgressBar.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.util.pbar.ProgressBar.update" title="Permalink to this definition">¶</a></dt>
@@ -284,7 +395,7 @@ change to tex notation.</p>
         <li class="right" >
           <a href="file.html" title="14. file - File IO"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5.3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>3. AstroFITS – Empty FITS HDUs &mdash; AstroObject 0.5.3 documentation</title>
+    <title>3. AstroFITS – Empty FITS HDUs &mdash; AstroObject 0.6 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.5.3',
+        VERSION:     '0.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5.3 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.6 documentation" href="index.html" />
     <link rel="next" title="4. AstroImage — Image Stacks and Storage" href="AstroImage.html" />
     <link rel="prev" title="2. Installation" href="installation.html" /> 
   </head>
@@ -44,7 +44,7 @@
         <li class="right" >
           <a href="installation.html" title="2. Installation"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5.3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -57,15 +57,15 @@
 <h1>3. <tt class="xref py py-mod docutils literal"><span class="pre">AstroFITS</span></tt> – Empty FITS HDUs<a class="headerlink" href="#astrofits-empty-fits-hdus" title="Permalink to this headline">¶</a></h1>
 <p>The <a class="reference internal" href="#AstroObject.AstroFITS.FITSStack" title="AstroObject.AstroFITS.FITSStack"><tt class="xref py py-class docutils literal"><span class="pre">FITSStack</span></tt></a> <strong>stack</strong> handles <em>empty</em> FITS Header-Data-Units (or HDUs). As such, it can only contain HDUs that do not have data, and should only be used when you need to write a FITS file that has only header information and no actual data. The module does serve as a good demonstration of the use and implementation of the <a class="reference internal" href="AstroObject.html#astroobjectapi"><em>AstroObjectBase – AstroObject API</em></a>.</p>
 <p class="graphviz">
-<img src="_images/inheritance-54428b3cd71aa3c9a78aaf62289ef765fb7c177a.png" alt="Inheritance diagram of AstroObject.AstroFITS.FITSStack, AstroObject.AstroFITS.FITSFrame" usemap="#inheritance2532213fd1" class="inheritance"/>
+<img src="_images/inheritance-b0463670aa90d48e4de4fd8ea0bef1cad872c9b2.png" alt="Inheritance diagram of AstroObject.AstroFITS.FITSStack, AstroObject.AstroFITS.FITSFrame" usemap="#inheritance2532213fd1" class="inheritance"/>
 <map id="inheritance2532213fd1" name="inheritance2532213fd1">
-<area shape="rect" id="node1" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="157,103,251,129"/>
-<area shape="rect" id="node5" href="#AstroObject.AstroFITS.FITSFrame" title="FITSFrame" alt="" coords="337,153,426,178"/>
+<area shape="rect" id="node1" href="AstroObject.html#AstroObject.AstroObjectBase.NoDataMixin" title="NoDataMixin" alt="" coords="153,103,255,129"/>
+<area shape="rect" id="node9" href="#AstroObject.AstroFITS.FITSFrame" title="FITSFrame" alt="" coords="337,153,426,178"/>
 <area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="12,153,84,178"/>
-<area shape="rect" id="node6" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="139,153,269,178"/>
-<area shape="rect" id="node8" href="AstroObject.html#AstroObject.AstroObjectBase.NoDataMixin" title="NoDataMixin" alt="" coords="153,202,255,227"/>
-<area shape="rect" id="node21" href="AstroObject.html#AstroObject.AstroObjectBase.BaseStack" title="BaseStack" alt="" coords="493,54,584,79"/>
-<area shape="rect" id="node20" href="#AstroObject.AstroFITS.FITSStack" title="FITSStack" alt="" coords="633,54,717,79"/>
+<area shape="rect" id="node7" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="139,153,269,178"/>
+<area shape="rect" id="node12" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="157,202,251,227"/>
+<area shape="rect" id="node4" href="#AstroObject.AstroFITS.FITSStack" title="FITSStack" alt="" coords="633,54,717,79"/>
+<area shape="rect" id="node5" href="AstroObject.html#AstroObject.AstroObjectBase.BaseStack" title="BaseStack" alt="" coords="493,54,584,79"/>
 </map>
 </p>
 <div class="section" id="fitsstack-empty-hdu-stacks">
@@ -75,6 +75,12 @@
 <em class="property">class </em><tt class="descclassname">AstroObject.AstroFITS.</tt><tt class="descname">FITSStack</tt><big>(</big><em>dataClasses=[&lt;class 'AstroObject.AstroFITS.FITSFrame'&gt;], fileClasses=[&lt;class 'AstroObject.file.fits.FITSFile'&gt;], **kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroFITS.html#FITSStack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseStack" title="AstroObject.AstroObjectBase.BaseStack"><tt class="xref py py-class docutils literal"><span class="pre">AstroObject.AstroObjectBase.BaseStack</span></tt></a></p>
 <p>This <strong>stack</strong> tracks a number of data frames. This class is a simple subclass of <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.BaseStack</span></tt> and usese all of the special methods implemented in that base class. This object sets up an <strong>stack</strong> class which uses only the <a class="reference internal" href="#AstroObject.AstroFITS.FITSFrame" title="AstroObject.AstroFITS.FITSFrame"><tt class="xref py py-class docutils literal"><span class="pre">FITSFrame</span></tt></a> class for data. As such, it can only contain objects which are classes (or subclassses of) <a class="reference internal" href="#AstroObject.AstroFITS.FITSFrame" title="AstroObject.AstroFITS.FITSFrame"><tt class="xref py py-class docutils literal"><span class="pre">FITSFrame</span></tt></a>.</p>
+<dl class="method">
+<dt id="AstroObject.AstroFITS.FITSStack.add_data_class">
+<tt class="descname">add_data_class</tt><big>(</big><em>data_class</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.add_data_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert a data class into the list of acceptable data classes for this object.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="AstroObject.AstroFITS.FITSStack.clear">
 <tt class="descname">clear</tt><big>(</big><em>delete=False</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.clear" title="Permalink to this definition">¶</a></dt>
@@ -102,7 +108,7 @@
 
 <dl class="method">
 <dt id="AstroObject.AstroFITS.FITSStack.data">
-<tt class="descname">data</tt><big>(</big><em>framename=None</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.data" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">data</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the raw data for the current frame. This is done through the <a class="reference internal" href="#AstroObject.AstroFITS.FITSFrame.__call__" title="AstroObject.AstroFITS.FITSFrame.__call__"><tt class="xref py py-meth docutils literal"><span class="pre">FITSFrame.__call__()</span></tt></a> method, which should return basic data in as raw a form as possible. The purpose of this call is to allow the user get at the most recent piece of data as easily as possible.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -126,6 +132,12 @@
 </dd></dl>
 
 <dl class="attribute">
+<dt id="AstroObject.AstroFITS.FITSStack.data_classes">
+<tt class="descname">data_classes</tt><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.data_classes" title="Permalink to this definition">¶</a></dt>
+<dd><p>The list of acceptable data classes. This is a</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="AstroObject.AstroFITS.FITSStack.f">
 <tt class="descname">f</tt><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.f" title="Permalink to this definition">¶</a></dt>
 <dd><p>The selected FITS frame. This frame is usually the last modified frame in the system. Equivalent to:</p>
@@ -136,7 +148,7 @@
 
 <dl class="method">
 <dt id="AstroObject.AstroFITS.FITSStack.frame">
-<tt class="descname">frame</tt><big>(</big><em>framename=None</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.frame" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">frame</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.frame" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -172,16 +184,40 @@
 <dd><p>Current frame name. This will normally be the last saved <strong>frame</strong>, but there are some exceptions. First, explicitly using <a class="reference internal" href="#AstroObject.AstroFITS.FITSStack.select" title="AstroObject.AstroFITS.FITSStack.select"><tt class="xref py py-meth docutils literal"><span class="pre">select()</span></tt></a> will change the framename. Also, deleting the most recent frame will by default change the selected frame to the second oldest. Using the <a class="reference internal" href="#AstroObject.AstroFITS.FITSStack.save" title="AstroObject.AstroFITS.FITSStack.save"><tt class="xref py py-meth docutils literal"><span class="pre">save()</span></tt></a> function with <tt class="docutils literal"><span class="pre">save(data,</span> <span class="pre">select=False)</span></tt> will skip the selection of that added frame.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="classmethod">
 <dt id="AstroObject.AstroFITS.FITSStack.fromAtFile">
-<tt class="descname">fromAtFile</tt><big>(</big><em>atfile</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.fromAtFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read an atfile into this object. The name of the atfile can include a starting &#8220;&#64;&#8221; which is stripped. The file is then loaded, and each line is assumed to contain a single fully-qualified part-name.</p>
+<em class="property">classmethod </em><tt class="descname">fromAtFile</tt><big>(</big><em>filename</em>, <em>framename=None</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.fromAtFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new object create from an &#64;file. This method is a factory shortcut for <a class="reference internal" href="#AstroObject.AstroFITS.FITSStack.readAtFile" title="AstroObject.AstroFITS.FITSStack.readAtFile"><tt class="xref py py-meth docutils literal"><span class="pre">readAtFile()</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filename</strong> (<em>string</em>) &#8211; The &#64;file to be read into the object. Should be supported by <a class="reference internal" href="file.html#module-AstroObject.file" title="AstroObject.file"><tt class="xref py py-mod docutils literal"><span class="pre">file</span></tt></a>.</li>
+<li><strong>framename</strong> (<em>string</em>) &#8211; The framename to use (overrides the filename-as-framename, but not the &#8216;LABEL&#8217; FITS keyword.)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="classmethod">
 <dt id="AstroObject.AstroFITS.FITSStack.fromFile">
-<em class="property">classmethod </em><tt class="descname">fromFile</tt><big>(</big><em>filename</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.fromFile" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><tt class="descname">fromFile</tt><big>(</big><em>filename</em>, <em>framename=None</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.fromFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrun a new object created from a filename. This method is a shortcut factory for <a class="reference internal" href="#AstroObject.AstroFITS.FITSStack.read" title="AstroObject.AstroFITS.FITSStack.read"><tt class="xref py py-meth docutils literal"><span class="pre">read()</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filename</strong> (<em>string</em>) &#8211; The file to be read into the object. T</li>
+<li><strong>framename</strong> (<em>string</em>) &#8211; The framename to use (overrides the filename-as-framename, but not the &#8216;LABEL&#8217; FITS keyword.)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">BaseStack</span><span class="o">.</span><span class="n">fromFile</span><span class="p">(</span><span class="s">&quot;SomeImage.fits&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
 <span class="go">[&quot;SomeImage&quot;, &quot;SomeImage-1&quot;, &quot;SomeImage-2&quot;]</span>
@@ -191,7 +227,7 @@
 
 <dl class="method">
 <dt id="AstroObject.AstroFITS.FITSStack.keep">
-<tt class="descname">keep</tt><big>(</big><em>*framenames</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.keep" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">keep</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.keep" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes all frames except the specified frame(s) in the object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -226,19 +262,52 @@
 
 <dl class="method">
 <dt id="AstroObject.AstroFITS.FITSStack.read">
-<tt class="descname">read</tt><big>(</big><em>filename=None</em>, <em>framename=None</em>, <em>clobber=False</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.read" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">read</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>This reader takes a FITS file, and trys to render each HDU within that FITS file as a frame in this Object. As such, it might read multiple frames. This method will return a list of Frames that it read. It uses the <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> <a class="reference internal" href="#AstroObject.AstroFITS.FITSFrame.__read__" title="AstroObject.AstroFITS.FITSFrame.__read__"><tt class="xref py py-meth docutils literal"><span class="pre">FITSFrame.__read__()</span></tt></a> method to return a valid Frame object for each HDU.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filename</strong> (<em>string|stream</em>) &#8211; The file or filestream to read from. Should be supported by <a class="reference internal" href="file.html#module-AstroObject.file" title="AstroObject.file"><tt class="xref py py-mod docutils literal"><span class="pre">file</span></tt></a>.</li>
+<li><strong>framename</strong> (<em>string</em>) &#8211; The framename to use (overrides the filename-as-framename, but not the &#8216;LABEL&#8217; FITS keyword.)</li>
+<li><strong>clobber</strong> (<em>bool</em>) &#8211; Whether to overwrite existing frames. Default <tt class="docutils literal"><span class="pre">False</span></tt>.</li>
+<li><strong>select</strong> (<em>bool</em>) &#8211; Whether to make the imported frames the selected ones. Default <tt class="docutils literal"><span class="pre">True</span></tt>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">BaseStack</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&quot;SomeImage.fits&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
 <span class="go">[&quot;SomeImage&quot;, &quot;SomeImage-1&quot;, &quot;SomeImage-2&quot;]</span>
 </pre></div>
 </div>
 </dd></dl>
 
 <dl class="method">
+<dt id="AstroObject.AstroFITS.FITSStack.readAtFile">
+<tt class="descname">readAtFile</tt><big>(</big><em>atfile</em>, <em>framename=None</em>, <em>clobber=False</em>, <em>select=True</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.readAtFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read an atfile into this object. The name of the atfile can include a starting &#8220;&#64;&#8221; which is stripped. The file is then loaded, and each line is assumed to contain a single fully-qualified part-name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>atfile</strong> (<em>string</em>) &#8211; The &#64;file to read from. Filename can start with <tt class="docutils literal"><span class="pre">&#64;</span></tt> which will be stripped, automatically.</li>
+<li><strong>framename</strong> (<em>string</em>) &#8211; The framename to use (overrides the filename-as-framename, but not the &#8216;LABEL&#8217; FITS keyword.)</li>
+<li><strong>clobber</strong> (<em>bool</em>) &#8211; Whether to overwrite existing frames. Default <tt class="docutils literal"><span class="pre">False</span></tt>.</li>
+<li><strong>select</strong> (<em>bool</em>) &#8211; Whether to make the imported frames the selected ones. Default <tt class="docutils literal"><span class="pre">True</span></tt>.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="AstroObject.AstroFITS.FITSStack.remove">
-<tt class="descname">remove</tt><big>(</big><em>*framenames</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.remove" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">remove</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.remove" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes the specified frame(s) from the object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -259,7 +328,7 @@
 
 <dl class="method">
 <dt id="AstroObject.AstroFITS.FITSStack.save">
-<tt class="descname">save</tt><big>(</big><em>data</em>, <em>framename=None</em>, <em>clobber=False</em>, <em>select=True</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.save" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">save</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves the given data to this object. If the data is an instance of one of the acceptable <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> then this method will simply save the data. Otherwise, it will attempt to cast the data into one of the acceptable <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> using their <tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt> mehtod.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -288,7 +357,7 @@
 
 <dl class="method">
 <dt id="AstroObject.AstroFITS.FITSStack.select">
-<tt class="descname">select</tt><big>(</big><em>framename</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.select" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">select</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.select" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the default frame to the given framename. Normally, the default frame is the one that was last saved.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -302,22 +371,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroFITS.FITSStack.show">
-<tt class="descname">show</tt><big>(</big><em>framename=None</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.show" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the (rendered) matplotlib plot for this object. This is a quick way to view your current data frame without doing any serious plotting work. This aims for the sensible defaults philosophy, if you don&#8217;t like what you get, write a new method that uses the <a class="reference internal" href="#AstroObject.AstroFITS.FITSStack.data" title="AstroObject.AstroFITS.FITSStack.data"><tt class="xref py py-meth docutils literal"><span class="pre">data()</span></tt></a> call and plots that.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>framename</strong> (<em>string</em>) &#8211; the name of the frame to be retrieved.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
 <dt id="AstroObject.AstroFITS.FITSStack.write">
-<tt class="descname">write</tt><big>(</big><em>filename=None</em>, <em>frames=None</em>, <em>primaryFrame=None</em>, <em>clobber=False</em>, <em>singleFrame=False</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.write" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">write</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroFITS.FITSStack.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify <tt class="docutils literal"><span class="pre">frames</span></tt> then only those frames will be used. <tt class="docutils literal"><span class="pre">primaryFrame</span></tt> should be the frame of the front HDU. When not specified, the latest frame will be used. It uses the <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> <a class="reference internal" href="#AstroObject.AstroFITS.FITSFrame.__hdu__" title="AstroObject.AstroFITS.FITSFrame.__hdu__"><tt class="xref py py-meth docutils literal"><span class="pre">FITSFrame.__hdu__()</span></tt></a> method to return a valid HDU object for each Frame.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -337,6 +392,14 @@
 </tr>
 </tbody>
 </table>
+<dl class="docutils">
+<dt>::  </dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s">&quot;Test.fits&quot;</span><span class="p">)</span>
+<span class="go">(&#39;MainFrame&#39;,[&#39;OtherFrame-1&#39;,&#39;OtherFrame-2&#39;],&#39;Test.fits&#39;)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -540,7 +603,7 @@ Frames are known as Header Data Units, or HDUs when written to a FITS file.</p>
         <li class="right" >
           <a href="installation.html" title="2. Installation"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.5.3 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

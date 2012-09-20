@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AstroObject.AstroSpectra &mdash; AstroObject 0.5.3 documentation</title>
+    <title>AstroObject.AstroSpectra &mdash; AstroObject 0.6 documentation</title>
     
     <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.5.3',
+        VERSION:     '0.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5.3 documentation" href="../../index.html" />
+    <link rel="top" title="AstroObject 0.6 documentation" href="../../index.html" />
     <link rel="up" title="AstroObject" href="../AstroObject.html" /> 
   </head>
   <body>
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.5.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.6 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li>
           <li><a href="../AstroObject.html" accesskey="U">AstroObject</a> &raquo;</li> 
       </ul>
@@ -56,7 +56,7 @@
 <span class="c">#  </span>
 <span class="c">#  Created by Alexander Rudy on 2011-10-07.</span>
 <span class="c">#  Copyright 2011 Alexander Rudy. All rights reserved.</span>
-<span class="c">#  Version 0.5.3</span>
+<span class="c">#  Version 0.6.0</span>
 <span class="c"># </span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">:mod:`AstroSpectra` — Raw Spectrum Management </span>
@@ -108,7 +108,7 @@
 
 <span class="c"># Submodules from this system</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">AstroObjectLogging</span> <span class="k">as</span> <span class="n">logging</span>
-<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">getVersion</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">getVersion</span><span class="p">,</span> <span class="n">npArrayInfo</span>
 <span class="kn">from</span> <span class="nn">.util.mpl</span> <span class="kn">import</span> <span class="n">expandLim</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;SpectraMixin&quot;</span><span class="p">,</span><span class="s">&quot;SpectraFrame&quot;</span><span class="p">,</span><span class="s">&quot;SpectraStack&quot;</span><span class="p">]</span>
@@ -119,6 +119,35 @@
 
 <div class="viewcode-block" id="SpectraMixin"><a class="viewcode-back" href="../../AstroObject.html#AstroObject.AstroSpectra.SpectraMixin">[docs]</a><span class="k">class</span> <span class="nc">SpectraMixin</span><span class="p">(</span><span class="n">AstroObjectBase</span><span class="o">.</span><span class="n">Mixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Mixin to set the properties of Spectra **frames** and to provide a :meth:`~.AstroObjectBase.BaseFrame.__show__` method. Used for any spectrum **frame** which contains raw data.&quot;&quot;&quot;</span>
+    
+    <span class="n">_resolution</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">__hdu__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">primary</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns an HDU to represent this frame. If this frame is linear, (see :meth:`x_is_linear`), the output will be an HDU with just the flux, and keyword hearders which describe the wavelength.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_is_linear</span><span class="p">():</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">SpectraMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__hdu__</span><span class="p">(</span><span class="n">primary</span><span class="p">)</span>
+        <span class="n">CRVAL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">CDELT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">primary</span><span class="p">:</span>
+            <span class="n">HDU</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flux</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">HDU</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">ImageHDU</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flux</span><span class="p">)</span>
+        <span class="n">HDU</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s">&#39;CRVAL&#39;</span><span class="p">,</span><span class="n">CRVAL</span><span class="p">)</span>
+        <span class="n">HDU</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s">&#39;CDELT&#39;</span><span class="p">,</span><span class="n">CDELT</span><span class="p">)</span>
+    
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">__read__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="n">HDU</span><span class="p">,</span><span class="n">label</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read into this frame type.&quot;&quot;&quot;</span>
+        <span class="n">Object</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">SpectraMixin</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__read__</span><span class="p">(</span><span class="n">HDU</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s">&quot;CRVAL&quot;</span> <span class="ow">in</span> <span class="n">HDU</span><span class="o">.</span><span class="n">header</span> <span class="ow">and</span> <span class="s">&quot;CDELT&quot;</span> <span class="ow">in</span> <span class="n">HDU</span><span class="o">.</span><span class="n">header</span><span class="p">:</span>
+            <span class="n">CRVAL</span> <span class="o">=</span> <span class="n">HDU</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;CRVAL&#39;</span><span class="p">]</span>
+            <span class="n">CDELT</span> <span class="o">=</span> <span class="n">HDU</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;CDELT&#39;</span><span class="p">]</span>
+            <span class="n">CRMAX</span> <span class="o">=</span> <span class="n">CRVAL</span> <span class="o">+</span> <span class="n">CDELT</span> <span class="o">*</span> <span class="n">HDU</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">wavelengths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">CRVAL</span><span class="p">,</span><span class="n">CRMAX</span><span class="p">,</span><span class="n">CDELT</span><span class="p">)</span>
+            <span class="n">Object</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">Object</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">Object</span>
+        
+    
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">wavelengths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Accessor to get the wavelengths from this spectrum&quot;&quot;&quot;</span>
@@ -128,6 +157,28 @@
     <span class="k">def</span> <span class="nf">flux</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Accessor to get the flux from this spectrum&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">resolution</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Spectral resolution&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s">&#39;_resolution&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span>
+        <span class="kn">from</span> <span class="nn">.util.functions</span> <span class="kn">import</span> <span class="n">get_resolution</span>
+        <span class="k">return</span> <span class="n">get_resolution</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span><span class="p">,</span><span class="n">matched</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        
+    <span class="nd">@resolution.setter</span>
+    <span class="k">def</span> <span class="nf">resolution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">values</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the explicit resolution&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">values</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">return</span>
+        <span class="k">assert</span> <span class="n">values</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span><span class="o">.</span><span class="n">shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resolution</span> <span class="o">=</span> <span class="n">values</span>
+
+    
+    <span class="k">def</span> <span class="nf">__info__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return information about this spectrum.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">npArrayInfo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span><span class="p">,</span><span class="s">u&quot;̵λ&quot;</span><span class="p">),</span> <span class="n">npArrayInfo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flux</span><span class="p">,</span><span class="s">u&quot;flux&quot;</span><span class="p">),</span> <span class="n">npArrayInfo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resolution</span><span class="p">,</span><span class="s">u&quot;R&quot;</span><span class="p">)</span> <span class="p">]</span>
     
     <span class="k">def</span> <span class="nf">__show__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plots the image in this frame using matplotlib&#39;s ``imshow`` function. The color map is set to an inverted binary, as is often useful when looking at astronomical images. The figure object is returned, and can be manipulated further.</span>
@@ -143,8 +194,49 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="n">expandLim</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">()))</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s">&quot;sci&quot;</span><span class="p">,</span><span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+     
+    <span class="k">def</span> <span class="nf">dx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;x-axis spacing (usually wavelengths, but could be energy etc.)&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">dlogx</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logbase</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;x-axis logarithmix spacing.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">logbase</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">x_is_linear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Whether the x-axis is approximately linear&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dx</span><span class="p">())</span> <span class="o">&lt;</span> <span class="n">tol</span>
+        
+    <span class="k">def</span> <span class="nf">x_is_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logbase</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Whether the x-axis is approximately logarithmic&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dlogx</span><span class="p">(</span><span class="n">logbase</span> <span class="o">=</span> <span class="n">logbase</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">tol</span>
+        
+    <span class="k">def</span> <span class="nf">linearize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strict</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Linearize this spectrum&quot;&quot;&quot;</span>
+        <span class="n">new_wavelengths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span><span class="p">),</span><span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+        <span class="kn">from</span> <span class="nn">.util.functions</span> <span class="kn">import</span> <span class="n">get_resolution</span><span class="p">,</span> <span class="n">Resample</span><span class="p">,</span> <span class="n">cap_resolution</span><span class="p">,</span> <span class="n">conserve_resolution</span>
+        <span class="n">new_resolutions</span> <span class="o">=</span> <span class="n">get_resolution</span><span class="p">(</span><span class="n">new_wavelengths</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">strict</span><span class="p">:</span>
+            <span class="n">new_resolutions</span> <span class="o">=</span> <span class="n">cap_resolution</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resolution</span><span class="p">,</span><span class="n">new_resolutions</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">strict</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">conserve_resolution</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resolution</span><span class="p">,</span><span class="n">new_resolutions</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Resolution not conserved!&quot;</span><span class="p">)</span>
+        <span class="n">new_flux</span> <span class="o">=</span> <span class="n">Resample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">flux</span><span class="p">,</span><span class="n">new_wavelengths</span><span class="p">,</span><span class="n">new_resolutions</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">new_wavelengths</span><span class="p">,</span><span class="n">new_flux</span><span class="p">))</span>
+        
+    <span class="k">def</span> <span class="nf">logarize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strict</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Apply a logarithmic scale to this spectrum&quot;&quot;&quot;</span>
+        <span class="n">new_wavelengths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span><span class="p">)),</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span><span class="p">)),</span><span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+        <span class="kn">from</span> <span class="nn">.util.functions</span> <span class="kn">import</span> <span class="n">get_resolution</span><span class="p">,</span> <span class="n">Resample</span><span class="p">,</span> <span class="n">cap_resolution</span><span class="p">,</span> <span class="n">conserve_resolution</span>
+        <span class="n">new_resolutions</span> <span class="o">=</span> <span class="n">get_resolution</span><span class="p">(</span><span class="n">new_wavelengths</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">strict</span><span class="p">:</span>
+            <span class="n">new_resolutions</span> <span class="o">=</span> <span class="n">cap_resolution</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resolution</span><span class="p">,</span><span class="n">new_resolutions</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">strict</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">conserve_resolution</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resolution</span><span class="p">,</span><span class="n">new_resolutions</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Resolution not conserved!&quot;</span><span class="p">)</span>
+        <span class="n">new_flux</span> <span class="o">=</span> <span class="n">Resample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wavelengths</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">flux</span><span class="p">,</span><span class="n">new_wavelengths</span><span class="p">,</span><span class="n">new_resolutions</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">new_wavelengths</span><span class="p">,</span><span class="n">new_flux</span><span class="p">))</span>
+    
 </div>
-<div class="viewcode-block" id="SpectraFrame"><a class="viewcode-back" href="../../AstroSpectra.html#AstroObject.AstroSpectra.SpectraFrame">[docs]</a><span class="k">class</span> <span class="nc">SpectraFrame</span><span class="p">(</span><span class="n">AstroObjectBase</span><span class="o">.</span><span class="n">HDUHeaderMixin</span><span class="p">,</span><span class="n">SpectraMixin</span><span class="p">,</span><span class="n">AstroObjectBase</span><span class="o">.</span><span class="n">BaseFrame</span><span class="p">):</span>
+<div class="viewcode-block" id="SpectraFrame"><a class="viewcode-back" href="../../AstroSpectra.html#AstroObject.AstroSpectra.SpectraFrame">[docs]</a><span class="k">class</span> <span class="nc">SpectraFrame</span><span class="p">(</span><span class="n">SpectraMixin</span><span class="p">,</span><span class="n">AstroObjectBase</span><span class="o">.</span><span class="n">HDUHeaderMixin</span><span class="p">,</span><span class="n">AstroObjectBase</span><span class="o">.</span><span class="n">BaseFrame</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A single frame of a spectrum. This will save the spectrum as an image, with the first row having flux, and second row having the wavelength equivalent. Further rows can accomodate further spectral frames when stored to a FITS image. However, the frame only accepts a single spectrum.&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span> <span class="c"># The image data</span>
@@ -290,7 +382,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">AstroObject 0.5.3 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">AstroObject 0.6 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li>
           <li><a href="../AstroObject.html" >AstroObject</a> &raquo;</li> 
       </ul>

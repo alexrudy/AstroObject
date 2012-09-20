@@ -1,0 +1,705 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>AstroObject.file.fileset &mdash; AstroObject 0.6 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.6',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="AstroObject 0.6 documentation" href="../../../index.html" />
+    <link rel="up" title="AstroObject.file" href="../file.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">AstroObject 0.6 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../../AstroObject.html" >AstroObject</a> &raquo;</li>
+          <li><a href="../file.html" accesskey="U">AstroObject.file</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for AstroObject.file.fileset</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c"># </span>
+<span class="c">#  fileset.py</span>
+<span class="c">#  AstroObject</span>
+<span class="c">#  </span>
+<span class="c">#  Created by Alexander Rudy on 2012-05-17.</span>
+<span class="c">#  Copyright 2012 Alexander Rudy. All rights reserved.</span>
+<span class="c"># </span>
+<span class="sd">u&quot;&quot;&quot;</span>
+<span class="sd">:mod:`file.fileset` – File Group management</span>
+<span class="sd">-------------------------------------------</span>
+<span class="sd">File sets are groups of monitored files, held in a single directory. They can return a list of modified files in the directory, as well as files that have gone missing. File sets can either monitor only files which are explicitly registered with the fileset, or can autodiscover new files. Filesets can clean themselves up, deleting all member files in the fileset.</span>
+
+
+<span class="sd">:class:`FileSet` – Generic Fileset</span>
+<span class="sd">**********************************</span>
+<span class="sd">A fileset which simply uses a ``base/name`` explicit directory structure.</span>
+
+<span class="sd">.. autoclass::</span>
+<span class="sd">    AstroObject.file.fileset.FileSet</span>
+<span class="sd">    :members:</span>
+<span class="sd">    :inherited-members:</span>
+<span class="sd">    </span>
+<span class="sd">    </span>
+<span class="sd">:class:`TempFileSet` – Temporary File Set</span>
+<span class="sd">*****************************************</span>
+<span class="sd">A fileset which uses temporary directories for the fileset. Can use the system temporary file directory as the file base.</span>
+
+<span class="sd">.. autoclass::</span>
+<span class="sd">    AstroObject.file.fileset.TempFileSet</span>
+<span class="sd">    :members:</span>
+<span class="sd">    :inherited-members:</span>
+
+
+<span class="sd">:class:`HashedFileSet` – Hahsed File Set</span>
+<span class="sd">****************************************</span>
+<span class="sd">A fileset that uses an SHA1 hash to set the name of the directory for use. Files are saved in ``base/hash`` directories. The hash can be updated, which will move the entire fileset to a new ``base/hash`` directory location.</span>
+
+<span class="sd">.. autoclass::</span>
+<span class="sd">    AstroObject.file.fileset.HashedFileSet</span>
+<span class="sd">    :members:</span>
+<span class="sd">    :inherited-members:</span>
+
+<span class="sd">    </span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c"># Standard Python Modules</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+
+<span class="kn">from</span> <span class="nn">..AstroConfig</span> <span class="kn">import</span> <span class="n">Configuration</span>
+
+<span class="n">__log__</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FileSet"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.FileSet">[docs]</a><span class="k">class</span> <span class="nc">FileSet</span><span class="p">(</span><span class="n">collections</span><span class="o">.</span><span class="n">MutableSet</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A set of files to be monitored. The set of files must all be contained in a single parent directory. The file set will monitor the registered files for changes and modifications, and will notify (using :exc:`IOError`) the program if the fileset attempts to close with remianing modifications.</span>
+<span class="sd">    </span>
+<span class="sd">    :param string base: The base directory name for use with this file set.</span>
+<span class="sd">    :param string name: The name of this particular fileset. Filesets are stored in ``base/name/``</span>
+<span class="sd">    :param bool isopen: Whether to start the fileset as open. Closed filesets are read-only objects.</span>
+<span class="sd">    :param bool persist: Whether this fileset should try to persist across instantiations.</span>
+<span class="sd">    :param bool autodiscover: Whether this fileset should check the directory for new files automatically, and register those files.</span>
+<span class="sd">    :keyword string timeformat: The format string for the :mod:`datetime` module to use when writing/reading from the database. There is no reason to need to change this default, but it is supported just in case.</span>
+<span class="sd">    :keyword string dbfilebase: The base name of the persistance database. By default it is ``.AOFSdb.yml``. If this filename *could* conflict with other files you might add to the file-set, you might want to change it to a non-conflicting filename. Files should have the ``.yml,.yaml`` extension.</span>
+<span class="sd">    </span>
+<span class="sd">    **Persistance**:</span>
+<span class="sd">    </span>
+<span class="sd">    Persistant filesets will remember thier state using a database file between application instances. If the fileset is supposed to persist, it will write a database file to the fileset directory. The database file records the currently known modification times for each registered file. The database file will be automatically loaded when the fielset is created, or the directory is changed (with :meth:`move`). The database will also be automatically written whenever changes occur. </span>
+<span class="sd">    </span>
+<span class="sd">    If the load on the program is too heavy due to constant file-set access and modification, you can toggle the persistance mode using the :attr:`persist` attribute. The database is only ever loaded when the fileset is initialized. </span>
+<span class="sd">    </span>
+<span class="sd">    **Autodiscovery**:</span>
+<span class="sd">    </span>
+<span class="sd">    If the fileset has autodiscovery enabled, most method calls will cause the fileset to examine its container directory for new files. New files in the container directory which are not registered members of the fileset will be added to the fileset.</span>
+<span class="sd">    </span>
+<span class="sd">    If the load on the program is too heavy due to constant file-set access and modification, you can toggle the autodiscovery mode using the :attr:`autodiscover` attribute.</span>
+<span class="sd">    </span>
+<span class="sd">    **Closed vs. Open Filesets**:</span>
+<span class="sd">    Closed filesets are read-only filesets. If the fileset is closed, it will have a directory, but files cannot be registered or unregistered. Calling the :meth:`close` will normally close **and** delete the fileset, unless ``clean=False`` is passed to the close method. </span>
+<span class="sd">    &quot;&quot;&quot;</span> 
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">isopen</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">persist</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">autodiscover</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">timeformat</span><span class="o">=</span><span class="s">&quot;%Y-%m-</span><span class="si">%d</span><span class="s">T%H:%M:%S&quot;</span><span class="p">,</span> <span class="n">dbfilebase</span><span class="o">=</span><span class="s">&quot;.AOFSdb.yml&quot;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FileSet</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="c"># Start both mode variables as false for initialization process.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_date_key</span> <span class="o">=</span> <span class="s">&quot;==DATE&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_open_key</span> <span class="o">=</span> <span class="s">&quot;==OPEN&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_persistance_value</span> <span class="o">=</span> <span class="n">persist</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_autodiscover_value</span> <span class="o">=</span> <span class="n">autodiscover</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timeformat</span> <span class="o">=</span> <span class="n">timeformat</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dbfilebase</span> <span class="o">=</span> <span class="n">dbfilebase</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_createtime</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_files</span> <span class="o">=</span> <span class="n">Configuration</span><span class="p">({})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">-db&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_open_files</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_autodiscovery_in_progress</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_directory</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base</span><span class="p">,</span><span class="n">name</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reload</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_open</span> <span class="o">=</span> <span class="n">isopen</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="o">=</span> <span class="n">__log__</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;File Set created with directory </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_directory</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">persist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="c">#: = False</span>
+        <span class="sd">&quot;&quot;&quot;Enable or disable persistance of this fileset. Must be (bool). If the fileset is initialized with ``persist=False`` (the default), then the database will not be reloaded, and will instead be overwritten.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_persistance_value</span>
+        
+    <span class="nd">@persist.setter</span>
+<div class="viewcode-block" id="FileSet.persist"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.FileSet.persist">[docs]</a>    <span class="k">def</span> <span class="nf">persist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_persistance_value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_persist</span><span class="p">()</span>
+    </div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">autodiscover</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="c">#: = True</span>
+        <span class="sd">&quot;&quot;&quot;Enable or disable autodiscovery of new files in this fileset. Must be (bool).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_autodiscover_value</span>
+        
+    <span class="nd">@autodiscover.setter</span>
+<div class="viewcode-block" id="FileSet.autodiscover"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.FileSet.autodiscover">[docs]</a>    <span class="k">def</span> <span class="nf">autodiscover</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_autodiscover_value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_autodiscover_files</span><span class="p">()</span>
+    </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FileSet.date"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.FileSet.date">[docs]</a>    <span class="k">def</span> <span class="nf">date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creation date for this fileset&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_createtime</span>
+    </div>
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Number of files contained in this fileset.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filepath</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check whether a filepath is contained in this fileset.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bpath</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span>
+        
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns an iterable over all of the filepaths which are registered in this fileset.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Enter this fileset&#39;s contextual mode. Contextual mode ensures that the fileset is closed on departure. When using a fileset in contextual mode, changes to the files are monitored, but the fileset does not ensure all changes have been registered when the fileset closes. The fileset is guaranteed to close in the end.</span>
+<span class="sd">        </span>
+<span class="sd">        ::</span>
+<span class="sd">            with FileSet(&quot;Files&quot;, name=&quot;Data&quot;) as Files:</span>
+<span class="sd">                Files.register(&quot;Somefile.dat&quot;)</span>
+<span class="sd">                fd = Files.open_fd(&quot;Somefile.dat&quot;,&quot;w&quot;)</span>
+<span class="sd">                fd.write(&quot;Some Text In the File&quot;)</span>
+<span class="sd">                Files.close_fd(&quot;Somefile.dat&quot;)</span>
+<span class="sd">                Files.update(&quot;Somefile.dat&quot;)</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span>
+        
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Leave the fileset contextual state. Contextual mode ensures that the fileset is closed on departure. When using a fileset in contextual mode, changes to the files are monitored, but the fileset does not ensure all changes have been registered when the fileset closes. The fileset is guaranteed to close in the end. See :meth:`__enter__``.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">check</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_persist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">isopen</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Write the persistance database to the database file in the fileset directory.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">persist</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_date_key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_createtime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_timeformat</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_open_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">isopen</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dbfilename</span><span class="p">)</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_date_key</span><span class="p">]</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_open_key</span><span class="p">]</span>
+        
+    <span class="k">def</span> <span class="nf">_reload</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reload the persistance databse to this object. </span>
+<span class="sd">        </span>
+<span class="sd">        This method should only be called when the fileset is first instantiated. This is because the loading overwrites existing data about modification times, and will not preserve any calls to :meth:`update` made after object initialization. The reload function will preserve the registration of new files into the fileset.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns bool: Whether the persistance database was reloaded successfully.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dbfilename</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">persist</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dbfilename</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_createtime</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_date_key</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_createtime</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_timeformat</span><span class="p">)),</span><span class="bp">self</span><span class="o">.</span><span class="n">_timeformat</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_open_key</span><span class="p">,</span><span class="bp">False</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;Fileset is already open, not opening co-incident file sets: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_directory</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dbfilename</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="bp">False</span>
+        
+    <span class="k">def</span> <span class="nf">_get_cpath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the cache object-like filepath for the requested filepath. This helps ensure that calls to register, etc. will not fail.&quot;&quot;&quot;</span>
+        <span class="n">fbase</span><span class="p">,</span> <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fbase</span> <span class="o">==</span> <span class="s">&quot;&quot;</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">fbase</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">fname</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span><span class="n">filename</span><span class="p">))</span>
+        
+    <span class="k">def</span> <span class="nf">_get_bpath</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Extracts the base directory component from a filename.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">filename</span>
+        
+    <span class="k">def</span> <span class="nf">_set_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">base</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the directory for this fielset from the given base name. This method ensures that the database filename attribute remains consistent.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">base</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">base</span><span class="p">)</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">base</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">)</span>    
+        <span class="bp">self</span><span class="o">.</span><span class="n">_directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dbfilename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_dbfilebase</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reload</span><span class="p">()</span>
+        
+    <span class="k">def</span> <span class="nf">_autodiscover_files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Automatically discover files that are in this fileset using :func:`os.walk`. Automatically discovered files are registered with the fileset.</span>
+<span class="sd">        </span>
+<span class="sd">        This method automatically short-circuits if the fileset is closed, or if autodiscovery is not enabled. It also automatically prevents recursive calls to itself.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">autodiscover</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">open</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_autodiscovery_in_progress</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_autodiscovery_in_progress</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">filepath</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+                <span class="n">fullpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span><span class="n">filepath</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">fullpath</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_cpath</span><span class="p">(</span><span class="n">fullpath</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dbfilename</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">fullpath</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_autodiscovery_in_progress</span> <span class="o">=</span> <span class="bp">False</span>
+    
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FileSet.files"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.FileSet.files">[docs]</a>    <span class="k">def</span> <span class="nf">files</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A list of all of the files registered to this fileset.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_autodiscover_files</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FileSet.directory"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.FileSet.directory">[docs]</a>    <span class="k">def</span> <span class="nf">directory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The directory name for this fileset. This is a read-only attribute. To change the directory a fileset is stored in, use :meth:`move`.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_directory</span>
+    </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FileSet.open"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.FileSet.open">[docs]</a>    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Whether this fileset is open or not. Closed filesets are read-only objects, and cannot be re-opened.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open</span>
+        </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FileSet.modified"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.FileSet.modified">[docs]</a>    <span class="k">def</span> <span class="nf">modified</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A list of files in the fileset that have been modified since registering.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_autodiscover_files</span><span class="p">()</span>
+        <span class="n">modified</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">filekey</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">:</span>
+            <span class="n">filepath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_cpath</span><span class="p">(</span><span class="n">filekey</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">filepath</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dbfilename</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span><span class="o">.</span><span class="n">st_mtime</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">[</span><span class="n">filekey</span><span class="p">]:</span>
+                    <span class="n">modified</span> <span class="o">+=</span> <span class="p">[</span><span class="n">filekey</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">modified</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_persist</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">modified</span>
+        </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FileSet.deleted"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.FileSet.deleted">[docs]</a>    <span class="k">def</span> <span class="nf">deleted</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A list of files in the fileset have been deleted since registering.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_autodiscover_files</span><span class="p">()</span>
+        <span class="n">deleted</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">filekey</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">:</span>
+            <span class="n">filepath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_cpath</span><span class="p">(</span><span class="n">filekey</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+                <span class="n">deleted</span> <span class="o">+=</span> <span class="p">[</span><span class="n">filekey</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">[</span><span class="n">filekey</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">deleted</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_persist</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">deleted</span>
+    </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="FileSet.active_fd"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.FileSet.active_fd">[docs]</a>    <span class="k">def</span> <span class="nf">active_fd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a list of open file descriptors for this fileset. Any file descriptors that have already been closed are removed from the fileset&#39;s registry of file descriptors.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_files</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_files</span><span class="p">[</span><span class="n">fn</span><span class="p">]</span><span class="o">.</span><span class="n">closed</span><span class="p">:</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_files</span><span class="p">[</span><span class="n">fn</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_files</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        </div>
+<div class="viewcode-block" id="FileSet.add"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.FileSet.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filepath</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Insert filepath into the fileset. Ensures that filepaths are not duplicated in the fileset.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">return</span>
+        </div>
+<div class="viewcode-block" id="FileSet.discard"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.FileSet.discard">[docs]</a>    <span class="k">def</span> <span class="nf">discard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filepath</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove a filepath from the fileset. If the filepath exists, it will be deleted. This method will raise a :exc:`KeyError` if the filepath is not registered.&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">return</span>
+        
+
+                </div>
+<div class="viewcode-block" id="FileSet.register"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.FileSet.register">[docs]</a>    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">filenames</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Register filenames as a members of this fileset. Multiple filenames can be registered. They are registered by thier relative path by default.</span>
+<span class="sd">        </span>
+<span class="sd">        :param string filename: A path to a file to be registered. The path must contain no directory, or contain only the fileset directory, or be provided as a relative path from the base of the fileset directory.</span>
+<span class="sd">        :raises KeyError: If the file is already registered.</span>
+<span class="sd">        :raises IOError: If the fileset is closed.</span>
+<span class="sd">        :returns: A list of all registered files in this fileset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;File set is not open!&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
+            <span class="n">fullpath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_cpath</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">filekey</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bpath</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">filekey</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&quot;Filepath </span><span class="si">%s</span><span class="s"> already exists in fileset.&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">fullpath</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dbfilename</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&quot;Cannot add DB to database.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fullpath</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">[</span><span class="n">filekey</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">fullpath</span><span class="p">)</span><span class="o">.</span><span class="n">st_mtime</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Registered </span><span class="si">%s</span><span class="s"> as existing file&quot;</span> <span class="o">%</span> <span class="n">filekey</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">[</span><span class="n">filekey</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Registered </span><span class="si">%s</span><span class="s"> as non-existant file&quot;</span> <span class="o">%</span> <span class="n">filekey</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_persist</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    </div>
+<div class="viewcode-block" id="FileSet.filename"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.FileSet.filename">[docs]</a>    <span class="k">def</span> <span class="nf">filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">extension</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="s">&#39;tmp&#39;</span><span class="p">,</span><span class="n">getfd</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">text</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a temporary filename which is a member of this fileset.</span>
+<span class="sd">        </span>
+<span class="sd">        :param string extension: The temporary file&#39;s extension (actually appears as suffix).</span>
+<span class="sd">        :param string prefix: The temporary file&#39;s prefix. Defualts to ``tmp``.</span>
+<span class="sd">        :param bool getfd: Whether to return an open file descriptor to this file as well as the filename.</span>
+<span class="sd">        :keywords: Keyword arguments to pass to :func:`tempfile.mkstemp`</span>
+<span class="sd">        :returns filename: Relative path filename for the temporary file.</span>
+<span class="sd">        :returns filename,fileobj: File descriptor for temporary file if ``getfd=True``.</span>
+<span class="sd">        </span>
+<span class="sd">         &quot;&quot;&quot;</span>
+        <span class="n">fileobj</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkstemp</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="n">extension</span><span class="p">,</span><span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span><span class="nb">dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span><span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">)</span>
+        <span class="n">filekey</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bpath</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">getfd</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_open_files</span><span class="p">[</span><span class="n">filekey</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fdopen</span><span class="p">(</span><span class="n">fileobj</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">filename</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_files</span><span class="p">[</span><span class="n">filekey</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>    
+            <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fileobj</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">filename</span>
+    </div>
+<div class="viewcode-block" id="FileSet.delete"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.FileSet.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">filepaths</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove filepaths from the fileset, and delete the underlying file. Multiple filepaths can be passed in as arguments. This method will raise a :exc:`KeyError` if the filepath is not registered. To delete all files in the fileset, use::</span>
+<span class="sd">            </span>
+<span class="sd">            fileset = FileSet(&quot;File&quot;,name=&quot;Data&quot;)</span>
+<span class="sd">            fileset.add(&quot;file1.txt&quot;)</span>
+<span class="sd">            fileset.add(&quot;file2.txt&quot;)</span>
+<span class="sd">            fileset.delete(*fileset.files)</span>
+<span class="sd">            </span>
+<span class="sd">        </span>
+<span class="sd">        :returns: A list of files in this fileset.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;File set is not open!&quot;</span><span class="p">)</span>        
+        <span class="k">for</span> <span class="n">filepath</span> <span class="ow">in</span> <span class="n">filepaths</span><span class="p">:</span>
+            <span class="n">filepath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_cpath</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+            <span class="n">filekey</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bpath</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">filepath</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_files</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">close_fd</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">[</span><span class="n">filekey</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_persist</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        </div>
+<div class="viewcode-block" id="FileSet.updated"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.FileSet.updated">[docs]</a>    <span class="k">def</span> <span class="nf">updated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">filepaths</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Mark the given filepaths as updated. Multiple filepaths can be passed in as arguments. This method will raise a :exc:`KeyError` if the filepath is not registered.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: A list of files in this fileset.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;File set is not open!&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">filepath</span> <span class="ow">in</span> <span class="n">filepaths</span><span class="p">:</span>
+            <span class="n">filepath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_cpath</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+            <span class="n">filekey</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bpath</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">filepath</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s">&quot;Cannot update unregistered file!&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">[</span><span class="n">filekey</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">stat</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span><span class="o">.</span><span class="n">st_mtime</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="p">[</span><span class="n">filekey</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_persist</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_files</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    
+    </div>
+<div class="viewcode-block" id="FileSet.open_fd"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.FileSet.open_fd">[docs]</a>    <span class="k">def</span> <span class="nf">open_fd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">filepath</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a file descriptor for the given filepath. The file descriptor will be return and monitored by this fileset. If the fileset attempts to close, it will ensure that all attached file descriptors are closed. This is a safer way to get file-descriptors to use over a long period of time. Any other arguments passed to this method will be used for the call to :func:`open` as the file mode, etc.</span>
+<span class="sd">        </span>
+<span class="sd">        .. Note:: This method has not been tested with context managers yet, and should not be used as such.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;File set is not open!&quot;</span><span class="p">)</span>
+        <span class="n">filepath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_cpath</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="n">filekey</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bpath</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">filepath</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_files</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_open_files</span><span class="p">[</span><span class="n">filekey</span><span class="p">]</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;File descriptor already open, not adjusting mode etc.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_files</span><span class="p">[</span><span class="n">filekey</span><span class="p">]</span>
+        </div>
+<div class="viewcode-block" id="FileSet.close_fd"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.FileSet.close_fd">[docs]</a>    <span class="k">def</span> <span class="nf">close_fd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">filepaths</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Close the file descriptors which are open and registered to the filepaths. Multiple file paths can be passed to this function as a series of arguments.</span>
+<span class="sd">        </span>
+<span class="sd">        ::  </span>
+<span class="sd">            </span>
+<span class="sd">            fileset = FileSet(&quot;File&quot;,name=&quot;Data&quot;)</span>
+<span class="sd">            fileset.open_fd(&quot;file1.txt&quot;)</span>
+<span class="sd">            fileset.open_fd(&quot;file2.txt&quot;)</span>
+<span class="sd">            fileset.close_fd(&quot;file1.txt&quot;,&quot;file2.txt&quot;)</span>
+<span class="sd">            </span>
+<span class="sd">        </span>
+<span class="sd">        To close all open file descriptors in this fileset::</span>
+<span class="sd">            </span>
+<span class="sd">            fileset = FileSet(&quot;File&quot;,name=&quot;Data&quot;)</span>
+<span class="sd">            fileset.open_fd(&quot;file1.txt&quot;)</span>
+<span class="sd">            fileset.open_fd(&quot;file2.txt&quot;)</span>
+<span class="sd">            fileset.close_fd(*fileset.active_fd)</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">filepath</span> <span class="ow">in</span> <span class="n">filepaths</span><span class="p">:</span>
+            <span class="n">filepath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_cpath</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+            <span class="n">filekey</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bpath</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_files</span><span class="p">[</span><span class="n">filekey</span><span class="p">]</span><span class="o">.</span><span class="n">closed</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_open_files</span><span class="p">[</span><span class="n">filekey</span><span class="p">]</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_files</span><span class="p">[</span><span class="n">filekey</span><span class="p">]</span>
+        </div>
+<div class="viewcode-block" id="FileSet.move"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.FileSet.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">base</span><span class="p">,</span><span class="n">check</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Move this fileset to a new base location. The old directory for this fileset will be removed in its entirety.</span>
+<span class="sd">        </span>
+<span class="sd">        :param string base: The new base directory to be used.</span>
+<span class="sd">        :param bool check: Whether to check the old directory for modifications/additions before moving.</span>
+<span class="sd">        </span>
+<span class="sd">        Note that with ``check=False``, the entire old directory will be removed. This will remove even files that are not registered to the old fileset.&quot;&quot;&quot;</span>
+        <span class="n">persist</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">persist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">persist</span><span class="p">,</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_persist</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">base</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">base</span><span class="p">)</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">base</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">filekey</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_cpath</span><span class="p">(</span><span class="n">filekey</span><span class="p">)</span>
+            <span class="n">newfilename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base</span><span class="p">,</span><span class="n">filekey</span><span class="p">)</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">newfilename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">check</span> <span class="o">=</span> <span class="n">check</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_directory</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_open</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reload</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">persist</span> <span class="o">=</span> <span class="n">persist</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_persist</span><span class="p">()</span>
+    
+        </div>
+<div class="viewcode-block" id="FileSet.close"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.FileSet.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">clean</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Close this fileset, rendering it as a read-only object. By default, close also deletes all registered files and the persistance database.</span>
+<span class="sd">        </span>
+<span class="sd">        :param bool check: Whether to ensure that all files have not been modified. Default ``True``.</span>
+<span class="sd">        :param bool clean: Whether to delete all registered files from the system. Default ``True``.</span>
+<span class="sd">        </span>
+<span class="sd">        If you want to use this fileset as a read-only fileset, call ``fileset.close(check=False,clean=False)``.</span>
+<span class="sd">        </span>
+<span class="sd">        With ``check=True``, the close method will first ensure that there are no open file descriptors. Then it will ensure that there are no modified files. With ``check=False``, it will close any open registered file descriptors. With ``clean=True``, it will delete all registered files. If the directory still contains files after all registered files are removed, it will remain. If ``clean=True`` and ``check=False``, it will delete all files in the fileset directory, regardless of whether they have been registered. Closing a fileset with ``clean=True`` will prevent that fileset from persisting.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;May only close an open FileSet&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">persist</span> <span class="ow">and</span> <span class="n">clean</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Closing and cleaning a persistent fileset.&quot;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_persist</span><span class="p">(</span><span class="n">isopen</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">check</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">active_fd</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Active File Handles Preventing Close: </span><span class="si">%r</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_fd</span><span class="p">)</span>
+            
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;Files have not all been closed.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">close_fd</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">active_fd</span><span class="p">)</span>
+            
+        <span class="k">if</span> <span class="n">check</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">modified</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Modified Files Preventing Close: </span><span class="si">%r</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">modified</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s">&quot;Files have been modified.&quot;</span><span class="p">)</span>
+            
+        <span class="k">if</span> <span class="n">clean</span> <span class="ow">and</span> <span class="n">check</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dbfilename</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dbfilename</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">rmdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&quot;Directory was not deleted, as it isn&#39;t empty.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">clean</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">check</span><span class="p">:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">directory</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;File Set closed with directory </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_directory</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_open</span> <span class="o">=</span> <span class="bp">False</span>
+        
+</div></div>
+<div class="viewcode-block" id="TempFileSet"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.TempFileSet">[docs]</a><span class="k">class</span> <span class="nc">TempFileSet</span><span class="p">(</span><span class="n">FileSet</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A set of files to be monitored in a temporary directory. The set of files must all be contained in a single parent directory. The file set will monitor the registered files for changes and modifications, and will notify (using :exc:`IOError`) the program if the fileset attempts to close with remianing modifications.</span>
+<span class="sd">    </span>
+<span class="sd">    :param string base: The base directory name for use with this file set. If ``None``, will use the operating systems temporary directory.</span>
+<span class="sd">    :param string name: The name of this particular fileset. Filesets are stored in ``base/name/``</span>
+<span class="sd">    :param bool isopen: Whether to start the fileset as open. Closed filesets are read-only objects.</span>
+<span class="sd">    :param bool persist: Whether this fileset should try to persist across instantiations. Persistance is not supported in operating system temporary directories.</span>
+<span class="sd">    :keyword bool autodiscover: Whether this fileset should check the directory for new files automatically, and register those files.</span>
+<span class="sd">    :keyword string timeformat: The format string for the :mod:`datetime` module to use when writing/reading from the database. There is no reason to need to change this default, but it is supported just in case.</span>
+<span class="sd">    :keyword string dbfilebase: The base name of the persistance database. By default it is ``.AOFSdb.yml``. If this filename *could* conflict with other files you might add to the file-set, you might want to change it to a non-conflicting filename. Files should have the ``.yml,.yaml`` extension.</span>
+<span class="sd">    </span>
+<span class="sd">    **Persistance**:</span>
+<span class="sd">    </span>
+<span class="sd">    Persistant filesets will remember thier state using a database file between application instances. If the fileset is supposed to persist, it will write a database file to the fileset directory. The database file records the currently known modification times for each registered file. The database file will be automatically loaded when the fielset is created, or the directory is changed (with :meth:`move`). The database will also be automatically written whenever changes occur.</span>
+<span class="sd">    </span>
+<span class="sd">    If the load on the program is too heavy due to constant file-set access and modification, you can toggle the persistance mode using the :attr:`persist` attribute. The database is only ever loaded when the fileset is initialized. </span>
+<span class="sd">    </span>
+<span class="sd">    .. Warning:: Persistance is not supported when the temporary fileset is initialized with ``base=None``, as persistance is not supported in operating system level temporary directories. This is to prevent stray temporary file directories from appearing in difficult-to-find locations.</span>
+<span class="sd">    </span>
+<span class="sd">    **Autodiscovery**:</span>
+<span class="sd">    </span>
+<span class="sd">    If the fileset has autodiscovery enabled, most method calls will cause the fileset to examine its container directory for new files. New files in the container directory which are not registered members of the fileset will be added to the fileset.</span>
+<span class="sd">    </span>
+<span class="sd">    If the load on the program is too heavy due to constant file-set access and modification, you can toggle the autodiscovery mode using the :attr:`autodiscover` attribute.</span>
+<span class="sd">    </span>
+<span class="sd">    **Closed vs. Open Filesets**:</span>
+<span class="sd">    </span>
+<span class="sd">    Closed filesets are read-only filesets. If the fileset is closed, it will have a directory, but files cannot be registered or unregistered. Calling the :meth:`close` will normally close **and** delete the fileset, unless ``clean=False`` is passed to the close method.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;tmp&#39;</span><span class="p">,</span> <span class="n">persist</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_temporary_base_directory</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="n">base</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_temporary_base_directory</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="nb">dir</span><span class="o">=</span><span class="n">base</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TempFileSet</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">base</span> <span class="o">=</span> <span class="n">base</span><span class="p">,</span> <span class="n">persist</span> <span class="o">=</span> <span class="n">persist</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        
+        
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">persist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Enable or disable persistance of this fileset. Must be (bool). If the fileset is initialized with ``persist=False`` (the default), then the database will not be reloaded, and will instead be overwritten.</span>
+<span class="sd">        </span>
+<span class="sd">        .. Warning:: Persistance is not supported when the temporary fileset is initialized with ``base=None``, as persistance is not supported in operating system level temporary directories. This is to prevent stray temporary file directories from appearing in difficult-to-find locations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_persistance_value</span>
+    
+    <span class="nd">@persist.setter</span>
+<div class="viewcode-block" id="TempFileSet.persist"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.TempFileSet.persist">[docs]</a>    <span class="k">def</span> <span class="nf">persist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temporary_base_directory</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;Temporary File Sets cannot persist across processes, as they are not defined outside of a single process. &quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_persistance_value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_persist</span><span class="p">()</span>
+            </div></div>
+<div class="viewcode-block" id="HashedFileSet"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.HashedFileSet">[docs]</a><span class="k">class</span> <span class="nc">HashedFileSet</span><span class="p">(</span><span class="n">FileSet</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A set of files to be monitored contained in a directory with an SHA1 hash name. The file set will monitor the registered files for changes and modifications, and will notify (using :exc:`IOError`) the program if the fileset attempts to close with remianing modifications.</span>
+<span class="sd">    </span>
+<span class="sd">    :param string base: The base directory name for use with this file set.</span>
+<span class="sd">    :param string hashable: The string to be used for the SHA1 hash folder name.</span>
+<span class="sd">    :keyword bool isopen: Whether to start the fileset as open. Closed filesets are read-only objects.</span>
+<span class="sd">    :keyword bool persist: Whether this fileset should try to persist across instantiations.</span>
+<span class="sd">    :keyword bool autodiscover: Whether this fileset should check the directory for new files automatically, and register those files.</span>
+<span class="sd">    :keyword string timeformat: The format string for the :mod:`datetime` module to use when writing/reading from the database. There is no reason to need to change this default, but it is supported just in case.</span>
+<span class="sd">    :keyword string dbfilebase: The base name of the persistance database. By default it is ``.AOFSdb.yml``. If this filename *could* conflict with other files you might add to the file-set, you might want to change it to a non-conflicting filename. Files should have the ``.yml,.yaml`` extension.</span>
+<span class="sd">    </span>
+<span class="sd">    **Persistance**:</span>
+<span class="sd">    </span>
+<span class="sd">    Persistant filesets will remember thier state using a database file between application instances. If the fileset is supposed to persist, it will write a database file to the fileset directory. The database file records the currently known modification times for each registered file. The database file will be automatically loaded when the fielset is created, or the directory is changed (with :meth:`move`). The database will also be automatically written whenever changes occur. </span>
+<span class="sd">    </span>
+<span class="sd">    If the load on the program is too heavy due to constant file-set access and modification, you can toggle the persistance mode using the :attr:`persist` attribute. The database is only ever loaded when the fileset is initialized. </span>
+<span class="sd">    </span>
+<span class="sd">    **Autodiscovery**:</span>
+<span class="sd">    </span>
+<span class="sd">    If the fileset has autodiscovery enabled, most method calls will cause the fileset to examine its container directory for new files. New files in the container directory which are not registered members of the fileset will be added to the fileset.</span>
+<span class="sd">    </span>
+<span class="sd">    If the load on the program is too heavy due to constant file-set access and modification, you can toggle the autodiscovery mode using the :attr:`autodiscover` attribute.</span>
+<span class="sd">    </span>
+<span class="sd">    **Closed vs. Open Filesets**:</span>
+<span class="sd">    Closed filesets are read-only filesets. If the fileset is closed, it will have a directory, but files cannot be registered or unregistered. Calling the :meth:`close` will normally close **and** delete the fileset, unless ``clean=False`` is passed to the close method.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">hashable</span> <span class="o">=</span> <span class="n">__name__</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">_hash</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">()</span>
+        <span class="n">_hash</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">hashable</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hashhex</span> <span class="o">=</span> <span class="n">_hash</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prehashbase</span> <span class="o">=</span> <span class="n">base</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prehashbase</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">HashedFileSet</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">hash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the hexadecimal hash digest (the SHA1 which becomes the directory name). If set, set the hashable string, and it will update the hashhex to the new value, and move the fileset to that new location using :meth:`move`.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hashhex</span>
+        
+    <span class="nd">@hash.setter</span>    
+<div class="viewcode-block" id="HashedFileSet.hash"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.HashedFileSet.hash">[docs]</a>    <span class="k">def</span> <span class="nf">hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">hashable</span><span class="p">):</span>
+        <span class="n">_hash</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha1</span><span class="p">()</span>
+        <span class="n">_hash</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">hashable</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hashhex</span> <span class="o">=</span> <span class="n">_hash</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prehashbase</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="HashedFileSet.move"><a class="viewcode-back" href="../../../file.html#AstroObject.file.fileset.HashedFileSet.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">base</span><span class="p">,</span><span class="n">check</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Move this fileset to a new base location. The old directory for this fileset will be removed in its entirety. The new location will have the hashable base added to the directory by default.</span>
+<span class="sd">        </span>
+<span class="sd">        :param string base: The new base directory to be used.</span>
+<span class="sd">        :param bool check: Whether to check the old directory for modifications/additions before moving.</span>
+<span class="sd">        </span>
+<span class="sd">        Note that with ``check=False``, the entire old directory will be removed. This will remove even files that are not registered to the old fileset.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">HashedFileSet</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">base</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">hash</span><span class="p">),</span> <span class="n">check</span><span class="p">)</span>
+        
+        
+        </div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">AstroObject 0.6 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../../AstroObject.html" >AstroObject</a> &raquo;</li>
+          <li><a href="../file.html" >AstroObject.file</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Alexander Rudy.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

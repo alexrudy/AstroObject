@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Example Spectral Data Script &mdash; AstroObject 0.5.3 documentation</title>
+    <title>Example Spectral Data Script &mdash; AstroObject 0.6 documentation</title>
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.5.3',
+        VERSION:     '0.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.5.3 documentation" href="../index.html" />
+    <link rel="top" title="AstroObject 0.6 documentation" href="../index.html" />
     <link rel="next" title="Pipeline written with AstroObject" href="pipeline.html" />
     <link rel="prev" title="Walkthrough of a basic iraftools script" href="iraftools.html" /> 
   </head>
@@ -44,7 +44,7 @@
         <li class="right" >
           <a href="iraftools.html" title="Walkthrough of a basic iraftools script"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">AstroObject 0.5.3 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -73,9 +73,11 @@
 <span class="kn">from</span> <span class="nn">AstroObject.AstroObjectLogging</span> <span class="kn">import</span> <span class="o">*</span>
 <span class="kn">from</span> <span class="nn">AstroObject.AnalyticSpectra</span> <span class="kn">import</span> <span class="n">InterpolatedSpectrum</span><span class="p">,</span><span class="n">GaussianSpectrum</span><span class="p">,</span><span class="n">FlatSpectrum</span><span class="p">,</span><span class="n">BlackBodySpectrum</span><span class="p">,</span><span class="n">UnitarySpectrum</span><span class="p">,</span><span class="n">Resolver</span>
 <span class="kn">from</span> <span class="nn">AstroObject.AstroSpectra</span> <span class="kn">import</span> <span class="n">SpectraStack</span>
+<span class="kn">from</span> <span class="nn">AstroObject.util</span> <span class="kn">import</span> <span class="n">npArrayInfo</span>
+<span class="kn">from</span> <span class="nn">AstroObject.util.functions</span> <span class="kn">import</span> <span class="n">get_resolution_spectrum</span>
 
 <span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;AstroObject&#39;</span><span class="p">)</span>
-<span class="n">LOG</span><span class="o">.</span><span class="n">configure</span><span class="p">()</span>
+<span class="n">LOG</span><span class="o">.</span><span class="n">configure_from_file</span><span class="p">(</span><span class="s">&#39;Examples/config.yml&#39;</span><span class="p">)</span>
 <span class="n">LOG</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
 <span class="n">WAVELENGTHS</span> <span class="o">=</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">98</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mf">2.0</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e-7</span>
@@ -86,30 +88,43 @@
 
 <span class="n">OBJECT</span> <span class="o">=</span> <span class="n">SpectraStack</span><span class="p">()</span>
 
-<span class="n">OBJECT</span><span class="p">[</span><span class="s">&quot;Raw Data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">VALID</span>
+<span class="n">OBJECT</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&quot;Examples/SNIa.R1000.dat&quot;</span><span class="p">)</span>
+<span class="n">OBJECT</span><span class="p">[</span><span class="s">&quot;Interpolateable&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">InterpolatedSpectrum</span><span class="p">(</span><span class="n">OBJECT</span><span class="o">.</span><span class="n">d</span><span class="p">,</span><span class="s">&quot;Interpolateable&quot;</span><span class="p">)</span>
+<span class="n">wl</span><span class="p">,</span> <span class="n">rs</span> <span class="o">=</span> <span class="n">get_resolution_spectrum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">OBJECT</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">wavelengths</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">OBJECT</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">wavelengths</span><span class="p">),</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">OBJECT</span><span class="p">[</span><span class="s">&quot;Raw Data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OBJECT</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="n">wavelengths</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">resolution</span> <span class="o">=</span> <span class="n">rs</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s">&#39;resample&#39;</span><span class="p">)</span>
 <span class="n">OBJECT</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="n">OBJECT</span><span class="p">[</span><span class="s">&quot;Interpolated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">InterpolatedSpectrum</span><span class="p">(</span><span class="n">VALID</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s">&quot;Interpolated&quot;</span><span class="p">)</span>
+<span class="n">wl</span><span class="p">,</span> <span class="n">rs</span> <span class="o">=</span> <span class="n">get_resolution_spectrum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">OBJECT</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">wavelengths</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">OBJECT</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">wavelengths</span><span class="p">),</span><span class="mi">50</span><span class="p">)</span>
+<span class="n">OBJECT</span><span class="p">[</span><span class="s">&quot;Low Res Data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OBJECT</span><span class="p">[</span><span class="s">&quot;Interpolateable&quot;</span><span class="p">](</span><span class="n">wavelengths</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">resolution</span> <span class="o">=</span> <span class="n">rs</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s">&#39;resample&#39;</span><span class="p">)</span>
 <span class="n">OBJECT</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="n">OBJECT</span><span class="p">[</span><span class="s">&quot;Post Interpolation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OBJECT</span><span class="o">.</span><span class="n">frame</span><span class="p">()(</span><span class="n">wavelengths</span><span class="o">=</span><span class="n">WAVELENGTHS</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">OBJECT</span><span class="o">.</span><span class="n">info</span><span class="p">():</span>
+    <span class="k">print</span> <span class="n">line</span>
+<span class="k">print</span> <span class="s">&quot;Valid:&quot;</span><span class="p">,</span><span class="n">OBJECT</span><span class="o">.</span><span class="n">valid</span><span class="p">()</span>
+<span class="n">OBJECT</span><span class="p">[</span><span class="s">&quot;Raw Data&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">logarize</span><span class="p">()</span>
+<span class="n">OBJECT</span><span class="p">[</span><span class="s">&quot;Logarized&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OBJECT</span><span class="p">[</span><span class="s">&quot;Raw Data&quot;</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">OBJECT</span><span class="o">.</span><span class="n">info</span><span class="p">():</span>
+    <span class="k">print</span> <span class="n">line</span>
+<span class="k">print</span> <span class="s">&quot;Valid:&quot;</span><span class="p">,</span><span class="n">OBJECT</span><span class="o">.</span><span class="n">valid</span><span class="p">()</span>
 <span class="n">OBJECT</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="n">OBJECT</span><span class="p">[</span><span class="s">&quot;Resampled&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OBJECT</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="s">&quot;Interpolated&quot;</span><span class="p">)(</span><span class="n">wavelengths</span><span class="o">=</span><span class="n">WAVELENGTHS_LOWR</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span><span class="n">resolution</span><span class="o">=</span><span class="n">LOWR</span><span class="p">,</span><span class="n">method</span><span class="o">=</span><span class="s">&#39;resample&#39;</span><span class="p">)</span>
+<span class="n">OBJECT</span><span class="p">[</span><span class="s">&quot;Raw Data&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">linearize</span><span class="p">()</span>
+<span class="n">OBJECT</span><span class="p">[</span><span class="s">&quot;Linearized&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OBJECT</span><span class="p">[</span><span class="s">&quot;Raw Data&quot;</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">OBJECT</span><span class="o">.</span><span class="n">info</span><span class="p">():</span>
+    <span class="k">print</span> <span class="n">line</span>
+<span class="k">print</span> <span class="s">&quot;Valid:&quot;</span><span class="p">,</span><span class="n">OBJECT</span><span class="o">.</span><span class="n">valid</span><span class="p">()</span>
 <span class="n">OBJECT</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-<span class="n">OBJECT</span><span class="p">[</span><span class="s">&quot;Integrated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OBJECT</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="s">&quot;Interpolated&quot;</span><span class="p">)(</span><span class="n">wavelengths</span><span class="o">=</span><span class="n">WAVELENGTHS</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span><span class="n">resolution</span><span class="o">=</span><span class="n">HIGH_R</span><span class="p">,</span><span class="n">method</span><span class="o">=</span><span class="s">&#39;integrate&#39;</span><span class="p">)</span>
-<span class="n">OBJECT</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="n">OBJECT</span><span class="p">[</span><span class="s">&quot;Integrated Quad&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OBJECT</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="s">&quot;Interpolated&quot;</span><span class="p">)(</span><span class="n">wavelengths</span><span class="o">=</span><span class="n">WAVELENGTHS</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span><span class="n">resolution</span><span class="o">=</span><span class="n">HIGH_R</span><span class="p">,</span><span class="n">method</span><span class="o">=</span><span class="s">&#39;integrate_quad&#39;</span><span class="p">)</span>
-<span class="n">OBJECT</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="n">OBJECT</span><span class="p">[</span><span class="s">&quot;R and Integrated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OBJECT</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="s">&quot;Interpolated&quot;</span><span class="p">)(</span><span class="n">wavelengths</span><span class="o">=</span><span class="n">WAVELENGTHS</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span><span class="n">resolution</span><span class="o">=</span><span class="n">HIGH_R</span><span class="p">,</span><span class="n">method</span><span class="o">=</span><span class="s">&#39;resolve_and_integrate&#39;</span><span class="p">)</span>
-<span class="n">OBJECT</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="n">OBJECT</span><span class="p">[</span><span class="s">&quot;Integrated LR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OBJECT</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="s">&quot;Interpolated&quot;</span><span class="p">)(</span><span class="n">wavelengths</span><span class="o">=</span><span class="n">WAVELENGTHS_LOWR</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span><span class="n">resolution</span><span class="o">=</span><span class="n">LOWR</span><span class="p">,</span><span class="n">method</span><span class="o">=</span><span class="s">&#39;integrate&#39;</span><span class="p">)</span>
-<span class="n">OBJECT</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="n">OBJECT</span><span class="p">[</span><span class="s">&quot;Integrated Quad LR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OBJECT</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="s">&quot;Interpolated&quot;</span><span class="p">)(</span><span class="n">wavelengths</span><span class="o">=</span><span class="n">WAVELENGTHS_LOWR</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span><span class="n">resolution</span><span class="o">=</span><span class="n">LOWR</span><span class="p">,</span><span class="n">method</span><span class="o">=</span><span class="s">&#39;integrate_quad&#39;</span><span class="p">)</span>
-<span class="n">OBJECT</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="n">OBJECT</span><span class="p">[</span><span class="s">&quot;R and Integrated LR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OBJECT</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="s">&quot;Interpolated&quot;</span><span class="p">)(</span><span class="n">wavelengths</span><span class="o">=</span><span class="n">WAVELENGTHS_LOWR</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span><span class="n">resolution</span><span class="o">=</span><span class="n">LOWR</span><span class="p">,</span><span class="n">method</span><span class="o">=</span><span class="s">&#39;resolve_and_integrate&#39;</span><span class="p">)</span>
-<span class="n">OBJECT</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">OBJECT</span><span class="o">.</span><span class="n">info</span><span class="p">():</span>
+        <span class="k">print</span> <span class="n">line</span>
+    <span class="k">print</span> <span class="s">&quot;Valid:&quot;</span><span class="p">,</span><span class="n">OBJECT</span><span class="o">.</span><span class="n">valid</span><span class="p">()</span>
+    <span class="k">print</span> <span class="s">&quot;Is Log:&quot;</span><span class="p">,</span><span class="n">OBJECT</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">x_is_log</span><span class="p">()</span>
+    <span class="k">print</span> <span class="s">&quot;Is Linear:&quot;</span><span class="p">,</span><span class="n">OBJECT</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">x_is_linear</span><span class="p">()</span>
+    <span class="k">print</span> <span class="s">&quot;dx, dlogx:&quot;</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">OBJECT</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">dx</span><span class="p">()),</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">OBJECT</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">dlogx</span><span class="p">())</span>
+    <span class="n">OBJECT</span><span class="p">[</span><span class="s">&quot;Raw Data&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">logarize</span><span class="p">(</span><span class="n">strict</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">OBJECT</span><span class="p">[</span><span class="s">&quot;Logarized Strict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OBJECT</span><span class="p">[</span><span class="s">&quot;Raw Data&quot;</span><span class="p">]</span>
+    <span class="n">OBJECT</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+    <span class="k">print</span> <span class="n">e</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">&quot;Wavelength Scale Tests&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -164,7 +179,7 @@
         <li class="right" >
           <a href="iraftools.html" title="Walkthrough of a basic iraftools script"
              >previous</a> |</li>
-        <li><a href="../index.html">AstroObject 0.5.3 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
