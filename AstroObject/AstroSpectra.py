@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5.3-p2
+#  Version 0.6.0
 # 
 """
 :mod:`AstroSpectra` — Raw Spectrum Management 
@@ -112,8 +112,8 @@ class SpectraMixin(AstroObjectBase.Mixin):
         """Spectral resolution"""
         if hasattr(self,'_resolution') and self._resolution is not None:
             return self._resolution
-        from .util.functions import GetResolution
-        return GetResolution(self.wavelengths,matched=True)
+        from .util.functions import get_resolution
+        return get_resolution(self.wavelengths,matched=True)
         
     @resolution.setter
     def resolution(self,values):
@@ -163,11 +163,11 @@ class SpectraMixin(AstroObjectBase.Mixin):
     def linearize(self, strict = False):
         """Linearize this spectrum"""
         new_wavelengths = np.linspace(np.min(self.wavelengths),np.max(self.wavelengths),self.wavelengths.size)
-        from .util.functions import GetResolution, Resample, CapResolution, ConserveResolution
-        new_resolutions = GetResolution(new_wavelengths)
+        from .util.functions import get_resolution, Resample, cap_resolution, conserve_resolution
+        new_resolutions = get_resolution(new_wavelengths)
         if not strict:
-            new_resolutions = CapResolution(self.resolution,new_resolutions)
-        elif strict and not ConserveResolution(self.resolution,new_resolutions):
+            new_resolutions = cap_resolution(self.resolution,new_resolutions)
+        elif strict and not conserve_resolution(self.resolution,new_resolutions):
             raise Exception("Resolution not conserved!")
         new_flux = Resample(self.wavelengths,self.flux,new_wavelengths,new_resolutions)
         self.data = np.vstack((new_wavelengths,new_flux))
@@ -175,11 +175,11 @@ class SpectraMixin(AstroObjectBase.Mixin):
     def logarize(self, strict = False):
         """Apply a logarithmic scale to this spectrum"""
         new_wavelengths = np.logspace(np.log10(np.min(self.wavelengths)),np.log10(np.max(self.wavelengths)),self.wavelengths.size)
-        from .util.functions import GetResolution, Resample, CapResolution, ConserveResolution
-        new_resolutions = GetResolution(new_wavelengths)
+        from .util.functions import get_resolution, Resample, cap_resolution, conserve_resolution
+        new_resolutions = get_resolution(new_wavelengths)
         if not strict:
-            new_resolutions = CapResolution(self.resolution,new_resolutions)
-        elif strict and not ConserveResolution(self.resolution,new_resolutions):
+            new_resolutions = cap_resolution(self.resolution,new_resolutions)
+        elif strict and not conserve_resolution(self.resolution,new_resolutions):
             raise Exception("Resolution not conserved!")
         new_flux = Resample(self.wavelengths,self.flux,new_wavelengths,new_resolutions)
         self.data = np.vstack((new_wavelengths,new_flux))

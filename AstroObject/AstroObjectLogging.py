@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5.3-p2
+#  Version 0.6.0
 #
 """
 :mod:`AstroObjectLogging` — Structured Configuration Logging 
@@ -61,7 +61,6 @@ import os
 import yaml
 import collections
 
-from Utilities import *
 from .AstroConfig import StructuredConfiguration, DottedConfiguration
 from logging import *
 from .util import getVersion, ConfigurationError, update

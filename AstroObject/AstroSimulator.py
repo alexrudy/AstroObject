@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-12-14.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.5.3-p2
+#  Version 0.6.0
 # 
 """
 :mod:`AstroSimulator` — Complex Task Management 
@@ -272,12 +272,10 @@ import multiprocessing
 from .AstroCache import *
 from .AstroConfig import StructuredConfiguration, DottedConfiguration
 from . import AstroObjectLogging as logging
-from .Utilities import getVersion, make_decorator, func_lineno, ProgressBar, ColorBar
 
 import util.pbar as progressbar
 import util.terminal as terminal
 from util import getVersion, npArrayInfo, func_lineno, make_decorator
-print __name__
 
 __all__ = ["Simulator","on_collection","help","replaces","excepts","depends","triggers","include","optional","description","collect","ignore","on_instance_collection"]
 

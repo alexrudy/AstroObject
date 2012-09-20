@@ -64,7 +64,9 @@ def getVersion():
 def validate_filename(resourcename,extension=".fits"):
     """Validates a string as an acceptable filename, stripping path components,etc.
     
-    ..warning:: This function isn't very good. I wouldn't use it in its current state."""
+    ..warning:: This function isn't very good. I wouldn't use it in its current state.
+    
+    """
     dirname,filename = os.path.split(resourcename)
     if not filename.endswith(extension):
         filename += extension
@@ -72,7 +74,12 @@ def validate_filename(resourcename,extension=".fits"):
 
 def update(d, u):
     """A deep update command for dictionaries.
-    This is because the normal dictionary.update() command does not handle nested dictionaries."""
+    This replaces the normal ``dict.update()`` command, which does not handle nested dictionaries.
+    
+    :param d: The original dictionary
+    :param u: The new valued dictionary
+    
+    """
     if len(u)==0:
         return d
     for k, v in u.iteritems():
@@ -120,7 +127,8 @@ def make_decorator(func):
     return decorate
 
 def npArrayInfo(array,name=None):
-    """Message describing this array in excruciating detail. Used in debugging arrays where we don't know what they contain. Returns a message string.
+    """
+    Message describing this array in excruciating detail. Used in debugging arrays where we don't know what they contain. Returns a message string.
     
     ::
         
@@ -194,7 +202,22 @@ def npArrayInfo(array,name=None):
     return MSG % fmtr
 
 def set_trace_errors(*exceptions):
-    """This sets the stack trace for the specified exceptions to this calling method, for user debugging simplicity."""
+    """This sets the stack trace for the specified exceptions to this calling method, for user debugging simplicity.
+    
+    This is a decorator which will catch certain exceptions and re-raise them from this decorator, concealing function code.
+    
+    ::
+        
+        @set_trace_errors(KeyError,ValueError)
+        def some_function():
+            raise KeyError
+    
+    Traceback::
+        
+        KeyError in some_function()
+        
+    
+    """
     def decorator(func):
         def clip_traceback(*args,**kwargs):
             try:
