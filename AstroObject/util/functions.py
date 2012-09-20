@@ -58,7 +58,21 @@ def CapResolution(given_resolution,target_resolution):
     delta_resolution = target_resolution > given_resolution_d
     target_resolution[delta_resolution] = given_resolution_d[delta_resolution]
     return target_resolution
-    
+
+
+def get_resolution_spectrum(minwl,maxwl,resolution):
+    """docstring for get_resolution_spectrum"""
+        
+    dwl = [minwl]
+    new_wl = minwl
+    while new_wl <= maxwl:
+        new_wl += (new_wl / resolution)
+        dwl += [new_wl]
+            
+    dense_wavelengths = np.array(dwl)
+    dense_resolution = dense_wavelengths[:-1] / np.diff(dense_wavelengths)
+    dense_wavelengths = dense_wavelengths[:-1]
+    return dense_wavelengths, dense_resolution 
     
 def Resample(old_wavelengths,flux,new_wavelengths,resolution=None):
     """Gaussian resampling of a spectrum"""
