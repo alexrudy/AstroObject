@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # 
-#  AstroHDU.py
+#  hdu.py
 #  AstroObject
 #  
 #  Created by Alexander Rudy on 2011-11-08.
@@ -8,7 +8,7 @@
 #  Version 0.6.0
 # 
 """
-:mod:`AstroHDU` – HDU Objects and Storage 
+:mod:`hdu` – HDU Objects and Storage 
 =========================================
 
 Objects for manipulating and managing HDUs directly. The :class:`HDUFrame` behaves just like a regular image HDU from PyFITS. It can be used anywhere you would otherwise use a :class:`~pyfits.ImageHDU`.
@@ -18,7 +18,7 @@ Objects for manipulating and managing HDUs directly. The :class:`HDUFrame` behav
 ------------------------------------------------------
 
 .. autoclass::
-    AstroObject.AstroHDU.HDUStack
+    AstroObject.hdu.HDUStack
     :members:
     :inherited-members:
 
@@ -26,7 +26,7 @@ Objects for manipulating and managing HDUs directly. The :class:`HDUFrame` behav
 ------------------------------------------------------
 
 .. autoclass::
-    AstroObject.AstroHDU.HDUFrame
+    AstroObject.hdu.HDUFrame
     :members:
     :special-members:
     
@@ -34,7 +34,7 @@ Objects for manipulating and managing HDUs directly. The :class:`HDUFrame` behav
 
 
 # Parent Modules
-from .AstroObjectBase import HDUHeaderMixin, BaseFrame, BaseStack
+from .base import HDUHeaderMixin, BaseFrame, BaseStack
 
 # Standard Scipy Toolkits
 import numpy as np
@@ -160,7 +160,7 @@ class HDUFrame(HDUHeaderMixin,BaseFrame,pf.ImageHDU):
 
 
 class HDUStack(BaseStack):
-    """This object tracks a number of HDU frames. This class is a simple subclass of :class:`AstroObjectBase.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. It uses only the :class:`HDUFrame` class for data.
+    """This object tracks a number of HDU frames. This class is a simple subclass of :class:`base.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. It uses only the :class:`HDUFrame` class for data.
     """
     def __init__(self, dataClasses=[HDUFrame],filename=None):
         super(HDUStack, self).__init__(dataClasses=dataClasses,filename=filename)

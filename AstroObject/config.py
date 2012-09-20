@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # 
-#  AstroConfig.py
+#  config.py
 #  AstroObject
 #  
 #  Created by Alexander Rudy on 2012-02-08.
@@ -8,31 +8,31 @@
 #  Version 0.6.0
 # 
 """
-:mod:`AstroConfig` — YAML-based Configuration Dictionaries
+:mod:`config` — YAML-based Configuration Dictionaries
 ==========================================================
 
 This module provides structured, YAML based, deep dictionary configuration objects. The objects have a built-in deep-update function and use deep-update behavior by default. They act otherwise like dictionaries, and handle thier internal operation using a storage dictionary. The objects also provide a YAML configuration file reading and writing interface.
 
 .. inheritance-diagram::
-    AstroObject.AstroConfig.Configuration
-    AstroObject.AstroConfig.StructuredConfiguration
+    AstroObject.config.Configuration
+    AstroObject.config.StructuredConfiguration
     :parts: 1
     
 .. autofunction::
-    AstroObject.AstroConfig.reformat
+    AstroObject.config.reformat
 
 Basic Configurations: :class:`Configuration`
 --------------------------------------------
 
 .. autoclass::
-    AstroObject.AstroConfig.Configuration
+    AstroObject.config.Configuration
     :members:
 
 Dotted Configurations: :class:`Configuration`
 ---------------------------------------------
 
 .. autoclass::
-    AstroObject.AstroConfig.DottedConfiguration
+    AstroObject.config.DottedConfiguration
     :members:
     :inherited-members:
 
@@ -41,7 +41,7 @@ Structured Configurations: :class:`StructuredConfiguration`
 -----------------------------------------------------------
 
 .. autoclass::
-    AstroObject.AstroConfig.StructuredConfiguration
+    AstroObject.config.StructuredConfiguration
     :members:
     :inherited-members:
 

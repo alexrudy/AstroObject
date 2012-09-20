@@ -53,7 +53,7 @@ import hashlib
 import shutil
 import collections
 
-from ..AstroConfig import Configuration
+from ..config import Configuration
 
 __log__ = logging.getLogger(__name__)
 

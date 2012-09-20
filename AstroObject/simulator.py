@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # 
-#  AstroSimulator.py
+#  simulator.py
 #  AstroObject
 #  
 #  Created by Alexander Rudy on 2011-12-14.
@@ -8,7 +8,7 @@
 #  Version 0.6.0
 # 
 """
-:mod:`AstroSimulator` — Complex Task Management 
+:mod:`simulator` — Complex Task Management 
 ===============================================
 
 The Simulator is designed to provide a high level, command-line useful interface to large computational tasks. As the name suggests, Simulators often do a lot of programming work, and do so across many distinct "stages", whcih can be configured in any way the user desires. All of the abilities in this program are simply object abstraction techniques to provide a complex program with a command line interface and better control and reporting on the activities carreid out to successfully complete the program. It allows for the configuration of simple test cases and "macros" from within the program, eliminating the need to provide small wrapper scripts and test handlers.
@@ -20,7 +20,7 @@ An example (simple) program using the simulator can be found in :ref:`SimulatorE
 :program:`Simulator` Command Line Interface
 -------------------------------------------
 
-The master simulator program is a command-line interface to the :meth:`AstroObject.AstroSimulator.Simulator.run` method. Below are the major command line components.
+The master simulator program is a command-line interface to the :meth:`AstroObject.simulator.Simulator.run` method. Below are the major command line components.
 
 Usage Statement ::
 	
@@ -32,7 +32,7 @@ The program is actually agnostic to the order of arguments. Any argument may com
 
 .. option:: {stages}
 	
-	The stages option specifies individual stages for the program to run. You must specify at least one stage to run in the simulator. By default, two basic stages are provided, ``*all`` and ``*none``. The default simulation is performed by ``*all``. To test the simulator without running any stages (for example, to test :meth:`AstroObject.AstroSimulator.Simulator.registerFunction` functionality), use the ``*none`` stage to opertate without using any stages.
+	The stages option specifies individual stages for the program to run. You must specify at least one stage to run in the simulator. By default, two basic stages are provided, ``*all`` and ``*none``. The default simulation is performed by ``*all``. To test the simulator without running any stages (for example, to test :meth:`AstroObject.simulator.Simulator.registerFunction` functionality), use the ``*none`` stage to opertate without using any stages.
 	
 	Stages are called with either a ``*``, ``+`` or ``-`` character at the beginning. Their resepctive actions are shown below. All commands must include at least one macro. If you don't want any particular macro, use the ``*none`` macro.
 	
@@ -72,11 +72,11 @@ The program is actually agnostic to the order of arguments. Any argument may com
 	  ``*none``             Run no stages                          
 	=====================  ========================================
 	
-	Stages are registered by the :meth:`AstroObject.AstroSimulator.Simulator.registerStage` method.
+	Stages are registered by the :meth:`AstroObject.simulator.Simulator.registerStage` method.
 	
 .. option:: [configurations]
 	
-	Configuration options override defaults set up in :class:`AstroObject.AstroSimulator.Simulator`. As such, they are useful quick changes to a configuration.
+	Configuration options override defaults set up in :class:`AstroObject.simulator.Simulator`. As such, they are useful quick changes to a configuration.
 	
 	 ===================== ============================================
 	   Options               Description
@@ -146,7 +146,7 @@ The program is actually agnostic to the order of arguments. Any argument may com
 :program:`Simulator` Configuration Files
 ----------------------------------------
 
-:program:`Simulator` configuration files are YAML files which contain a dictionary structure. All values in the YAML files are basic yaml, and contain no python-specific directives. To find out what the default or current configuration is, use the :option:`--dump` command. The file produced from this will contain a YAML structure for the configuration in use when the system started up. The various directives in the configuration file are described below. Configuration options are described using the dotted-syntax described in :mod:`AstroObject.AstroConfig`
+:program:`Simulator` configuration files are YAML files which contain a dictionary structure. All values in the YAML files are basic yaml, and contain no python-specific directives. To find out what the default or current configuration is, use the :option:`--dump` command. The file produced from this will contain a YAML structure for the configuration in use when the system started up. The various directives in the configuration file are described below. Configuration options are described using the dotted-syntax described in :mod:`AstroObject.config`
 
 - ``Configurations``: contains a list of potential configuration files.
 - ``Configurations.Main``: The name of the primary configuration file. This default is produced by the program. Overriding it in the configuration file has essentially no effect.
@@ -157,7 +157,7 @@ The program is actually agnostic to the order of arguments. Any argument may com
 - ``Dirs.Partials``: Location of partial output, including a dump of the configuration.
 - ``Options``: The dictionary for storing command line options.
 - ``Options.DryRun``: Whether to skip actually executing stages.
-- ``Logging``: Configuration of the :mod:`AstroObject.AstroObjectLogging` module
+- ``Logging``: Configuration of the :mod:`AstroObject.loggers` module
 
 A simple configuration file can be found in the :ref:`SimulatorExample`.
 
@@ -169,7 +169,7 @@ API Methods
 The following methods handle the external-API for the simulator. Normally, when you write a simulator, you will subclass the :class:`Simulator`, and then use the methods here to control the behavior of the simulator. At a minimum, a simulator must register stages, probably using :meth:`Simulator.collect` or :meth:`Simulator.registerStage`, and then call the :meth:`Simulator.run` function to process the command line interface and start the simulator.
     
 .. autoclass::
-    AstroObject.AstroSimulator.Simulator
+    AstroObject.simulator.Simulator
     
     .. automethod:: collect
     
@@ -193,7 +193,7 @@ The following methods handle the external-API for the simulator. Normally, when 
     
 Decorators
 ----------
-The following decorators can be used (in conjuction with :meth:`AstroObject.AstroSimulator.Simulator.collect`) to register and configure simulator stages:
+The following decorators can be used (in conjuction with :meth:`AstroObject.simulator.Simulator.collect`) to register and configure simulator stages:
 
 .. autofunction:: collect
 
@@ -225,33 +225,33 @@ Private Methods and Classes
 These methods are used to implment the public-facing API. They are documented here to explain their use in development.
 
 .. inheritance-diagram::
-    AstroObject.AstroSimulator.Simulator
-    AstroObject.AstroSimulator.Stage
+    AstroObject.simulator.Simulator
+    AstroObject.simulator.Stage
     :parts: 1
 
 .. automethod:: 
-    AstroObject.AstroSimulator.Simulator._initOptions
+    AstroObject.simulator.Simulator._initOptions
 
 .. automethod:: 
-    AstroObject.AstroSimulator.Simulator._default_macros
+    AstroObject.simulator.Simulator._default_macros
     
 .. automethod:: 
-    AstroObject.AstroSimulator.Simulator._parseArguments
+    AstroObject.simulator.Simulator._parseArguments
     
 .. automethod:: 
-    AstroObject.AstroSimulator.Simulator._preConfiguration
+    AstroObject.simulator.Simulator._preConfiguration
     
 .. automethod:: 
-    AstroObject.AstroSimulator.Simulator._configure
+    AstroObject.simulator.Simulator._configure
     
 .. automethod:: 
-    AstroObject.AstroSimulator.Simulator._postConfiguration
+    AstroObject.simulator.Simulator._postConfiguration
 
 .. automethod:: 
-    AstroObject.AstroSimulator.Simulator.execute
+    AstroObject.simulator.Simulator.execute
     
 .. autoclass::
-    AstroObject.AstroSimulator.Stage
+    AstroObject.simulator.Stage
 
 
 """
@@ -269,9 +269,9 @@ from pkg_resources import resource_filename
 import multiprocessing
 
 # Submodules from this system
-from .AstroCache import *
-from .AstroConfig import StructuredConfiguration, DottedConfiguration
-from . import AstroObjectLogging as logging
+from .cache import *
+from .config import StructuredConfiguration, DottedConfiguration
+from . import logging as logging
 
 import util.pbar as progressbar
 import util.terminal as terminal

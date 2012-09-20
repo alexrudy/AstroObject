@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # 
-#  AstroFITS.py
+#  fits.py
 #  AstroObject
 #  
 #  Created by Alexander Rudy on 2012-04-17.
@@ -8,15 +8,15 @@
 #  Version 0.6.0
 # 
 """
-:mod:`AstroFITS` – Empty FITS HDUs
+:mod:`fits` – Empty FITS HDUs
 ==================================
 
 The :class:`FITSStack` **stack** handles *empty* FITS Header-Data-Units (or HDUs). As such, it can only contain HDUs that do not have data, and should only be used when you need to write a FITS file that has only header information and no actual data. The module does serve as a good demonstration of the use and implementation of the :ref:`AstroObjectAPI`.
 
 
 .. inheritance-diagram::
-    AstroObject.AstroFITS.FITSStack
-    AstroObject.AstroFITS.FITSFrame
+    AstroObject.fits.FITSStack
+    AstroObject.fits.FITSFrame
     :parts: 1
 
 
@@ -24,7 +24,7 @@ The :class:`FITSStack` **stack** handles *empty* FITS Header-Data-Units (or HDUs
 ------------------------------------------
 
 .. autoclass::
-    AstroObject.AstroFITS.FITSStack
+    AstroObject.fits.FITSStack
     :members:
     :inherited-members:
     :show-inheritance:
@@ -36,7 +36,7 @@ The :class:`FITSStack` **stack** handles *empty* FITS Header-Data-Units (or HDUs
 Our first example frame is the :class:`FITSFrame`. This class is a data frame which can only contain empty HDUs. As such, it does not implement all of the methods of the API, and instead uses the :class:`NoDataMixin` class.
 
 .. autoclass:: 
-    AstroObject.AstroFITS.FITSFrame
+    AstroObject.fits.FITSFrame
     :members:
     :inherited-members:
     :show-inheritance:
@@ -65,7 +65,7 @@ import math, logging, os, time
 import copy
 import collections
 
-from .AstroObjectBase import BaseFrame,BaseStack,HDUHeaderMixin,NoDataMixin
+from .base import BaseFrame,BaseStack,HDUHeaderMixin,NoDataMixin
 from .file.fits import FITSFile
 # Submodules from this system
 from .util import getVersion, npArrayInfo
@@ -124,7 +124,7 @@ class FITSFrame(HDUHeaderMixin,NoDataMixin,BaseFrame):
         return Object
 
 class FITSStack(BaseStack):
-    """This **stack** tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an **stack** class which uses only the :class:`FITSFrame` class for data. As such, it can only contain objects which are classes (or subclassses of) :class:`FITSFrame`.
+    """This **stack** tracks a number of data frames. This class is a simple subclass of :class:`base.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an **stack** class which uses only the :class:`FITSFrame` class for data. As such, it can only contain objects which are classes (or subclassses of) :class:`FITSFrame`.
     """
     def __init__(self,dataClasses=[FITSFrame],fileClasses=[FITSFile],**kwargs):
         super(FITSStack, self).__init__(dataClasses=dataClasses,fileClasses=[FITSFile],**kwargs)

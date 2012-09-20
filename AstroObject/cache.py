@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # 
-#  AstroCache.py
+#  cache.py
 #  AstroObject
 #  
 #  Created by Alexander Rudy on 2011-12-22.
@@ -24,8 +24,8 @@ import hashlib
 import shutil
 
 # Submodules from this system
-from .AstroConfig import Configuration
-from .AstroObjectLogging import logging
+from .config import Configuration
+from .loggers import logging
 from .file.fileset import FileSet, HashedFileSet
 
 __all__ = ["CacheManager","Cache","NumpyCache","YAMLCache"]

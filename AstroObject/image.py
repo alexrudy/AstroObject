@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # 
-#  AstroImage.py
+#  image.py
 #  Astronomy ObjectModel
 #  
 #  Created by Alexander Rudy on 2011-04-28.
@@ -8,7 +8,7 @@
 #  Version 0.6.0
 # 
 """
-:mod:`AstroImage` — Image Stacks and Storage 
+:mod:`image` — Image Stacks and Storage 
 ============================================
 
 **Stacks** and **frames** for manipulating and managing images. Images are simply defined as a two-dimensional numpy array. Image **stacks** have two special methods, :meth:`ImageStack.loadFromFile` and :meth:`ImageStack.show3D`.
@@ -16,15 +16,15 @@
 To understand IRAF integration of this module, see the methods provided by :mod:`~.iraftools`, including :func:`~.iraftools.UseIRAFTools`.
 
 .. inheritance-diagram::
-    AstroObject.AstroImage.ImageStack
-    AstroObject.AstroImage.ImageFrame
+    AstroObject.image.ImageStack
+    AstroObject.image.ImageFrame
     :parts: 1
 
 :class:`ImageStack` — Image **stacks**
 --------------------------------------
 
 .. autoclass::
-    AstroObject.AstroImage.ImageStack
+    AstroObject.image.ImageStack
     :members:
     :inherited-members:
 
@@ -32,13 +32,13 @@ To understand IRAF integration of this module, see the methods provided by :mod:
 --------------------------------------
 
 .. autoclass::
-    AstroObject.AstroImage.ImageFrame
+    AstroObject.image.ImageFrame
     :members:
     :special-members:
 
 """
 # Parent Modules
-from .AstroObjectBase import HDUHeaderMixin, BaseFrame, BaseStack
+from .base import HDUHeaderMixin, BaseFrame, BaseStack
 
 # Standard Scipy Toolkits
 import numpy as np
@@ -50,7 +50,7 @@ import os
 
 # Module Utilites
 from .util import getVersion, npArrayInfo
-from . import AstroObjectLogging as logging
+from . import logging as logging
 
 __all__ = [ "ImageFrame", "ImageStack" ]
 
@@ -149,7 +149,7 @@ class ImageFrame(HDUHeaderMixin,BaseFrame):
 
 
 class ImageStack(BaseStack):
-    """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`ImageFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.
+    """This object tracks a number of data frames. This class is a simple subclass of :class:`base.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`ImageFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.
     """
     def __init__(self, array=None,dataClasses=[ImageFrame], **kwargs):
         super(ImageStack, self).__init__(dataClasses=dataClasses,**kwargs)

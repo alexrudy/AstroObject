@@ -10,13 +10,13 @@
  
 import time,sys,os
 
-from AstroObjectLogging import *
+from .loggers import *
 
 from version import version as versionstr
 
 __version__ = versionstr
 
-__all__ = ['AnalyticSpectra','AstroImage','AstroObjectBase','AstroSpectra','AstroObjectLogging','util']
+__all__ = ['anaspec','image','base','spectra','logging','util']
 
 
 logger = logging.getLogger(__name__)

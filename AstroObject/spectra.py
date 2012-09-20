@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # 
-#  AstroSpectra.py
+#  spectra.py
 #  ObjectModel
 #  
 #  Created by Alexander Rudy on 2011-10-07.
@@ -8,23 +8,23 @@
 #  Version 0.6.0
 # 
 """
-:mod:`AstroSpectra` — Raw Spectrum Management 
+:mod:`spectra` — Raw Spectrum Management 
 =============================================
 
-An **stack** and **frame** class which can handle raw spectrum data. This module only handles raw spectra. These spectra are simply data held in image-like **frames**. This class allows a spectrum to be consistently read and written to a FITS file, using image rows as data arrays. The spectra functions contained in this module are bland. For more sophisitcated spectral analysis, see the :mod:`AnalyticSpectra` module, which contians classes which can re-sample a raw spectrum and interpolate correctly across a spectrum to provide an analytic interface to otherwise discrete spectra.
+An **stack** and **frame** class which can handle raw spectrum data. This module only handles raw spectra. These spectra are simply data held in image-like **frames**. This class allows a spectrum to be consistently read and written to a FITS file, using image rows as data arrays. The spectra functions contained in this module are bland. For more sophisitcated spectral analysis, see the :mod:`anaspec` module, which contians classes which can re-sample a raw spectrum and interpolate correctly across a spectrum to provide an analytic interface to otherwise discrete spectra.
 
 .. warning:: The class implemented here does not yet use a sophisticated enough method for saving FITS header data etc. As such, it will not preserve state names etc. The development of this class should bring it inline with the STSCI spectra classes in the future.
 
 .. inheritance-diagram::
-    AstroObject.AstroSpectra.SpectraStack
-    AstroObject.AstroSpectra.SpectraFrame
+    AstroObject.spectra.SpectraStack
+    AstroObject.spectra.SpectraFrame
     :parts: 1
 
 :class:`SpectraStack` – Raw Spectrum **stacks**
 -----------------------------------------------
 
 .. autoclass::
-    AstroObject.AstroSpectra.SpectraStack
+    AstroObject.spectra.SpectraStack
     :members:
     :inherited-members:
 
@@ -32,7 +32,7 @@ An **stack** and **frame** class which can handle raw spectrum data. This module
 -----------------------------------------------
 
 .. autoclass::
-    AstroObject.AstroSpectra.SpectraFrame
+    AstroObject.spectra.SpectraFrame
     :members:
     :special-members:
     :inherited-members:
@@ -40,7 +40,7 @@ An **stack** and **frame** class which can handle raw spectrum data. This module
 
 """
 
-import AstroObjectBase, AstroImage
+import base, image
 
 # Standard Scipy Toolkits
 import numpy as np
@@ -56,7 +56,7 @@ from scipy.linalg import norm
 import os
 
 # Submodules from this system
-from . import AstroObjectLogging as logging
+from . import logging as logging
 from .util import getVersion, npArrayInfo
 from .util.mpl import expandLim
 
@@ -66,8 +66,8 @@ __version__ = getVersion()
 
 LOG = logging.getLogger(__name__)
 
-class SpectraMixin(AstroObjectBase.Mixin):
-    """Mixin to set the properties of Spectra **frames** and to provide a :meth:`~.AstroObjectBase.BaseFrame.__show__` method. Used for any spectrum **frame** which contains raw data."""
+class SpectraMixin(base.Mixin):
+    """Mixin to set the properties of Spectra **frames** and to provide a :meth:`~.base.BaseFrame.__show__` method. Used for any spectrum **frame** which contains raw data."""
     
     _resolution = None
 
@@ -185,7 +185,7 @@ class SpectraMixin(AstroObjectBase.Mixin):
         self.data = np.vstack((new_wavelengths,new_flux))
     
 
-class SpectraFrame(SpectraMixin,AstroObjectBase.HDUHeaderMixin,AstroObjectBase.BaseFrame):
+class SpectraFrame(SpectraMixin,base.HDUHeaderMixin,base.BaseFrame):
     """A single frame of a spectrum. This will save the spectrum as an image, with the first row having flux, and second row having the wavelength equivalent. Further rows can accomodate further spectral frames when stored to a FITS image. However, the frame only accepts a single spectrum."""
     def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
         self.data = data # The image data
@@ -262,8 +262,8 @@ class SpectraFrame(SpectraMixin,AstroObjectBase.HDUHeaderMixin,AstroObjectBase.B
     
 
 
-class SpectraStack(AstroObjectBase.BaseStack):
-    """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`SpectraFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately."""
+class SpectraStack(base.BaseStack):
+    """This object tracks a number of data frames. This class is a simple subclass of :class:`base.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`SpectraFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately."""
     def __init__(self,dataClasses=[SpectraFrame],**kwargs):
         super(SpectraStack, self).__init__(dataClasses=dataClasses,**kwargs)
 

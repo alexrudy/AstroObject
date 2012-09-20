@@ -163,8 +163,8 @@ import shutil
 # Submodules from this system
 from .util import getVersion
 from .file.fileset import TempFileSet
-from .AstroObjectBase import BaseStack, Mixin, BaseFrame, NoHDUMixin, NoDataMixin
-from .AstroFITS import FITSFrame
+from .base import BaseStack, Mixin, BaseFrame, NoHDUMixin, NoDataMixin
+from .fits import FITSFrame
 
 __version__ = getVersion()
 
@@ -406,7 +406,7 @@ def UseIRAFTools(klass):
     Example::
         
         from AstroObject.iraftools import UseIRAFTools
-        from AstroObject.AstroImage import ImageStack
+        from AstroObject.image import ImageStack
         ImageStack = UseIRAFTools(ImageStack)
         
     """

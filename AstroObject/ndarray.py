@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # 
-#  AstroNDArray.py
+#  ndarray.py
 #  AstroObject
 #  
 #  Created by Alexander Rudy on 2012-04-18.
@@ -8,21 +8,21 @@
 #  Version 0.6.0
 # 
 u"""
-:mod:`AstroNDArray` – Numpy Array Frames
+:mod:`ndarray` – Numpy Array Frames
 ========================================
 
-This module implements a **frame** as a subclass of NDArray. This eliminates the difference between the :attr:`~AstroOBject.AstroObjectBase.BaseStack.d` attribute and the :attr:`~AstroOBject.AstroObjectBase.BaseStack.f`.
+This module implements a **frame** as a subclass of NDArray. This eliminates the difference between the :attr:`~AstroOBject.base.BaseStack.d` attribute and the :attr:`~AstroOBject.base.BaseStack.f`.
 
 .. inheritance-diagram::
-    AstroObject.AstroNDArray.NDArrayStack
-    AstroObject.AstroNDArray.NDArrayFrame
+    AstroObject.ndarray.NDArrayStack
+    AstroObject.ndarray.NDArrayFrame
     :parts: 1
 
 :class:`NDArrayStack` – Numpy Array **Stacks**
 ----------------------------------------------
 
 .. autoclass::
-    AstroObject.AstroNDArray.NDArrayStack
+    AstroObject.ndarray.NDArrayStack
     :members:
     :inherited-members:
 
@@ -31,7 +31,7 @@ This module implements a **frame** as a subclass of NDArray. This eliminates the
 ----------------------------------------------
 
 .. autoclass::
-    AstroObject.AstroNDArray.NDArrayFrame
+    AstroObject.ndarray.NDArrayFrame
     :members:
     :special-members:
 
@@ -47,7 +47,7 @@ import math, logging, os, time
 import copy
 import collections
 
-from .AstroObjectBase import BaseFrame,BaseStack,HDUHeaderMixin
+from .base import BaseFrame,BaseStack,HDUHeaderMixin
 
 # Submodules from this system
 from .util import getVersion
@@ -190,7 +190,7 @@ class NDArrayFrame(HDUHeaderMixin,BaseFrame,np.ndarray):
         return Object
 
 class NDArrayStack(BaseStack):
-    """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`NDArrayFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.
+    """This object tracks a number of data frames. This class is a simple subclass of :class:`base.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`NDArrayFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.
     """
     def __init__(self,dataClasses=[NDArrayFrame],**kwargs):
         super(NDArrayStack, self).__init__(dataClasses=dataClasses,**kwargs)
