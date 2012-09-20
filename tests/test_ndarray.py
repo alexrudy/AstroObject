@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # 
-#  test_AstroNDArray.py
+#  test_ndarray.py
 #  AstroObject
 #  
 #  Created by Alexander Rudy on 2012-04-18.
@@ -10,10 +10,10 @@
 
 
 # Test API Imports
-from tests.AstroTest import *
+from tests.apitests import *
 
 # Parent Object Imports
-import AstroObject.AstroNDArray
+import AstroObject.ndarray
 
 # Testing Imports
 import nose.tools as nt
@@ -48,7 +48,7 @@ class equality_ImageFrame(equality_Base):
 
 
 class test_NDArrayFrame(equality_ImageFrame,API_General_Frame):
-    """AstroNDArray.NDArrayFrame"""
+    """ndarray.NDArrayFrame"""
     
     def setup(self):
         """Sets up the test with some basic image data"""
@@ -61,7 +61,7 @@ class test_NDArrayFrame(equality_ImageFrame,API_General_Frame):
             self.image = np.int32(np.sum(mpimage.imread(self.testJPG),axis=2))
         
         self.VALID = self.image
-        self.FRAME = AstroObject.AstroNDArray.NDArrayFrame
+        self.FRAME = AstroObject.ndarray.NDArrayFrame
         self.INVALID = 20
         self.FRAMESTR = "<'NDArrayFrame' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
@@ -81,7 +81,7 @@ class test_NDArrayFrame(equality_ImageFrame,API_General_Frame):
         
 
 class test_NDArrayStack(equality_ImageFrame,API_BaseStack):
-    """AstroNDArray.NDArrayStack"""
+    """ndarray.NDArrayStack"""
     
     def setup(self):
         """Fixture for setting up a basic image frame"""
@@ -95,7 +95,7 @@ class test_NDArrayStack(equality_ImageFrame,API_BaseStack):
             self.image = np.int32(np.sum(mpimage.imread(self.testJPG),axis=2))
 
 
-        self.FRAME = AstroObject.AstroNDArray.NDArrayFrame
+        self.FRAME = AstroObject.ndarray.NDArrayFrame
         self.HDU = pf.PrimaryHDU
         self.imHDU = pf.ImageHDU
         self.VALID = self.image
@@ -104,7 +104,7 @@ class test_NDArrayStack(equality_ImageFrame,API_BaseStack):
         self.FRAMESTR = "<'ImageFrame' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.image.AxesImage
-        self.OBJECT = AstroObject.AstroNDArray.NDArrayStack
+        self.OBJECT = AstroObject.ndarray.NDArrayStack
         self.FLABEL = "Valid"
         super(test_NDArrayStack, self).setup()
         
@@ -127,8 +127,8 @@ class test_NDArrayStack(equality_ImageFrame,API_BaseStack):
         AObject.select(self.FLABEL)
         assert AObject.data()[1,1] != -1.0
 
-class btest_AstroImage_Functional(API_Base_Functional):
-    """Functional Tests for AstroImage"""
+class btest_image_Functional(API_Base_Functional):
+    """Functional Tests for image"""
     def setUp(self):
         """Fixture for setting up a basic image frame"""
         self.testJPG = "Data/Hong-Kong.jpg"

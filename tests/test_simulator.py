@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # 
-#  Test_AstroSimulator.py
+#  Test_simulator.py
 #  AstroObject
 #  
 #  Created by Alexander Rudy on 2012-01-11.
@@ -9,9 +9,9 @@
 # 
 
 
-from tests.AstroTest import *
-import AstroObject.AstroSimulator as AS
-from AstroObject.AstroCache import *
+from tests.apitests import *
+import AstroObject.simulator as AS
+from AstroObject.cache import *
 import nose.tools as nt
 from nose.plugins.skip import Skip,SkipTest
 import numpy as np
@@ -24,7 +24,7 @@ import logging
 
 
 class test_Simulator(API_Base):
-    """AstroObject.AstroSimulator"""
+    """AstroObject.simulator"""
     attributes = ["SIMULATOR"]
     
     def setup(self):
@@ -40,7 +40,7 @@ class test_Simulator(API_Base):
         
         
 class test_SimulatorFunctional(object):
-    """Functional tests for AstroSimulator"""
+    """Functional tests for simulator"""
     
     def stest_BasicSimulation(self):
         """A very simple simulation with caching"""

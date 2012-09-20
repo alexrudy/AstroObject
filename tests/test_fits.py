@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # 
-#  Test_AstroObjectBase.py
+#  Test_base.py
 #  ObjectModel
 #  
 #  Created by Alexander Rudy on 2011-10-28.
@@ -8,9 +8,9 @@
 #  Version 0.6.0
 # 
 
-from tests.AstroTest import *
-import AstroObject.AstroObjectBase
-import AstroObject.AstroFITS
+from tests.apitests import *
+import AstroObject.base
+import AstroObject.fits
 
 import nose.tools as nt
 from nose.plugins.skip import Skip,SkipTest
@@ -49,10 +49,10 @@ class equality_FITSFrame(equality_Base):
         
 
 class test_FITSFrame(equality_FITSFrame,API_NoData_Frame,API_General_Frame):
-    """AstroObjectBase.FITSFrame"""
+    """base.FITSFrame"""
     
     def setup(self):
-        self.FRAME = AstroObject.AstroFITS.FITSFrame
+        self.FRAME = AstroObject.fits.FITSFrame
         self.FRAMESTR = "<'FITSFrame' labeled 'Valid'>"
         self.VALID = None
         self.INVALID = np.array([1,2,3]).astype(np.int16)
@@ -64,11 +64,11 @@ class test_FITSFrame(equality_FITSFrame,API_NoData_Frame,API_General_Frame):
     
         
 class test_FITSStack(equality_FITSFrame,API_BaseStack):
-    """AstroFITS.FITSStack"""
+    """fits.FITSStack"""
     def setup(self):
         self.files = ["TestFile.fits","TestFile.dat","TestFile.npy"]
-        self.FRAME = AstroObject.AstroFITS.FITSFrame
-        self.OBJECT = AstroObject.AstroFITS.FITSStack
+        self.FRAME = AstroObject.fits.FITSFrame
+        self.OBJECT = AstroObject.fits.FITSStack
         self.FRAMESTR = "<'FITSFrame' labeled 'Valid'>"
         self.VALID = None
         self.INVALID = np.array([1,2,3]).astype(np.int16)

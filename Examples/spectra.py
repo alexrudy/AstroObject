@@ -12,9 +12,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-from AstroObject.AstroObjectLogging import *
-from AstroObject.AnalyticSpectra import InterpolatedSpectrum,GaussianSpectrum,FlatSpectrum,BlackBodySpectrum,UnitarySpectrum,Resolver
-from AstroObject.AstroSpectra import SpectraStack
+from AstroObject.loggers import *
+from AstroObject.anaspec import InterpolatedSpectrum,GaussianSpectrum,FlatSpectrum,BlackBodySpectrum,UnitarySpectrum,Resolver
+from AstroObject.spectra import SpectraStack
 from AstroObject.util import npArrayInfo
 from AstroObject.util.functions import get_resolution_spectrum
 

@@ -4,7 +4,7 @@
 #  - bias.fits (IMAGTYP=zero)
 #  - dark.fits (IMAGTYP=dark)
 #  - flat.fits (IMAGTYP=flat)
-from AstroObject.AstroImage import ImageStack
+from AstroObject.image import ImageStack
 from AstroObject.iraftools import UseIRAFTools
 ImageStack = UseIRAFTools(ImageStack) # Enable IRAFTools
 from pyraf import iraf

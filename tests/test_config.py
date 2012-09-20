@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # 
-#  Test_AstroConfig.py
+#  Test_config.py
 #  AstroObject
 #  
 #  Created by Alexander Rudy on 2012-03-17.
@@ -16,10 +16,10 @@ import nose.tools as nt
 from nose.plugins.skip import Skip,SkipTest
 
 # AstroObject Import
-from AstroObject.AstroConfig import *
+from AstroObject.config import *
 
 class Test_Configuration(object):
-    """AstroObject.AstroConfig.Configuration"""
+    """AstroObject.config.Configuration"""
     
     def setUp(self):
         """docstring for setUp"""
@@ -80,7 +80,7 @@ class Test_Configuration(object):
         assert cfg == self.cfgC
 
 class Test_DottedConfiguration(Test_Configuration):
-    """AstroObject.AstroConfig.DottedConfiguration"""
+    """AstroObject.config.DottedConfiguration"""
     def setUp(self):
         """docstring for setUp"""
         self.cfgA = {"Hi":{"A":1,"B":2,"D":{"A":1},},}
@@ -113,7 +113,7 @@ class Test_DottedConfiguration(Test_Configuration):
         
 
 class Test_StructuredConfiguration(Test_DottedConfiguration):
-    """AstroObject.AstroConfig.StructuredConfiguration"""
+    """AstroObject.config.StructuredConfiguration"""
     def setUp(self):
         """docstring for setUp"""
         self.cfgA = {"Hi":{"A":1,"B":2,"D":{"A":1},},}

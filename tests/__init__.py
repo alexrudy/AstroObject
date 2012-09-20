@@ -8,7 +8,7 @@
 #  Version 0.6.0
 # 
 
-from AstroObject.AstroObjectLogging import *
+from AstroObject.loggers import *
 
 __config__ = "tests/logging.yaml"
 
