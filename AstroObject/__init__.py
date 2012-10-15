@@ -8,9 +8,7 @@
 #  Version 0.6.0
 #  
  
-import time,sys,os
-
-from .loggers import *
+import time,sys,os,logging
 
 from version import version as versionstr
 
@@ -19,7 +17,5 @@ __version__ = versionstr
 __all__ = ['anaspec','image','base','spectra','logging','util']
 
 
-logger = logging.getLogger(__name__)
-logger.addHandler(logging.NullHandler())
 
 
