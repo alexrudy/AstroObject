@@ -68,7 +68,7 @@ class HDUFrame(HDUHeaderMixin,BaseFrame,pf.ImageHDU):
     __metaclass__ = classmaker()
     
     def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
-        self.data = data
+        #self.data = data
         super(HDUFrame, self).__init__(data=None, label=label, header=header, metadata=metadata, **kwargs)
         self.data = data
         try:
