@@ -154,6 +154,16 @@ __all__ = ["AnalyticSpectrum","CompositeSpectra","InterpolatedSpectrum","Interpo
 
 LOG = logging.getLogger(__name__)
 
+class AnalyticSpectrumValueError(Exception):
+    """docstring for AnalyticSpectrumValueError"""
+    def __init__(self, msg):
+        self.msg = msg
+    
+    def __str__(self):
+        """docstring for __str__"""
+        return u"%s: %s" % (self.__class__.__name__,repr(self.msg))
+        
+
 class AnalyticSpectrum(base.BaseFrame):
     """A functional spectrum object for spectrum generation. This is an abstract class which implements spectrum arithmetic. Spectrum arithmetic has a delayed implementation, whereby it is applied to the spectrum only once the spectrum is called for data, allowing spectra to produce data which matches the requested wavelengths (and resolution, if applicable).
     
@@ -253,7 +263,7 @@ class CompositeSpectra(base.AnalyticMixin,AnalyticSpectrum):
         if wavelengths == None:
             wavelengths = self._wavelengths
         if wavelengths == None:
-            raise ValueError(u"No wavelengths specified in %s" % (self))
+            raise AnalyticSpectrumValueError(u"No wavelengths specified in %s" % (self))
             
         if isinstance(self.A,AnalyticSpectrum):
             Awavelengths,Avalue = self.A(wavelengths=wavelengths,**kwargs)
@@ -275,7 +285,7 @@ class CompositeSpectra(base.AnalyticMixin,AnalyticSpectrum):
         if Result != None:
             return np.vstack((wavelengths,Result))
         else:
-            raise ValueError(u"Composition did not produce a value result!")
+            raise AnalyticSpectrumValueError(u"Composition did not produce a value result!")
         
     
 
@@ -342,16 +352,16 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,base.BaseFrame):
         if (np.diff(oldwl) < 0).any():
             msg += [u"Given λ must be monotonically increasing."]
             arrays[u"Given λ"] = oldwl
-            error = ValueError
+            error = AnalyticSpectrumValueError
         try:    
             if (np.diff(newwl) < 0).any():
                 msg += [u"Requested λ must be monotonically increasing."]
                 arrays[u"Requested λ"] = newwl
-                error = ValueError
+                error = AnalyticSpectrumValueError
         except:
             msg += [u"Requested λ threw an error"]
             arrays[u"Requested λ"] = newwl
-            error = ValueError
+            error = AnalyticSpectrumValueError
             
         
         # Check that we have non-zero, positive flux provided.
@@ -398,7 +408,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,base.BaseFrame):
                 warning = True
             else:
                 msg += [u"Can not extrapolate during reampling process. Please provide new λ that are within the range of old ones."]
-                error = ValueError
+                error = AnalyticSpectrumValueError
             arrays[u"Requested λ"] = newwl
             arrays[u"Given λ"] = oldwl
             dmsg += [u"%s: Allowed range for Requested λ: [%g,%g]" % (self,mintol,maxtol)]
@@ -424,7 +434,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,base.BaseFrame):
                     if upsample:
                         warning = True
                     else:
-                        error = ValueError
+                        error = AnalyticSpectrumValueError
                 else:
                     msg += [u"Requested R may be close to same detail as given R. Fidelity might not be preserved."]
                     arrays[u"Requested R"] = newrs
@@ -494,7 +504,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,base.BaseFrame):
                 
         if np.isnan(newfl).any():
             msg += [u"Detected NaN in Flux!"]
-            error = ValueError
+            error = AnalyticSpectrumValueError
                 
         if float(np.sum(newfl <= 0))/float(np.size(newfl)) > 0.01 and (oldfl > 0).all() and not extrapolate:
             msg += [u"New Flux <= 0 for more than 1% of points"]
@@ -502,7 +512,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,base.BaseFrame):
             
         if newfl.shape != newwl.shape:
             msg += [u"λ lengths have changed: %s -> %s" % (newfl.shape,newwl.shape)]
-            error = ValueError
+            error = AnalyticSpectrumValueError
         
         if (newfl <= 0).any() and (oldfl > 0).all():
             msg += [u"New Flux <= 0 some point!"]
@@ -537,7 +547,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,base.BaseFrame):
         if wavelengths == None:
             wavelengths = self._wavelengths
         if wavelengths == None:
-            raise ValueError(u"Requires Wavelenths")
+            raise AnalyticSpectrumValueError(u"Requires Wavelenths")
         
         LOG.debug(u"Interpolate Starting")
         
@@ -567,7 +577,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,base.BaseFrame):
         if wavelengths == None:
             wavelengths = self._wavelengths
         if wavelengths == None:
-            raise ValueError(u"Requires Wavelenths")
+            raise AnalyticSpectrumValueError(u"Requires Wavelenths")
         
         LOG.debug(u"Polyfit Starting")
         
@@ -603,15 +613,15 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,base.BaseFrame):
         if resolution == None:
             resolution = self.resolution
         if wavelengths == None:
-            raise ValueError(u"Requires Wavelenths")
+            raise AnalyticSpectrumValueError(u"Requires Wavelenths")
         if resolution == None:
-            raise ValueError(u"Requires Resolution")
+            raise AnalyticSpectrumValueError(u"Requires Resolution")
         
         LOG.debug(u"Resample Starting")
         
         
         # Sanity Checks for Data
-        self._presanity(self.wavelengths,self.flux,wavelengths,resolution,upsample=upsample)
+        self._presanity(self.wavelengths,self.flux,wavelengths,resolution,upsample=upsample,extrapolate=kwargs.get('extrapolate',False))
         
         # The main resampling function.
         # A two dimensional grid is used (instead of two for-loops). The grid stretches across wavelength (data), wavelength (requested). The 
@@ -655,7 +665,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,base.BaseFrame):
             u"Curve Evaluated" : curves,
         }
         if (topzo.astype(int) < zeros.astype(int)).any():
-            self._postsanity(self.wavelengths,self.flux,wavelengths,flux,resolution,error=ValueError,message=u"Normalizing Zero error." % (np.sum(zeros)),**msgarray)
+            self._postsanity(self.wavelengths,self.flux,wavelengths,flux,resolution,error=AnalyticSpectrumValueError,message=u"Normalizing Zero error." % (np.sum(zeros)),**msgarray)
         elif np.sum(zeros) > 0:
             self._postsanity(self.wavelengths,self.flux,wavelengths,flux,resolution,warning=True,message=u"Removed %d zeros from re-weighting." % (np.sum(zeros)),**msgarray)
         else:
@@ -684,7 +694,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,base.BaseFrame):
         if wavelengths == None:
             wavelengths = self._wavelengths
         if wavelengths == None:
-            raise ValueError(u"Requires Wavelenths")
+            raise AnalyticSpectrumValueError(u"Requires Wavelenths")
         
         # Upsample the provided wavelengths
         # This increases the accuracy of the trapezoidal algorithm, as this algorithm is very sensitive to sampling errors.
@@ -698,6 +708,8 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,base.BaseFrame):
         
         # Data sanity check
         LOG.debug(u"Interpolating to wavelength bins.")
+        interpkwargs = kwargs
+        interpkwargs.pop('extrapolate',False)
         oldwl,oldfl = self.interpolate(wavelengths=bins,extrapolate=True,**kwargs)
         LOG.debug(u"Integration Starting")
         
@@ -709,13 +721,13 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,base.BaseFrame):
         if (np.diff(bins) <= 0).any():
             msg = u"λ Bins must increase monotonically. [wl + %g]" % (wavelengths[-1]+np.diff(wavelengths)[-1])
             arrays = {u"λ Bins" : bins, u"Requested λ" : wavelengths ,u"Requested Δλ": wavelengths, u"Bin Δλ" : np.diff(bins),u"λ Offset" : offset }
-            error = ValueError
+            error = AnalyticSpectrumValueError
         else:
             bincount,wavelengths = np.histogram(oldwl[:-1],wavelengths)
             if (bincount == 0).any():
                 msg = u"Given λ is undersampled in Requested λ (there is not at least 1 given λ per requested bin)"
                 arrays = {u"Histogram of λ" : bincount, u"Requested λ" : wavelengths , u"Given λ" : oldwl }
-                error = ValueError
+                error = AnalyticSpectrumValueError
             elif (bincount < 2).any():
                 msg = u"Bins appear undersampled by given λ"
                 arrays = {u"Histogram of λ" : bincount, u"Requested λ" : wavelengths , u"Given λ" : oldwl }
@@ -756,7 +768,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,base.BaseFrame):
         if wavelengths == None:
             wavelengths = self._wavelengths
         if wavelengths == None:
-            raise ValueError(u"Requires Wavelenths")
+            raise AnalyticSpectrumValueError(u"Requires Wavelenths")
         
         LOG.debug(u"Integration Starting")
         
