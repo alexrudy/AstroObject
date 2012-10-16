@@ -640,7 +640,7 @@ class BaseStack(collections.MutableMapping):
             # Initialize return values
             rvals = []
             
-            framenames = list(*framenames)
+            framenames = list(framenames)
             if len(framenames) < 1:
                 framenames = [self._default_frame()]
                 
