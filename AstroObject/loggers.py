@@ -170,7 +170,7 @@ class RedirectionHandler(logging.Handler):
                         target.handle(record)
                 elif isinstance(target,str):
                     tlogger = logging.getLogger(target)
-                    tlogger.handler(record)
+                    tlogger.handle(record)
 
     def close(self):
         """Close the handler"""
@@ -407,4 +407,4 @@ logging.captureWarnings(True)
 logging.getLogger('py.warnings').addHandler(RedirectionHandler(__name__))
 
 
-from logging import *
+# from logging import *

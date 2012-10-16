@@ -271,7 +271,7 @@ import multiprocessing
 # Submodules from this system
 from .cache import *
 from .config import StructuredConfiguration, DottedConfiguration
-from . import logging as logging
+from .loggers import *
 
 import util.pbar as progressbar
 import util.terminal as terminal
@@ -821,7 +821,7 @@ can be customized using the 'Default' configuration variable in the configuratio
         currentList = dir(self)
         stageList = []
         for methodname in currentList:
-            if methodname not in genericList:
+            if (methodname not in genericList):
                 method = getattr(self,methodname)
                 if callable(method) and ( re.search(matching,methodname) or getattr(method,'collect',False) ) and ( not getattr(method,'ignore',False) ):
                     stageList.append(method)
