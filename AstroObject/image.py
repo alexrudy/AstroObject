@@ -67,7 +67,7 @@ class ImageFrame(HDUHeaderMixin,BaseFrame):
     
     """
     def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
-        self.data = data # The image data
+        self.data = np.asarray(data) # The image data
         self.size = data.size # The size of this image
         self.shape = data.shape # The shape of this image
         super(ImageFrame, self).__init__(data=None, label=label, header=header, metadata=metadata, **kwargs)

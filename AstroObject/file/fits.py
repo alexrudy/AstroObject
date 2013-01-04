@@ -65,5 +65,5 @@ class FITSFile(File):
         
     def open(self):
         """Open this file and return the HDUList."""
-        return pf.open(self.file)
+        return pf.open(self.file,ignore_missing_end=True)
         

@@ -259,7 +259,7 @@ class IRAFTools(object):
         filename = self.set.filename(extension=extension,prefix=framename)
         self.object.write(frames=[framename],filename=filename,clobber=True)
         self.log.log(2,"Created infile for frame %s named %s" % (framename,filename))
-        return filename
+        return os.path.relpath(filename)
     
     infile = inpfile
         
@@ -284,7 +284,7 @@ class IRAFTools(object):
         self.object.save(IRAFFrame(data=None,label=framename),select=False)
         self._collect[framename] = filename
         self.log.log(2,"Created outfile for frame %s named %s" % (framename,filename))
-        return filename
+        return os.path.relpath(filename)
         
     def modfile(self,framename,newframename=None,append=None,extension='.fits',**kwargs):
         """Returns a filename for a ``fits`` file from the given framename which can be used as input for IRAF tasks which modify a file in-place. The file will be reloaded when :meth:`done` is called.

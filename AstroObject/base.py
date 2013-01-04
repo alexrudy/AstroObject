@@ -404,8 +404,7 @@ class HDUHeaderMixin(Mixin):
         """
         HDU.header.update('label', str(self.label))
         HDU.header.update('object', str(self.label))
-        for key in self.header:
-            HDU.header.update(key, self.header[key])
+        HDU.header.update(self.header)
         return HDU
         
     def __getheader__(self, HDU):
@@ -968,7 +967,7 @@ class BaseStack(collections.MutableMapping):
         LOG.log(5, u"Wrote frame %s (primary) and frames %s to FITS file %s" % (primaryFrame, frames, filename))
         return primaryFrame, frames, filename
 
-    @set_trace_errors(TypeError)
+    @set_trace_errors(TypeError,IOError)
     def read(self, filename=None, framename=None, filetype=None, clobber=False, select=True):
         """This reader takes a FITS file, and trys to render each HDU within that FITS file as a frame in this Object. As such, it might read multiple frames. This method will return a list of Frames that it read. It uses the :attr:`dataClasses` :meth:`FITSFrame.__read__` method to return a valid Frame object for each HDU.
         
