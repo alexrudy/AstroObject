@@ -230,5 +230,54 @@ class ImageStack(BaseStack):
         if label == None:
             label = "Cropped"
         self.save(cropped,label,clobber=clobber)
+        
+    
+    def showds9(self,*framenames):
+        """Show the frames in DS9.
+        
+        :params frames: All the frames that should be displayed in DS9.
+        
+        Frames are displayed in DS9 using pyds9 and XPA access methods for the DS9 application. If the object was set up with :mod:`~AstroObject.iraftools`, then temporary fits files will be used to preserve header data in DS9. If not, then numpy arrays will be sent.
+        
+        """
+        framenames = list(framenames)
+        if len(framenames) < 1:
+            framenames = [self._default_frame()]
+        
+        if not hasattr(self,'_ds9'):
+            import ds9
+            self._ds9 = ds9.ds9()
+        if hasattr(self,'iraf'):
+            for frame in framenames:
+                self.__showds9_iraftools(frame)
+            self.iraf.done()
+        else:
+            for frame in framenames:
+                self.__showds9_noiraftools(frame)
+        return framenames
+        
+        
+    def __showds9_iraftools(self,frame):
+        """Show a single frame in ds9 via iraftools.
+        
+        :param frame: the frame name to display.
+        
+        This method uses ds9 XPA set methods and a temporary file.
+        
+        """
+        self._ds9.set("frame new")
+        self._ds9.set("file %s" % self.iraf.infile(frame))
+        self._ds9.set("zoom to fit")
+        self._ds9.set("scale log")
+        self._ds9.set("cmap sls")
+        
+    def __showds9_noiraftools(self,frame):
+        """Show a single frame in ds9 via numpy arrays.
+        
+        :param frame: the frame name to display.
+        
+        This method uses ds9 XPA set methods and sends a numpy array.
+        """
+        self._ds9.set("frame new")
+        self._ds9.set_np2arr(self.data(frame))
 
-                
