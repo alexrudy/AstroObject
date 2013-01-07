@@ -776,7 +776,7 @@ class BaseStack(collections.MutableMapping):
         return self.frame(framename)
     
     def _select(self, framename):
-        """Private, silent select mode. The parent select() function will issuee messages for everything. This one wont."""
+        """Private, silent select mode. The parent select() function will issue messages for everything. This one wont."""
         if framename is None:
             self._framename = None # Unselect frame
             framename = self._default_frame()

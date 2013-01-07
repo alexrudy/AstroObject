@@ -109,6 +109,7 @@ class ImageFrame(HDUHeaderMixin,BaseFrame):
         figure.set_cmap('binary_r')
         plt.colorbar()
         return figure
+        
     
     @classmethod
     def __save__(cls,data,label):
@@ -238,6 +239,8 @@ class ImageStack(BaseStack):
         :params frames: All the frames that should be displayed in DS9.
         
         Frames are displayed in DS9 using pyds9 and XPA access methods for the DS9 application. If the object was set up with :mod:`~AstroObject.iraftools`, then temporary fits files will be used to preserve header data in DS9. If not, then numpy arrays will be sent.
+        
+        .. Note :: This method is a Stack method to allow for the use of :mod:`~AstroObject.iraftools` which are not accessible at the Frame level. There is not a good way to retrieve the IRAFTools controller from an individual frame, and there aren't good ways to write files from individual frames.
         
         """
         framenames = list(framenames)
