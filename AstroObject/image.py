@@ -105,7 +105,7 @@ class ImageFrame(HDUHeaderMixin,BaseFrame):
         import matplotlib as mpl
         import matplotlib.pyplot as plt
         figure = plt.imshow(self(),interpolation="nearest")
-        plt.title(r'\verb-'+self.label+r'-')
+        plt.title(r'\verb"'+self.label+r'"')
         figure.set_cmap('binary_r')
         plt.colorbar()
         return figure
