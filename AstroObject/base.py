@@ -634,10 +634,6 @@ class BaseStack(collections.MutableMapping):
         
         """
         
-        if not hasattr(self.f,'__'+name+'__'):
-            raise AttributeError("%s has no attribute %s, and %s has no attribute %s." % 
-            (self.__class__.__name__,name,self.f.__class__.__name__,'__'+name+'__'))
-        
         def __attr_method(*framenames):
             # Set up frame method name (as string)
             method = '__' + name + '__'
@@ -651,7 +647,11 @@ class BaseStack(collections.MutableMapping):
             # Execute the desired method everywhere
             for framename in framenames:
                 if framename != None and framename in self:
-                    rvals += [ getattr(self[framename],method)() ]
+                    try:
+                        rvals += [ getattr(self[framename],method)() ]
+                    except AttributeError:
+                        raise AttributeError("%s has no attribute %s, and %s has no attribute %s." % 
+            (self.__class__.__name__,name,self.f.__class__.__name__,'__'+name+'__'))
                 else:
                     self._key_error(framename)
             
