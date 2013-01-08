@@ -1043,6 +1043,20 @@ class API_BaseStack(API_Base):
         AObject.save(self.frame())
         AObject.show(self.FLABEL + "JUNK...")
     
+    @nt.raises(AttributeError)
+    def test_attribute_error(self):
+        """badMethod() fails for trying to call __badMethod__()"""
+        AObject = self.OBJECT()
+        AObject.save(self.frame())
+        AObject.badMethod()
+        
+    @nt.raises(AttributeError)
+    def test_attribute_error_form(self):
+        """_badMethod() fails because it doesn't exist."""
+        AObject = self.OBJECT()
+        AObject.save(self.frame())
+        AObject._badMethod()
+    
     def test_object(self):
         """object() call exists and works, but has been depreciated"""
         BObject = self.OBJECT()

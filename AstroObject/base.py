@@ -634,6 +634,10 @@ class BaseStack(collections.MutableMapping):
         
         """
         
+        if name.startswith("_"):
+            raise AttributeError("%s has no attribute %s." %
+             (self.__class__.__name__,name))
+        
         def __attr_method(*framenames):
             # Set up frame method name (as string)
             method = '__' + name + '__'
