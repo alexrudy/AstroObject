@@ -561,7 +561,7 @@ class BaseStack(collections.MutableMapping):
         if self.name:
             return "<\'%s\' labeled \'%s\'>" % (self.__class__.__name__, self.name)
         else:
-            return super(BaseStack, self).__repr__()
+            return "<\'%s\' with %d frames at \'%s\'>" % (self.__class__.__name__,len(self),hex(id(self)))
     
     def __str__(self):
         """String label for this object."""
