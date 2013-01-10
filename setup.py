@@ -69,12 +69,17 @@ setup(
     version = versionstr,
     packages = find_packages(exclude=['tests']),
     package_data = {'':['Defaults.yaml']},
-    install_requires = ['distribute','pyfits>=2.4','numpy>=1.5','scipy>=0.9',"PyYAML>=3.10",'progressbar'],
+    install_requires = ['distribute','pyfits>=3.1','numpy>=1.5','scipy>=0.9',"PyYAML>=3.10",'progressbar','pyds9','ipython','pyshell'],
     test_suite = 'tests',
     author = "Alexander Rudy",
     author_email = "dev@alexrudy.org",
     cmdclass = {
         'build_py' : ao_build_py,
         'version' : Version
-    }
+    },
+    entry_points = {
+        'console_scripts' : [
+            'iPyStack = AstroObject.tools.ipystack:IPyStack.script'
+        ],
+    },
 )
