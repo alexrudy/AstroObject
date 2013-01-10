@@ -110,6 +110,17 @@ class ImageFrame(HDUHeaderMixin,BaseFrame):
         plt.colorbar()
         return figure
         
+    def __showds9__(self):
+        """Show this frame using DS9 and array tools."""
+        LOG.log(2,"Showing %s using DS9 and XPA" % self)
+        import ds9
+        _ds9 = ds9.ds9()
+        _ds9.set("frame new")
+        _ds9.set_np2arr(self())
+        _ds9.set("zoom to fit")
+        _ds9.set("scale log")
+        _ds9.set("cmap sls")
+        
     
     @classmethod
     def __save__(cls,data,label):
@@ -214,7 +225,7 @@ class ImageStack(BaseStack):
         LOG.log(2,"Masked masked and saved image")
         self.save(masked,label,clobber=clobber)
         
-    def crop(self,x,y,xsize,ysize=None,label=None,clobber=True):
+    def crop(self,x,y,xsize,**kwargs):
         """Crops the provided image to twice the specified size, centered around the x and y coordinates provided.
         
         :param int x: The x position of the desired center.
@@ -225,12 +236,13 @@ class ImageStack(BaseStack):
         :keyword clobber: Whether to overwrite the named frame in this stack.
         
         """
+        ysize = kwargs.pop("ysize",False)
         if not ysize:
             ysize = xsize
         cropped = self.d[x-xsize:x+xsize,y-ysize:y+ysize]
-        if label == None:
-            label = "Cropped"
-        self.save(cropped,label,clobber=clobber)
+        if not kwargs.get("clobber",False):
+            kwargs.setdefault("framename","Cropped")
+        return self.save(cropped,**kwargs)
         
     
     def showds9(self,*framenames):
@@ -255,8 +267,7 @@ class ImageStack(BaseStack):
                 self.__showds9_iraftools(frame)
             self.iraf.done()
         else:
-            for frame in framenames:
-                self.__showds9_noiraftools(frame)
+            getattr(self,'showds9')(*framenames)
         return framenames
         
         
@@ -273,14 +284,4 @@ class ImageStack(BaseStack):
         self._ds9.set("zoom to fit")
         self._ds9.set("scale log")
         self._ds9.set("cmap sls")
-        
-    def __showds9_noiraftools(self,frame):
-        """Show a single frame in ds9 via numpy arrays.
-        
-        :param frame: the frame name to display.
-        
-        This method uses ds9 XPA set methods and sends a numpy array.
-        """
-        self._ds9.set("frame new")
-        self._ds9.set_np2arr(self.data(frame))
 
