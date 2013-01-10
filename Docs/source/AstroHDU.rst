@@ -1,2 +1,2 @@
 .. automodule::
-	AstroObject.AstroHDU
+	AstroObject.hdu

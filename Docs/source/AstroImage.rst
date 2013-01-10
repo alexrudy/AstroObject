@@ -1,1 +1,1 @@
-.. automodule:: AstroObject.AstroImage
+.. automodule:: AstroObject.image

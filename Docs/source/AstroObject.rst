@@ -1,4 +1,4 @@
 .. automodule::
-    AstroObject.AstroObjectBase
+    AstroObject.base
 
     

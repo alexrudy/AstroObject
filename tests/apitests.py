@@ -24,16 +24,16 @@ In order to ensure that tests can be run correctly with this API, the API will c
     tests.apitests.API_AnalyticMixin
     tests.apitests.API_General_Frame
     tests.apitests.API_BaseStack
-    tests.Test_fits.test_FITSFrame
-    tests.Test_fits.test_FITSStack
+    tests.test_fits.test_FITSFrame
+    tests.test_fits.test_FITSStack
     tests.test_hdu.test_HDUFrame
     tests.test_hdu.test_HDUStack
-    tests.Test_image.test_ImageFrame
-    tests.Test_image.test_ImageStack
-    tests.Test_spectra.test_SpectraFrame
-    tests.Test_spectra.test_SpectraStack
-    tests.Test_anaspec.test_InterpolatedSpectrum
-    tests.Test_anaspec.test_UnitarySpectrum
+    tests.test_image.test_ImageFrame
+    tests.test_image.test_ImageStack
+    tests.test_spectra.test_SpectraFrame
+    tests.test_spectra.test_SpectraStack
+    tests.test_anaspec.test_InterpolatedSpectrum
+    tests.test_anaspec.test_UnitarySpectrum
     :parts: 1
 
 """
