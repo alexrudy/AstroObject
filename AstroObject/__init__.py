@@ -13,7 +13,7 @@ import time,sys,os,logging
 from version import version as versionstr
 
 __version__ = versionstr
-
+__libdebug__ = True
 __all__ = ['anaspec','image','base','spectra','logging','util']
 
 
