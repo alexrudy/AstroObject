@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2012-04-19.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.6.0
+#  Version 0.6.1
 # 
 u"""
 :mod:`iraftools` – IRAF integration facility
@@ -163,8 +163,8 @@ import shutil
 # Submodules from this system
 from .util import getVersion
 from .file.fileset import TempFileSet
-from .AstroObjectBase import BaseStack, Mixin, BaseFrame, NoHDUMixin, NoDataMixin
-from .AstroFITS import FITSFrame
+from .base import BaseStack, Mixin, BaseFrame, NoHDUMixin, NoDataMixin
+from .fits import FITSFrame
 
 __version__ = getVersion()
 
@@ -259,7 +259,7 @@ class IRAFTools(object):
         filename = self.set.filename(extension=extension,prefix=framename)
         self.object.write(frames=[framename],filename=filename,clobber=True)
         self.log.log(2,"Created infile for frame %s named %s" % (framename,filename))
-        return filename
+        return os.path.relpath(filename)
     
     infile = inpfile
         
@@ -284,7 +284,7 @@ class IRAFTools(object):
         self.object.save(IRAFFrame(data=None,label=framename),select=False)
         self._collect[framename] = filename
         self.log.log(2,"Created outfile for frame %s named %s" % (framename,filename))
-        return filename
+        return os.path.relpath(filename)
         
     def modfile(self,framename,newframename=None,append=None,extension='.fits',**kwargs):
         """Returns a filename for a ``fits`` file from the given framename which can be used as input for IRAF tasks which modify a file in-place. The file will be reloaded when :meth:`done` is called.
@@ -406,7 +406,7 @@ def UseIRAFTools(klass):
     Example::
         
         from AstroObject.iraftools import UseIRAFTools
-        from AstroObject.AstroImage import ImageStack
+        from AstroObject.image import ImageStack
         ImageStack = UseIRAFTools(ImageStack)
         
     """

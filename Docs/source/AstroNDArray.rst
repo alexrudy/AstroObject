@@ -1,2 +1,2 @@
 .. automodule::
-	AstroObject.AstroNDArray
+	AstroObject.ndarray

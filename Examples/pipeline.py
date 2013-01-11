@@ -27,8 +27,8 @@ from pkg_resources import resource_filename
 from pyraf import iraf
 from iraf import imred, ccdred
 
-from AstroObject.AstroSimulator import Simulator
-from AstroObject.AstroSimulator import (
+from AstroObject.simulator import Simulator
+from AstroObject.simulator import (
     optional,
     description,
     include,
@@ -39,9 +39,9 @@ from AstroObject.AstroSimulator import (
     ignore,
     help
 )
-from AstroObject.AstroImage import ImageStack
+from AstroObject.image import ImageStack
 from AstroObject.iraftools import UseIRAFTools
-from AstroObject.AstroObjectLogging import logging
+from AstroObject.loggers import logging
 ImageStack = UseIRAFTools(ImageStack)
 
 class Pipeline(Simulator):

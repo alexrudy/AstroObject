@@ -1,24 +1,24 @@
 # -*- coding: utf-8 -*-
 # 
-#  AnalyticSpectra.py
+#  anaspec.py
 #  ObjectModel
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.6.0
+#  Version 0.6.1
 # 
 """
-:mod:`AnalyticSpectra` – Analytic Spectra and Interpolation
+:mod:`anaspec` – Analytic Spectra and Interpolation
 ===========================================================
 
 Objects for manipulating and managing spectra which are inherently analytic (i.e. you want interpolation, or your spectrum to be defined by a single function). The classes provided in this module are *FRAMES* not *OBJECTS*, i.e. they are individual representations of spectra etc.
 
-It is possible to create an AnalyticSpectraObject to hold many spectra. However, such an object might be of limited utility, as it could not be used to write or read data saved in FITS files, as the FITS format is not conducive to storing analytic items.
+It is possible to create an anaspecObject to hold many spectra. However, such an object might be of limited utility, as it could not be used to write or read data saved in FITS files, as the FITS format is not conducive to storing analytic items.
 
 .. Note::
     This is a solvable problem. I could use FITS header information to store the required values for an analytic spectrum, and then simply store empty images. However, I don't need this capability now, so maybe in a future version.
 
-This module contains a few pre-defined analytic spectra which you can use as examples. See the :mod:`AnalyticSpectraObjects` module.
+This module contains a few pre-defined analytic spectra which you can use as examples. See the :mod:`anaspecobjects` module.
 
 This module provides basic analytic spectrum capabilites. There is a simple principle at work in this module: Do all calculations as late as possible. As such, most spectra will be defined as basic analytic spectra. However, the use of the :class:`CompositeSpectra` class allows spectra to be used in mathematics::
     
@@ -34,9 +34,9 @@ Module Structure
 
 This module is built on a foundation of Analytic and semi-Analytic spectra. Analytic spectra are spectra that can be described purely as functions. They are known quantities, and show none of the features of a discritized, measured spectrum. The :class:`AnalyticSpectrum` class provides an abstract base for this type of spectra. The :class:`CompositeSpectra` manages the mathematical operations that can be performed on any :class:`AnalyticSpectrum`.
 
-The :class:`.AstroObjectBase.AnalyticMixin` is a mixin which provides for using data **frames** as analytic objects with no data access attributes.
+The :class:`.base.AnalyticMixin` is a mixin which provides for using data **frames** as analytic objects with no data access attributes.
 
-The :class:`InterpolatedSpectrum` provides a spectrum which is entered as raw data (like a :class:`.AstroSpectra.SpectraFrame`) and then returned, using a transformation function, as a different, discrite spectrum. The methods for this transformation are defined in :class:`InterpolatedSpectrumBase`. The :class:`SpectraMixin` provides the properties and plotting methods used by spectra which have discrete raw data.
+The :class:`InterpolatedSpectrum` provides a spectrum which is entered as raw data (like a :class:`.spectra.SpectraFrame`) and then returned, using a transformation function, as a different, discrite spectrum. The methods for this transformation are defined in :class:`InterpolatedSpectrumBase`. The :class:`SpectraMixin` provides the properties and plotting methods used by spectra which have discrete raw data.
 
 :class:`UnitarySpectrum` is used to perform a single interpolation operation on a spectrum, *when that spectrum is called*. As it operates when the spectrum is called, it does not contain accessible *raw data*, and so is "analytic" in some sense.
 
@@ -45,14 +45,14 @@ The :class:`InterpolatedSpectrum` provides a spectrum which is entered as raw da
 The :class:`FlatSpectrum`, :class:`GaussianSpectrum`, and :class:`BlackBodySpectrum` objects are all analytic spectra with a specific functional implementation (as thier names imply).
 
 .. inheritance-diagram:: 
-    AstroObject.AnalyticSpectra.AnalyticSpectrum
-    AstroObject.AnalyticSpectra.CompositeSpectra
-    AstroObject.AnalyticSpectra.InterpolatedSpectrum
-    AstroObject.AnalyticSpectra.Resolver
-    AstroObject.AnalyticSpectra.UnitarySpectrum	
-    AstroObject.AnalyticSpectra.FlatSpectrum
-	AstroObject.AnalyticSpectra.GaussianSpectrum
-	AstroObject.AnalyticSpectra.BlackBodySpectrum
+    AstroObject.anaspec.AnalyticSpectrum
+    AstroObject.anaspec.CompositeSpectra
+    AstroObject.anaspec.InterpolatedSpectrum
+    AstroObject.anaspec.Resolver
+    AstroObject.anaspec.UnitarySpectrum	
+    AstroObject.anaspec.FlatSpectrum
+	AstroObject.anaspec.GaussianSpectrum
+	AstroObject.anaspec.BlackBodySpectrum
     :parts: 1
 
 
@@ -60,11 +60,11 @@ Simple Objects
 --------------
 
 .. autoclass::
-    AstroObject.AnalyticSpectra.AnalyticSpectrum
+    AstroObject.anaspec.AnalyticSpectrum
     :members:
 
 .. autoclass::
-    AstroObject.AnalyticSpectra.CompositeSpectra
+    AstroObject.anaspec.CompositeSpectra
     :members:
     :inherited-members:
     
@@ -76,7 +76,7 @@ Expansion Objects
 These objects expand the concept of an analytic spectrum to be any spectrum which can respond to calls with arbitrary wavelength boundaries. The spectra in the :class:`InterpolatedSpectrum` class rely on a number of potential methods to calculate the desired wavelength values. The public methods for this class are generally the accepted potential resolution methods.
 
 .. autoclass::
-    AstroObject.AnalyticSpectra.InterpolatedSpectrum
+    AstroObject.anaspec.InterpolatedSpectrum
     :members:
     :inherited-members:
     
@@ -87,13 +87,13 @@ These objects expand the concept of an analytic spectrum to be any spectrum whic
     .. automethod:: _postsanity
 
 .. autoclass::
-    AstroObject.AnalyticSpectra.Resolver
+    AstroObject.anaspec.Resolver
         
     .. automethod:: __call__
 
     
 .. autoclass::
-    AstroObject.AnalyticSpectra.UnitarySpectrum
+    AstroObject.anaspec.UnitarySpectrum
         
     .. automethod:: __call__
     
@@ -104,7 +104,7 @@ Analytic Spectrum Objects
 These objects actually have spectral functions included.
 
 .. autoclass::
-    AstroObject.AnalyticSpectra.BlackBodySpectrum
+    AstroObject.anaspec.BlackBodySpectrum
     :members:
     :inherited-members:
     
@@ -112,7 +112,7 @@ These objects actually have spectral functions included.
     
 
 .. autoclass::
-    AstroObject.AnalyticSpectra.GaussianSpectrum
+    AstroObject.anaspec.GaussianSpectrum
     :members:
     :inherited-members:
     
@@ -120,7 +120,7 @@ These objects actually have spectral functions included.
     
 
 .. autoclass::
-    AstroObject.AnalyticSpectra.FlatSpectrum
+    AstroObject.anaspec.FlatSpectrum
     :members:
     :inherited-members:
     
@@ -128,7 +128,7 @@ These objects actually have spectral functions included.
 
 """
 # Parent Modules
-from . import AstroObjectBase,AstroImage,AstroSpectra
+from . import base,image,spectra
 
 # Standard Scipy Toolkits
 import numpy as np
@@ -147,20 +147,30 @@ import os
 import itertools
 
 # Submodules from this system
-from . import AstroObjectLogging as logging
+from . import logging as logging
 from .util import getVersion, npArrayInfo
 
 __all__ = ["AnalyticSpectrum","CompositeSpectra","InterpolatedSpectrum","InterpolatedSpectrumBase","Resolver","UnitarySpectrum"]
 
 LOG = logging.getLogger(__name__)
 
-class AnalyticSpectrum(AstroObjectBase.BaseFrame):
+class AnalyticSpectrumValueError(Exception):
+    """docstring for AnalyticSpectrumValueError"""
+    def __init__(self, msg):
+        self.msg = msg
+    
+    def __str__(self):
+        """docstring for __str__"""
+        return u"%s: %s" % (self.__class__.__name__,repr(self.msg))
+        
+
+class AnalyticSpectrum(base.BaseFrame):
     """A functional spectrum object for spectrum generation. This is an abstract class which implements spectrum arithmetic. Spectrum arithmetic has a delayed implementation, whereby it is applied to the spectrum only once the spectrum is called for data, allowing spectra to produce data which matches the requested wavelengths (and resolution, if applicable).
     
     The Analytic spectrum can be provided with a set of wavelengths upon intialization. The `wavelengths` keyword will be stored and used when this spectrum is later called by the system. The `units` keyword is currently unused.
     
     .. inheritance-diagram::
-        AstroObject.AnalyticSpectra.AnalyticSpectrum
+        AstroObject.anaspec.AnalyticSpectrum
         :parts: 1
         
     
@@ -220,11 +230,11 @@ class AnalyticSpectrum(AstroObjectBase.BaseFrame):
     
 
 
-class CompositeSpectra(AstroObjectBase.AnalyticMixin,AnalyticSpectrum):
+class CompositeSpectra(base.AnalyticMixin,AnalyticSpectrum):
     """Binary composition of two functional spectra. This object should not be initialized by the user. Instead, this class is returned when you combine two spectra of different types, or combine a spectra with any other type. As such, do not initialze composite spectra idependently. See the :meth:`__call__` function for documentation of how to use this type of object.
     
     .. inheritance-diagram::
-        AstroObject.AnalyticSpectra.CompositeSpectra
+        AstroObject.anaspec.CompositeSpectra
         :parts: 1
         
     
@@ -253,7 +263,7 @@ class CompositeSpectra(AstroObjectBase.AnalyticMixin,AnalyticSpectrum):
         if wavelengths == None:
             wavelengths = self._wavelengths
         if wavelengths == None:
-            raise ValueError(u"No wavelengths specified in %s" % (self))
+            raise AnalyticSpectrumValueError(u"No wavelengths specified in %s" % (self))
             
         if isinstance(self.A,AnalyticSpectrum):
             Awavelengths,Avalue = self.A(wavelengths=wavelengths,**kwargs)
@@ -275,12 +285,12 @@ class CompositeSpectra(AstroObjectBase.AnalyticMixin,AnalyticSpectrum):
         if Result != None:
             return np.vstack((wavelengths,Result))
         else:
-            raise ValueError(u"Composition did not produce a value result!")
+            raise AnalyticSpectrumValueError(u"Composition did not produce a value result!")
         
     
 
 
-class InterpolatedSpectrumBase(AnalyticSpectrum,AstroObjectBase.BaseFrame):
+class InterpolatedSpectrumBase(AnalyticSpectrum,base.BaseFrame):
 
     def __init__(self, data=None, label=None, wavelengths=None,resolution=None, method=u"interpolate",integrator='integrate_hist', **kwargs):
         self.method = getattr(self,method)
@@ -342,16 +352,16 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,AstroObjectBase.BaseFrame):
         if (np.diff(oldwl) < 0).any():
             msg += [u"Given λ must be monotonically increasing."]
             arrays[u"Given λ"] = oldwl
-            error = ValueError
+            error = AnalyticSpectrumValueError
         try:    
             if (np.diff(newwl) < 0).any():
                 msg += [u"Requested λ must be monotonically increasing."]
                 arrays[u"Requested λ"] = newwl
-                error = ValueError
+                error = AnalyticSpectrumValueError
         except:
             msg += [u"Requested λ threw an error"]
             arrays[u"Requested λ"] = newwl
-            error = ValueError
+            error = AnalyticSpectrumValueError
             
         
         # Check that we have non-zero, positive flux provided.
@@ -398,7 +408,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,AstroObjectBase.BaseFrame):
                 warning = True
             else:
                 msg += [u"Can not extrapolate during reampling process. Please provide new λ that are within the range of old ones."]
-                error = ValueError
+                error = AnalyticSpectrumValueError
             arrays[u"Requested λ"] = newwl
             arrays[u"Given λ"] = oldwl
             dmsg += [u"%s: Allowed range for Requested λ: [%g,%g]" % (self,mintol,maxtol)]
@@ -424,7 +434,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,AstroObjectBase.BaseFrame):
                     if upsample:
                         warning = True
                     else:
-                        error = ValueError
+                        error = AnalyticSpectrumValueError
                 else:
                     msg += [u"Requested R may be close to same detail as given R. Fidelity might not be preserved."]
                     arrays[u"Requested R"] = newrs
@@ -494,7 +504,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,AstroObjectBase.BaseFrame):
                 
         if np.isnan(newfl).any():
             msg += [u"Detected NaN in Flux!"]
-            error = ValueError
+            error = AnalyticSpectrumValueError
                 
         if float(np.sum(newfl <= 0))/float(np.size(newfl)) > 0.01 and (oldfl > 0).all() and not extrapolate:
             msg += [u"New Flux <= 0 for more than 1% of points"]
@@ -502,7 +512,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,AstroObjectBase.BaseFrame):
             
         if newfl.shape != newwl.shape:
             msg += [u"λ lengths have changed: %s -> %s" % (newfl.shape,newwl.shape)]
-            error = ValueError
+            error = AnalyticSpectrumValueError
         
         if (newfl <= 0).any() and (oldfl > 0).all():
             msg += [u"New Flux <= 0 some point!"]
@@ -537,7 +547,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,AstroObjectBase.BaseFrame):
         if wavelengths == None:
             wavelengths = self._wavelengths
         if wavelengths == None:
-            raise ValueError(u"Requires Wavelenths")
+            raise AnalyticSpectrumValueError(u"Requires Wavelenths")
         
         LOG.debug(u"Interpolate Starting")
         
@@ -567,7 +577,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,AstroObjectBase.BaseFrame):
         if wavelengths == None:
             wavelengths = self._wavelengths
         if wavelengths == None:
-            raise ValueError(u"Requires Wavelenths")
+            raise AnalyticSpectrumValueError(u"Requires Wavelenths")
         
         LOG.debug(u"Polyfit Starting")
         
@@ -603,15 +613,15 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,AstroObjectBase.BaseFrame):
         if resolution == None:
             resolution = self.resolution
         if wavelengths == None:
-            raise ValueError(u"Requires Wavelenths")
+            raise AnalyticSpectrumValueError(u"Requires Wavelenths")
         if resolution == None:
-            raise ValueError(u"Requires Resolution")
+            raise AnalyticSpectrumValueError(u"Requires Resolution")
         
         LOG.debug(u"Resample Starting")
         
         
         # Sanity Checks for Data
-        self._presanity(self.wavelengths,self.flux,wavelengths,resolution,upsample=upsample)
+        self._presanity(self.wavelengths,self.flux,wavelengths,resolution,upsample=upsample,extrapolate=kwargs.get('extrapolate',False))
         
         # The main resampling function.
         # A two dimensional grid is used (instead of two for-loops). The grid stretches across wavelength (data), wavelength (requested). The 
@@ -655,7 +665,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,AstroObjectBase.BaseFrame):
             u"Curve Evaluated" : curves,
         }
         if (topzo.astype(int) < zeros.astype(int)).any():
-            self._postsanity(self.wavelengths,self.flux,wavelengths,flux,resolution,error=ValueError,message=u"Normalizing Zero error." % (np.sum(zeros)),**msgarray)
+            self._postsanity(self.wavelengths,self.flux,wavelengths,flux,resolution,error=AnalyticSpectrumValueError,message=u"Normalizing Zero error." % (np.sum(zeros)),**msgarray)
         elif np.sum(zeros) > 0:
             self._postsanity(self.wavelengths,self.flux,wavelengths,flux,resolution,warning=True,message=u"Removed %d zeros from re-weighting." % (np.sum(zeros)),**msgarray)
         else:
@@ -684,7 +694,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,AstroObjectBase.BaseFrame):
         if wavelengths == None:
             wavelengths = self._wavelengths
         if wavelengths == None:
-            raise ValueError(u"Requires Wavelenths")
+            raise AnalyticSpectrumValueError(u"Requires Wavelenths")
         
         # Upsample the provided wavelengths
         # This increases the accuracy of the trapezoidal algorithm, as this algorithm is very sensitive to sampling errors.
@@ -698,6 +708,8 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,AstroObjectBase.BaseFrame):
         
         # Data sanity check
         LOG.debug(u"Interpolating to wavelength bins.")
+        interpkwargs = kwargs
+        interpkwargs.pop('extrapolate',False)
         oldwl,oldfl = self.interpolate(wavelengths=bins,extrapolate=True,**kwargs)
         LOG.debug(u"Integration Starting")
         
@@ -709,13 +721,13 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,AstroObjectBase.BaseFrame):
         if (np.diff(bins) <= 0).any():
             msg = u"λ Bins must increase monotonically. [wl + %g]" % (wavelengths[-1]+np.diff(wavelengths)[-1])
             arrays = {u"λ Bins" : bins, u"Requested λ" : wavelengths ,u"Requested Δλ": wavelengths, u"Bin Δλ" : np.diff(bins),u"λ Offset" : offset }
-            error = ValueError
+            error = AnalyticSpectrumValueError
         else:
             bincount,wavelengths = np.histogram(oldwl[:-1],wavelengths)
             if (bincount == 0).any():
                 msg = u"Given λ is undersampled in Requested λ (there is not at least 1 given λ per requested bin)"
                 arrays = {u"Histogram of λ" : bincount, u"Requested λ" : wavelengths , u"Given λ" : oldwl }
-                error = ValueError
+                error = AnalyticSpectrumValueError
             elif (bincount < 2).any():
                 msg = u"Bins appear undersampled by given λ"
                 arrays = {u"Histogram of λ" : bincount, u"Requested λ" : wavelengths , u"Given λ" : oldwl }
@@ -756,7 +768,7 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,AstroObjectBase.BaseFrame):
         if wavelengths == None:
             wavelengths = self._wavelengths
         if wavelengths == None:
-            raise ValueError(u"Requires Wavelenths")
+            raise AnalyticSpectrumValueError(u"Requires Wavelenths")
         
         LOG.debug(u"Integration Starting")
         
@@ -851,13 +863,13 @@ class InterpolatedSpectrumBase(AnalyticSpectrum,AstroObjectBase.BaseFrame):
         return integrated
         
 
-class InterpolatedSpectrum(AstroSpectra.SpectraFrame,InterpolatedSpectrumBase):
+class InterpolatedSpectrum(spectra.SpectraFrame,InterpolatedSpectrumBase):
     """An analytic representation of a generic, specified spectrum. The spectrum provided will be used to create an infintiely dense interpolation function. This function can then be used to call the spectrum at any wavelength. The interpolation used by default is a simple 1d interpolation.
     
     Passing the name of any member function in this class to the `method` parameter will change the interpolation/method used for this spectrum.
     
     .. inheritance-diagram::
-        AstroObject.AnalyticSpectra.InterpolatedSpectrum
+        AstroObject.anaspec.InterpolatedSpectrum
         :parts: 1
         
     
@@ -878,11 +890,11 @@ class InterpolatedSpectrum(AstroSpectra.SpectraFrame,InterpolatedSpectrumBase):
         # This allows a custom __call__ function for extraction of interpolated spectral data withouth the difficulties caused by MROs
     
 
-class Resolver(AstroSpectra.SpectraFrame,InterpolatedSpectrumBase):
+class Resolver(spectra.SpectraFrame,InterpolatedSpectrumBase):
     """This spectrum performs a unitary operation on any InterpolatedSpectrum-type-object. The operation (specified by the `method` keyword) is performed after the contained spectrum is called. The included spectrum is called immediately and then discarded. As such, wavelength and resolution keywords should be provided when appropriate to resolve the spectrum immediately. This operation does not save the old data state. All methods in :class:`InterpolatedSpectrum` are available.
     
     .. inheritance-diagram::
-        AstroObject.AnalyticSpectra.Resolver
+        AstroObject.anaspec.Resolver
         :parts: 1
         
     
@@ -890,12 +902,12 @@ class Resolver(AstroSpectra.SpectraFrame,InterpolatedSpectrumBase):
     def __init__(self, spectrum=None, label=None, new_method='interpolate',**kwargs):
         
         # Priority grabbing of Spectra
-        if isinstance(spectrum,AstroObjectBase.BaseFrame):
+        if isinstance(spectrum,base.BaseFrame):
             # First assume everything is a spectrum
             data = spectrum(**kwargs)
         elif spectrum is not None:
             data = spectrum
-        elif isinstance(kwargs.get('data',None),AstroObjectBase.BaseFrame):
+        elif isinstance(kwargs.get('data',None),base.BaseFrame):
             data = kwargs.pop('data',None)(**kwargs)
         else:
             data = kwargs.pop('data',None)
@@ -915,11 +927,11 @@ class Resolver(AstroSpectra.SpectraFrame,InterpolatedSpectrumBase):
         
     
         
-class UnitarySpectrum(AstroObjectBase.AnalyticMixin,AstroSpectra.SpectraMixin,InterpolatedSpectrumBase):
+class UnitarySpectrum(base.AnalyticMixin,spectra.SpectraMixin,InterpolatedSpectrumBase):
     """This spectrum performs a unitary operation on any InterpolatedSpectrum-type-object. The operation (specified by the `method` keyword) is performed after the contained spectrum is called. All methods in :class:`InterpolatedSpectrum` are available.
     
     .. inheritance-diagram::
-        AstroObject.AnalyticSpectra.UnitarySpectrum
+        AstroObject.anaspec.UnitarySpectrum
         :parts: 1
         
     
@@ -943,13 +955,13 @@ class UnitarySpectrum(AstroObjectBase.AnalyticMixin,AstroSpectra.SpectraMixin,In
 
     def __valid__(self):
         """Check our unitary spectrum for validity"""
-        assert isinstance(self.spectrum,AstroObjectBase.BaseFrame), "Unitary Spectrum must contain another spectrum"
+        assert isinstance(self.spectrum,base.BaseFrame), "Unitary Spectrum must contain another spectrum"
         assert callable(self.method), "Method must be a callable object."
         super(UnitarySpectrum, self).__valid__()
         
                     
 
-import AnalyticSpectraObjects
-from AnalyticSpectraObjects import *
+import anaspecobjects
+from anaspecobjects import *
 
-__all__ += AnalyticSpectraObjects.__all__
+__all__ += anaspecobjects.__all__

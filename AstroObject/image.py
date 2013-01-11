@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 # 
-#  AstroImage.py
+#  image.py
 #  Astronomy ObjectModel
 #  
 #  Created by Alexander Rudy on 2011-04-28.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.6.0
+#  Version 0.6.1
 # 
 """
-:mod:`AstroImage` — Image Stacks and Storage 
+:mod:`image` — Image Stacks and Storage 
 ============================================
 
 **Stacks** and **frames** for manipulating and managing images. Images are simply defined as a two-dimensional numpy array. Image **stacks** have two special methods, :meth:`ImageStack.loadFromFile` and :meth:`ImageStack.show3D`.
@@ -16,15 +16,15 @@
 To understand IRAF integration of this module, see the methods provided by :mod:`~.iraftools`, including :func:`~.iraftools.UseIRAFTools`.
 
 .. inheritance-diagram::
-    AstroObject.AstroImage.ImageStack
-    AstroObject.AstroImage.ImageFrame
+    AstroObject.image.ImageStack
+    AstroObject.image.ImageFrame
     :parts: 1
 
 :class:`ImageStack` — Image **stacks**
 --------------------------------------
 
 .. autoclass::
-    AstroObject.AstroImage.ImageStack
+    AstroObject.image.ImageStack
     :members:
     :inherited-members:
 
@@ -32,13 +32,13 @@ To understand IRAF integration of this module, see the methods provided by :mod:
 --------------------------------------
 
 .. autoclass::
-    AstroObject.AstroImage.ImageFrame
+    AstroObject.image.ImageFrame
     :members:
     :special-members:
 
 """
 # Parent Modules
-from .AstroObjectBase import HDUHeaderMixin, BaseFrame, BaseStack
+from .base import HDUHeaderMixin, BaseFrame, BaseStack
 
 # Standard Scipy Toolkits
 import numpy as np
@@ -50,7 +50,7 @@ import os
 
 # Module Utilites
 from .util import getVersion, npArrayInfo
-from . import AstroObjectLogging as logging
+from . import logging as logging
 
 __all__ = [ "ImageFrame", "ImageStack" ]
 
@@ -67,7 +67,7 @@ class ImageFrame(HDUHeaderMixin,BaseFrame):
     
     """
     def __init__(self, data=None, label=None, header=None, metadata=None, **kwargs):
-        self.data = data # The image data
+        self.data = np.asarray(data) # The image data
         self.size = data.size # The size of this image
         self.shape = data.shape # The shape of this image
         super(ImageFrame, self).__init__(data=None, label=label, header=header, metadata=metadata, **kwargs)
@@ -105,10 +105,22 @@ class ImageFrame(HDUHeaderMixin,BaseFrame):
         import matplotlib as mpl
         import matplotlib.pyplot as plt
         figure = plt.imshow(self(),interpolation="nearest")
-        plt.title(r'\verb-'+self.label+r'-')
+        plt.title(r'\verb"'+self.label+r'"')
         figure.set_cmap('binary_r')
         plt.colorbar()
         return figure
+        
+    def __showds9__(self):
+        """Show this frame using DS9 and array tools."""
+        LOG.log(2,"Showing %s using DS9 and XPA" % self)
+        import ds9
+        _ds9 = ds9.ds9()
+        _ds9.set("frame new")
+        _ds9.set_np2arr(self())
+        _ds9.set("zoom to fit")
+        _ds9.set("scale log")
+        _ds9.set("cmap sls")
+        
     
     @classmethod
     def __save__(cls,data,label):
@@ -149,7 +161,7 @@ class ImageFrame(HDUHeaderMixin,BaseFrame):
 
 
 class ImageStack(BaseStack):
-    """This object tracks a number of data frames. This class is a simple subclass of :class:`AstroObjectBase.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`ImageFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.
+    """This object tracks a number of data frames. This class is a simple subclass of :class:`base.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`ImageFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.
     """
     def __init__(self, array=None,dataClasses=[ImageFrame], **kwargs):
         super(ImageStack, self).__init__(dataClasses=dataClasses,**kwargs)
@@ -213,7 +225,7 @@ class ImageStack(BaseStack):
         LOG.log(2,"Masked masked and saved image")
         self.save(masked,label,clobber=clobber)
         
-    def crop(self,x,y,xsize,ysize=None,label=None,clobber=True):
+    def crop(self,x,y,xsize,**kwargs):
         """Crops the provided image to twice the specified size, centered around the x and y coordinates provided.
         
         :param int x: The x position of the desired center.
@@ -224,11 +236,52 @@ class ImageStack(BaseStack):
         :keyword clobber: Whether to overwrite the named frame in this stack.
         
         """
+        ysize = kwargs.pop("ysize",False)
         if not ysize:
             ysize = xsize
         cropped = self.d[x-xsize:x+xsize,y-ysize:y+ysize]
-        if label == None:
-            label = "Cropped"
-        self.save(cropped,label,clobber=clobber)
+        if not kwargs.get("clobber",False):
+            kwargs.setdefault("framename","Cropped")
+        return self.save(cropped,**kwargs)
+        
+    
+    def showds9(self,*framenames):
+        """Show the frames in DS9.
+        
+        :params frames: All the frames that should be displayed in DS9.
+        
+        Frames are displayed in DS9 using pyds9 and XPA access methods for the DS9 application. If the object was set up with :mod:`~AstroObject.iraftools`, then temporary fits files will be used to preserve header data in DS9. If not, then numpy arrays will be sent.
+        
+        .. Note :: This method is a Stack method to allow for the use of :mod:`~AstroObject.iraftools` which are not accessible at the Frame level. There is not a good way to retrieve the IRAFTools controller from an individual frame, and there aren't good ways to write files from individual frames.
+        
+        """
+        framenames = list(framenames)
+        if len(framenames) < 1:
+            framenames = [self._default_frame()]
+        
+        if not hasattr(self,'_ds9'):
+            import ds9
+            self._ds9 = ds9.ds9()
+        if hasattr(self,'iraf'):
+            for frame in framenames:
+                self.__showds9_iraftools(frame)
+            self.iraf.done()
+        else:
+            getattr(self,'showds9')(*framenames)
+        return framenames
+        
+        
+    def __showds9_iraftools(self,frame):
+        """Show a single frame in ds9 via iraftools.
+        
+        :param frame: the frame name to display.
+        
+        This method uses ds9 XPA set methods and a temporary file.
+        
+        """
+        self._ds9.set("frame new")
+        self._ds9.set("file %s" % self.iraf.infile(frame))
+        self._ds9.set("zoom to fit")
+        self._ds9.set("scale log")
+        self._ds9.set("cmap sls")
 
-                

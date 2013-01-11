@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 # 
-#  Test_AstroConfig.py
+#  Test_config.py
 #  AstroObject
 #  
 #  Created by Alexander Rudy on 2012-03-17.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.6.0
+#  Version 0.6.1
 # 
 
 # Python Imports
@@ -16,13 +16,13 @@ import nose.tools as nt
 from nose.plugins.skip import Skip,SkipTest
 
 # AstroObject Import
-from AstroObject.AstroCache import *
-from AstroObject.AstroConfig import *
+from AstroObject.cache import *
+from AstroObject.config import *
 
 
 
 class Test_Cache(object):
-    """AstroObject.AstroCache.Cache"""
+    """AstroObject.cache.Cache"""
     def setUp(self):
         """Fixtures for this test"""
         self.filename = "Time.dat"
@@ -62,7 +62,7 @@ class Test_Cache(object):
         self.manager.close()
     
 class Test_YAMLCache(Test_Cache):
-    """AstroObject.AstroCache.YAMLCache"""
+    """AstroObject.cache.YAMLCache"""
     def setUp(self):
         """Fixtures for this test"""
         self.filename = "Time.yaml"

@@ -1,35 +1,35 @@
 # -*- coding: utf-8 -*-
 # 
-#  AstroObjectBase.py
+#  base.py
 #  ObjectModel
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.6.0
+#  Version 0.6.1
 # 
 u"""
 .. _AstroObjectAPI:
 
-:mod:`AstroObjectBase` – AstroObject API
+:mod:`base` – AstroObject API
 ========================================
 
-The API is the foundation of the :mod:`AstroObject` module. When creating new types of data, you will want to create frames for that type of data. The functions shown below are the functions which must be present in every data frame type, in order to maintain compatibility with enclosing Objects. If your class conforms to this API, then it can easily be used as data for :class:`AstroObjectBase.BaseStack`. 
+The API is the foundation of the :mod:`AstroObject` module. When creating new types of data, you will want to create frames for that type of data. The functions shown below are the functions which must be present in every data frame type, in order to maintain compatibility with enclosing Objects. If your class conforms to this API, then it can easily be used as data for :class:`base.BaseStack`. 
 
 
-To see how easy this will make objects, examine the following code for a custom Object class which accepts :class:`FooFrame`. To create the custom :class:`AstroObjectBase.BaseStack` which accepts your new data type :class:`FooFrame`, simply use::
+To see how easy this will make objects, examine the following code for a custom Object class which accepts :class:`FooFrame`. To create the custom :class:`base.BaseStack` which accepts your new data type :class:`FooFrame`, simply use::
     
-    class FooObject(AstroObjectBase.BaseStack):
+    class FooObject(base.BaseStack):
         \"""A container for tracking FooFrames\"""
         def __init__(self, dataClasses=[FooFrame]):
             super(ImageStack, self).__init__(dataClasses = dataClasses)
             
         
     
-This object will then have all of the functions provided by :class:`AstroObjectBase.BaseStack`, but will only accept and handle data of type :class:`FooFrame`. :class:`FooFrame` should then implement all of the functions described in the API below.
+This object will then have all of the functions provided by :class:`base.BaseStack`, but will only accept and handle data of type :class:`FooFrame`. :class:`FooFrame` should then implement all of the functions described in the API below.
 
-To use this API, it is recommended that you sub-class :class:`AstroObjectBase.BaseFrame`. This template class is an abstract base which will ensure that you implement all of the required methods.
+To use this API, it is recommended that you sub-class :class:`base.BaseFrame`. This template class is an abstract base which will ensure that you implement all of the required methods.
 
-The API also provides a number of Mixin classes for special cases. These mixins allow you to use incomplete, or standard implementations in certain cases. Mixins are useful when your data type cannot possibly conform to the full API provided by :class:`AstroObjectBase.BaseFrame`. Examples of this are classes which cannot produce HDUs or FITS files, or classes which do not actually contain raw data. See :ref:`Mixins` for more information.
+The API also provides a number of Mixin classes for special cases. These mixins allow you to use incomplete, or standard implementations in certain cases. Mixins are useful when your data type cannot possibly conform to the full API provided by :class:`base.BaseFrame`. Examples of this are classes which cannot produce HDUs or FITS files, or classes which do not actually contain raw data. See :ref:`Mixins` for more information.
 
 Module Structure
 ----------------
@@ -39,24 +39,24 @@ The module generally uses **stacks** and **frames** as the base structures. **St
 The Mixin classes are provided to make the creation of certain basic methods easier, and to remove the requirement that other basic methods be implemented. See :ref:`Mixins` for more information.
 
 .. inheritance-diagram::
-    AstroObject.AstroFITS.FITSFrame
-    AstroObject.AstroFITS.FITSStack
-    AstroObject.AstroImage.ImageFrame
-    AstroObject.AstroImage.ImageStack
-    AstroObject.AstroSpectra.SpectraFrame
-    AstroObject.AstroSpectra.SpectraStack
-    AstroObject.AstroHDU.HDUFrame
-    AstroObject.AstroHDU.HDUStack
-    AstroObject.AstroNDArray.NDArrayFrame
-    AstroObject.AstroNDArray.NDArrayStack
-    AstroObject.AnalyticSpectra.AnalyticSpectrum
-    AstroObject.AnalyticSpectra.CompositeSpectra
-    AstroObject.AnalyticSpectra.InterpolatedSpectrum
-    AstroObject.AnalyticSpectra.Resolver
-    AstroObject.AnalyticSpectra.UnitarySpectrum
-    AstroObject.AnalyticSpectra.FlatSpectrum
-    AstroObject.AnalyticSpectra.GaussianSpectrum
-    AstroObject.AnalyticSpectra.BlackBodySpectrum
+    AstroObject.fits.FITSFrame
+    AstroObject.fits.FITSStack
+    AstroObject.image.ImageFrame
+    AstroObject.image.ImageStack
+    AstroObject.spectra.SpectraFrame
+    AstroObject.spectra.SpectraStack
+    AstroObject.hdu.HDUFrame
+    AstroObject.hdu.HDUStack
+    AstroObject.ndarray.NDArrayFrame
+    AstroObject.ndarray.NDArrayStack
+    AstroObject.anaspec.AnalyticSpectrum
+    AstroObject.anaspec.CompositeSpectra
+    AstroObject.anaspec.InterpolatedSpectrum
+    AstroObject.anaspec.Resolver
+    AstroObject.anaspec.UnitarySpectrum
+    AstroObject.anaspec.FlatSpectrum
+    AstroObject.anaspec.GaussianSpectrum
+    AstroObject.anaspec.BlackBodySpectrum
     :parts: 1
 
 
@@ -66,13 +66,13 @@ The Mixin classes are provided to make the creation of certain basic methods eas
 The :class:`BaseFrame` class provides abstract methods for all of the required frame methods. If you subclass from :class:`BaseFrame`, you will ensure that your subclass is interoperable with all of the frame and object features of this module. The :class:`BaseFrame` serves as the primary definition of the API for frames.
 
 .. autoclass:: 
-    AstroObject.AstroObjectBase.BaseFrame
+    AstroObject.base.BaseFrame
     :members:
     :special-members:
 
 .. _Mixins:
 
-Mixins in :mod:`AstroObjectBase`
+Mixins in :mod:`base`
 --------------------------------
 
 Mixins allow certain classes to operate without all of the features required by :class:`BaseFrame`. Each class below implements certain methods and skips others. 
@@ -80,7 +80,7 @@ Mixins allow certain classes to operate without all of the features required by 
 A summary table is below. The table has classes provided from right to left. Note that :class:`AnalyticMixin` inherits from :class:`NoHDUMixin` and :class:`NoDataMixin`. This means that objects with type :class:`AnalyticMixin` are assumed by the system to be a type of frame, but they do not implement any of the major frame methods.
 
 ================================ ==================== ========================= ====================== ===================== ========================================== ======================================
-Method                            :class:`BaseFrame`   :class:`HDUHeaderMixin`   :class:`NoDataMixin`   :class:`NoHDUMixin`   :class:`AnalyticMixin`                     :class:`~.AstroSpectra.SpectraMixin`
+Method                            :class:`BaseFrame`   :class:`HDUHeaderMixin`   :class:`NoDataMixin`   :class:`NoHDUMixin`   :class:`AnalyticMixin`                     :class:`~.spectra.SpectraMixin`
 ================================ ==================== ========================= ====================== ===================== ========================================== ======================================
 Class Inherits From:              :class:`Mixin`        :class:`Mixin`           :class:`Mixin`         :class:`Mixin`        :class:`NoHDUMixin` :class:`NoDataMixin`   :class:`Mixin` 
 :meth:`~BaseFrame.__init__`       Implemented           *Abstract*               *Abstract*             *Abstract*            *Abstract*                                 *Abstract*
@@ -95,22 +95,22 @@ Class Inherits From:              :class:`Mixin`        :class:`Mixin`          
 ================================ ==================== ========================= ====================== ===================== ========================================== ======================================
 
 .. autoclass::
-    AstroObject.AstroObjectBase.Mixin
+    AstroObject.base.Mixin
 
 .. autoclass::
-    AstroObject.AstroObjectBase.HDUHeaderMixin
+    AstroObject.base.HDUHeaderMixin
     
 .. autoclass::
-    AstroObject.AstroObjectBase.NoDataMixin
+    AstroObject.base.NoDataMixin
     
 .. autoclass::
-    AstroObject.AstroObjectBase.NoHDUMixin
+    AstroObject.base.NoHDUMixin
     
 .. autoclass::
-    AstroObject.AstroObjectBase.AnalyticMixin
+    AstroObject.base.AnalyticMixin
     
 .. autoclass::
-    AstroObject.AstroSpectra.SpectraMixin
+    AstroObject.spectra.SpectraMixin
 
 :class:`BaseStack` — Base Stack and Stack API Definition 
 --------------------------------------------------------
@@ -118,7 +118,7 @@ Class Inherits From:              :class:`Mixin`        :class:`Mixin`          
 The base **stack** definition provides the normal object accessor methods. It should be subclassed as shown in :ref:`AstroObjectAPI`. The API methods defined in this class should be the final methods, and no re-implementation is necessary, so long as the data frames obey the Frame API as defined by :class:`BaseFrame`.
 
 .. autoclass::
-    AstroObject.AstroObjectBase.BaseStack
+    AstroObject.base.BaseStack
     :members:
 
 
@@ -160,7 +160,7 @@ class Mixin(object):
 
 
 class BaseFrame(Mixin):
-    """This is the API for frame objects, that is, objects which represnet a single state of data. See :class:`AstroObjectBase.FITSFrame`. This API is generally not called by the end user, but rather is called by the parent :class:`AstroObject.AstroObjectBase.BaseStack`'s function. For an example of a parent object, see :class:`AstroObjectBase.BaseStack`.
+    """This is the API for frame objects, that is, objects which represnet a single state of data. See :class:`base.FITSFrame`. This API is generally not called by the end user, but rather is called by the parent :class:`AstroObject.base.BaseStack`'s function. For an example of a parent object, see :class:`base.BaseStack`.
     
     :param data: Initalizing data
     :param label: string label
@@ -221,7 +221,7 @@ class BaseFrame(Mixin):
         
         :returns: The data for this object.
         
-        :class:`AstroImage.ImageFrame` implements this method as::
+        :class:`image.ImageFrame` implements this method as::
             
             def __call__(self):
                 return self.data
@@ -341,7 +341,7 @@ class BaseFrame(Mixin):
                     msg = "%s data did not validate: %s" % (cls.__name__, AE)
                     raise NotImplementedError(msg)
                 
-            This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like :exc:`AttributeError`) which are diffult to track and diagnose without the code in :meth:`__save__`. See :meth:`AstroImage.__save__` for an example ``__save__`` function which uses this trick, but also includes some basic data validation."""
+            This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like :exc:`AttributeError`) which are diffult to track and diagnose without the code in :meth:`__save__`. See :meth:`image.__save__` for an example ``__save__`` function which uses this trick, but also includes some basic data validation."""
         msg = u"Abstract Data Structure %s cannot be the target of a save operation!" % (cls)
         raise NotImplementedError(msg)
         
@@ -364,7 +364,7 @@ class BaseFrame(Mixin):
                     msg = "%s data did not validate: %s" % (cls.__name__, AE)
                     raise NotImplementedError(msg)
                 
-            This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like :exc:`AttributeError`) which are diffult to track and diagnose without the code in :meth:`__read__`. See :meth:`AstroImage.__read__` for an example ``__read__`` function which uses this trick, but also includes some basic data validation.
+            This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like :exc:`AttributeError`) which are diffult to track and diagnose without the code in :meth:`__read__`. See :meth:`image.__read__` for an example ``__read__`` function which uses this trick, but also includes some basic data validation.
             
         .. Note:: It is acceptable to call the class :meth:`__save__` function here. However, the :meth:`__read__` function should also correctly handle header data."""
         msg = u"Abstract Data Structure %s cannot be the target of a read operation!" % (cls)
@@ -404,8 +404,7 @@ class HDUHeaderMixin(Mixin):
         """
         HDU.header.update('label', str(self.label))
         HDU.header.update('object', str(self.label))
-        for key in self.header:
-            HDU.header.update(key, self.header[key])
+        HDU.header.update(self.header)
         return HDU
         
     def __getheader__(self, HDU):
@@ -488,7 +487,7 @@ class NoHDUMixin(Mixin):
 
 
 class AnalyticMixin(NoHDUMixin, NoDataMixin):
-    """Mixin for purely-analytic frames. These frames do not contain actual raw data, and cannot produce HDUs. However, they are callable (and their call signature should accept a ``wavelengths`` keyword, see e.g. :class:`~.AnalyticSpectra.FlatSpectrum`).
+    """Mixin for purely-analytic frames. These frames do not contain actual raw data, and cannot produce HDUs. However, they are callable (and their call signature should accept a ``wavelengths`` keyword, see e.g. :class:`~.anaspec.FlatSpectrum`).
     
     This mixin allows the developer to not implement :meth:`~BaseFrame.__getheader__`, :meth:`~BaseFrame.__setheader__`, :meth:`~BaseFrame.__hdu__`, :meth:`~BaseFrame.__read__`, :meth:`~BaseFrame.__save__`, and :meth:`~BaseFrame.__show__`. It requires that developers implement :meth:`~BaseFrame.__call__` to access data."""
     
@@ -530,6 +529,7 @@ class BaseStack(collections.MutableMapping):
         self.clobber = False
         self.name = False
         self._dataClasses = []
+        
         if isinstance(dataClasses, list):
             self._dataClasses += dataClasses
         elif dataClasses:
@@ -543,6 +543,7 @@ class BaseStack(collections.MutableMapping):
             raise AttributeError(u"Can't understand file classes")
         if len(self._fileClasses) < 1:
             raise NotImplementedError(u"Instantiating %s without any valid file classes!" % self)
+        
         canstream = []
         for fileClass in self._fileClasses:
             if not issubclass(fileClass,File):
@@ -562,7 +563,7 @@ class BaseStack(collections.MutableMapping):
         if self.name:
             return "<\'%s\' labeled \'%s\'>" % (self.__class__.__name__, self.name)
         else:
-            return super(BaseStack, self).__repr__()
+            return "<\'%s\' with %d frames at \'%s\'>" % (self.__class__.__name__,len(self),hex(id(self)))
     
     def __str__(self):
         """String label for this object."""
@@ -600,6 +601,11 @@ class BaseStack(collections.MutableMapping):
         """Current frame name. This will normally be the last saved **frame**, but there are some exceptions. First, explicitly using :meth:`select` will change the framename. Also, deleting the most recent frame will by default change the selected frame to the second oldest. Using the :meth:`save` function with ``save(data, select=False)`` will skip the selection of that added frame.
         """
         return self._default_frame()
+        
+    @property
+    def framenames(self):
+        """Return a list of all framenames in this object."""
+        return self.list()
     
     @property
     def d(self):
@@ -634,20 +640,29 @@ class BaseStack(collections.MutableMapping):
         will call the :meth:`~BaseFrame.__show__` method on each frame.
         
         """
+        
+        if name.startswith("_"):
+            raise AttributeError("%s has no attribute %s." %
+             (self.__class__.__name__,name))
+        
         def __attr_method(*framenames):
             # Set up frame method name (as string)
             method = '__' + name + '__'
             # Initialize return values
             rvals = []
             
-            framenames = list(*framenames)
+            framenames = list(framenames)
             if len(framenames) < 1:
                 framenames = [self._default_frame()]
                 
             # Execute the desired method everywhere
             for framename in framenames:
                 if framename != None and framename in self:
-                    rvals += [ getattr(self[framename],method)() ]
+                    try:
+                        rvals += [ getattr(self[framename],method)() ]
+                    except AttributeError:
+                        raise AttributeError("%s has no attribute %s, and %s has no attribute %s." % 
+            (self.__class__.__name__,name,self.f.__class__.__name__,'__'+name+'__'))
                 else:
                     self._key_error(framename)
             
@@ -772,7 +787,7 @@ class BaseStack(collections.MutableMapping):
         return self.frame(framename)
     
     def _select(self, framename):
-        """Private, silent select mode. The parent select() function will issuee messages for everything. This one wont."""
+        """Private, silent select mode. The parent select() function will issue messages for everything. This one wont."""
         if framename is None:
             self._framename = None # Unselect frame
             framename = self._default_frame()
@@ -968,7 +983,7 @@ class BaseStack(collections.MutableMapping):
         LOG.log(5, u"Wrote frame %s (primary) and frames %s to FITS file %s" % (primaryFrame, frames, filename))
         return primaryFrame, frames, filename
 
-    @set_trace_errors(TypeError)
+    @set_trace_errors(TypeError,IOError)
     def read(self, filename=None, framename=None, filetype=None, clobber=False, select=True):
         """This reader takes a FITS file, and trys to render each HDU within that FITS file as a frame in this Object. As such, it might read multiple frames. This method will return a list of Frames that it read. It uses the :attr:`dataClasses` :meth:`FITSFrame.__read__` method to return a valid Frame object for each HDU.
         

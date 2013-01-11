@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 #
-#  AstroTest.py
+#  apitests.py
 #  ObjectModel
 #
 #  Created by Alexander Rudy on 2011-10-31.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.6.0
+#  Version 0.6.1
 #
 """
-:mod:`AstroTest` for nosetests
+:mod:`apitests` for nosetests
 ==============================
 
 This module has test frameworks for all modules. The baisc hierarchy of testing frameworks is designed to mimic the basic hierarchy of the :mod:`AstroObject` module in general. There are appropriate test class mixins for all of the built-in Frame and Stack classes.
@@ -16,24 +16,24 @@ This module has test frameworks for all modules. The baisc hierarchy of testing 
 In order to ensure that tests can be run correctly with this API, the API will check for the existance of all variables listed in the ``attributes`` item in each test class. This prevents running the test framework without the required variables for each sub-class.
 
 .. inheritance-diagram::
-    tests.AstroTest.API_Base_Frame
-    tests.AstroTest.API_HDUHeader_Frame
-    tests.AstroTest.API_NoData_Frame
-    tests.AstroTest.API_NoHDU_Frame
-    tests.AstroTest.API_NotEmpty_Frame
-    tests.AstroTest.API_AnalyticMixin
-    tests.AstroTest.API_General_Frame
-    tests.AstroTest.API_BaseStack
-    tests.Test_AstroFITS.test_FITSFrame
-    tests.Test_AstroFITS.test_FITSStack
-    tests.test_AstroHDU.test_HDUFrame
-    tests.test_AstroHDU.test_HDUStack
-    tests.Test_AstroImage.test_ImageFrame
-    tests.Test_AstroImage.test_ImageStack
-    tests.Test_AstroSpectra.test_SpectraFrame
-    tests.Test_AstroSpectra.test_SpectraStack
-    tests.Test_AnalyticSpectra.test_InterpolatedSpectrum
-    tests.Test_AnalyticSpectra.test_UnitarySpectrum
+    tests.apitests.API_Base_Frame
+    tests.apitests.API_HDUHeader_Frame
+    tests.apitests.API_NoData_Frame
+    tests.apitests.API_NoHDU_Frame
+    tests.apitests.API_NotEmpty_Frame
+    tests.apitests.API_AnalyticMixin
+    tests.apitests.API_General_Frame
+    tests.apitests.API_BaseStack
+    tests.test_fits.test_FITSFrame
+    tests.test_fits.test_FITSStack
+    tests.test_hdu.test_HDUFrame
+    tests.test_hdu.test_HDUStack
+    tests.test_image.test_ImageFrame
+    tests.test_image.test_ImageStack
+    tests.test_spectra.test_SpectraFrame
+    tests.test_spectra.test_SpectraStack
+    tests.test_anaspec.test_InterpolatedSpectrum
+    tests.test_anaspec.test_UnitarySpectrum
     :parts: 1
 
 """
@@ -237,7 +237,7 @@ class API_Base_Frame(API_Base):
         pass
 
 class API_CanBeEmpty_Frame(API_Base):
-    """API for AstroObjectBase.BaseFrame which can be empty"""
+    """API for base.BaseFrame which can be empty"""
     
     def test_init_empty(self):
         """__init__() works without data"""
@@ -258,7 +258,7 @@ class API_CanBeEmpty_Frame(API_Base):
         assert BFrame.label == "Empty"    
 
 class API_HDUHeader_Frame(API_Base):
-    """API for AstroObjectBase.HDUHeaderMixin """
+    """API for base.HDUHeaderMixin """
     def test_getheader_primary(self):
         """__getheader__(HDU) a HDU frame with a primary HDU."""
         BFrame = self.frame()
@@ -290,7 +290,7 @@ class API_HDUHeader_Frame(API_Base):
         assert isinstance(nHDU,self.HDUTYPE)
     
 class API_NoData_Frame(API_CanBeEmpty_Frame,API_Base):
-    """API for AstroObjectBase.NoDataMixin"""
+    """API for base.NoDataMixin"""
     
     @nt.raises(NotImplementedError)
     def test_call_with_kwargs(self):
@@ -321,7 +321,7 @@ class API_NoData_Frame(API_CanBeEmpty_Frame,API_Base):
     
 
 class API_NoHDU_Frame(API_Base):
-    """API for AstroObjectBase.NoHDUMixin"""
+    """API for base.NoHDUMixin"""
     
     @nt.raises(NotImplementedError)
     def test_getheader_primary(self):
@@ -391,7 +391,7 @@ class API_NoHDU_Frame(API_Base):
     
 
 class API_AnalyticMixin(API_NoHDU_Frame,API_NoData_Frame):
-    """API for AstroObjectBase.AnalyticMixin"""
+    """API for base.AnalyticMixin"""
     
     @nt.raises(NotImplementedError)
     def test_save_data(self):
@@ -415,7 +415,7 @@ class API_AnalyticMixin(API_NoHDU_Frame,API_NoData_Frame):
         
 
 class API_NotEmpty_Frame(API_Base):
-    """API for AstroObjectBase.BaseFrame which cannot be empty"""
+    """API for base.BaseFrame which cannot be empty"""
     
     @nt.raises(AttributeError)
     def test_init_empty(self):
@@ -524,7 +524,7 @@ class API_General_Frame(API_HDUHeader_Frame,API_NotEmpty_Frame,API_Base_Frame):
     
 
 class API_BaseStack(API_Base):
-    """API for AstroObjectBase.BaseStack"""
+    """API for base.BaseStack"""
     
     attributes = ['FRAME','VALID','INVALID','SHOWTYPE','HDUTYPE','OBJECTSTR','OBJECT','FRAMESTR','FLABEL']
     methods = ['frame_eq_frame','data_eq_data','data_eq_frame','frame']
@@ -1042,6 +1042,20 @@ class API_BaseStack(API_Base):
         AObject = self.OBJECT()
         AObject.save(self.frame())
         AObject.show(self.FLABEL + "JUNK...")
+    
+    @nt.raises(AttributeError)
+    def test_attribute_error(self):
+        """badMethod() fails for trying to call __badMethod__()"""
+        AObject = self.OBJECT()
+        AObject.save(self.frame())
+        AObject.badMethod()
+        
+    @nt.raises(AttributeError)
+    def test_attribute_error_form(self):
+        """_badMethod() fails because it doesn't exist."""
+        AObject = self.OBJECT()
+        AObject.save(self.frame())
+        AObject._badMethod()
     
     def test_object(self):
         """object() call exists and works, but has been depreciated"""

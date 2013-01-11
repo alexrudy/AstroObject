@@ -15,8 +15,8 @@ import numpy as np
 import math, copy, sys, time, logging, os, argparse
 
 # AstroObject Imports
-from AstroObject.AstroSimulator import *
-from AstroObject.AstroCache import *
+from AstroObject.simulator import *
+from AstroObject.cache import *
 
 
     

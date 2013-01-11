@@ -40,3 +40,4 @@ Docs/build/*
 .noseids
 .coverage
 experiment.py
+._*

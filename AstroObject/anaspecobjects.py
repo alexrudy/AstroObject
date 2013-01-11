@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 # 
-#  AnalyticSpectraObjects.py
+#  anaspecobjects.py
 #  ObjectModel
 #  
 #  Created by Alexander Rudy on 2011-10-12.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.6.0
+#  Version 0.6.1
 # 
 
 # Parent Modules
-from .AnalyticSpectra import AnalyticSpectrum
-from .AstroObjectBase import AnalyticMixin
+from .anaspec import AnalyticSpectrum
+from .base import AnalyticMixin
 # Standard Scipy Toolkits
 import numpy as np
 import pyfits as pf
@@ -25,7 +25,7 @@ from scipy.linalg import norm
 import os
 
 # Submodules from this system
-from . import AstroObjectLogging as logging
+from . import logging as logging
 from .util import getVersion
 from .util.functions import BlackBody, Gaussian
 
@@ -39,7 +39,7 @@ class BlackBodySpectrum(AnalyticMixin,AnalyticSpectrum):
     :param float temperature: The temperature, in Kelvin, of this black body curve.
     
     .. inheritance-diagram::
-        AstroObject.AnalyticSpectra.BlackBodySpectrum
+        AstroObject.anaspec.BlackBodySpectrum
         :parts: 1
         
     
@@ -63,7 +63,7 @@ class GaussianSpectrum(AnalyticMixin,AnalyticSpectrum):
     :param float height: The maximum height of the gaussian in flux units.
     
     .. inheritance-diagram::
-        AstroObject.AnalyticSpectra.GaussianSpectrum
+        AstroObject.anaspec.GaussianSpectrum
         :parts: 1
         
     
@@ -89,7 +89,7 @@ class FlatSpectrum(AnalyticMixin,AnalyticSpectrum):
     :param float value: The height of this flat spectrum, in flux units.
     
     .. inheritance-diagram::
-        AstroObject.AnalyticSpectra.FlatSpectrum
+        AstroObject.anaspec.FlatSpectrum
         :parts: 1
         
     

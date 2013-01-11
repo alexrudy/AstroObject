@@ -1,4 +1,4 @@
-.. automodule:: AstroObject.AstroObjectLogging
+.. automodule:: AstroObject.loggers
 
 
 

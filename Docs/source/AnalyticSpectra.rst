@@ -1,2 +1,2 @@
-.. automodule:: AstroObject.AnalyticSpectra
+.. automodule:: AstroObject.anaspec
 	:show-inheritance:

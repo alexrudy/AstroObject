@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 # 
-#  Test_AstroHDU.py
+#  Test_hdu.py
 #  AstroObject
 #  
 #  Created by Alexander Rudy on 2011-11-08.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.6.0
+#  Version 0.6.1
 # 
 
 # Test API Imports
-from tests.AstroTest import *
+from tests.apitests import *
 
 # Parent Object Imports
-import AstroObject.AstroHDU
+import AstroObject.hdu
 
 # Utility Imports
 from AstroObject.util import npArrayInfo
@@ -48,7 +48,7 @@ class equality_HDUFrame(equality_Base):
         return np.allclose(frame(),data)
 
 class test_HDUFrame(equality_HDUFrame,API_CanBeEmpty_Frame,API_General_Frame):
-    """AstroHDU.HDUFrame"""
+    """hdu.HDUFrame"""
     
     def setup(self):
         """Sets up the test with some basic image data"""
@@ -61,7 +61,7 @@ class test_HDUFrame(equality_HDUFrame,API_CanBeEmpty_Frame,API_General_Frame):
             self.image = np.int32(np.sum(mpimage.imread(self.testJPG),axis=2))
         
         self.VALID = self.image
-        self.FRAME = AstroObject.AstroHDU.HDUFrame
+        self.FRAME = AstroObject.hdu.HDUFrame
         self.INVALID = 20
         self.FRAMESTR = "<'HDUFrame' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
@@ -72,7 +72,7 @@ class test_HDUFrame(equality_HDUFrame,API_CanBeEmpty_Frame,API_General_Frame):
     
 
 class test_HDUStack(equality_HDUFrame,API_BaseStack):
-    """AstroHDU.HDUStack"""
+    """hdu.HDUStack"""
     
     def setup(self):
         """Fixture for setting up a basic image frame"""
@@ -85,7 +85,7 @@ class test_HDUStack(equality_HDUFrame,API_BaseStack):
         else:
             self.image = np.int32(np.sum(mpimage.imread(self.testJPG),axis=2))
 
-        self.FRAME = AstroObject.AstroHDU.HDUFrame
+        self.FRAME = AstroObject.hdu.HDUFrame
         self.HDU = pf.PrimaryHDU
         self.imHDU = pf.ImageHDU
         self.VALID = self.image
@@ -94,7 +94,7 @@ class test_HDUStack(equality_HDUFrame,API_BaseStack):
         self.FRAMESTR = "<'HDUFrame' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.image.AxesImage
-        self.OBJECT = AstroObject.AstroHDU.HDUStack
+        self.OBJECT = AstroObject.hdu.HDUStack
         self.FLABEL = "Valid"
         super(test_HDUStack, self).setup()
     

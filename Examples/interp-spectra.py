@@ -12,12 +12,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-from AstroObject.AstroObjectLogging import *
-from AstroObject.AnalyticSpectra import InterpolatedSpectrum,GaussianSpectrum,FlatSpectrum,BlackBodySpectrum,UnitarySpectrum,Resolver
-from AstroObject.AstroSpectra import SpectraStack
+from AstroObject.loggers import *
+from AstroObject.anaspec import InterpolatedSpectrum,GaussianSpectrum,FlatSpectrum,BlackBodySpectrum,UnitarySpectrum,Resolver
+from AstroObject.spectra import SpectraStack
 
 LOG = logging.getLogger('AstroObject')
-LOG.configure(configFile='Examples/config.yml')
+LOG.configure_from_file('Examples/config.yml')
 LOG.start()
 
 WAVELENGTHS = ((np.arange(98)+1)/2.0 + 1.0) * 1e-7

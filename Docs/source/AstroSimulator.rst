@@ -1,4 +1,4 @@
 
 
-.. automodule:: AstroObject.AstroSimulator
+.. automodule:: AstroObject.simulator
 

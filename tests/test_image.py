@@ -1,19 +1,18 @@
 # -*- coding: utf-8 -*-
-# 
-#  test_AstroNDArray.py
-#  AstroObject
-#  
-#  Created by Alexander Rudy on 2012-04-18.
-#  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.6.0
-# 
-
+#
+#  Test_image.py
+#  ObjectModel
+#
+#  Created by Alexander Rudy on 2011-10-31.
+#  Copyright 2011 Alexander Rudy. All rights reserved.
+#  Version 0.6.1
+#
 
 # Test API Imports
-from tests.AstroTest import *
+from tests.apitests import *
 
 # Parent Object Imports
-import AstroObject.AstroNDArray
+import AstroObject.image
 
 # Testing Imports
 import nose.tools as nt
@@ -26,7 +25,6 @@ import scipy as sp
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimage
-
 
 # Python Imports
 import math, copy, sys, time, logging, os
@@ -45,30 +43,33 @@ class equality_ImageFrame(equality_Base):
     def data_eq_frame(self,data,frame):
         """Return whether this data is the same as the data in this frame."""
         return np.allclose(frame(),data)
-
-
-class test_NDArrayFrame(equality_ImageFrame,API_General_Frame):
-    """AstroNDArray.NDArrayFrame"""
+        
+class test_ImageFrame(equality_ImageFrame,API_General_Frame):
+    """image.ImageFrame"""
     
     def setup(self):
         """Sets up the test with some basic image data"""
         self.testJPG = "Hong-Kong.jpg"
         self.data = [self.testJPG]
         if not os.access(self.testJPG,os.R_OK):
-            self.image = np.zeros((100,100))
-            self.image[45:55,45:55] = np.ones((10,10))
+            self.image = np.zeros((1000,1000))
+            self.image[450:550,450:550] = np.ones((100,100))
         else:
             self.image = np.int32(np.sum(mpimage.imread(self.testJPG),axis=2))
         
         self.VALID = self.image
-        self.FRAME = AstroObject.AstroNDArray.NDArrayFrame
+        self.FRAME = AstroObject.image.ImageFrame
         self.INVALID = 20
-        self.FRAMESTR = "<'NDArrayFrame' labeled 'Valid'>"
+        self.FRAMESTR = "<'ImageFrame' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.image.AxesImage
         self.RKWARGS = {}
         self.FLABEL = "Valid"
-        super(test_NDArrayFrame,self).setup()            
+        super(test_ImageFrame,self).setup()
+    
+    def test_init_manydim(self):
+        """__init__() works with many dimensional data."""
+        self.FRAME(data=np.ones((100,100,100)),label="3D!")
     
     def test_read_grayscale_HDU(self):
         """__read__() an image HDU succeeds"""
@@ -80,8 +81,8 @@ class test_NDArrayFrame(equality_ImageFrame,API_General_Frame):
         
         
 
-class test_NDArrayStack(equality_ImageFrame,API_BaseStack):
-    """AstroNDArray.NDArrayStack"""
+class test_ImageStack(equality_ImageFrame,API_BaseStack):
+    """image.ImageStack"""
     
     def setup(self):
         """Fixture for setting up a basic image frame"""
@@ -89,13 +90,12 @@ class test_NDArrayStack(equality_ImageFrame,API_BaseStack):
         self.data = [self.testJPG]
         self.files = ["TestFile.fits","TestFile.dat","TestFile.npy"]
         if not os.access(self.testJPG,os.R_OK):
-            self.image = np.zeros((100,100))
-            self.image[45:55,45:55] = np.ones((10,10))
+            self.image = np.zeros((1000,1000))
+            self.image[450:550,450:550] = np.ones((100,100))
         else:
             self.image = np.int32(np.sum(mpimage.imread(self.testJPG),axis=2))
 
-
-        self.FRAME = AstroObject.AstroNDArray.NDArrayFrame
+        self.FRAME = AstroObject.image.ImageFrame
         self.HDU = pf.PrimaryHDU
         self.imHDU = pf.ImageHDU
         self.VALID = self.image
@@ -104,10 +104,37 @@ class test_NDArrayStack(equality_ImageFrame,API_BaseStack):
         self.FRAMESTR = "<'ImageFrame' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.image.AxesImage
-        self.OBJECT = AstroObject.AstroNDArray.NDArrayStack
+        self.OBJECT = AstroObject.image.ImageStack
         self.FLABEL = "Valid"
-        super(test_NDArrayStack, self).setup()
+        super(test_ImageStack, self).setup()
         
+    
+    def test_read_from_image_file(self):
+        """loadFromFile() directly from an image file"""
+        if not os.access(self.data[0],os.R_OK):
+            raise SkipTest
+        IObject = self.OBJECT()
+        IObject.loadFromFile(self.data[0],"TestJPG")
+        assert IObject.framename == "TestJPG"
+        
+    def test_mask(self):
+        """mask() works to clip info off of side of image."""
+        AObject = self.OBJECT()
+        AObject.save(self.frame())
+        AObject.mask(10,10)
+        
+    def test_crop(self):
+        """crop() works to centered crop"""
+        AObject = self.OBJECT()
+        AObject.save(self.frame())
+        AObject.crop(500,500,40)
+    
+    @nt.raises(IOError)
+    def test_read_from_nonexistant_file(self):
+        """loadFromFile() fails for a non-existant image file"""
+        IObject = self.OBJECT()
+        IObject.loadFromFile("Bogus")
+    
     def test_double_saving_data_should_not_reference(self):
         """data() should prevent data from referencing each other."""
         AObject = self.OBJECT()
@@ -127,8 +154,8 @@ class test_NDArrayStack(equality_ImageFrame,API_BaseStack):
         AObject.select(self.FLABEL)
         assert AObject.data()[1,1] != -1.0
 
-class btest_AstroImage_Functional(API_Base_Functional):
-    """Functional Tests for AstroImage"""
+class btest_image_Functional(API_Base_Functional):
+    """Functional Tests for image"""
     def setUp(self):
         """Fixture for setting up a basic image frame"""
         self.testJPG = "Data/Hong-Kong.jpg"
@@ -137,8 +164,8 @@ class btest_AstroImage_Functional(API_Base_Functional):
             self.image[450:550,450:550] = np.ones((100,100))
         else:
             self.image = np.int32(np.sum(mpimage.imread(self.testJPG),axis=2))
-        self.FRAMEINST = AN.NDArrayFrame(self.image,"Hong Kong")
-        self.FRAME = AN.NDArrayFrame
+        self.FRAMEINST = AI.ImageFrame(self.image,"Hong Kong")
+        self.FRAME = AI.ImageFrame
         self.HDU = pf.PrimaryHDU
         self.imHDU = pf.ImageHDU
         self.VALID = self.image
@@ -146,7 +173,7 @@ class btest_AstroImage_Functional(API_Base_Functional):
         self.OBJECTSTR = None
         self.HDUTYPE = pf.ImageHDU
         self.SHOWTYPE = mpl.image.AxesImage
-        self.OBJECT = AN.NDArrayStack
+        self.OBJECT = AI.ImageStack
         self.FILENAME = "TestFile.fits"
         
         def SAMEDATA(first,second):
@@ -156,9 +183,11 @@ class btest_AstroImage_Functional(API_Base_Functional):
         
         def SAME(first,second):
             """Return whether these two are the same"""
-            return SAMEDATA(first,second)
+            return SAMEDATA(first(),second())
         
         self.SAME = SAME
         self.SAMEDATA = SAMEDATA
         
         self.check_constants()
+
+        

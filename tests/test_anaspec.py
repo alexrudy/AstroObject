@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 #
-#  Test_AnalyticSpectra.py
+#  Test_anaspec.py
 #  ObjectModel
 #
 #  Created by Alexander Rudy on 2011-10-31.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.6.0
+#  Version 0.6.1
 #
 
 import numpy as np
@@ -20,9 +20,9 @@ import os,copy
 import nose.tools as nt
 from nose.plugins.skip import Skip,SkipTest
 
-from tests.AstroTest import *
+from tests.apitests import *
 
-import AstroObject.AnalyticSpectra
+import AstroObject.anaspec
 
 class equality_AnalyticFrame(equality_Base):
     """Equality methods for FITSFrames"""
@@ -51,7 +51,7 @@ class equality_InterpolatedSpectraFrame(equality_AnalyticFrame):
         return np.allclose(frame.data,data)
 
 
-class API_AnalyticSpectra(equality_AnalyticFrame,API_Base_Frame):
+class API_anaspec(equality_AnalyticFrame,API_Base_Frame):
     """Set up and basic tests for analytic spectra"""
     
     def test_init_with_wavelengths(self):
@@ -90,14 +90,14 @@ class API_AnalyticSpectra(equality_AnalyticFrame,API_Base_Frame):
         SFrame1 = self.frame()
         SFrame2 = self.frame()
         SFrame3 = SFrame1 + SFrame2
-        assert isinstance(SFrame3,AstroObject.AnalyticSpectra.CompositeSpectra)
+        assert isinstance(SFrame3,AstroObject.anaspec.CompositeSpectra)
     
     def test_sub_objects(self):
         """__sub__() Objects respont to - operator"""
         SFrame1 = self.frame()
         SFrame2 = self.frame()
         SFrame3 = SFrame1 - SFrame2
-        assert isinstance(SFrame3,AstroObject.AnalyticSpectra.CompositeSpectra)
+        assert isinstance(SFrame3,AstroObject.anaspec.CompositeSpectra)
     
     
     def test_mul_objects(self):
@@ -105,17 +105,17 @@ class API_AnalyticSpectra(equality_AnalyticFrame,API_Base_Frame):
         SFrame1 = self.frame()
         SFrame2 = self.frame()
         SFrame3 = SFrame1 * SFrame2
-        assert isinstance(SFrame3,AstroObject.AnalyticSpectra.CompositeSpectra)
+        assert isinstance(SFrame3,AstroObject.anaspec.CompositeSpectra)
     
     def test_add_other(self):
         """__add__() Handles adding of other simple classes"""
         SFrame1 = self.frame()
         SFrame2 = 10.0
         SFrame3 = SFrame1 + SFrame2
-        assert isinstance(SFrame3,AstroObject.AnalyticSpectra.CompositeSpectra)
+        assert isinstance(SFrame3,AstroObject.anaspec.CompositeSpectra)
 
 
-class API_InterpolatedSpectrumBase(equality_InterpolatedSpectraFrame,API_AnalyticSpectra):
+class API_InterpolatedSpectrumBase(equality_InterpolatedSpectraFrame,API_anaspec):
     """API_InterpolatedSpectrumBase"""
     
     def save_or_compare(self,data,filename,skip=True):
@@ -263,7 +263,7 @@ class test_InterpolatedSpectrum(API_InterpolatedSpectrumBase,API_General_Frame):
         self.WAVELENGTHS = ((np.arange(98)+1)/2.0 + 1.0) * 1e-7
         self.WAVELENGHTS_LOWR = ((np.arange(23)+1)*2.0 + 1.0) * 1e-7
         self.VALID = np.array([(np.arange(50) + 1.0) * 1e-7,np.sin(np.arange(50))+2.0])
-        self.FRAME = AstroObject.AnalyticSpectra.InterpolatedSpectrum
+        self.FRAME = AstroObject.anaspec.InterpolatedSpectrum
         self.INVALID = 20
         self.FRAMESTR = "<'InterpolatedSpectrum' labeled 'Valid'>"
         self.HDUTYPE = pf.ImageHDU
@@ -276,13 +276,13 @@ class test_InterpolatedSpectrum(API_InterpolatedSpectrumBase,API_General_Frame):
     
     
 class test_UnitarySpectrum(API_AnalyticMixin,API_InterpolatedSpectrumBase):
-    """AnalyticSpectra.UnitarySpectrum"""
+    """anaspec.UnitarySpectrum"""
     def setup(self):
         """Sets up the test with some basic image data"""
         self.WAVELENGTHS = ((np.arange(98)+1)/2.0 + 1.0) * 1e-7
         self.WAVELENGHTS_LOWR = ((np.arange(23)+1)*2.0 + 1.0) * 1e-7
-        self.VALID = AstroObject.AnalyticSpectra.InterpolatedSpectrum(np.array([(np.arange(50) + 1.0) * 1e-7,np.sin(np.arange(50))+2.0]),"Valid")
-        self.FRAME = AstroObject.AnalyticSpectra.UnitarySpectrum
+        self.VALID = AstroObject.anaspec.InterpolatedSpectrum(np.array([(np.arange(50) + 1.0) * 1e-7,np.sin(np.arange(50))+2.0]),"Valid")
+        self.FRAME = AstroObject.anaspec.UnitarySpectrum
         self.INVALID = 20
         self.FRAMESTR = "<'UnitarySpectrum' labeled '[Valid]'>"
         self.HDUTYPE = pf.ImageHDU
@@ -338,14 +338,14 @@ class test_UnitarySpectrum(API_AnalyticMixin,API_InterpolatedSpectrumBase):
         assert self.save_or_compare(data,"tests/data/%s-resample2.npy",skip=False)
     
 class test_Resolver(API_InterpolatedSpectrumBase,API_General_Frame):
-    """AnalyticSpectra.Resolver"""
+    """anaspec.Resolver"""
     def setup(self):
         """Sets up the test with some basic image data"""
         self.WAVELENGTHS = ((np.arange(98)+1)/2.0 + 1.0) * 1e-7
         self.WAVELENGHTS_LOWR = ((np.arange(23)+1)*2.0 + 1.0) * 1e-7
-        self.VALIDF = AstroObject.AnalyticSpectra.InterpolatedSpectrum(np.array([(np.arange(50) + 1.0) * 1e-7,np.sin(np.arange(50))+2.0]),"Valid")
+        self.VALIDF = AstroObject.anaspec.InterpolatedSpectrum(np.array([(np.arange(50) + 1.0) * 1e-7,np.sin(np.arange(50))+2.0]),"Valid")
         self.VALID = self.VALIDF.data
-        self.FRAME = AstroObject.AnalyticSpectra.Resolver
+        self.FRAME = AstroObject.anaspec.Resolver
         self.INVALID = 20
         self.FRAMESTR = "<'Resolver' labeled 'R[Valid]'>"
         self.HDUTYPE = pf.ImageHDU

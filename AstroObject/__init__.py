@@ -5,21 +5,17 @@
 #  
 #  Created by Alexander Rudy on 2011-10-07.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.6.0
+#  Version 0.6.1
 #  
  
-import time,sys,os
-
-from AstroObjectLogging import *
+import time,sys,os,logging
 
 from version import version as versionstr
 
 __version__ = versionstr
+__libdebug__ = True
+__all__ = ['anaspec','image','base','spectra','logging','util']
 
-__all__ = ['AnalyticSpectra','AstroImage','AstroObjectBase','AstroSpectra','AstroObjectLogging','util']
 
-
-logger = logging.getLogger(__name__)
-logger.addHandler(logging.NullHandler())
 
 

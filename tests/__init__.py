@@ -5,10 +5,10 @@
 #  
 #  Created by Alexander Rudy on 2012-03-17.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.6.0
+#  Version 0.6.1
 # 
 
-from AstroObject.AstroObjectLogging import *
+from AstroObject.loggers import *
 
 __config__ = "tests/logging.yaml"
 

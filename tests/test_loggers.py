@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 # 
-#  Test_AstroObjectLogging.py
+#  Test_logging.py
 #  AstroObject
 #  
 #  Created by Alexander Rudy on 2011-12-29.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.6.0
+#  Version 0.6.1
 # 
 
 
-import AstroObject.AstroObjectLogging as AOLogging
+import AstroObject.loggers as AOLogging
 import logging,logging.handlers
 import nose.tools as nt
 from nose.plugins.skip import Skip,SkipTest
@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 import os
 
 class test_Logger(object):
-    """AstroObjectLogging.LogManager"""
+    """AstroObject.loggers.AstroLogger"""
     
     def test_LoggerInit(self):
         """logging.getLogger(__name__)"""

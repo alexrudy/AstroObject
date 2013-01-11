@@ -186,9 +186,9 @@ class BaseFileSetTests(object):
         assert self.FsInstance.modified == []
         self.FsInstance.autodiscover = True
         assert self.STATIC_FILE in self.FsInstance
-        assert self.FsInstance.modified == [], "Unexpected .modified == %r " % self.FsInstance.modified
+        assert self.FsInstance.modified == [], "Unexpected .deleted == %r " % self.FsInstance.modified
         os.remove(self.STATIC_FILE_PATH)
-        assert self.FsInstance.deleted == [ self.STATIC_FILE ], "Unexpected .modified == %r " % self.FsInstance.modified
+        assert self.FsInstance.deleted == [ self.STATIC_FILE ], "Unexpected .deleted == %r " % self.FsInstance.modified
         try: self.FsInstance.deleted = [ self.MISSING_FILE ]
         except AttributeError: pass
         else:

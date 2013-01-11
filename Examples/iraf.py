@@ -8,8 +8,8 @@
 #  Copyright 2012 Alexander Rudy. All rights reserved.
 # 
 
-from AstroObject.AstroObjectLogging import *
-from AstroObject.AstroImage import ImageStack
+from AstroObject.loggers import *
+from AstroObject.image import ImageStack
 from AstroObject.iraftools import UseIRAFTools
 
 import numpy as np
