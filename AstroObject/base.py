@@ -529,6 +529,7 @@ class BaseStack(collections.MutableMapping):
         self.clobber = False
         self.name = False
         self._dataClasses = []
+        
         if isinstance(dataClasses, list):
             self._dataClasses += dataClasses
         elif dataClasses:
@@ -542,6 +543,7 @@ class BaseStack(collections.MutableMapping):
             raise AttributeError(u"Can't understand file classes")
         if len(self._fileClasses) < 1:
             raise NotImplementedError(u"Instantiating %s without any valid file classes!" % self)
+        
         canstream = []
         for fileClass in self._fileClasses:
             if not issubclass(fileClass,File):
@@ -599,6 +601,11 @@ class BaseStack(collections.MutableMapping):
         """Current frame name. This will normally be the last saved **frame**, but there are some exceptions. First, explicitly using :meth:`select` will change the framename. Also, deleting the most recent frame will by default change the selected frame to the second oldest. Using the :meth:`save` function with ``save(data, select=False)`` will skip the selection of that added frame.
         """
         return self._default_frame()
+        
+    @property
+    def framenames(self):
+        """Return a list of all framenames in this object."""
+        return self.list()
     
     @property
     def d(self):
