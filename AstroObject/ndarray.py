@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2012-04-18.
 #  Copyright 2012 Alexander Rudy. All rights reserved.
-#  Version 0.6.0
+#  Version 0.6.1
 # 
 u"""
 :mod:`ndarray` – Numpy Array Frames

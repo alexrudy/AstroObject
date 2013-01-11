@@ -5,7 +5,7 @@
 #  
 #  Created by Alexander Rudy on 2011-11-08.
 #  Copyright 2011 Alexander Rudy. All rights reserved.
-#  Version 0.6.0
+#  Version 0.6.1
 # 
 """
 :mod:`hdu` – HDU Objects and Storage 

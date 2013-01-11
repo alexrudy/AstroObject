@@ -21,7 +21,7 @@ from __future__ import division,with_statement
 #these components can be changed for new versions
 major = 0
 minor = 6
-bugfix = 0
+bugfix = 1
 patch = None
 isdev = True
 devstr = None
