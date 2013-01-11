@@ -30,6 +30,9 @@ The AstroObject module also has a simulator framework. The simulator is designed
 
 # Release Notes
 
+* 0.6.1
+	- New API and module names.
+	- Bug Fixes
 * 0.6.0
 	- ``fileset`` module which allows for controlled filesets
 	- **stacks** have a new API for accessing frame functions. Simply, any undefined function on the **stack** will be passed to the frame as ``__function__``. So the ``show()`` method is now using this to call ``__show__()`` on underlying **frames**.
