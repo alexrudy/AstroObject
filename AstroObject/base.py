@@ -138,7 +138,7 @@ import collections
 from abc import ABCMeta, abstractmethod
 
 # Submodules from this system
-from .util import getVersion, make_decorator, validate_filename, set_trace_errors
+from .util import getVersion, make_decorator, validate_filename, set_trace_errors, semiabstractmethod
 from .file import DefaultFileClasses, File
 
 __all__ = ["BaseStack", "BaseFrame", "AnalyticMixin", "NoHDUMixin", "HDUHeaderMixin", "NoDataMixin", "Mixin"]
@@ -369,20 +369,6 @@ class BaseFrame(Mixin):
         .. Note:: It is acceptable to call the class :meth:`__save__` function here. However, the :meth:`__read__` function should also correctly handle header data."""
         msg = u"Abstract Data Structure %s cannot be the target of a read operation!" % (cls)
         raise NotImplementedError(msg)
-        
-
-def semiabstractmethod(txt):
-    """Convert semi-abstract-methods into raisers for NotImplementedErrors"""
-    if callable(txt):
-        func = txt
-        txt = u"Abstract method %s.%s() cannot be called."
-    def decorator(func):
-        def raiser(self, *args, **kwargs):
-            msg = txt % (self, func.__name__)
-            raise NotImplementedError(msg)
-        newfunc = make_decorator(func)(raiser)
-        return newfunc
-    return decorator
         
 
 class HDUHeaderMixin(Mixin):

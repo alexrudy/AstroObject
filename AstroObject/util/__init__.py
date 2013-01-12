@@ -238,6 +238,20 @@ def set_trace_errors(*exceptions):
         return clip_traceback
     return decorator
 
+def semiabstractmethod(txt):
+    """Convert semi-abstract-methods into raisers for NotImplementedErrors"""
+    if callable(txt):
+        func = txt
+        txt = u"Abstract method %s.%s() cannot be called."
+    def decorator(func):
+        def raiser(self, *args, **kwargs):
+            msg = txt % (self, func.__name__)
+            raise NotImplementedError(msg)
+        newfunc = make_decorator(func)(raiser)
+        return newfunc
+    return decorator
+
+
 class HDUFrameTypeError(Exception):
     """An error caused because an HDUFrame is of the wrong type for interpretation."""
     pass
