@@ -590,7 +590,7 @@ class BaseStack(collections.MutableMapping):
         
     @property
     def framenames(self):
-        """Return a list of all framenames in this object."""
+        """Return a list of all framenames in this object. See :meth:`~base.list` for full documentation."""
         return self.list()
     
     @property
@@ -772,11 +772,13 @@ class BaseStack(collections.MutableMapping):
         LOG.log(5, u"Method \".object()\" on %s has been depreciated. Please use \".frame()\" instead." % self)
         return self.frame(framename)
     
-    def _select(self, framename):
+    def _select(self, framename = None):
         """Private, silent select mode. The parent select() function will issue messages for everything. This one wont."""
         if framename is None:
             self._framename = None # Unselect frame
             framename = self._default_frame()
+        elif isinstance(framename,int):
+            framename = self.keys()[framename]
         elif framename not in self:
             self._key_error(framename)
         self._framename = framename
@@ -799,11 +801,14 @@ class BaseStack(collections.MutableMapping):
     
     def list(self):
         """Provides a list of the available frames, by label.
+        The list is always returned in order of creation time.
         
         :returns: list
         
         """
-        return self._frames.keys()
+        frames = np.array(self._frames.keys())
+        CDates = [ self.frame(name).time for name in frames ]
+        return list(frames[np.argsort(CDates)])
     
     def _key_error(self, framename):
         """Throw a keyError for the given framename."""
@@ -842,7 +847,7 @@ class BaseStack(collections.MutableMapping):
                 del self._frames[frame]
             del self._frames
         self._frames = {}
-        self._framename = self._default_frame()
+        self._framename = self._select()
         LOG.log(5, u"%s: Cleared all frames. Remaining: %s" % (self, self.list()))
         return self.list()
     
@@ -867,7 +872,7 @@ class BaseStack(collections.MutableMapping):
                     del self._frames[frame]
             del self._frames
         self._frames = newStates
-        self._framename = self._default_frame()
+        self._framename = self._select()
         return self.list()
     
     @set_trace_errors(KeyError)
@@ -892,7 +897,7 @@ class BaseStack(collections.MutableMapping):
             else:
                 self._frames.pop(framename)
             removed += [framename]
-        self._framename = self._default_frame()
+        self._framename = self._select()
         LOG.log(5, u"%s: Removed frames %s" % (self, removed))
         return self.list()
     
