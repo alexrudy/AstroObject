@@ -1,0 +1,9 @@
+<map id="inheritance9ab9336085" name="inheritance9ab9336085">
+<area shape="rect" id="node1" href="AstroObject.html#AstroObject.base.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="139,103,269,129"/>
+<area shape="rect" id="node20" href="#AstroObject.fits.FITSFrame" title="FITSFrame" alt="" coords="337,153,426,178"/>
+<area shape="rect" id="node2" href="AstroObject.html#AstroObject.base.Mixin" title="Mixin" alt="" coords="12,153,84,178"/>
+<area shape="rect" id="node10" href="AstroObject.html#AstroObject.base.NoDataMixin" title="NoDataMixin" alt="" coords="153,153,255,178"/>
+<area shape="rect" id="node13" href="AstroObject.html#AstroObject.base.BaseFrame" title="BaseFrame" alt="" coords="157,202,251,227"/>
+<area shape="rect" id="node8" href="AstroObject.html#AstroObject.base.BaseStack" title="BaseStack" alt="" coords="493,54,584,79"/>
+<area shape="rect" id="node7" href="#AstroObject.fits.FITSStack" title="FITSStack" alt="" coords="633,54,717,79"/>
+</map>

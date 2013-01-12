@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Pipeline written with AstroObject &mdash; AstroObject 0.6 documentation</title>
+    <title>Pipeline written with AstroObject &mdash; AstroObject 0.6.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.6',
+        VERSION:     '0.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.6 documentation" href="../index.html" />
-    <link rel="next" title="AstroTest for nosetests" href="../AstroTest.html" />
+    <link rel="top" title="AstroObject 0.6.1 documentation" href="../index.html" />
+    <link rel="next" title="apitests for nosetests" href="../AstroTest.html" />
     <link rel="prev" title="Example Spectral Data Script" href="spectra.html" /> 
   </head>
   <body>
@@ -39,12 +39,12 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../AstroTest.html" title="AstroTest for nosetests"
+          <a href="../AstroTest.html" title="apitests for nosetests"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="spectra.html" title="Example Spectral Data Script"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">AstroObject 0.6.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -84,8 +84,8 @@
 <span class="kn">from</span> <span class="nn">pyraf</span> <span class="kn">import</span> <span class="n">iraf</span>
 <span class="kn">from</span> <span class="nn">iraf</span> <span class="kn">import</span> <span class="n">imred</span><span class="p">,</span> <span class="n">ccdred</span>
 
-<span class="kn">from</span> <span class="nn">AstroObject.AstroSimulator</span> <span class="kn">import</span> <span class="n">Simulator</span>
-<span class="kn">from</span> <span class="nn">AstroObject.AstroSimulator</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">AstroObject.simulator</span> <span class="kn">import</span> <span class="n">Simulator</span>
+<span class="kn">from</span> <span class="nn">AstroObject.simulator</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">optional</span><span class="p">,</span>
     <span class="n">description</span><span class="p">,</span>
     <span class="n">include</span><span class="p">,</span>
@@ -96,9 +96,9 @@
     <span class="n">ignore</span><span class="p">,</span>
     <span class="n">help</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">AstroObject.AstroImage</span> <span class="kn">import</span> <span class="n">ImageStack</span>
+<span class="kn">from</span> <span class="nn">AstroObject.image</span> <span class="kn">import</span> <span class="n">ImageStack</span>
 <span class="kn">from</span> <span class="nn">AstroObject.iraftools</span> <span class="kn">import</span> <span class="n">UseIRAFTools</span>
-<span class="kn">from</span> <span class="nn">AstroObject.AstroObjectLogging</span> <span class="kn">import</span> <span class="n">logging</span>
+<span class="kn">from</span> <span class="nn">AstroObject.loggers</span> <span class="kn">import</span> <span class="n">logging</span>
 <span class="n">ImageStack</span> <span class="o">=</span> <span class="n">UseIRAFTools</span><span class="p">(</span><span class="n">ImageStack</span><span class="p">)</span>
 
 <span class="k">class</span> <span class="nc">Pipeline</span><span class="p">(</span><span class="n">Simulator</span><span class="p">):</span>
@@ -284,7 +284,7 @@
                         title="previous chapter">Example Spectral Data Script</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="../AstroTest.html"
-                        title="next chapter"><tt class="docutils literal docutils literal"><span class="pre">AstroTest</span></tt> for nosetests</a></p>
+                        title="next chapter"><tt class="docutils literal docutils literal"><span class="pre">apitests</span></tt> for nosetests</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/examples/pipeline.txt"
@@ -317,12 +317,12 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../AstroTest.html" title="AstroTest for nosetests"
+          <a href="../AstroTest.html" title="apitests for nosetests"
              >next</a> |</li>
         <li class="right" >
           <a href="spectra.html" title="Example Spectral Data Script"
              >previous</a> |</li>
-        <li><a href="../index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">AstroObject 0.6.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

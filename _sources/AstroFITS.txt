@@ -1,4 +1,4 @@
-.. automodule:: AstroObject.AstroFITS
+.. automodule:: AstroObject.fits
 
 
 

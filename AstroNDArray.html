@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>7. AstroNDArray – Numpy Array Frames &mdash; AstroObject 0.6 documentation</title>
+    <title>7. ndarray – Numpy Array Frames &mdash; AstroObject 0.6.1 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.6',
+        VERSION:     '0.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,9 +24,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.6 documentation" href="index.html" />
-    <link rel="next" title="8. AstroHDU – HDU Objects and Storage" href="AstroHDU.html" />
-    <link rel="prev" title="6. AnalyticSpectra – Analytic Spectra and Interpolation" href="AnalyticSpectra.html" /> 
+    <link rel="top" title="AstroObject 0.6.1 documentation" href="index.html" />
+    <link rel="next" title="8. hdu – HDU Objects and Storage" href="AstroHDU.html" />
+    <link rel="prev" title="6. anaspec – Analytic Spectra and Interpolation" href="AnalyticSpectra.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,12 +39,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="AstroHDU.html" title="8. AstroHDU – HDU Objects and Storage"
+          <a href="AstroHDU.html" title="8. hdu – HDU Objects and Storage"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="AnalyticSpectra.html" title="6. AnalyticSpectra – Analytic Spectra and Interpolation"
+          <a href="AnalyticSpectra.html" title="6. anaspec – Analytic Spectra and Interpolation"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.6.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -53,35 +53,35 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <span class="target" id="module-AstroObject.AstroNDArray"></span><div class="section" id="astrondarray-numpy-array-frames">
-<h1>7. <tt class="xref py py-mod docutils literal"><span class="pre">AstroNDArray</span></tt> – Numpy Array Frames<a class="headerlink" href="#astrondarray-numpy-array-frames" title="Permalink to this headline">¶</a></h1>
+  <span class="target" id="module-AstroObject.ndarray"></span><div class="section" id="ndarray-numpy-array-frames">
+<h1>7. <tt class="xref py py-mod docutils literal"><span class="pre">ndarray</span></tt> – Numpy Array Frames<a class="headerlink" href="#ndarray-numpy-array-frames" title="Permalink to this headline">¶</a></h1>
 <p>This module implements a <strong>frame</strong> as a subclass of NDArray. This eliminates the difference between the <tt class="xref py py-attr docutils literal"><span class="pre">d</span></tt> attribute and the <tt class="xref py py-attr docutils literal"><span class="pre">f</span></tt>.</p>
 <p class="graphviz">
-<img src="_images/inheritance-009e2ab48e8b753f16c65f8b9adf5c00c9fdea0a.png" alt="Inheritance diagram of AstroObject.AstroNDArray.NDArrayStack, AstroObject.AstroNDArray.NDArrayFrame" usemap="#inheritance6d042525b4" class="inheritance"/>
-<map id="inheritance6d042525b4" name="inheritance6d042525b4">
-<area shape="rect" id="node2" href="#AstroObject.AstroNDArray.NDArrayFrame" title="NDArrayFrame" alt="" coords="323,153,440,178"/>
-<area shape="rect" id="node3" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="139,153,269,178"/>
-<area shape="rect" id="node5" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="157,202,251,227"/>
-<area shape="rect" id="node10" href="#AstroObject.AstroNDArray.NDArrayStack" title="NDArrayStack" alt="" coords="632,54,744,79"/>
-<area shape="rect" id="node11" href="AstroObject.html#AstroObject.AstroObjectBase.BaseStack" title="BaseStack" alt="" coords="493,54,584,79"/>
-<area shape="rect" id="node13" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="12,178,84,203"/>
+<img src="_images/inheritance-921536a5c78ed8ef98912865111309526481440d.png" alt="Inheritance diagram of AstroObject.ndarray.NDArrayStack, AstroObject.ndarray.NDArrayFrame" usemap="#inheritance5e5bafbbda" class="inheritance"/>
+<map id="inheritance5e5bafbbda" name="inheritance5e5bafbbda">
+<area shape="rect" id="node1" href="AstroObject.html#AstroObject.base.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="139,153,269,178"/>
+<area shape="rect" id="node19" href="#AstroObject.ndarray.NDArrayFrame" title="NDArrayFrame" alt="" coords="323,153,440,178"/>
+<area shape="rect" id="node2" href="AstroObject.html#AstroObject.base.Mixin" title="Mixin" alt="" coords="12,178,84,203"/>
+<area shape="rect" id="node17" href="AstroObject.html#AstroObject.base.BaseFrame" title="BaseFrame" alt="" coords="157,202,251,227"/>
+<area shape="rect" id="node10" href="AstroObject.html#AstroObject.base.BaseStack" title="BaseStack" alt="" coords="493,54,584,79"/>
+<area shape="rect" id="node9" href="#AstroObject.ndarray.NDArrayStack" title="NDArrayStack" alt="" coords="632,54,744,79"/>
 </map>
 </p>
 <div class="section" id="ndarraystack-numpy-array-stacks">
-<h2>7.1. <a class="reference internal" href="#AstroObject.AstroNDArray.NDArrayStack" title="AstroObject.AstroNDArray.NDArrayStack"><tt class="xref py py-class docutils literal"><span class="pre">NDArrayStack</span></tt></a> – Numpy Array <strong>Stacks</strong><a class="headerlink" href="#ndarraystack-numpy-array-stacks" title="Permalink to this headline">¶</a></h2>
+<h2>7.1. <a class="reference internal" href="#AstroObject.ndarray.NDArrayStack" title="AstroObject.ndarray.NDArrayStack"><tt class="xref py py-class docutils literal"><span class="pre">NDArrayStack</span></tt></a> – Numpy Array <strong>Stacks</strong><a class="headerlink" href="#ndarraystack-numpy-array-stacks" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="AstroObject.AstroNDArray.NDArrayStack">
-<em class="property">class </em><tt class="descclassname">AstroObject.AstroNDArray.</tt><tt class="descname">NDArrayStack</tt><big>(</big><em>dataClasses=[&lt;class 'AstroObject.AstroNDArray.NDArrayFrame'&gt;], **kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroNDArray.html#NDArrayStack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayStack" title="Permalink to this definition">¶</a></dt>
-<dd><p>This object tracks a number of data frames. This class is a simple subclass of <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.BaseStack</span></tt> and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the <a class="reference internal" href="#AstroObject.AstroNDArray.NDArrayFrame" title="AstroObject.AstroNDArray.NDArrayFrame"><tt class="xref py py-class docutils literal"><span class="pre">NDArrayFrame</span></tt></a> class for data. As well, it accepts an array in the initializer that will be saved immediately.</p>
+<dt id="AstroObject.ndarray.NDArrayStack">
+<em class="property">class </em><tt class="descclassname">AstroObject.ndarray.</tt><tt class="descname">NDArrayStack</tt><big>(</big><em>dataClasses=[&lt;class 'AstroObject.ndarray.NDArrayFrame'&gt;], **kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/ndarray.html#NDArrayStack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.ndarray.NDArrayStack" title="Permalink to this definition">¶</a></dt>
+<dd><p>This object tracks a number of data frames. This class is a simple subclass of <tt class="xref py py-class docutils literal"><span class="pre">base.BaseStack</span></tt> and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the <a class="reference internal" href="#AstroObject.ndarray.NDArrayFrame" title="AstroObject.ndarray.NDArrayFrame"><tt class="xref py py-class docutils literal"><span class="pre">NDArrayFrame</span></tt></a> class for data. As well, it accepts an array in the initializer that will be saved immediately.</p>
 <dl class="method">
-<dt id="AstroObject.AstroNDArray.NDArrayStack.add_data_class">
-<tt class="descname">add_data_class</tt><big>(</big><em>data_class</em><big>)</big><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayStack.add_data_class" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayStack.add_data_class">
+<tt class="descname">add_data_class</tt><big>(</big><em>data_class</em><big>)</big><a class="headerlink" href="#AstroObject.ndarray.NDArrayStack.add_data_class" title="Permalink to this definition">¶</a></dt>
 <dd><p>Insert a data class into the list of acceptable data classes for this object.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroNDArray.NDArrayStack.clear">
-<tt class="descname">clear</tt><big>(</big><em>delete=False</em><big>)</big><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayStack.clear" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayStack.clear">
+<tt class="descname">clear</tt><big>(</big><em>delete=False</em><big>)</big><a class="headerlink" href="#AstroObject.ndarray.NDArrayStack.clear" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clears all frames from this object. Returns an empty list representing the currently known frames.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -96,8 +96,8 @@
 </dd></dl>
 
 <dl class="attribute">
-<dt id="AstroObject.AstroNDArray.NDArrayStack.d">
-<tt class="descname">d</tt><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayStack.d" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayStack.d">
+<tt class="descname">d</tt><a class="headerlink" href="#AstroObject.ndarray.NDArrayStack.d" title="Permalink to this definition">¶</a></dt>
 <dd><p>The data for the selected FITS frame. Equivalent to:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Stack</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
 </pre></div>
@@ -105,8 +105,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroNDArray.NDArrayStack.data">
-<tt class="descname">data</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayStack.data" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayStack.data">
+<tt class="descname">data</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.ndarray.NDArrayStack.data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the raw data for the current frame. This is done through the <tt class="xref py py-meth docutils literal"><span class="pre">FITSFrame.__call__()</span></tt> method, which should return basic data in as raw a form as possible. The purpose of this call is to allow the user get at the most recent piece of data as easily as possible.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -130,14 +130,14 @@
 </dd></dl>
 
 <dl class="attribute">
-<dt id="AstroObject.AstroNDArray.NDArrayStack.data_classes">
-<tt class="descname">data_classes</tt><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayStack.data_classes" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayStack.data_classes">
+<tt class="descname">data_classes</tt><a class="headerlink" href="#AstroObject.ndarray.NDArrayStack.data_classes" title="Permalink to this definition">¶</a></dt>
 <dd><p>The list of acceptable data classes. This is a</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="AstroObject.AstroNDArray.NDArrayStack.f">
-<tt class="descname">f</tt><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayStack.f" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayStack.f">
+<tt class="descname">f</tt><a class="headerlink" href="#AstroObject.ndarray.NDArrayStack.f" title="Permalink to this definition">¶</a></dt>
 <dd><p>The selected FITS frame. This frame is usually the last modified frame in the system. Equivalent to:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Stack</span><span class="o">.</span><span class="n">frame</span><span class="p">()</span>
 </pre></div>
@@ -145,8 +145,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroNDArray.NDArrayStack.frame">
-<tt class="descname">frame</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayStack.frame" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayStack.frame">
+<tt class="descname">frame</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.ndarray.NDArrayStack.frame" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -177,15 +177,21 @@
 </dd></dl>
 
 <dl class="attribute">
-<dt id="AstroObject.AstroNDArray.NDArrayStack.framename">
-<tt class="descname">framename</tt><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayStack.framename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Current frame name. This will normally be the last saved <strong>frame</strong>, but there are some exceptions. First, explicitly using <a class="reference internal" href="#AstroObject.AstroNDArray.NDArrayStack.select" title="AstroObject.AstroNDArray.NDArrayStack.select"><tt class="xref py py-meth docutils literal"><span class="pre">select()</span></tt></a> will change the framename. Also, deleting the most recent frame will by default change the selected frame to the second oldest. Using the <a class="reference internal" href="#AstroObject.AstroNDArray.NDArrayStack.save" title="AstroObject.AstroNDArray.NDArrayStack.save"><tt class="xref py py-meth docutils literal"><span class="pre">save()</span></tt></a> function with <tt class="docutils literal"><span class="pre">save(data,</span> <span class="pre">select=False)</span></tt> will skip the selection of that added frame.</p>
+<dt id="AstroObject.ndarray.NDArrayStack.framename">
+<tt class="descname">framename</tt><a class="headerlink" href="#AstroObject.ndarray.NDArrayStack.framename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current frame name. This will normally be the last saved <strong>frame</strong>, but there are some exceptions. First, explicitly using <a class="reference internal" href="#AstroObject.ndarray.NDArrayStack.select" title="AstroObject.ndarray.NDArrayStack.select"><tt class="xref py py-meth docutils literal"><span class="pre">select()</span></tt></a> will change the framename. Also, deleting the most recent frame will by default change the selected frame to the second oldest. Using the <a class="reference internal" href="#AstroObject.ndarray.NDArrayStack.save" title="AstroObject.ndarray.NDArrayStack.save"><tt class="xref py py-meth docutils literal"><span class="pre">save()</span></tt></a> function with <tt class="docutils literal"><span class="pre">save(data,</span> <span class="pre">select=False)</span></tt> will skip the selection of that added frame.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.ndarray.NDArrayStack.framenames">
+<tt class="descname">framenames</tt><a class="headerlink" href="#AstroObject.ndarray.NDArrayStack.framenames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of all framenames in this object.</p>
 </dd></dl>
 
 <dl class="classmethod">
-<dt id="AstroObject.AstroNDArray.NDArrayStack.fromAtFile">
-<em class="property">classmethod </em><tt class="descname">fromAtFile</tt><big>(</big><em>filename</em>, <em>framename=None</em><big>)</big><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayStack.fromAtFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a new object create from an &#64;file. This method is a factory shortcut for <a class="reference internal" href="#AstroObject.AstroNDArray.NDArrayStack.readAtFile" title="AstroObject.AstroNDArray.NDArrayStack.readAtFile"><tt class="xref py py-meth docutils literal"><span class="pre">readAtFile()</span></tt></a>.</p>
+<dt id="AstroObject.ndarray.NDArrayStack.fromAtFile">
+<em class="property">classmethod </em><tt class="descname">fromAtFile</tt><big>(</big><em>filename</em>, <em>framename=None</em><big>)</big><a class="headerlink" href="#AstroObject.ndarray.NDArrayStack.fromAtFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new object create from an &#64;file. This method is a factory shortcut for <a class="reference internal" href="#AstroObject.ndarray.NDArrayStack.readAtFile" title="AstroObject.ndarray.NDArrayStack.readAtFile"><tt class="xref py py-meth docutils literal"><span class="pre">readAtFile()</span></tt></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -201,9 +207,9 @@
 </dd></dl>
 
 <dl class="classmethod">
-<dt id="AstroObject.AstroNDArray.NDArrayStack.fromFile">
-<em class="property">classmethod </em><tt class="descname">fromFile</tt><big>(</big><em>filename</em>, <em>framename=None</em><big>)</big><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayStack.fromFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrun a new object created from a filename. This method is a shortcut factory for <a class="reference internal" href="#AstroObject.AstroNDArray.NDArrayStack.read" title="AstroObject.AstroNDArray.NDArrayStack.read"><tt class="xref py py-meth docutils literal"><span class="pre">read()</span></tt></a>.</p>
+<dt id="AstroObject.ndarray.NDArrayStack.fromFile">
+<em class="property">classmethod </em><tt class="descname">fromFile</tt><big>(</big><em>filename</em>, <em>framename=None</em><big>)</big><a class="headerlink" href="#AstroObject.ndarray.NDArrayStack.fromFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrun a new object created from a filename. This method is a shortcut factory for <a class="reference internal" href="#AstroObject.ndarray.NDArrayStack.read" title="AstroObject.ndarray.NDArrayStack.read"><tt class="xref py py-meth docutils literal"><span class="pre">read()</span></tt></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -224,8 +230,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroNDArray.NDArrayStack.keep">
-<tt class="descname">keep</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayStack.keep" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayStack.keep">
+<tt class="descname">keep</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.ndarray.NDArrayStack.keep" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes all frames except the specified frame(s) in the object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -245,8 +251,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroNDArray.NDArrayStack.list">
-<tt class="descname">list</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayStack.list" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayStack.list">
+<tt class="descname">list</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.ndarray.NDArrayStack.list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provides a list of the available frames, by label.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -259,8 +265,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroNDArray.NDArrayStack.read">
-<tt class="descname">read</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayStack.read" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayStack.read">
+<tt class="descname">read</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.ndarray.NDArrayStack.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>This reader takes a FITS file, and trys to render each HDU within that FITS file as a frame in this Object. As such, it might read multiple frames. This method will return a list of Frames that it read. It uses the <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> <tt class="xref py py-meth docutils literal"><span class="pre">FITSFrame.__read__()</span></tt> method to return a valid Frame object for each HDU.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -284,8 +290,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroNDArray.NDArrayStack.readAtFile">
-<tt class="descname">readAtFile</tt><big>(</big><em>atfile</em>, <em>framename=None</em>, <em>clobber=False</em>, <em>select=True</em><big>)</big><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayStack.readAtFile" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayStack.readAtFile">
+<tt class="descname">readAtFile</tt><big>(</big><em>atfile</em>, <em>framename=None</em>, <em>clobber=False</em>, <em>select=True</em><big>)</big><a class="headerlink" href="#AstroObject.ndarray.NDArrayStack.readAtFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read an atfile into this object. The name of the atfile can include a starting &#8220;&#64;&#8221; which is stripped. The file is then loaded, and each line is assumed to contain a single fully-qualified part-name.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -304,8 +310,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroNDArray.NDArrayStack.remove">
-<tt class="descname">remove</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayStack.remove" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayStack.remove">
+<tt class="descname">remove</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.ndarray.NDArrayStack.remove" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes the specified frame(s) from the object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -325,8 +331,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroNDArray.NDArrayStack.save">
-<tt class="descname">save</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayStack.save" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayStack.save">
+<tt class="descname">save</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.ndarray.NDArrayStack.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves the given data to this object. If the data is an instance of one of the acceptable <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> then this method will simply save the data. Otherwise, it will attempt to cast the data into one of the acceptable <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> using their <tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt> mehtod.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -354,8 +360,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroNDArray.NDArrayStack.select">
-<tt class="descname">select</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayStack.select" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayStack.select">
+<tt class="descname">select</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.ndarray.NDArrayStack.select" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the default frame to the given framename. Normally, the default frame is the one that was last saved.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -369,8 +375,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroNDArray.NDArrayStack.write">
-<tt class="descname">write</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayStack.write" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayStack.write">
+<tt class="descname">write</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.ndarray.NDArrayStack.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify <tt class="docutils literal"><span class="pre">frames</span></tt> then only those frames will be used. <tt class="docutils literal"><span class="pre">primaryFrame</span></tt> should be the frame of the front HDU. When not specified, the latest frame will be used. It uses the <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> <tt class="xref py py-meth docutils literal"><span class="pre">FITSFrame.__hdu__()</span></tt> method to return a valid HDU object for each Frame.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -404,50 +410,50 @@
 
 </div>
 <div class="section" id="ndarrayframe-numpy-array-frames">
-<h2>7.2. <a class="reference internal" href="#AstroObject.AstroNDArray.NDArrayFrame" title="AstroObject.AstroNDArray.NDArrayFrame"><tt class="xref py py-class docutils literal"><span class="pre">NDArrayFrame</span></tt></a> – Numpy Array <strong>Frames</strong><a class="headerlink" href="#ndarrayframe-numpy-array-frames" title="Permalink to this headline">¶</a></h2>
+<h2>7.2. <a class="reference internal" href="#AstroObject.ndarray.NDArrayFrame" title="AstroObject.ndarray.NDArrayFrame"><tt class="xref py py-class docutils literal"><span class="pre">NDArrayFrame</span></tt></a> – Numpy Array <strong>Frames</strong><a class="headerlink" href="#ndarrayframe-numpy-array-frames" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="AstroObject.AstroNDArray.NDArrayFrame">
-<em class="property">class </em><tt class="descclassname">AstroObject.AstroNDArray.</tt><tt class="descname">NDArrayFrame</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroNDArray.html#NDArrayFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayFrame" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayFrame">
+<em class="property">class </em><tt class="descclassname">AstroObject.ndarray.</tt><tt class="descname">NDArrayFrame</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/ndarray.html#NDArrayFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.ndarray.NDArrayFrame" title="Permalink to this definition">¶</a></dt>
 <dd><p>A frame based on np.ndarray</p>
 <dl class="method">
-<dt id="AstroObject.AstroNDArray.NDArrayFrame.__array_finalize__">
-<tt class="descname">__array_finalize__</tt><big>(</big><em>obj</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroNDArray.html#NDArrayFrame.__array_finalize__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayFrame.__array_finalize__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayFrame.__array_finalize__">
+<tt class="descname">__array_finalize__</tt><big>(</big><em>obj</em><big>)</big><a class="reference internal" href="_modules/AstroObject/ndarray.html#NDArrayFrame.__array_finalize__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.ndarray.NDArrayFrame.__array_finalize__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finalize this array&#8217;s initialization</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroNDArray.NDArrayFrame.__setlabel__">
-<tt class="descname">__setlabel__</tt><big>(</big><em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroNDArray.html#NDArrayFrame.__setlabel__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayFrame.__setlabel__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayFrame.__setlabel__">
+<tt class="descname">__setlabel__</tt><big>(</big><em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/ndarray.html#NDArrayFrame.__setlabel__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.ndarray.NDArrayFrame.__setlabel__" title="Permalink to this definition">¶</a></dt>
 <dd><p>One use function to set the label</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroNDArray.NDArrayFrame.__call__">
-<tt class="descname">__call__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroNDArray.html#NDArrayFrame.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayFrame.__call__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayFrame.__call__">
+<tt class="descname">__call__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/ndarray.html#NDArrayFrame.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.ndarray.NDArrayFrame.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simply returns this data item.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroNDArray.NDArrayFrame.__str__">
-<tt class="descname">__str__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroNDArray.html#NDArrayFrame.__str__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayFrame.__str__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayFrame.__str__">
+<tt class="descname">__str__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/ndarray.html#NDArrayFrame.__str__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.ndarray.NDArrayFrame.__str__" title="Permalink to this definition">¶</a></dt>
 <dd><p>String representation of this object.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroNDArray.NDArrayFrame.__valid__">
-<tt class="descname">__valid__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroNDArray.html#NDArrayFrame.__valid__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayFrame.__valid__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayFrame.__valid__">
+<tt class="descname">__valid__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/ndarray.html#NDArrayFrame.__valid__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.ndarray.NDArrayFrame.__valid__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check this item for validity</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroNDArray.NDArrayFrame.__hdu__">
-<tt class="descname">__hdu__</tt><big>(</big><em>primary=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroNDArray.html#NDArrayFrame.__hdu__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayFrame.__hdu__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayFrame.__hdu__">
+<tt class="descname">__hdu__</tt><big>(</big><em>primary=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/ndarray.html#NDArrayFrame.__hdu__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.ndarray.NDArrayFrame.__hdu__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns an HDU for this object</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroNDArray.NDArrayFrame.__show__">
-<tt class="descname">__show__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroNDArray.html#NDArrayFrame.__show__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayFrame.__show__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayFrame.__show__">
+<tt class="descname">__show__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/ndarray.html#NDArrayFrame.__show__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.ndarray.NDArrayFrame.__show__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots the image in this frame using matplotlib&#8217;s <tt class="docutils literal"><span class="pre">imshow</span></tt> function. The color map is set to an inverted binary, as is often useful when looking at astronomical images. The figure object is returned, and can be manipulated further.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -456,14 +462,14 @@
 </dd></dl>
 
 <dl class="classmethod">
-<dt id="AstroObject.AstroNDArray.NDArrayFrame.__save__">
-<em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>data</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroNDArray.html#NDArrayFrame.__save__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayFrame.__save__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayFrame.__save__">
+<em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>data</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/ndarray.html#NDArrayFrame.__save__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.ndarray.NDArrayFrame.__save__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save some data to this class</p>
 </dd></dl>
 
 <dl class="classmethod">
-<dt id="AstroObject.AstroNDArray.NDArrayFrame.__read__">
-<em class="property">classmethod </em><tt class="descname">__read__</tt><big>(</big><em>HDU</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroNDArray.html#NDArrayFrame.__read__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroNDArray.NDArrayFrame.__read__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.ndarray.NDArrayFrame.__read__">
+<em class="property">classmethod </em><tt class="descname">__read__</tt><big>(</big><em>HDU</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/ndarray.html#NDArrayFrame.__read__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.ndarray.NDArrayFrame.__read__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read some data for this class from a HDU</p>
 </dd></dl>
 
@@ -480,7 +486,7 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">7. <tt class="docutils literal"><span class="pre">AstroNDArray</span></tt> – Numpy Array Frames</a><ul>
+<li><a class="reference internal" href="#">7. <tt class="docutils literal"><span class="pre">ndarray</span></tt> – Numpy Array Frames</a><ul>
 <li><a class="reference internal" href="#ndarraystack-numpy-array-stacks">7.1. <tt class="docutils literal"><span class="pre">NDArrayStack</span></tt> – Numpy Array <strong>Stacks</strong></a></li>
 <li><a class="reference internal" href="#ndarrayframe-numpy-array-frames">7.2. <tt class="docutils literal"><span class="pre">NDArrayFrame</span></tt> – Numpy Array <strong>Frames</strong></a></li>
 </ul>
@@ -489,10 +495,10 @@
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="AnalyticSpectra.html"
-                        title="previous chapter">6. <tt class="docutils literal docutils literal"><span class="pre">AnalyticSpectra</span></tt> – Analytic Spectra and Interpolation</a></p>
+                        title="previous chapter">6. <tt class="docutils literal docutils literal"><span class="pre">anaspec</span></tt> – Analytic Spectra and Interpolation</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="AstroHDU.html"
-                        title="next chapter">8. <tt class="docutils literal docutils literal"><span class="pre">AstroHDU</span></tt> – HDU Objects and Storage</a></p>
+                        title="next chapter">8. <tt class="docutils literal docutils literal"><span class="pre">hdu</span></tt> – HDU Objects and Storage</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/AstroNDArray.txt"
@@ -525,12 +531,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="AstroHDU.html" title="8. AstroHDU – HDU Objects and Storage"
+          <a href="AstroHDU.html" title="8. hdu – HDU Objects and Storage"
              >next</a> |</li>
         <li class="right" >
-          <a href="AnalyticSpectra.html" title="6. AnalyticSpectra – Analytic Spectra and Interpolation"
+          <a href="AnalyticSpectra.html" title="6. anaspec – Analytic Spectra and Interpolation"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.6.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

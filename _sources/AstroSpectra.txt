@@ -1,4 +1,4 @@
-.. automodule:: AstroObject.AstroSpectra
+.. automodule:: AstroObject.spectra
 
 
 

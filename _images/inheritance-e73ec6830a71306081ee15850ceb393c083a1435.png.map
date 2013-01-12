@@ -1,0 +1,9 @@
+<map id="inheritance53ebb8e6d7" name="inheritance53ebb8e6d7">
+<area shape="rect" id="node11" href="#AstroObject.anaspec.Resolver" title="Resolver" alt="" coords="691,43,762,66"/>
+<area shape="rect" id="node2" href="#AstroObject.anaspec.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="288,20,415,44"/>
+<area shape="rect" id="node4" href="AstroObject.html#AstroObject.base.BaseFrame" title="BaseFrame" alt="" coords="135,20,225,44"/>
+<area shape="rect" id="node12" href="AstroSpectra.html#AstroObject.spectra.SpectraFrame" title="SpectraFrame" alt="" coords="298,66,405,90"/>
+<area shape="rect" id="node6" href="AstroObject.html#AstroObject.spectra.SpectraMixin" title="SpectraMixin" alt="" coords="131,66,229,90"/>
+<area shape="rect" id="node7" href="AstroObject.html#AstroObject.base.Mixin" title="Mixin" alt="" coords="5,66,73,90"/>
+<area shape="rect" id="node9" href="AstroObject.html#AstroObject.base.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="118,113,242,137"/>
+</map>

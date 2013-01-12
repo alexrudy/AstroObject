@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Example Spectral Data Script &mdash; AstroObject 0.6 documentation</title>
+    <title>Example Spectral Data Script &mdash; AstroObject 0.6.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.6',
+        VERSION:     '0.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.6 documentation" href="../index.html" />
+    <link rel="top" title="AstroObject 0.6.1 documentation" href="../index.html" />
     <link rel="next" title="Pipeline written with AstroObject" href="pipeline.html" />
     <link rel="prev" title="Walkthrough of a basic iraftools script" href="iraftools.html" /> 
   </head>
@@ -44,7 +44,7 @@
         <li class="right" >
           <a href="iraftools.html" title="Walkthrough of a basic iraftools script"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">AstroObject 0.6.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -70,9 +70,9 @@
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 
 
-<span class="kn">from</span> <span class="nn">AstroObject.AstroObjectLogging</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">AstroObject.AnalyticSpectra</span> <span class="kn">import</span> <span class="n">InterpolatedSpectrum</span><span class="p">,</span><span class="n">GaussianSpectrum</span><span class="p">,</span><span class="n">FlatSpectrum</span><span class="p">,</span><span class="n">BlackBodySpectrum</span><span class="p">,</span><span class="n">UnitarySpectrum</span><span class="p">,</span><span class="n">Resolver</span>
-<span class="kn">from</span> <span class="nn">AstroObject.AstroSpectra</span> <span class="kn">import</span> <span class="n">SpectraStack</span>
+<span class="kn">from</span> <span class="nn">AstroObject.loggers</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">AstroObject.anaspec</span> <span class="kn">import</span> <span class="n">InterpolatedSpectrum</span><span class="p">,</span><span class="n">GaussianSpectrum</span><span class="p">,</span><span class="n">FlatSpectrum</span><span class="p">,</span><span class="n">BlackBodySpectrum</span><span class="p">,</span><span class="n">UnitarySpectrum</span><span class="p">,</span><span class="n">Resolver</span>
+<span class="kn">from</span> <span class="nn">AstroObject.spectra</span> <span class="kn">import</span> <span class="n">SpectraStack</span>
 <span class="kn">from</span> <span class="nn">AstroObject.util</span> <span class="kn">import</span> <span class="n">npArrayInfo</span>
 <span class="kn">from</span> <span class="nn">AstroObject.util.functions</span> <span class="kn">import</span> <span class="n">get_resolution_spectrum</span>
 
@@ -179,7 +179,7 @@
         <li class="right" >
           <a href="iraftools.html" title="Walkthrough of a basic iraftools script"
              >previous</a> |</li>
-        <li><a href="../index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">AstroObject 0.6.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

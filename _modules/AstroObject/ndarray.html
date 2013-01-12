@@ -1,0 +1,291 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>AstroObject.ndarray &mdash; AstroObject 0.6.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.6.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="AstroObject 0.6.1 documentation" href="../../index.html" />
+    <link rel="up" title="AstroObject" href="../AstroObject.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">AstroObject 0.6.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../AstroObject.html" accesskey="U">AstroObject</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for AstroObject.ndarray</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c"># </span>
+<span class="c">#  ndarray.py</span>
+<span class="c">#  AstroObject</span>
+<span class="c">#  </span>
+<span class="c">#  Created by Alexander Rudy on 2012-04-18.</span>
+<span class="c">#  Copyright 2012 Alexander Rudy. All rights reserved.</span>
+<span class="c">#  Version 0.6.0</span>
+<span class="c"># </span>
+<span class="sd">u&quot;&quot;&quot;</span>
+<span class="sd">:mod:`ndarray` – Numpy Array Frames</span>
+<span class="sd">========================================</span>
+
+<span class="sd">This module implements a **frame** as a subclass of NDArray. This eliminates the difference between the :attr:`~AstroOBject.base.BaseStack.d` attribute and the :attr:`~AstroOBject.base.BaseStack.f`.</span>
+
+<span class="sd">.. inheritance-diagram::</span>
+<span class="sd">    AstroObject.ndarray.NDArrayStack</span>
+<span class="sd">    AstroObject.ndarray.NDArrayFrame</span>
+<span class="sd">    :parts: 1</span>
+
+<span class="sd">:class:`NDArrayStack` – Numpy Array **Stacks**</span>
+<span class="sd">----------------------------------------------</span>
+
+<span class="sd">.. autoclass::</span>
+<span class="sd">    AstroObject.ndarray.NDArrayStack</span>
+<span class="sd">    :members:</span>
+<span class="sd">    :inherited-members:</span>
+
+
+<span class="sd">:class:`NDArrayFrame` – Numpy Array **Frames**</span>
+<span class="sd">----------------------------------------------</span>
+
+<span class="sd">.. autoclass::</span>
+<span class="sd">    AstroObject.ndarray.NDArrayFrame</span>
+<span class="sd">    :members:</span>
+<span class="sd">    :special-members:</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c"># Standard Scipy Toolkits</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pyfits</span> <span class="kn">as</span> <span class="nn">pf</span>
+<span class="kn">import</span> <span class="nn">scipy</span> <span class="kn">as</span> <span class="nn">sp</span>
+
+<span class="c"># Standard Python Modules</span>
+<span class="kn">import</span> <span class="nn">math</span><span class="o">,</span> <span class="nn">logging</span><span class="o">,</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+
+<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseFrame</span><span class="p">,</span><span class="n">BaseStack</span><span class="p">,</span><span class="n">HDUHeaderMixin</span>
+
+<span class="c"># Submodules from this system</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">getVersion</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;BaseStack&quot;</span><span class="p">,</span><span class="s">&quot;BaseFrame&quot;</span><span class="p">,</span><span class="s">&quot;AnalyticMixin&quot;</span><span class="p">,</span><span class="s">&quot;NoHDUMixin&quot;</span><span class="p">,</span><span class="s">&quot;HDUHeaderMixin&quot;</span><span class="p">,</span><span class="s">&quot;NoDataMixin&quot;</span><span class="p">]</span>
+
+<span class="n">__version__</span> <span class="o">=</span> <span class="n">getVersion</span><span class="p">()</span>
+
+<span class="n">LOG</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NDArrayFrame"><a class="viewcode-back" href="../../AstroNDArray.html#AstroObject.ndarray.NDArrayFrame">[docs]</a><span class="k">class</span> <span class="nc">NDArrayFrame</span><span class="p">(</span><span class="n">HDUHeaderMixin</span><span class="p">,</span><span class="n">BaseFrame</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A frame based on np.ndarray&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">NDArrayFrame</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">header</span><span class="p">,</span><span class="n">collections</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Header</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="n">header</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="n">obj</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">header</span><span class="p">,</span><span class="n">pf</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Header</span><span class="p">):</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">header</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">header</span> <span class="o">==</span> <span class="bp">None</span><span class="p">,</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> doesn&#39;t understand the header, </span><span class="si">%s</span><span class="s">, type </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">header</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">header</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span><span class="n">collections</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">metadata</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s">&#39;time&#39;</span><span class="p">):</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">clock</span><span class="p">()</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Saving NDArrayFrame at time </span><span class="si">%r</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">obj</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">__setlabel__</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">__valid__</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Created NDArrayFrame labeled </span><span class="si">%r</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">obj</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">obj</span>
+    
+<div class="viewcode-block" id="NDArrayFrame.__array_finalize__"><a class="viewcode-back" href="../../AstroNDArray.html#AstroObject.ndarray.NDArrayFrame.__array_finalize__">[docs]</a>    <span class="k">def</span> <span class="nf">__array_finalize__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Finalize this array&#39;s initialization&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s">&#39;header&#39;</span><span class="p">,</span><span class="n">pf</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Header</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s">&#39;metadata&#39;</span><span class="p">,{})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_label</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="s">&#39;time&#39;</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s">&#39;time&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">clock</span><span class="p">()</span>
+            <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Setting NDArrayFrame at time </span><span class="si">%r</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">,</span><span class="n">pf</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Header</span><span class="p">):</span>
+            <span class="c">#Nothing to do when we are already with the correct header type.</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">,</span><span class="n">collections</span><span class="o">.</span><span class="n">Mapping</span><span class="p">):</span>
+            <span class="n">_header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">pf</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Header</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">value</span> <span class="ow">in</span> <span class="n">_header</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">,</span><span class="n">pf</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">Header</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">==</span> <span class="bp">None</span><span class="p">,</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> doesn&#39;t understand the header, </span><span class="si">%s</span><span class="s">, type </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__valid__</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Initialized NDArrayFrame labeled </span><span class="si">%r</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="NDArrayFrame.__setlabel__"><a class="viewcode-back" href="../../AstroNDArray.html#AstroObject.ndarray.NDArrayFrame.__setlabel__">[docs]</a>    <span class="k">def</span> <span class="nf">__setlabel__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">label</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;One use function to set the label&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">label</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_label</span> <span class="o">=</span> <span class="n">label</span>
+        <span class="k">elif</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="bp">None</span><span class="p">)</span> <span class="o">==</span> <span class="n">label</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&quot;Cannot change label twice! </span><span class="si">%s</span><span class="s"> -&gt; </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">found_label</span><span class="p">,</span><span class="n">label</span><span class="p">))</span>
+            </div>
+<div class="viewcode-block" id="NDArrayFrame.__call__"><a class="viewcode-back" href="../../AstroNDArray.html#AstroObject.ndarray.NDArrayFrame.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Simply returns this data item.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span>
+        </div>
+<div class="viewcode-block" id="NDArrayFrame.__str__"><a class="viewcode-back" href="../../AstroNDArray.html#AstroObject.ndarray.NDArrayFrame.__str__">[docs]</a>    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;String representation of this object.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">BaseFrame</span><span class="o">.</span><span class="n">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="NDArrayFrame.__valid__"><a class="viewcode-back" href="../../AstroNDArray.html#AstroObject.ndarray.NDArrayFrame.__valid__">[docs]</a>    <span class="k">def</span> <span class="nf">__valid__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check this item for validity&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;Must be an array with elements in it!&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;Array must have non-zero dimensions.&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">NDArrayFrame</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__valid__</span><span class="p">()</span>
+        </div>
+<div class="viewcode-block" id="NDArrayFrame.__hdu__"><a class="viewcode-back" href="../../AstroNDArray.html#AstroObject.ndarray.NDArrayFrame.__hdu__">[docs]</a>    <span class="k">def</span> <span class="nf">__hdu__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">primary</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns an HDU for this object&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">primary</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pf</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pf</span><span class="o">.</span><span class="n">ImageHDU</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">))</span>
+            </div>
+<div class="viewcode-block" id="NDArrayFrame.__show__"><a class="viewcode-back" href="../../AstroNDArray.html#AstroObject.ndarray.NDArrayFrame.__show__">[docs]</a>    <span class="k">def</span> <span class="nf">__show__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Plots the image in this frame using matplotlib&#39;s ``imshow`` function. The color map is set to an inverted binary, as is often useful when looking at astronomical images. The figure object is returned, and can be manipulated further.</span>
+<span class="sd">        </span>
+<span class="sd">        .. Note::</span>
+<span class="sd">            This function serves as a quick view of the current state of the frame. It is not intended for robust plotting support, as that can be easily accomplished using ``matplotlib``. Rather, it attempts to do the minimum possible to create an acceptable image for immediate inspection.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Plotting </span><span class="si">%s</span><span class="s"> using matplotlib.pyplot.imshow&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="kn">as</span> <span class="nn">mpl</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+        <span class="n">figure</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="bp">self</span><span class="p">())</span>
+        <span class="n">figure</span><span class="o">.</span><span class="n">set_cmap</span><span class="p">(</span><span class="s">&#39;binary_r&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">figure</span>
+    </div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="NDArrayFrame.__save__"><a class="viewcode-back" href="../../AstroNDArray.html#AstroObject.ndarray.NDArrayFrame.__save__">[docs]</a>    <span class="k">def</span> <span class="nf">__save__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save some data to this class&quot;&quot;&quot;</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Attempting to save as </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">cls</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;NDArrayFrame cannot handle objects of type </span><span class="si">%s</span><span class="s">, must be type </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">Object</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">AE</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> data did not validate: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="n">AE</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Created </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">Object</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Object</span>
+        </div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="NDArrayFrame.__read__"><a class="viewcode-back" href="../../AstroNDArray.html#AstroObject.ndarray.NDArrayFrame.__read__">[docs]</a>    <span class="k">def</span> <span class="nf">__read__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="n">HDU</span><span class="p">,</span><span class="n">label</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read some data for this class from a HDU&quot;&quot;&quot;</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Attempting to read as </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">cls</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">HDU</span><span class="p">,(</span><span class="n">pf</span><span class="o">.</span><span class="n">ImageHDU</span><span class="p">,</span><span class="n">pf</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">)):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Must save a PrimaryHDU or ImageHDU to a </span><span class="si">%s</span><span class="s">, found </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="n">HDU</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">Object</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">HDU</span><span class="o">.</span><span class="n">data</span><span class="p">,</span><span class="n">label</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">AE</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> data did not validate: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="n">AE</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">&quot;Created </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">Object</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Object</span>
+</div></div>
+<div class="viewcode-block" id="NDArrayStack"><a class="viewcode-back" href="../../AstroNDArray.html#AstroObject.ndarray.NDArrayStack">[docs]</a><span class="k">class</span> <span class="nc">NDArrayStack</span><span class="p">(</span><span class="n">BaseStack</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This object tracks a number of data frames. This class is a simple subclass of :class:`base.BaseStack` and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the :class:`NDArrayFrame` class for data. As well, it accepts an array in the initializer that will be saved immediately.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">dataClasses</span><span class="o">=</span><span class="p">[</span><span class="n">NDArrayFrame</span><span class="p">],</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">NDArrayStack</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">dataClasses</span><span class="o">=</span><span class="n">dataClasses</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">AstroObject 0.6.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../AstroObject.html" >AstroObject</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Alexander Rudy.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

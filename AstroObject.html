@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>10. AstroObjectBase – AstroObject API &mdash; AstroObject 0.6 documentation</title>
+    <title>10. base – AstroObject API &mdash; AstroObject 0.6.1 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.6',
+        VERSION:     '0.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.6 documentation" href="index.html" />
-    <link rel="next" title="11. AstroSimulator — Complex Task Management" href="AstroSimulator.html" />
+    <link rel="top" title="AstroObject 0.6.1 documentation" href="index.html" />
+    <link rel="next" title="11. simulator — Complex Task Management" href="AstroSimulator.html" />
     <link rel="prev" title="9. iraftools – IRAF integration facility" href="iraftools.html" /> 
   </head>
   <body>
@@ -39,12 +39,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="AstroSimulator.html" title="11. AstroSimulator — Complex Task Management"
+          <a href="AstroSimulator.html" title="11. simulator — Complex Task Management"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="iraftools.html" title="9. iraftools – IRAF integration facility"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.6.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -53,59 +53,59 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <span class="target" id="module-AstroObject.AstroObjectBase"></span><div class="section" id="astroobjectbase-astroobject-api">
-<span id="astroobjectapi"></span><h1>10. <tt class="xref py py-mod docutils literal"><span class="pre">AstroObjectBase</span></tt> – AstroObject API<a class="headerlink" href="#astroobjectbase-astroobject-api" title="Permalink to this headline">¶</a></h1>
-<p>The API is the foundation of the <a class="reference internal" href="intro.html#module-AstroObject" title="AstroObject"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject</span></tt></a> module. When creating new types of data, you will want to create frames for that type of data. The functions shown below are the functions which must be present in every data frame type, in order to maintain compatibility with enclosing Objects. If your class conforms to this API, then it can easily be used as data for <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.BaseStack</span></tt>.</p>
-<p>To see how easy this will make objects, examine the following code for a custom Object class which accepts <tt class="xref py py-class docutils literal"><span class="pre">FooFrame</span></tt>. To create the custom <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.BaseStack</span></tt> which accepts your new data type <tt class="xref py py-class docutils literal"><span class="pre">FooFrame</span></tt>, simply use:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">FooObject</span><span class="p">(</span><span class="n">AstroObjectBase</span><span class="o">.</span><span class="n">BaseStack</span><span class="p">):</span>
+  <span class="target" id="module-AstroObject.base"></span><div class="section" id="base-astroobject-api">
+<span id="astroobjectapi"></span><h1>10. <tt class="xref py py-mod docutils literal"><span class="pre">base</span></tt> – AstroObject API<a class="headerlink" href="#base-astroobject-api" title="Permalink to this headline">¶</a></h1>
+<p>The API is the foundation of the <a class="reference internal" href="intro.html#module-AstroObject" title="AstroObject"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject</span></tt></a> module. When creating new types of data, you will want to create frames for that type of data. The functions shown below are the functions which must be present in every data frame type, in order to maintain compatibility with enclosing Objects. If your class conforms to this API, then it can easily be used as data for <tt class="xref py py-class docutils literal"><span class="pre">base.BaseStack</span></tt>.</p>
+<p>To see how easy this will make objects, examine the following code for a custom Object class which accepts <tt class="xref py py-class docutils literal"><span class="pre">FooFrame</span></tt>. To create the custom <tt class="xref py py-class docutils literal"><span class="pre">base.BaseStack</span></tt> which accepts your new data type <tt class="xref py py-class docutils literal"><span class="pre">FooFrame</span></tt>, simply use:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">FooObject</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">BaseStack</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A container for tracking FooFrames&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataClasses</span><span class="o">=</span><span class="p">[</span><span class="n">FooFrame</span><span class="p">]):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ImageStack</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">dataClasses</span> <span class="o">=</span> <span class="n">dataClasses</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>This object will then have all of the functions provided by <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.BaseStack</span></tt>, but will only accept and handle data of type <tt class="xref py py-class docutils literal"><span class="pre">FooFrame</span></tt>. <tt class="xref py py-class docutils literal"><span class="pre">FooFrame</span></tt> should then implement all of the functions described in the API below.</p>
-<p>To use this API, it is recommended that you sub-class <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.BaseFrame</span></tt>. This template class is an abstract base which will ensure that you implement all of the required methods.</p>
-<p>The API also provides a number of Mixin classes for special cases. These mixins allow you to use incomplete, or standard implementations in certain cases. Mixins are useful when your data type cannot possibly conform to the full API provided by <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.BaseFrame</span></tt>. Examples of this are classes which cannot produce HDUs or FITS files, or classes which do not actually contain raw data. See <a class="reference internal" href="#mixins"><em>Mixins in AstroObjectBase</em></a> for more information.</p>
+<p>This object will then have all of the functions provided by <tt class="xref py py-class docutils literal"><span class="pre">base.BaseStack</span></tt>, but will only accept and handle data of type <tt class="xref py py-class docutils literal"><span class="pre">FooFrame</span></tt>. <tt class="xref py py-class docutils literal"><span class="pre">FooFrame</span></tt> should then implement all of the functions described in the API below.</p>
+<p>To use this API, it is recommended that you sub-class <tt class="xref py py-class docutils literal"><span class="pre">base.BaseFrame</span></tt>. This template class is an abstract base which will ensure that you implement all of the required methods.</p>
+<p>The API also provides a number of Mixin classes for special cases. These mixins allow you to use incomplete, or standard implementations in certain cases. Mixins are useful when your data type cannot possibly conform to the full API provided by <tt class="xref py py-class docutils literal"><span class="pre">base.BaseFrame</span></tt>. Examples of this are classes which cannot produce HDUs or FITS files, or classes which do not actually contain raw data. See <a class="reference internal" href="#mixins"><em>Mixins in base</em></a> for more information.</p>
 <div class="section" id="module-structure">
 <h2>10.1. Module Structure<a class="headerlink" href="#module-structure" title="Permalink to this headline">¶</a></h2>
-<p>The module generally uses <strong>stacks</strong> and <strong>frames</strong> as the base structures. <strong>Stacks</strong> are easily implemented (as above), and <strong>frames</strong> are single data instances which provide all of the required methods from <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame" title="AstroObject.AstroObjectBase.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a>. The structure for <strong>Stacks</strong> is quite simple, as there is little variance among different stacks. <strong>Frames</strong> each are required to implement all of the methods in <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame" title="AstroObject.AstroObjectBase.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a>, with only a few of those methods implmeneted by default, and most of these require re-implementation.</p>
-<p>The Mixin classes are provided to make the creation of certain basic methods easier, and to remove the requirement that other basic methods be implemented. See <a class="reference internal" href="#mixins"><em>Mixins in AstroObjectBase</em></a> for more information.</p>
+<p>The module generally uses <strong>stacks</strong> and <strong>frames</strong> as the base structures. <strong>Stacks</strong> are easily implemented (as above), and <strong>frames</strong> are single data instances which provide all of the required methods from <a class="reference internal" href="#AstroObject.base.BaseFrame" title="AstroObject.base.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a>. The structure for <strong>Stacks</strong> is quite simple, as there is little variance among different stacks. <strong>Frames</strong> each are required to implement all of the methods in <a class="reference internal" href="#AstroObject.base.BaseFrame" title="AstroObject.base.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a>, with only a few of those methods implmeneted by default, and most of these require re-implementation.</p>
+<p>The Mixin classes are provided to make the creation of certain basic methods easier, and to remove the requirement that other basic methods be implemented. See <a class="reference internal" href="#mixins"><em>Mixins in base</em></a> for more information.</p>
 <p class="graphviz">
-<img src="_images/inheritance-3d890a99b74037226a3c747f860dc4c8ac08867a.png" alt="Inheritance diagram of AstroObject.AstroFITS.FITSFrame, AstroObject.AstroFITS.FITSStack, AstroObject.AstroImage.ImageFrame, AstroObject.AstroImage.ImageStack, AstroObject.AstroSpectra.SpectraFrame, AstroObject.AstroSpectra.SpectraStack, AstroObject.AstroHDU.HDUFrame, AstroObject.AstroHDU.HDUStack, AstroObject.AstroNDArray.NDArrayFrame, AstroObject.AstroNDArray.NDArrayStack, AstroObject.AnalyticSpectra.AnalyticSpectrum, AstroObject.AnalyticSpectra.CompositeSpectra, AstroObject.AnalyticSpectra.InterpolatedSpectrum, AstroObject.AnalyticSpectra.Resolver, AstroObject.AnalyticSpectra.UnitarySpectrum, AstroObject.AnalyticSpectra.FlatSpectrum, AstroObject.AnalyticSpectra.GaussianSpectrum, AstroObject.AnalyticSpectra.BlackBodySpectrum" usemap="#inheritance9023f7c43f" class="inheritance"/>
-<map id="inheritance9023f7c43f" name="inheritance9023f7c43f">
-<area shape="rect" id="node1" href="#AstroObject.AstroObjectBase.NoDataMixin" title="NoDataMixin" alt="" coords="148,430,232,451"/>
-<area shape="rect" id="node29" href="#AstroObject.AstroObjectBase.AnalyticMixin" title="AnalyticMixin" alt="" coords="296,307,381,328"/>
-<area shape="rect" id="node40" href="AstroFITS.html#AstroObject.AstroFITS.FITSFrame" title="FITSFrame" alt="" coords="302,470,375,491"/>
-<area shape="rect" id="node2" href="#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="22,430,80,451"/>
-<area shape="rect" id="node5" href="#AstroObject.AstroSpectra.SpectraMixin" title="SpectraMixin" alt="" coords="148,350,233,370"/>
-<area shape="rect" id="node7" href="#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="137,511,244,531"/>
-<area shape="rect" id="node9" href="#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="152,470,229,491"/>
-<area shape="rect" id="node32" href="#AstroObject.AstroObjectBase.NoHDUMixin" title="NoHDUMixin" alt="" coords="148,390,232,411"/>
-<area shape="rect" id="node4" href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraFrame" title="SpectraFrame" alt="" coords="292,430,385,451"/>
-<area shape="rect" id="node11" href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.Resolver" title="Resolver" alt="" coords="666,429,728,450"/>
-<area shape="rect" id="node80" href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.InterpolatedSpectrum" title="InterpolatedSpectrum" alt="" coords="631,469,764,490"/>
-<area shape="rect" id="node75" href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.UnitarySpectrum" title="UnitarySpectrum" alt="" coords="644,206,751,227"/>
-<area shape="rect" id="node16" href="AstroImage.html#AstroObject.AstroImage.ImageFrame" title="ImageFrame" alt="" coords="296,511,380,531"/>
-<area shape="rect" id="node35" href="AstroHDU.html#AstroObject.AstroHDU.HDUFrame" title="HDUFrame" alt="" coords="300,591,376,612"/>
-<area shape="rect" id="node59" href="AstroNDArray.html#AstroObject.AstroNDArray.NDArrayFrame" title="NDArrayFrame" alt="" coords="290,551,386,572"/>
-<area shape="rect" id="node19" href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="283,348,393,368"/>
-<area shape="rect" id="node28" href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.CompositeSpectra" title="CompositeSpectra" alt="" coords="455,288,570,308"/>
-<area shape="rect" id="node22" href="#AstroObject.AstroObjectBase.BaseStack" title="BaseStack" alt="" coords="475,85,549,106"/>
-<area shape="rect" id="node47" href="AstroNDArray.html#AstroObject.AstroNDArray.NDArrayStack" title="NDArrayStack" alt="" coords="652,5,743,26"/>
-<area shape="rect" id="node57" href="AstroSpectra.html#AstroObject.AstroSpectra.SpectraStack" title="SpectraStack" alt="" coords="653,45,741,66"/>
-<area shape="rect" id="node71" href="AstroHDU.html#AstroObject.AstroHDU.HDUStack" title="HDUStack" alt="" coords="661,85,733,106"/>
-<area shape="rect" id="node73" href="AstroFITS.html#AstroObject.AstroFITS.FITSStack" title="FITSStack" alt="" coords="663,126,732,146"/>
-<area shape="rect" id="node83" href="AstroImage.html#AstroObject.AstroImage.ImageStack" title="ImageStack" alt="" coords="657,166,738,187"/>
+<img src="_images/inheritance-762507b1138883283a367a7ed65c83611ac4166f.png" alt="Inheritance diagram of AstroObject.fits.FITSFrame, AstroObject.fits.FITSStack, AstroObject.image.ImageFrame, AstroObject.image.ImageStack, AstroObject.spectra.SpectraFrame, AstroObject.spectra.SpectraStack, AstroObject.hdu.HDUFrame, AstroObject.hdu.HDUStack, AstroObject.ndarray.NDArrayFrame, AstroObject.ndarray.NDArrayStack, AstroObject.anaspec.AnalyticSpectrum, AstroObject.anaspec.CompositeSpectra, AstroObject.anaspec.InterpolatedSpectrum, AstroObject.anaspec.Resolver, AstroObject.anaspec.UnitarySpectrum, AstroObject.anaspec.FlatSpectrum, AstroObject.anaspec.GaussianSpectrum, AstroObject.anaspec.BlackBodySpectrum" usemap="#inheritance20309f42d9" class="inheritance"/>
+<map id="inheritance20309f42d9" name="inheritance20309f42d9">
+<area shape="rect" id="node1" href="#AstroObject.base.NoHDUMixin" title="NoHDUMixin" alt="" coords="148,327,232,348"/>
+<area shape="rect" id="node17" href="#AstroObject.base.AnalyticMixin" title="AnalyticMixin" alt="" coords="296,410,381,430"/>
+<area shape="rect" id="node2" href="#AstroObject.base.Mixin" title="Mixin" alt="" coords="22,287,80,307"/>
+<area shape="rect" id="node8" href="#AstroObject.spectra.SpectraMixin" title="SpectraMixin" alt="" coords="148,367,233,388"/>
+<area shape="rect" id="node10" href="#AstroObject.base.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="137,206,244,227"/>
+<area shape="rect" id="node12" href="#AstroObject.base.BaseFrame" title="BaseFrame" alt="" coords="152,246,229,267"/>
+<area shape="rect" id="node50" href="#AstroObject.base.NoDataMixin" title="NoDataMixin" alt="" coords="148,287,232,307"/>
+<area shape="rect" id="node4" href="AstroFITS.html#AstroObject.fits.FITSStack" title="FITSStack" alt="" coords="663,5,732,26"/>
+<area shape="rect" id="node5" href="#AstroObject.base.BaseStack" title="BaseStack" alt="" coords="475,85,549,106"/>
+<area shape="rect" id="node14" href="AstroSpectra.html#AstroObject.spectra.SpectraStack" title="SpectraStack" alt="" coords="653,45,741,66"/>
+<area shape="rect" id="node22" href="AstroImage.html#AstroObject.image.ImageStack" title="ImageStack" alt="" coords="657,85,738,106"/>
+<area shape="rect" id="node32" href="AstroNDArray.html#AstroObject.ndarray.NDArrayStack" title="NDArrayStack" alt="" coords="652,126,743,146"/>
+<area shape="rect" id="node62" href="AstroHDU.html#AstroObject.hdu.HDUStack" title="HDUStack" alt="" coords="661,166,733,187"/>
+<area shape="rect" id="node7" href="AstroSpectra.html#AstroObject.spectra.SpectraFrame" title="SpectraFrame" alt="" coords="292,287,385,307"/>
+<area shape="rect" id="node34" href="AnalyticSpectra.html#AstroObject.anaspec.Resolver" title="Resolver" alt="" coords="666,298,728,318"/>
+<area shape="rect" id="node56" href="AnalyticSpectra.html#AstroObject.anaspec.InterpolatedSpectrum" title="InterpolatedSpectrum" alt="" coords="631,246,764,267"/>
+<area shape="rect" id="node16" href="AnalyticSpectra.html#AstroObject.anaspec.UnitarySpectrum" title="UnitarySpectrum" alt="" coords="644,511,751,531"/>
+<area shape="rect" id="node24" href="AstroHDU.html#AstroObject.hdu.HDUFrame" title="HDUFrame" alt="" coords="300,166,376,187"/>
+<area shape="rect" id="node29" href="AstroImage.html#AstroObject.image.ImageFrame" title="ImageFrame" alt="" coords="296,206,380,227"/>
+<area shape="rect" id="node52" href="AstroFITS.html#AstroObject.fits.FITSFrame" title="FITSFrame" alt="" coords="302,246,375,267"/>
+<area shape="rect" id="node81" href="AstroNDArray.html#AstroObject.ndarray.NDArrayFrame" title="NDArrayFrame" alt="" coords="290,126,386,146"/>
+<area shape="rect" id="node40" href="AnalyticSpectra.html#AstroObject.anaspec.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="283,369,393,390"/>
+<area shape="rect" id="node65" href="AnalyticSpectra.html#AstroObject.anaspec.CompositeSpectra" title="CompositeSpectra" alt="" coords="455,349,570,369"/>
 </map>
 </p>
 </div>
 <div class="section" id="baseframe-base-frame-and-frame-api-definition">
-<h2>10.2. <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame" title="AstroObject.AstroObjectBase.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a> — Base Frame and Frame API Definition<a class="headerlink" href="#baseframe-base-frame-and-frame-api-definition" title="Permalink to this headline">¶</a></h2>
-<p>The <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame" title="AstroObject.AstroObjectBase.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a> class provides abstract methods for all of the required frame methods. If you subclass from <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame" title="AstroObject.AstroObjectBase.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a>, you will ensure that your subclass is interoperable with all of the frame and object features of this module. The <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame" title="AstroObject.AstroObjectBase.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a> serves as the primary definition of the API for frames.</p>
+<h2>10.2. <a class="reference internal" href="#AstroObject.base.BaseFrame" title="AstroObject.base.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a> — Base Frame and Frame API Definition<a class="headerlink" href="#baseframe-base-frame-and-frame-api-definition" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="#AstroObject.base.BaseFrame" title="AstroObject.base.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a> class provides abstract methods for all of the required frame methods. If you subclass from <a class="reference internal" href="#AstroObject.base.BaseFrame" title="AstroObject.base.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a>, you will ensure that your subclass is interoperable with all of the frame and object features of this module. The <a class="reference internal" href="#AstroObject.base.BaseFrame" title="AstroObject.base.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a> serves as the primary definition of the API for frames.</p>
 <dl class="class">
-<dt id="AstroObject.AstroObjectBase.BaseFrame">
-<em class="property">class </em><tt class="descclassname">AstroObject.AstroObjectBase.</tt><tt class="descname">BaseFrame</tt><big>(</big><em>data=None</em>, <em>label=None</em>, <em>header=None</em>, <em>metadata=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame" title="Permalink to this definition">¶</a></dt>
-<dd><p>This is the API for frame objects, that is, objects which represnet a single state of data. See <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.FITSFrame</span></tt>. This API is generally not called by the end user, but rather is called by the parent <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseStack" title="AstroObject.AstroObjectBase.BaseStack"><tt class="xref py py-class docutils literal"><span class="pre">AstroObject.AstroObjectBase.BaseStack</span></tt></a>&#8216;s function. For an example of a parent object, see <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.BaseStack</span></tt>.</p>
+<dt id="AstroObject.base.BaseFrame">
+<em class="property">class </em><tt class="descclassname">AstroObject.base.</tt><tt class="descname">BaseFrame</tt><big>(</big><em>data=None</em>, <em>label=None</em>, <em>header=None</em>, <em>metadata=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseFrame" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the API for frame objects, that is, objects which represnet a single state of data. See <tt class="xref py py-class docutils literal"><span class="pre">base.FITSFrame</span></tt>. This API is generally not called by the end user, but rather is called by the parent <a class="reference internal" href="#AstroObject.base.BaseStack" title="AstroObject.base.BaseStack"><tt class="xref py py-class docutils literal"><span class="pre">AstroObject.base.BaseStack</span></tt></a>&#8216;s function. For an example of a parent object, see <tt class="xref py py-class docutils literal"><span class="pre">base.BaseStack</span></tt>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -119,32 +119,32 @@
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name" colspan="2">Raises AttributeError:</th></tr>
-<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first last">when the frame fails to validate. See <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__valid__" title="AstroObject.AstroObjectBase.BaseFrame.__valid__"><tt class="xref py py-meth docutils literal"><span class="pre">__valid__()</span></tt></a></p>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first last">when the frame fails to validate. See <a class="reference internal" href="#AstroObject.base.BaseFrame.__valid__" title="AstroObject.base.BaseFrame.__valid__"><tt class="xref py py-meth docutils literal"><span class="pre">__valid__()</span></tt></a></p>
 </td>
 </tr>
 </tbody>
 </table>
 <dl class="attribute">
-<dt id="AstroObject.AstroObjectBase.BaseFrame.__metaclass__">
-<tt class="descname">__metaclass__</tt><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__metaclass__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseFrame.__metaclass__">
+<tt class="descname">__metaclass__</tt><a class="headerlink" href="#AstroObject.base.BaseFrame.__metaclass__" title="Permalink to this definition">¶</a></dt>
 <dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">ABCMeta</span></tt></p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="AstroObject.AstroObjectBase.BaseFrame.label">
-<tt class="descname">label</tt><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.label"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.label" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseFrame.label">
+<tt class="descname">label</tt><a class="reference internal" href="_modules/AstroObject/base.html#BaseFrame.label"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseFrame.label" title="Permalink to this definition">¶</a></dt>
 <dd><p>The name for this frame, an immutable property.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectBase.BaseFrame.copy">
-<tt class="descname">copy</tt><big>(</big><em>label=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.copy" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseFrame.copy">
+<tt class="descname">copy</tt><big>(</big><em>label=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseFrame.copy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseFrame.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a re-labeled copy of this object.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectBase.BaseFrame.__call__">
-<tt class="descname">__call__</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__call__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseFrame.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseFrame.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseFrame.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Should return the data within this frame, usually as a <tt class="docutils literal"><span class="pre">numpy</span></tt> array.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -154,7 +154,7 @@
 </tr>
 </tbody>
 </table>
-<p><tt class="xref py py-class docutils literal"><span class="pre">AstroImage.ImageFrame</span></tt> implements this method as:</p>
+<p><tt class="xref py py-class docutils literal"><span class="pre">image.ImageFrame</span></tt> implements this method as:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
 </pre></div>
@@ -162,8 +162,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectBase.BaseFrame.__repr__">
-<tt class="descname">__repr__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.__repr__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__repr__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseFrame.__repr__">
+<tt class="descname">__repr__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseFrame.__repr__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseFrame.__repr__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns String Representation of this frame object. Will display the class name and the label. This method does not need to be overwritten by subclasses.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -176,8 +176,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectBase.BaseFrame.__valid__">
-<tt class="descname">__valid__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.__valid__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__valid__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseFrame.__valid__">
+<tt class="descname">__valid__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseFrame.__valid__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseFrame.__valid__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs a series of assertions which ensure that the data for this frame is valid</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -192,14 +192,14 @@
 </dd></dl>
 
 <dl class="attribute">
-<dt id="AstroObject.AstroObjectBase.BaseFrame.valid">
-<tt class="descname">valid</tt><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.valid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.valid" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseFrame.valid">
+<tt class="descname">valid</tt><a class="reference internal" href="_modules/AstroObject/base.html#BaseFrame.valid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseFrame.valid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether this object is valid.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectBase.BaseFrame.hdu">
-<tt class="descname">hdu</tt><big>(</big><em>primary=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.hdu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.hdu" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseFrame.hdu">
+<tt class="descname">hdu</tt><big>(</big><em>primary=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseFrame.hdu"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseFrame.hdu" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retruns a Header-Data Unit PyFits object. The abstract case generates empty HDUs, which contain no data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -214,8 +214,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectBase.BaseFrame.__setheader__">
-<tt class="descname">__setheader__</tt><big>(</big><em>hdu</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.__setheader__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__setheader__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseFrame.__setheader__">
+<tt class="descname">__setheader__</tt><big>(</big><em>hdu</em><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseFrame.__setheader__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseFrame.__setheader__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply header values to a given HDU and return that HDU.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -230,8 +230,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectBase.BaseFrame.__getheader__">
-<tt class="descname">__getheader__</tt><big>(</big><em>hdu</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.__getheader__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__getheader__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseFrame.__getheader__">
+<tt class="descname">__getheader__</tt><big>(</big><em>hdu</em><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseFrame.__getheader__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseFrame.__getheader__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract header values from a given HDU and save them to this object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -246,8 +246,8 @@
 </dd></dl>
 
 <dl class="staticmethod">
-<dt id="AstroObject.AstroObjectBase.BaseFrame.__getlabel__">
-<em class="property">static </em><tt class="descname">__getlabel__</tt><big>(</big><em>HDU</em>, <em>default=None</em>, <em>explicit=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.__getlabel__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__getlabel__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseFrame.__getlabel__">
+<em class="property">static </em><tt class="descname">__getlabel__</tt><big>(</big><em>HDU</em>, <em>default=None</em>, <em>explicit=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseFrame.__getlabel__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseFrame.__getlabel__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract header values from a given HDU and save them to this object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -268,8 +268,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectBase.BaseFrame.__hdu__">
-<tt class="descname">__hdu__</tt><big>(</big><em>primary=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.__hdu__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__hdu__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseFrame.__hdu__">
+<tt class="descname">__hdu__</tt><big>(</big><em>primary=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseFrame.__hdu__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseFrame.__hdu__" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method returns an HDU which represents the object. The HDU should respect the object&#8217;s <tt class="xref py py-attr docutils literal"><span class="pre">header</span></tt> attribute, and use that dictionary to populate the headers of the HDU.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -287,9 +287,9 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectBase.BaseFrame.__show__">
-<tt class="descname">__show__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.__show__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__show__" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method should create a simple view of the provided frame. Often this is done using <tt class="xref py py-mod docutils literal"><span class="pre">Matplotlib.pyplot</span></tt> to create a simple plot. The plot should have the minimum amount of work done to make a passable plot view, but still be basic enough that the end user can customize the plot object after calling <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__show__" title="AstroObject.AstroObjectBase.BaseFrame.__show__"><tt class="xref py py-meth docutils literal"><span class="pre">__show__()</span></tt></a>.</p>
+<dt id="AstroObject.base.BaseFrame.__show__">
+<tt class="descname">__show__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseFrame.__show__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseFrame.__show__" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method should create a simple view of the provided frame. Often this is done using <tt class="xref py py-mod docutils literal"><span class="pre">Matplotlib.pyplot</span></tt> to create a simple plot. The plot should have the minimum amount of work done to make a passable plot view, but still be basic enough that the end user can customize the plot object after calling <a class="reference internal" href="#AstroObject.base.BaseFrame.__show__" title="AstroObject.base.BaseFrame.__show__"><tt class="xref py py-meth docutils literal"><span class="pre">__show__()</span></tt></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -301,8 +301,8 @@
 </dd></dl>
 
 <dl class="classmethod">
-<dt id="AstroObject.AstroObjectBase.BaseFrame.__save__">
-<em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>data</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.__save__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__save__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseFrame.__save__">
+<em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>data</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseFrame.__save__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseFrame.__save__" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method should retun an instance of the parent class if the given data can be turned into an object of that class. If the data cannot be correctly cast, this method should throw an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -317,14 +317,14 @@
 <tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><p class="first"><tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> when this data can&#8217;t be saved.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame" title="AstroObject.AstroObjectBase.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a></p>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#AstroObject.base.BaseFrame" title="AstroObject.base.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a></p>
 </td>
 </tr>
 </tbody>
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p>Because the <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__valid__" title="AstroObject.AstroObjectBase.BaseFrame.__valid__"><tt class="xref py py-meth docutils literal"><span class="pre">__valid__()</span></tt></a> is called when an object is initialized, it is possible to check some aspects of the provided data in this initialization function. However, this would raise an <tt class="xref py py-exc docutils literal"><span class="pre">AssertionError</span></tt> not an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt>. To avoid this problem, it is suggested that you wrap your initialization in a try...except block like:</p>
+<p>Because the <a class="reference internal" href="#AstroObject.base.BaseFrame.__valid__" title="AstroObject.base.BaseFrame.__valid__"><tt class="xref py py-meth docutils literal"><span class="pre">__valid__()</span></tt></a> is called when an object is initialized, it is possible to check some aspects of the provided data in this initialization function. However, this would raise an <tt class="xref py py-exc docutils literal"><span class="pre">AssertionError</span></tt> not an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt>. To avoid this problem, it is suggested that you wrap your initialization in a try...except block like:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">try</span><span class="p">:</span>
     <span class="n">Object</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">HDU</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">AE</span><span class="p">:</span>
@@ -332,13 +332,13 @@
     <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </pre></div>
 </div>
-<p class="last">This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like <tt class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></tt>) which are diffult to track and diagnose without the code in <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__save__" title="AstroObject.AstroObjectBase.BaseFrame.__save__"><tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt></a>. See <tt class="xref py py-meth docutils literal"><span class="pre">AstroImage.__save__()</span></tt> for an example <tt class="docutils literal"><span class="pre">__save__</span></tt> function which uses this trick, but also includes some basic data validation.</p>
+<p class="last">This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like <tt class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></tt>) which are diffult to track and diagnose without the code in <a class="reference internal" href="#AstroObject.base.BaseFrame.__save__" title="AstroObject.base.BaseFrame.__save__"><tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt></a>. See <tt class="xref py py-meth docutils literal"><span class="pre">image.__save__()</span></tt> for an example <tt class="docutils literal"><span class="pre">__save__</span></tt> function which uses this trick, but also includes some basic data validation.</p>
 </div>
 </dd></dl>
 
 <dl class="classmethod">
-<dt id="AstroObject.AstroObjectBase.BaseFrame.__read__">
-<em class="property">classmethod </em><tt class="descname">__read__</tt><big>(</big><em>HDU</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseFrame.__read__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseFrame.__read__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseFrame.__read__">
+<em class="property">classmethod </em><tt class="descname">__read__</tt><big>(</big><em>HDU</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseFrame.__read__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseFrame.__read__" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method should return an instance of the parent class if the given <tt class="docutils literal"><span class="pre">HDU</span></tt> can be turned into an object of that class. If this is not possible (i.e. a Table HDU is provided to an Image Frame), this method should raise an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> with a message that describes the resaon the data could not be cast into this type of frame.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -353,14 +353,14 @@
 <tr class="field-even field"><th class="field-name">Raises :</th><td class="field-body"><p class="first"><tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> when this data can&#8217;t be saved.</p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame" title="AstroObject.AstroObjectBase.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a></p>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#AstroObject.base.BaseFrame" title="AstroObject.base.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a></p>
 </td>
 </tr>
 </tbody>
 </table>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p>Because the <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__valid__" title="AstroObject.AstroObjectBase.BaseFrame.__valid__"><tt class="xref py py-meth docutils literal"><span class="pre">__valid__()</span></tt></a> is called when an object is initialized, it is possible to check some aspects of the provided data in this initialization function. However, this would raise an <tt class="xref py py-exc docutils literal"><span class="pre">AssertionError</span></tt> not an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt>. To avoid this problem, it is suggested that you wrap your initialization in a try...except block like:</p>
+<p>Because the <a class="reference internal" href="#AstroObject.base.BaseFrame.__valid__" title="AstroObject.base.BaseFrame.__valid__"><tt class="xref py py-meth docutils literal"><span class="pre">__valid__()</span></tt></a> is called when an object is initialized, it is possible to check some aspects of the provided data in this initialization function. However, this would raise an <tt class="xref py py-exc docutils literal"><span class="pre">AssertionError</span></tt> not an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt>. To avoid this problem, it is suggested that you wrap your initialization in a try...except block like:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">try</span><span class="p">:</span>
     <span class="n">Object</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">HDU</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">AE</span><span class="p">:</span>
@@ -368,21 +368,21 @@
     <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </pre></div>
 </div>
-<p class="last">This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like <tt class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></tt>) which are diffult to track and diagnose without the code in <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__read__" title="AstroObject.AstroObjectBase.BaseFrame.__read__"><tt class="xref py py-meth docutils literal"><span class="pre">__read__()</span></tt></a>. See <tt class="xref py py-meth docutils literal"><span class="pre">AstroImage.__read__()</span></tt> for an example <tt class="docutils literal"><span class="pre">__read__</span></tt> function which uses this trick, but also includes some basic data validation.</p>
+<p class="last">This block simply changes the error type emitted from the __valid__ function. This trick is not a substituion for data validation before initializing the class. Just instantiating a class like this often results in bizzare errors (like <tt class="xref py py-exc docutils literal"><span class="pre">AttributeError</span></tt>) which are diffult to track and diagnose without the code in <a class="reference internal" href="#AstroObject.base.BaseFrame.__read__" title="AstroObject.base.BaseFrame.__read__"><tt class="xref py py-meth docutils literal"><span class="pre">__read__()</span></tt></a>. See <tt class="xref py py-meth docutils literal"><span class="pre">image.__read__()</span></tt> for an example <tt class="docutils literal"><span class="pre">__read__</span></tt> function which uses this trick, but also includes some basic data validation.</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">It is acceptable to call the class <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__save__" title="AstroObject.AstroObjectBase.BaseFrame.__save__"><tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt></a> function here. However, the <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__read__" title="AstroObject.AstroObjectBase.BaseFrame.__read__"><tt class="xref py py-meth docutils literal"><span class="pre">__read__()</span></tt></a> function should also correctly handle header data.</p>
+<p class="last">It is acceptable to call the class <a class="reference internal" href="#AstroObject.base.BaseFrame.__save__" title="AstroObject.base.BaseFrame.__save__"><tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt></a> function here. However, the <a class="reference internal" href="#AstroObject.base.BaseFrame.__read__" title="AstroObject.base.BaseFrame.__read__"><tt class="xref py py-meth docutils literal"><span class="pre">__read__()</span></tt></a> function should also correctly handle header data.</p>
 </div>
 </dd></dl>
 
 </dd></dl>
 
 </div>
-<div class="section" id="mixins-in-astroobjectbase">
-<span id="mixins"></span><h2>10.3. Mixins in <tt class="xref py py-mod docutils literal"><span class="pre">AstroObjectBase</span></tt><a class="headerlink" href="#mixins-in-astroobjectbase" title="Permalink to this headline">¶</a></h2>
-<p>Mixins allow certain classes to operate without all of the features required by <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame" title="AstroObject.AstroObjectBase.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a>. Each class below implements certain methods and skips others.</p>
-<p>A summary table is below. The table has classes provided from right to left. Note that <a class="reference internal" href="#AstroObject.AstroObjectBase.AnalyticMixin" title="AstroObject.AstroObjectBase.AnalyticMixin"><tt class="xref py py-class docutils literal"><span class="pre">AnalyticMixin</span></tt></a> inherits from <a class="reference internal" href="#AstroObject.AstroObjectBase.NoHDUMixin" title="AstroObject.AstroObjectBase.NoHDUMixin"><tt class="xref py py-class docutils literal"><span class="pre">NoHDUMixin</span></tt></a> and <a class="reference internal" href="#AstroObject.AstroObjectBase.NoDataMixin" title="AstroObject.AstroObjectBase.NoDataMixin"><tt class="xref py py-class docutils literal"><span class="pre">NoDataMixin</span></tt></a>. This means that objects with type <a class="reference internal" href="#AstroObject.AstroObjectBase.AnalyticMixin" title="AstroObject.AstroObjectBase.AnalyticMixin"><tt class="xref py py-class docutils literal"><span class="pre">AnalyticMixin</span></tt></a> are assumed by the system to be a type of frame, but they do not implement any of the major frame methods.</p>
+<div class="section" id="mixins-in-base">
+<span id="mixins"></span><h2>10.3. Mixins in <tt class="xref py py-mod docutils literal"><span class="pre">base</span></tt><a class="headerlink" href="#mixins-in-base" title="Permalink to this headline">¶</a></h2>
+<p>Mixins allow certain classes to operate without all of the features required by <a class="reference internal" href="#AstroObject.base.BaseFrame" title="AstroObject.base.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a>. Each class below implements certain methods and skips others.</p>
+<p>A summary table is below. The table has classes provided from right to left. Note that <a class="reference internal" href="#AstroObject.base.AnalyticMixin" title="AstroObject.base.AnalyticMixin"><tt class="xref py py-class docutils literal"><span class="pre">AnalyticMixin</span></tt></a> inherits from <a class="reference internal" href="#AstroObject.base.NoHDUMixin" title="AstroObject.base.NoHDUMixin"><tt class="xref py py-class docutils literal"><span class="pre">NoHDUMixin</span></tt></a> and <a class="reference internal" href="#AstroObject.base.NoDataMixin" title="AstroObject.base.NoDataMixin"><tt class="xref py py-class docutils literal"><span class="pre">NoDataMixin</span></tt></a>. This means that objects with type <a class="reference internal" href="#AstroObject.base.AnalyticMixin" title="AstroObject.base.AnalyticMixin"><tt class="xref py py-class docutils literal"><span class="pre">AnalyticMixin</span></tt></a> are assumed by the system to be a type of frame, but they do not implement any of the major frame methods.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="16%" />
@@ -395,22 +395,22 @@
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Method</th>
-<th class="head"><a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame" title="AstroObject.AstroObjectBase.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a></th>
-<th class="head"><a class="reference internal" href="#AstroObject.AstroObjectBase.HDUHeaderMixin" title="AstroObject.AstroObjectBase.HDUHeaderMixin"><tt class="xref py py-class docutils literal"><span class="pre">HDUHeaderMixin</span></tt></a></th>
-<th class="head"><a class="reference internal" href="#AstroObject.AstroObjectBase.NoDataMixin" title="AstroObject.AstroObjectBase.NoDataMixin"><tt class="xref py py-class docutils literal"><span class="pre">NoDataMixin</span></tt></a></th>
-<th class="head"><a class="reference internal" href="#AstroObject.AstroObjectBase.NoHDUMixin" title="AstroObject.AstroObjectBase.NoHDUMixin"><tt class="xref py py-class docutils literal"><span class="pre">NoHDUMixin</span></tt></a></th>
-<th class="head"><a class="reference internal" href="#AstroObject.AstroObjectBase.AnalyticMixin" title="AstroObject.AstroObjectBase.AnalyticMixin"><tt class="xref py py-class docutils literal"><span class="pre">AnalyticMixin</span></tt></a></th>
-<th class="head"><a class="reference internal" href="#AstroObject.AstroSpectra.SpectraMixin" title="AstroObject.AstroSpectra.SpectraMixin"><tt class="xref py py-class docutils literal"><span class="pre">SpectraMixin</span></tt></a></th>
+<th class="head"><a class="reference internal" href="#AstroObject.base.BaseFrame" title="AstroObject.base.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a></th>
+<th class="head"><a class="reference internal" href="#AstroObject.base.HDUHeaderMixin" title="AstroObject.base.HDUHeaderMixin"><tt class="xref py py-class docutils literal"><span class="pre">HDUHeaderMixin</span></tt></a></th>
+<th class="head"><a class="reference internal" href="#AstroObject.base.NoDataMixin" title="AstroObject.base.NoDataMixin"><tt class="xref py py-class docutils literal"><span class="pre">NoDataMixin</span></tt></a></th>
+<th class="head"><a class="reference internal" href="#AstroObject.base.NoHDUMixin" title="AstroObject.base.NoHDUMixin"><tt class="xref py py-class docutils literal"><span class="pre">NoHDUMixin</span></tt></a></th>
+<th class="head"><a class="reference internal" href="#AstroObject.base.AnalyticMixin" title="AstroObject.base.AnalyticMixin"><tt class="xref py py-class docutils literal"><span class="pre">AnalyticMixin</span></tt></a></th>
+<th class="head"><a class="reference internal" href="#AstroObject.spectra.SpectraMixin" title="AstroObject.spectra.SpectraMixin"><tt class="xref py py-class docutils literal"><span class="pre">SpectraMixin</span></tt></a></th>
 </tr>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>Class Inherits From:</td>
-<td><a class="reference internal" href="#AstroObject.AstroObjectBase.Mixin" title="AstroObject.AstroObjectBase.Mixin"><tt class="xref py py-class docutils literal"><span class="pre">Mixin</span></tt></a></td>
-<td><a class="reference internal" href="#AstroObject.AstroObjectBase.Mixin" title="AstroObject.AstroObjectBase.Mixin"><tt class="xref py py-class docutils literal"><span class="pre">Mixin</span></tt></a></td>
-<td><a class="reference internal" href="#AstroObject.AstroObjectBase.Mixin" title="AstroObject.AstroObjectBase.Mixin"><tt class="xref py py-class docutils literal"><span class="pre">Mixin</span></tt></a></td>
-<td><a class="reference internal" href="#AstroObject.AstroObjectBase.Mixin" title="AstroObject.AstroObjectBase.Mixin"><tt class="xref py py-class docutils literal"><span class="pre">Mixin</span></tt></a></td>
-<td><a class="reference internal" href="#AstroObject.AstroObjectBase.NoHDUMixin" title="AstroObject.AstroObjectBase.NoHDUMixin"><tt class="xref py py-class docutils literal"><span class="pre">NoHDUMixin</span></tt></a> <a class="reference internal" href="#AstroObject.AstroObjectBase.NoDataMixin" title="AstroObject.AstroObjectBase.NoDataMixin"><tt class="xref py py-class docutils literal"><span class="pre">NoDataMixin</span></tt></a></td>
-<td><a class="reference internal" href="#AstroObject.AstroObjectBase.Mixin" title="AstroObject.AstroObjectBase.Mixin"><tt class="xref py py-class docutils literal"><span class="pre">Mixin</span></tt></a></td>
+<td><a class="reference internal" href="#AstroObject.base.Mixin" title="AstroObject.base.Mixin"><tt class="xref py py-class docutils literal"><span class="pre">Mixin</span></tt></a></td>
+<td><a class="reference internal" href="#AstroObject.base.Mixin" title="AstroObject.base.Mixin"><tt class="xref py py-class docutils literal"><span class="pre">Mixin</span></tt></a></td>
+<td><a class="reference internal" href="#AstroObject.base.Mixin" title="AstroObject.base.Mixin"><tt class="xref py py-class docutils literal"><span class="pre">Mixin</span></tt></a></td>
+<td><a class="reference internal" href="#AstroObject.base.Mixin" title="AstroObject.base.Mixin"><tt class="xref py py-class docutils literal"><span class="pre">Mixin</span></tt></a></td>
+<td><a class="reference internal" href="#AstroObject.base.NoHDUMixin" title="AstroObject.base.NoHDUMixin"><tt class="xref py py-class docutils literal"><span class="pre">NoHDUMixin</span></tt></a> <a class="reference internal" href="#AstroObject.base.NoDataMixin" title="AstroObject.base.NoDataMixin"><tt class="xref py py-class docutils literal"><span class="pre">NoDataMixin</span></tt></a></td>
+<td><a class="reference internal" href="#AstroObject.base.Mixin" title="AstroObject.base.Mixin"><tt class="xref py py-class docutils literal"><span class="pre">Mixin</span></tt></a></td>
 </tr>
 <tr class="row-odd"><td><tt class="xref py py-meth docutils literal"><span class="pre">__init__()</span></tt></td>
 <td>Implemented</td>
@@ -420,7 +420,7 @@
 <td><em>Abstract</em></td>
 <td><em>Abstract</em></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__call__" title="AstroObject.AstroObjectBase.BaseFrame.__call__"><tt class="xref py py-meth docutils literal"><span class="pre">__call__()</span></tt></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#AstroObject.base.BaseFrame.__call__" title="AstroObject.base.BaseFrame.__call__"><tt class="xref py py-meth docutils literal"><span class="pre">__call__()</span></tt></a></td>
 <td>Abstract</td>
 <td>&nbsp;</td>
 <td>Skipped</td>
@@ -428,7 +428,7 @@
 <td>Abstract</td>
 <td>&nbsp;</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__setheader__" title="AstroObject.AstroObjectBase.BaseFrame.__setheader__"><tt class="xref py py-meth docutils literal"><span class="pre">__setheader__()</span></tt></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#AstroObject.base.BaseFrame.__setheader__" title="AstroObject.base.BaseFrame.__setheader__"><tt class="xref py py-meth docutils literal"><span class="pre">__setheader__()</span></tt></a></td>
 <td>Abstract</td>
 <td>Implemented</td>
 <td>&nbsp;</td>
@@ -436,7 +436,7 @@
 <td><em>Skipped</em></td>
 <td>&nbsp;</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__getheader__" title="AstroObject.AstroObjectBase.BaseFrame.__getheader__"><tt class="xref py py-meth docutils literal"><span class="pre">__getheader__()</span></tt></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#AstroObject.base.BaseFrame.__getheader__" title="AstroObject.base.BaseFrame.__getheader__"><tt class="xref py py-meth docutils literal"><span class="pre">__getheader__()</span></tt></a></td>
 <td>Abstract</td>
 <td>Implemented</td>
 <td>&nbsp;</td>
@@ -444,7 +444,7 @@
 <td><em>Skipped</em></td>
 <td>&nbsp;</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__getlabel__" title="AstroObject.AstroObjectBase.BaseFrame.__getlabel__"><tt class="xref py py-meth docutils literal"><span class="pre">__getlabel__()</span></tt></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#AstroObject.base.BaseFrame.__getlabel__" title="AstroObject.base.BaseFrame.__getlabel__"><tt class="xref py py-meth docutils literal"><span class="pre">__getlabel__()</span></tt></a></td>
 <td>Abstract</td>
 <td>Implemented</td>
 <td>&nbsp;</td>
@@ -452,7 +452,7 @@
 <td><em>Skipped</em></td>
 <td>&nbsp;</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__hdu__" title="AstroObject.AstroObjectBase.BaseFrame.__hdu__"><tt class="xref py py-meth docutils literal"><span class="pre">__hdu__()</span></tt></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#AstroObject.base.BaseFrame.__hdu__" title="AstroObject.base.BaseFrame.__hdu__"><tt class="xref py py-meth docutils literal"><span class="pre">__hdu__()</span></tt></a></td>
 <td>Abstract</td>
 <td>&nbsp;</td>
 <td>&nbsp;</td>
@@ -460,7 +460,7 @@
 <td><em>Skipped</em></td>
 <td>&nbsp;</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__show__" title="AstroObject.AstroObjectBase.BaseFrame.__show__"><tt class="xref py py-meth docutils literal"><span class="pre">__show__()</span></tt></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#AstroObject.base.BaseFrame.__show__" title="AstroObject.base.BaseFrame.__show__"><tt class="xref py py-meth docutils literal"><span class="pre">__show__()</span></tt></a></td>
 <td>Abstract</td>
 <td>&nbsp;</td>
 <td>Skipped</td>
@@ -468,7 +468,7 @@
 <td><em>Skipped</em></td>
 <td>Implemented</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__save__" title="AstroObject.AstroObjectBase.BaseFrame.__save__"><tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt></a></td>
+<tr class="row-even"><td><a class="reference internal" href="#AstroObject.base.BaseFrame.__save__" title="AstroObject.base.BaseFrame.__save__"><tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt></a></td>
 <td>Abstract</td>
 <td>&nbsp;</td>
 <td>&nbsp;</td>
@@ -476,7 +476,7 @@
 <td>Skipped</td>
 <td>&nbsp;</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__read__" title="AstroObject.AstroObjectBase.BaseFrame.__read__"><tt class="xref py py-meth docutils literal"><span class="pre">__read__()</span></tt></a></td>
+<tr class="row-odd"><td><a class="reference internal" href="#AstroObject.base.BaseFrame.__read__" title="AstroObject.base.BaseFrame.__read__"><tt class="xref py py-meth docutils literal"><span class="pre">__read__()</span></tt></a></td>
 <td>Abstract</td>
 <td>&nbsp;</td>
 <td>&nbsp;</td>
@@ -487,69 +487,69 @@
 </tbody>
 </table>
 <dl class="class">
-<dt id="AstroObject.AstroObjectBase.Mixin">
-<em class="property">class </em><tt class="descclassname">AstroObject.AstroObjectBase.</tt><tt class="descname">Mixin</tt><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#Mixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.Mixin" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.Mixin">
+<em class="property">class </em><tt class="descclassname">AstroObject.base.</tt><tt class="descname">Mixin</tt><a class="reference internal" href="_modules/AstroObject/base.html#Mixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.Mixin" title="Permalink to this definition">¶</a></dt>
 <dd><p>This is an abstract base class for any class which is a Mixin. All such objects should have the appropriate meta-class, and cannot be instantiated unless they havae thier own <tt class="xref py py-meth docutils literal"><span class="pre">__init__()</span></tt> method.</p>
 <p>This prevents Mixin classes from being instantiated as stand-alone entities.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="AstroObject.AstroObjectBase.HDUHeaderMixin">
-<em class="property">class </em><tt class="descclassname">AstroObject.AstroObjectBase.</tt><tt class="descname">HDUHeaderMixin</tt><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#HDUHeaderMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.HDUHeaderMixin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mixin to provide the default <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__setheader__" title="AstroObject.AstroObjectBase.BaseFrame.__setheader__"><tt class="xref py py-meth docutils literal"><span class="pre">__setheader__()</span></tt></a> and <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__getheader__" title="AstroObject.AstroObjectBase.BaseFrame.__getheader__"><tt class="xref py py-meth docutils literal"><span class="pre">__getheader__()</span></tt></a> functions. These functions are not provided by default in <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame" title="AstroObject.AstroObjectBase.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a>.</p>
-<p><a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__setheader__" title="AstroObject.AstroObjectBase.BaseFrame.__setheader__"><tt class="xref py py-meth docutils literal"><span class="pre">__setheader__()</span></tt></a> applies the <strong>frame</strong> label to the &#8220;label&#8221; and &#8220;object&#8221; keywords, then applies all of the existing keywords to the header.</p>
-<p><a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__getheader__" title="AstroObject.AstroObjectBase.BaseFrame.__getheader__"><tt class="xref py py-meth docutils literal"><span class="pre">__getheader__()</span></tt></a> retrieves the pyfits HDU for storage in the frame.</p>
-<p><a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__getlabel__" title="AstroObject.AstroObjectBase.BaseFrame.__getlabel__"><tt class="xref py py-meth docutils literal"><span class="pre">__getlabel__()</span></tt></a> collects label information from a provided HDU.</p>
+<dt id="AstroObject.base.HDUHeaderMixin">
+<em class="property">class </em><tt class="descclassname">AstroObject.base.</tt><tt class="descname">HDUHeaderMixin</tt><a class="reference internal" href="_modules/AstroObject/base.html#HDUHeaderMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.HDUHeaderMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mixin to provide the default <a class="reference internal" href="#AstroObject.base.BaseFrame.__setheader__" title="AstroObject.base.BaseFrame.__setheader__"><tt class="xref py py-meth docutils literal"><span class="pre">__setheader__()</span></tt></a> and <a class="reference internal" href="#AstroObject.base.BaseFrame.__getheader__" title="AstroObject.base.BaseFrame.__getheader__"><tt class="xref py py-meth docutils literal"><span class="pre">__getheader__()</span></tt></a> functions. These functions are not provided by default in <a class="reference internal" href="#AstroObject.base.BaseFrame" title="AstroObject.base.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a>.</p>
+<p><a class="reference internal" href="#AstroObject.base.BaseFrame.__setheader__" title="AstroObject.base.BaseFrame.__setheader__"><tt class="xref py py-meth docutils literal"><span class="pre">__setheader__()</span></tt></a> applies the <strong>frame</strong> label to the &#8220;label&#8221; and &#8220;object&#8221; keywords, then applies all of the existing keywords to the header.</p>
+<p><a class="reference internal" href="#AstroObject.base.BaseFrame.__getheader__" title="AstroObject.base.BaseFrame.__getheader__"><tt class="xref py py-meth docutils literal"><span class="pre">__getheader__()</span></tt></a> retrieves the pyfits HDU for storage in the frame.</p>
+<p><a class="reference internal" href="#AstroObject.base.BaseFrame.__getlabel__" title="AstroObject.base.BaseFrame.__getlabel__"><tt class="xref py py-meth docutils literal"><span class="pre">__getlabel__()</span></tt></a> collects label information from a provided HDU.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="AstroObject.AstroObjectBase.NoDataMixin">
-<em class="property">class </em><tt class="descclassname">AstroObject.AstroObjectBase.</tt><tt class="descname">NoDataMixin</tt><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#NoDataMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.NoDataMixin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mixin to allow for frames which <strong>cannot</strong> contain data. This mixin allows the developer to not implement <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__call__" title="AstroObject.AstroObjectBase.BaseFrame.__call__"><tt class="xref py py-meth docutils literal"><span class="pre">__call__()</span></tt></a> and <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__show__" title="AstroObject.AstroObjectBase.BaseFrame.__show__"><tt class="xref py py-meth docutils literal"><span class="pre">__show__()</span></tt></a>, both of which are only sensible methods for actual data.</p>
+<dt id="AstroObject.base.NoDataMixin">
+<em class="property">class </em><tt class="descclassname">AstroObject.base.</tt><tt class="descname">NoDataMixin</tt><a class="reference internal" href="_modules/AstroObject/base.html#NoDataMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.NoDataMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mixin to allow for frames which <strong>cannot</strong> contain data. This mixin allows the developer to not implement <a class="reference internal" href="#AstroObject.base.BaseFrame.__call__" title="AstroObject.base.BaseFrame.__call__"><tt class="xref py py-meth docutils literal"><span class="pre">__call__()</span></tt></a> and <a class="reference internal" href="#AstroObject.base.BaseFrame.__show__" title="AstroObject.base.BaseFrame.__show__"><tt class="xref py py-meth docutils literal"><span class="pre">__show__()</span></tt></a>, both of which are only sensible methods for actual data.</p>
 <p>Due to the validity of empty HDUs, it is possible to have an object which doesn&#8217;t contain data, but can still produce HDUs.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="AstroObject.AstroObjectBase.NoHDUMixin">
-<em class="property">class </em><tt class="descclassname">AstroObject.AstroObjectBase.</tt><tt class="descname">NoHDUMixin</tt><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#NoHDUMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.NoHDUMixin" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.NoHDUMixin">
+<em class="property">class </em><tt class="descclassname">AstroObject.base.</tt><tt class="descname">NoHDUMixin</tt><a class="reference internal" href="_modules/AstroObject/base.html#NoHDUMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.NoHDUMixin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mixin to allow for frames which <strong>cannot</strong> produce FITS Header-Data-Units (HDUs) and as such <strong>cannot</strong> produce FITS files.</p>
-<p>This mixin allows the developer to not implement <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__getheader__" title="AstroObject.AstroObjectBase.BaseFrame.__getheader__"><tt class="xref py py-meth docutils literal"><span class="pre">__getheader__()</span></tt></a>, <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__setheader__" title="AstroObject.AstroObjectBase.BaseFrame.__setheader__"><tt class="xref py py-meth docutils literal"><span class="pre">__setheader__()</span></tt></a>, <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__hdu__" title="AstroObject.AstroObjectBase.BaseFrame.__hdu__"><tt class="xref py py-meth docutils literal"><span class="pre">__hdu__()</span></tt></a>, and <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__read__" title="AstroObject.AstroObjectBase.BaseFrame.__read__"><tt class="xref py py-meth docutils literal"><span class="pre">__read__()</span></tt></a>.</p>
+<p>This mixin allows the developer to not implement <a class="reference internal" href="#AstroObject.base.BaseFrame.__getheader__" title="AstroObject.base.BaseFrame.__getheader__"><tt class="xref py py-meth docutils literal"><span class="pre">__getheader__()</span></tt></a>, <a class="reference internal" href="#AstroObject.base.BaseFrame.__setheader__" title="AstroObject.base.BaseFrame.__setheader__"><tt class="xref py py-meth docutils literal"><span class="pre">__setheader__()</span></tt></a>, <a class="reference internal" href="#AstroObject.base.BaseFrame.__hdu__" title="AstroObject.base.BaseFrame.__hdu__"><tt class="xref py py-meth docutils literal"><span class="pre">__hdu__()</span></tt></a>, and <a class="reference internal" href="#AstroObject.base.BaseFrame.__read__" title="AstroObject.base.BaseFrame.__read__"><tt class="xref py py-meth docutils literal"><span class="pre">__read__()</span></tt></a>.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="AstroObject.AstroObjectBase.AnalyticMixin">
-<em class="property">class </em><tt class="descclassname">AstroObject.AstroObjectBase.</tt><tt class="descname">AnalyticMixin</tt><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#AnalyticMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.AnalyticMixin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mixin for purely-analytic frames. These frames do not contain actual raw data, and cannot produce HDUs. However, they are callable (and their call signature should accept a <tt class="docutils literal"><span class="pre">wavelengths</span></tt> keyword, see e.g. <a class="reference internal" href="AnalyticSpectra.html#AstroObject.AnalyticSpectra.FlatSpectrum" title="AstroObject.AnalyticSpectra.FlatSpectrum"><tt class="xref py py-class docutils literal"><span class="pre">FlatSpectrum</span></tt></a>).</p>
-<p>This mixin allows the developer to not implement <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__getheader__" title="AstroObject.AstroObjectBase.BaseFrame.__getheader__"><tt class="xref py py-meth docutils literal"><span class="pre">__getheader__()</span></tt></a>, <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__setheader__" title="AstroObject.AstroObjectBase.BaseFrame.__setheader__"><tt class="xref py py-meth docutils literal"><span class="pre">__setheader__()</span></tt></a>, <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__hdu__" title="AstroObject.AstroObjectBase.BaseFrame.__hdu__"><tt class="xref py py-meth docutils literal"><span class="pre">__hdu__()</span></tt></a>, <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__read__" title="AstroObject.AstroObjectBase.BaseFrame.__read__"><tt class="xref py py-meth docutils literal"><span class="pre">__read__()</span></tt></a>, <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__save__" title="AstroObject.AstroObjectBase.BaseFrame.__save__"><tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt></a>, and <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__show__" title="AstroObject.AstroObjectBase.BaseFrame.__show__"><tt class="xref py py-meth docutils literal"><span class="pre">__show__()</span></tt></a>. It requires that developers implement <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__call__" title="AstroObject.AstroObjectBase.BaseFrame.__call__"><tt class="xref py py-meth docutils literal"><span class="pre">__call__()</span></tt></a> to access data.</p>
+<dt id="AstroObject.base.AnalyticMixin">
+<em class="property">class </em><tt class="descclassname">AstroObject.base.</tt><tt class="descname">AnalyticMixin</tt><a class="reference internal" href="_modules/AstroObject/base.html#AnalyticMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.AnalyticMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mixin for purely-analytic frames. These frames do not contain actual raw data, and cannot produce HDUs. However, they are callable (and their call signature should accept a <tt class="docutils literal"><span class="pre">wavelengths</span></tt> keyword, see e.g. <a class="reference internal" href="AnalyticSpectra.html#AstroObject.anaspec.FlatSpectrum" title="AstroObject.anaspec.FlatSpectrum"><tt class="xref py py-class docutils literal"><span class="pre">FlatSpectrum</span></tt></a>).</p>
+<p>This mixin allows the developer to not implement <a class="reference internal" href="#AstroObject.base.BaseFrame.__getheader__" title="AstroObject.base.BaseFrame.__getheader__"><tt class="xref py py-meth docutils literal"><span class="pre">__getheader__()</span></tt></a>, <a class="reference internal" href="#AstroObject.base.BaseFrame.__setheader__" title="AstroObject.base.BaseFrame.__setheader__"><tt class="xref py py-meth docutils literal"><span class="pre">__setheader__()</span></tt></a>, <a class="reference internal" href="#AstroObject.base.BaseFrame.__hdu__" title="AstroObject.base.BaseFrame.__hdu__"><tt class="xref py py-meth docutils literal"><span class="pre">__hdu__()</span></tt></a>, <a class="reference internal" href="#AstroObject.base.BaseFrame.__read__" title="AstroObject.base.BaseFrame.__read__"><tt class="xref py py-meth docutils literal"><span class="pre">__read__()</span></tt></a>, <a class="reference internal" href="#AstroObject.base.BaseFrame.__save__" title="AstroObject.base.BaseFrame.__save__"><tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt></a>, and <a class="reference internal" href="#AstroObject.base.BaseFrame.__show__" title="AstroObject.base.BaseFrame.__show__"><tt class="xref py py-meth docutils literal"><span class="pre">__show__()</span></tt></a>. It requires that developers implement <a class="reference internal" href="#AstroObject.base.BaseFrame.__call__" title="AstroObject.base.BaseFrame.__call__"><tt class="xref py py-meth docutils literal"><span class="pre">__call__()</span></tt></a> to access data.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="AstroObject.AstroSpectra.SpectraMixin">
-<em class="property">class </em><tt class="descclassname">AstroObject.AstroSpectra.</tt><tt class="descname">SpectraMixin</tt><a class="reference internal" href="_modules/AstroObject/AstroSpectra.html#SpectraMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroSpectra.SpectraMixin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mixin to set the properties of Spectra <strong>frames</strong> and to provide a <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__show__" title="AstroObject.AstroObjectBase.BaseFrame.__show__"><tt class="xref py py-meth docutils literal"><span class="pre">__show__()</span></tt></a> method. Used for any spectrum <strong>frame</strong> which contains raw data.</p>
+<dt id="AstroObject.spectra.SpectraMixin">
+<em class="property">class </em><tt class="descclassname">AstroObject.spectra.</tt><tt class="descname">SpectraMixin</tt><a class="reference internal" href="_modules/AstroObject/spectra.html#SpectraMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.spectra.SpectraMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mixin to set the properties of Spectra <strong>frames</strong> and to provide a <a class="reference internal" href="#AstroObject.base.BaseFrame.__show__" title="AstroObject.base.BaseFrame.__show__"><tt class="xref py py-meth docutils literal"><span class="pre">__show__()</span></tt></a> method. Used for any spectrum <strong>frame</strong> which contains raw data.</p>
 </dd></dl>
 
 </div>
 <div class="section" id="basestack-base-stack-and-stack-api-definition">
-<h2>10.4. <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseStack" title="AstroObject.AstroObjectBase.BaseStack"><tt class="xref py py-class docutils literal"><span class="pre">BaseStack</span></tt></a> — Base Stack and Stack API Definition<a class="headerlink" href="#basestack-base-stack-and-stack-api-definition" title="Permalink to this headline">¶</a></h2>
-<p>The base <strong>stack</strong> definition provides the normal object accessor methods. It should be subclassed as shown in <a class="reference internal" href="#astroobjectapi"><em>AstroObjectBase – AstroObject API</em></a>. The API methods defined in this class should be the final methods, and no re-implementation is necessary, so long as the data frames obey the Frame API as defined by <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame" title="AstroObject.AstroObjectBase.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a>.</p>
+<h2>10.4. <a class="reference internal" href="#AstroObject.base.BaseStack" title="AstroObject.base.BaseStack"><tt class="xref py py-class docutils literal"><span class="pre">BaseStack</span></tt></a> — Base Stack and Stack API Definition<a class="headerlink" href="#basestack-base-stack-and-stack-api-definition" title="Permalink to this headline">¶</a></h2>
+<p>The base <strong>stack</strong> definition provides the normal object accessor methods. It should be subclassed as shown in <a class="reference internal" href="#astroobjectapi"><em>base – AstroObject API</em></a>. The API methods defined in this class should be the final methods, and no re-implementation is necessary, so long as the data frames obey the Frame API as defined by <a class="reference internal" href="#AstroObject.base.BaseFrame" title="AstroObject.base.BaseFrame"><tt class="xref py py-class docutils literal"><span class="pre">BaseFrame</span></tt></a>.</p>
 <dl class="class">
-<dt id="AstroObject.AstroObjectBase.BaseStack">
-<em class="property">class </em><tt class="descclassname">AstroObject.AstroObjectBase.</tt><tt class="descname">BaseStack</tt><big>(</big><em>filename=None, dataClasses=None, fileClasses=[&lt;class 'AstroObject.file.fits.FITSFile'&gt;, &lt;class 'AstroObject.file.npy.NumpyFile'&gt;, &lt;class 'AstroObject.file.npy.NumpyZipFile'&gt;, &lt;class 'AstroObject.file.plaintext.NumpyTextFile'&gt;, &lt;class 'AstroObject.file.plaintext.AstroObjectTextFile'&gt;], **kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseStack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseStack" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseStack">
+<em class="property">class </em><tt class="descclassname">AstroObject.base.</tt><tt class="descname">BaseStack</tt><big>(</big><em>filename=None, dataClasses=None, fileClasses=[&lt;class 'AstroObject.file.fits.FITSFile'&gt;, &lt;class 'AstroObject.file.npy.NumpyFile'&gt;, &lt;class 'AstroObject.file.npy.NumpyZipFile'&gt;, &lt;class 'AstroObject.file.plaintext.NumpyTextFile'&gt;, &lt;class 'AstroObject.file.plaintext.AstroObjectTextFile'&gt;], **kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseStack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseStack" title="Permalink to this definition">¶</a></dt>
 <dd><p>This object tracks a number of data frames. The <tt class="xref py py-attr docutils literal"><span class="pre">Filename</span></tt> is the default filename to use when reading and writing, and the <tt class="xref py py-attr docutils literal"><span class="pre">dataClass</span></tt> argument accepts a list of new data classes to be used with this object. New data classes should conform to the data class standard.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>filename</strong> &#8211; String name of default file for reading and writing with <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseStack.read" title="AstroObject.AstroObjectBase.BaseStack.read"><tt class="xref py py-meth docutils literal"><span class="pre">read()</span></tt></a> and <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseStack.write" title="AstroObject.AstroObjectBase.BaseStack.write"><tt class="xref py py-meth docutils literal"><span class="pre">write()</span></tt></a>.</li>
+<li><strong>filename</strong> &#8211; String name of default file for reading and writing with <a class="reference internal" href="#AstroObject.base.BaseStack.read" title="AstroObject.base.BaseStack.read"><tt class="xref py py-meth docutils literal"><span class="pre">read()</span></tt></a> and <a class="reference internal" href="#AstroObject.base.BaseStack.write" title="AstroObject.base.BaseStack.write"><tt class="xref py py-meth docutils literal"><span class="pre">write()</span></tt></a>.</li>
 <li><strong>dataClasses</strong> &#8211; An array of classes which constitute valid save classes for this object.</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p><em>Stacks</em> have special attribute characteristics which allow them to reach the full <em>frame</em> API. <em>Stacks</em> can call methods defined within <em>frames</em>. Most frames define a <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__show__" title="AstroObject.AstroObjectBase.BaseFrame.__show__"><tt class="xref py py-meth docutils literal"><span class="pre">__show__()</span></tt></a>. This method can be called using <tt class="xref py py-meth docutils literal"><span class="pre">show()</span></tt> with the following syntax:</p>
+<p><em>Stacks</em> have special attribute characteristics which allow them to reach the full <em>frame</em> API. <em>Stacks</em> can call methods defined within <em>frames</em>. Most frames define a <a class="reference internal" href="#AstroObject.base.BaseFrame.__show__" title="AstroObject.base.BaseFrame.__show__"><tt class="xref py py-meth docutils literal"><span class="pre">__show__()</span></tt></a>. This method can be called using <tt class="xref py py-meth docutils literal"><span class="pre">show()</span></tt> with the following syntax:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Stack</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s">&quot;SomeFrameName&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -557,20 +557,26 @@
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Stack</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s">&quot;FrameA&quot;</span><span class="p">,</span><span class="s">&quot;FrameB&quot;</span><span class="p">,</span><span class="s">&quot;FrameC&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>will call the <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseFrame.__show__" title="AstroObject.AstroObjectBase.BaseFrame.__show__"><tt class="xref py py-meth docutils literal"><span class="pre">__show__()</span></tt></a> method on each frame.</p>
+<p>will call the <a class="reference internal" href="#AstroObject.base.BaseFrame.__show__" title="AstroObject.base.BaseFrame.__show__"><tt class="xref py py-meth docutils literal"><span class="pre">__show__()</span></tt></a> method on each frame.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">This is object only contains Abstract data objects. In order to use this class properly, you should set the dataClasses keyword for use when storing data.</p>
 </div>
 <dl class="attribute">
-<dt id="AstroObject.AstroObjectBase.BaseStack.framename">
-<tt class="descname">framename</tt><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseStack.framename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseStack.framename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Current frame name. This will normally be the last saved <strong>frame</strong>, but there are some exceptions. First, explicitly using <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseStack.select" title="AstroObject.AstroObjectBase.BaseStack.select"><tt class="xref py py-meth docutils literal"><span class="pre">select()</span></tt></a> will change the framename. Also, deleting the most recent frame will by default change the selected frame to the second oldest. Using the <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseStack.save" title="AstroObject.AstroObjectBase.BaseStack.save"><tt class="xref py py-meth docutils literal"><span class="pre">save()</span></tt></a> function with <tt class="docutils literal"><span class="pre">save(data,</span> <span class="pre">select=False)</span></tt> will skip the selection of that added frame.</p>
+<dt id="AstroObject.base.BaseStack.framename">
+<tt class="descname">framename</tt><a class="reference internal" href="_modules/AstroObject/base.html#BaseStack.framename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseStack.framename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current frame name. This will normally be the last saved <strong>frame</strong>, but there are some exceptions. First, explicitly using <a class="reference internal" href="#AstroObject.base.BaseStack.select" title="AstroObject.base.BaseStack.select"><tt class="xref py py-meth docutils literal"><span class="pre">select()</span></tt></a> will change the framename. Also, deleting the most recent frame will by default change the selected frame to the second oldest. Using the <a class="reference internal" href="#AstroObject.base.BaseStack.save" title="AstroObject.base.BaseStack.save"><tt class="xref py py-meth docutils literal"><span class="pre">save()</span></tt></a> function with <tt class="docutils literal"><span class="pre">save(data,</span> <span class="pre">select=False)</span></tt> will skip the selection of that added frame.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="AstroObject.AstroObjectBase.BaseStack.d">
-<tt class="descname">d</tt><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseStack.d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseStack.d" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseStack.framenames">
+<tt class="descname">framenames</tt><a class="reference internal" href="_modules/AstroObject/base.html#BaseStack.framenames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseStack.framenames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of all framenames in this object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.base.BaseStack.d">
+<tt class="descname">d</tt><a class="reference internal" href="_modules/AstroObject/base.html#BaseStack.d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseStack.d" title="Permalink to this definition">¶</a></dt>
 <dd><p>The data for the selected FITS frame. Equivalent to:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Stack</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
 </pre></div>
@@ -578,8 +584,8 @@
 </dd></dl>
 
 <dl class="attribute">
-<dt id="AstroObject.AstroObjectBase.BaseStack.f">
-<tt class="descname">f</tt><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseStack.f"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseStack.f" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseStack.f">
+<tt class="descname">f</tt><a class="reference internal" href="_modules/AstroObject/base.html#BaseStack.f"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseStack.f" title="Permalink to this definition">¶</a></dt>
 <dd><p>The selected FITS frame. This frame is usually the last modified frame in the system. Equivalent to:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Stack</span><span class="o">.</span><span class="n">frame</span><span class="p">()</span>
 </pre></div>
@@ -587,20 +593,20 @@
 </dd></dl>
 
 <dl class="attribute">
-<dt id="AstroObject.AstroObjectBase.BaseStack.data_classes">
-<tt class="descname">data_classes</tt><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseStack.data_classes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseStack.data_classes" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseStack.data_classes">
+<tt class="descname">data_classes</tt><a class="reference internal" href="_modules/AstroObject/base.html#BaseStack.data_classes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseStack.data_classes" title="Permalink to this definition">¶</a></dt>
 <dd><p>The list of acceptable data classes. This is a</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectBase.BaseStack.add_data_class">
-<tt class="descname">add_data_class</tt><big>(</big><em>data_class</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseStack.add_data_class"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseStack.add_data_class" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseStack.add_data_class">
+<tt class="descname">add_data_class</tt><big>(</big><em>data_class</em><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseStack.add_data_class"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseStack.add_data_class" title="Permalink to this definition">¶</a></dt>
 <dd><p>Insert a data class into the list of acceptable data classes for this object.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectBase.BaseStack.save">
-<tt class="descname">save</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseStack.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseStack.save" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseStack.save">
+<tt class="descname">save</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseStack.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseStack.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves the given data to this object. If the data is an instance of one of the acceptable <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> then this method will simply save the data. Otherwise, it will attempt to cast the data into one of the acceptable <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> using their <tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt> mehtod.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -628,8 +634,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectBase.BaseStack.data">
-<tt class="descname">data</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseStack.data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseStack.data" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseStack.data">
+<tt class="descname">data</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseStack.data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseStack.data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the raw data for the current frame. This is done through the <tt class="xref py py-meth docutils literal"><span class="pre">FITSFrame.__call__()</span></tt> method, which should return basic data in as raw a form as possible. The purpose of this call is to allow the user get at the most recent piece of data as easily as possible.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -653,8 +659,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectBase.BaseStack.frame">
-<tt class="descname">frame</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseStack.frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseStack.frame" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseStack.frame">
+<tt class="descname">frame</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseStack.frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseStack.frame" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -668,7 +674,7 @@
 </table>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p>Unlike with the <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseStack.data" title="AstroObject.AstroObjectBase.BaseStack.data"><tt class="xref py py-meth docutils literal"><span class="pre">BaseStack.data()</span></tt></a> call, the object returned here should be treated as roughly immutable. That is, it is not advisable to re-use the data frame here, as Python has returned a reference to all examples of this data frame in your code:</p>
+<p>Unlike with the <a class="reference internal" href="#AstroObject.base.BaseStack.data" title="AstroObject.base.BaseStack.data"><tt class="xref py py-meth docutils literal"><span class="pre">BaseStack.data()</span></tt></a> call, the object returned here should be treated as roughly immutable. That is, it is not advisable to re-use the data frame here, as Python has returned a reference to all examples of this data frame in your code:</p>
 <div class="last highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span> <span class="o">=</span> <span class="n">BaseStack</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">obj</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">FITSFrame</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="s">&quot;Label&quot;</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">Frame</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">frame</span><span class="p">()</span>
@@ -685,8 +691,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectBase.BaseStack.select">
-<tt class="descname">select</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseStack.select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseStack.select" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseStack.select">
+<tt class="descname">select</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseStack.select"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseStack.select" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the default frame to the given framename. Normally, the default frame is the one that was last saved.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -700,8 +706,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectBase.BaseStack.list">
-<tt class="descname">list</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseStack.list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseStack.list" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseStack.list">
+<tt class="descname">list</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseStack.list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseStack.list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provides a list of the available frames, by label.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -714,8 +720,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectBase.BaseStack.clear">
-<tt class="descname">clear</tt><big>(</big><em>delete=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseStack.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseStack.clear" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseStack.clear">
+<tt class="descname">clear</tt><big>(</big><em>delete=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseStack.clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseStack.clear" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clears all frames from this object. Returns an empty list representing the currently known frames.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -730,8 +736,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectBase.BaseStack.keep">
-<tt class="descname">keep</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseStack.keep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseStack.keep" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseStack.keep">
+<tt class="descname">keep</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseStack.keep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseStack.keep" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes all frames except the specified frame(s) in the object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -751,8 +757,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectBase.BaseStack.remove">
-<tt class="descname">remove</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseStack.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseStack.remove" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseStack.remove">
+<tt class="descname">remove</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseStack.remove"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseStack.remove" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes the specified frame(s) from the object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -772,8 +778,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectBase.BaseStack.write">
-<tt class="descname">write</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseStack.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseStack.write" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseStack.write">
+<tt class="descname">write</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseStack.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseStack.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify <tt class="docutils literal"><span class="pre">frames</span></tt> then only those frames will be used. <tt class="docutils literal"><span class="pre">primaryFrame</span></tt> should be the frame of the front HDU. When not specified, the latest frame will be used. It uses the <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> <tt class="xref py py-meth docutils literal"><span class="pre">FITSFrame.__hdu__()</span></tt> method to return a valid HDU object for each Frame.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -804,8 +810,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectBase.BaseStack.read">
-<tt class="descname">read</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseStack.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseStack.read" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseStack.read">
+<tt class="descname">read</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseStack.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseStack.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>This reader takes a FITS file, and trys to render each HDU within that FITS file as a frame in this Object. As such, it might read multiple frames. This method will return a list of Frames that it read. It uses the <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> <tt class="xref py py-meth docutils literal"><span class="pre">FITSFrame.__read__()</span></tt> method to return a valid Frame object for each HDU.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -829,8 +835,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectBase.BaseStack.readAtFile">
-<tt class="descname">readAtFile</tt><big>(</big><em>atfile</em>, <em>framename=None</em>, <em>clobber=False</em>, <em>select=True</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseStack.readAtFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseStack.readAtFile" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.base.BaseStack.readAtFile">
+<tt class="descname">readAtFile</tt><big>(</big><em>atfile</em>, <em>framename=None</em>, <em>clobber=False</em>, <em>select=True</em><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseStack.readAtFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseStack.readAtFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read an atfile into this object. The name of the atfile can include a starting &#8220;&#64;&#8221; which is stripped. The file is then loaded, and each line is assumed to contain a single fully-qualified part-name.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -849,9 +855,9 @@
 </dd></dl>
 
 <dl class="classmethod">
-<dt id="AstroObject.AstroObjectBase.BaseStack.fromAtFile">
-<em class="property">classmethod </em><tt class="descname">fromAtFile</tt><big>(</big><em>filename</em>, <em>framename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseStack.fromAtFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseStack.fromAtFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a new object create from an &#64;file. This method is a factory shortcut for <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseStack.readAtFile" title="AstroObject.AstroObjectBase.BaseStack.readAtFile"><tt class="xref py py-meth docutils literal"><span class="pre">readAtFile()</span></tt></a>.</p>
+<dt id="AstroObject.base.BaseStack.fromAtFile">
+<em class="property">classmethod </em><tt class="descname">fromAtFile</tt><big>(</big><em>filename</em>, <em>framename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseStack.fromAtFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseStack.fromAtFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new object create from an &#64;file. This method is a factory shortcut for <a class="reference internal" href="#AstroObject.base.BaseStack.readAtFile" title="AstroObject.base.BaseStack.readAtFile"><tt class="xref py py-meth docutils literal"><span class="pre">readAtFile()</span></tt></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -867,9 +873,9 @@
 </dd></dl>
 
 <dl class="classmethod">
-<dt id="AstroObject.AstroObjectBase.BaseStack.fromFile">
-<em class="property">classmethod </em><tt class="descname">fromFile</tt><big>(</big><em>filename</em>, <em>framename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectBase.html#BaseStack.fromFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectBase.BaseStack.fromFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrun a new object created from a filename. This method is a shortcut factory for <a class="reference internal" href="#AstroObject.AstroObjectBase.BaseStack.read" title="AstroObject.AstroObjectBase.BaseStack.read"><tt class="xref py py-meth docutils literal"><span class="pre">read()</span></tt></a>.</p>
+<dt id="AstroObject.base.BaseStack.fromFile">
+<em class="property">classmethod </em><tt class="descname">fromFile</tt><big>(</big><em>filename</em>, <em>framename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/base.html#BaseStack.fromFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.base.BaseStack.fromFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrun a new object created from a filename. This method is a shortcut factory for <a class="reference internal" href="#AstroObject.base.BaseStack.read" title="AstroObject.base.BaseStack.read"><tt class="xref py py-meth docutils literal"><span class="pre">read()</span></tt></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -902,10 +908,10 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">10. <tt class="docutils literal"><span class="pre">AstroObjectBase</span></tt> – AstroObject API</a><ul>
+<li><a class="reference internal" href="#">10. <tt class="docutils literal"><span class="pre">base</span></tt> – AstroObject API</a><ul>
 <li><a class="reference internal" href="#module-structure">10.1. Module Structure</a></li>
 <li><a class="reference internal" href="#baseframe-base-frame-and-frame-api-definition">10.2. <tt class="docutils literal"><span class="pre">BaseFrame</span></tt> — Base Frame and Frame API Definition</a></li>
-<li><a class="reference internal" href="#mixins-in-astroobjectbase">10.3. Mixins in <tt class="docutils literal"><span class="pre">AstroObjectBase</span></tt></a></li>
+<li><a class="reference internal" href="#mixins-in-base">10.3. Mixins in <tt class="docutils literal"><span class="pre">base</span></tt></a></li>
 <li><a class="reference internal" href="#basestack-base-stack-and-stack-api-definition">10.4. <tt class="docutils literal"><span class="pre">BaseStack</span></tt> — Base Stack and Stack API Definition</a></li>
 </ul>
 </li>
@@ -916,7 +922,7 @@
                         title="previous chapter">9. <tt class="docutils literal docutils literal"><span class="pre">iraftools</span></tt> – IRAF integration facility</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="AstroSimulator.html"
-                        title="next chapter">11. <tt class="docutils literal docutils literal"><span class="pre">AstroSimulator</span></tt> — Complex Task Management</a></p>
+                        title="next chapter">11. <tt class="docutils literal docutils literal"><span class="pre">simulator</span></tt> — Complex Task Management</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/AstroObject.txt"
@@ -949,12 +955,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="AstroSimulator.html" title="11. AstroSimulator — Complex Task Management"
+          <a href="AstroSimulator.html" title="11. simulator — Complex Task Management"
              >next</a> |</li>
         <li class="right" >
           <a href="iraftools.html" title="9. iraftools – IRAF integration facility"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.6.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>18. Release Notes &mdash; AstroObject 0.6 documentation</title>
+    <title>18. Release Notes &mdash; AstroObject 0.6.1 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.6',
+        VERSION:     '0.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.6 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.6.1 documentation" href="index.html" />
     <link rel="next" title="An Example Simulator" href="examples/simulator.html" />
     <link rel="prev" title="16. Development Plans" href="future.html" /> 
   </head>
@@ -44,7 +44,7 @@
         <li class="right" >
           <a href="future.html" title="16. Development Plans"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.6.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -57,11 +57,35 @@
 <h1>18. Release Notes<a class="headerlink" href="#release-notes" title="Permalink to this headline">¶</a></h1>
 <ul>
 <li><dl class="first docutils">
+<dt>0.6.1</dt>
+<dd><ul class="first last simple">
+<li>New module names.</li>
+<li>Bug Fixes</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>0.6.0</dt>
+<dd><ul class="first last simple">
+<li><tt class="xref py py-mod docutils literal"><span class="pre">fileset</span></tt> module which allows for controlled filesets</li>
+<li><strong>stacks</strong> have a new API for accessing frame functions. Simply, any undefined function on the <strong>stack</strong> will be passed to the frame as <tt class="docutils literal"><span class="pre">__function__</span></tt>. So the <tt class="docutils literal"><span class="pre">show()</span></tt> method is now using this to call <tt class="docutils literal"><span class="pre">__show__()</span></tt> on underlying <strong>frames</strong>.</li>
+<li>New caching &amp; logging modules. (NOTE: Caching still has performance issues, and logging is still not-ideal.)</li>
+<li>Configuration module has been entirely re-written for reliability</li>
+<li>Cleaned up logging, messaging, and error reporting in the base API</li>
+<li>File saving and writing has been re-written to handle new file types and streams</li>
+<li>Simulator improvements: Triggering stages, Caching Stages, customized automatic collection.</li>
+<li>AstroSpectra have properties and introspection methods</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
 <dt>0.5.3</dt>
 <dd><ul class="first last simple">
 <li><a class="reference internal" href="Utilities.html#module-AstroObject.util" title="AstroObject.util"><tt class="xref py py-mod docutils literal"><span class="pre">util</span></tt></a> module which contains submodules for utiltity functions.</li>
 <li><a class="reference internal" href="file.html#module-AstroObject.file" title="AstroObject.file"><tt class="xref py py-mod docutils literal"><span class="pre">file</span></tt></a> module which handles IO, via the FITS format, which is now the standard for format for AstroObject.</li>
-<li><a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame.__getlabel__" title="AstroObject.AstroObjectBase.BaseFrame.__getlabel__"><tt class="xref py py-meth docutils literal"><span class="pre">__getlabel__()</span></tt></a> API static method for extracting labels from HDU headers. Classes built with the <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="AstroObject.AstroObjectBase.HDUHeaderMixin"><tt class="xref py py-class docutils literal"><span class="pre">HDUHeaderMixin</span></tt></a> do not need to be altered.</li>
+<li><tt class="xref py py-meth docutils literal"><span class="pre">__getlabel__()</span></tt> API static method for extracting labels from HDU headers. Classes built with the <tt class="xref py py-class docutils literal"><span class="pre">HDUHeaderMixin</span></tt> do not need to be altered.</li>
 </ul>
 </dd>
 </dl>
@@ -81,7 +105,7 @@
 <li>Refactored simulator code to use internal APIs</li>
 <li>Naming schemes have changed: e.g. <strong>stacks</strong> and <strong>frames</strong> are more consistently used. Keyword arguments that used to be <strong>statename</strong> are now <strong>framename</strong> for more consistency. There is NO depreciation provided.</li>
 <li>Internal properties of <strong>stacks</strong> have been made private.</li>
-<li>There is a new crop and mask method for <a class="reference internal" href="AstroImage.html#AstroObject.AstroImage.ImageStack" title="AstroObject.AstroImage.ImageStack"><tt class="xref py py-class docutils literal"><span class="pre">AstroImage.ImageStack</span></tt></a></li>
+<li>There is a new crop and mask method for <tt class="xref py py-class docutils literal"><span class="pre">AstroImage.ImageStack</span></tt></li>
 <li>Fixed some unicode errors in the system.</li>
 <li>Changed <a class="reference internal" href="iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">IRAFTools</span></tt></a> names</li>
 </ul>
@@ -102,10 +126,10 @@
 <li><dl class="first docutils">
 <dt>0.4.0</dt>
 <dd><ul class="first last simple">
-<li>Inheritance structure improved, now with abstract classes and mixins. See <a class="reference internal" href="AstroObject.html#astroobjectapi"><em>AstroObjectBase – AstroObject API</em></a></li>
+<li>Inheritance structure improved, now with abstract classes and mixins. See <a class="reference internal" href="AstroObject.html#astroobjectapi"><em>base – AstroObject API</em></a></li>
 <li>Documentation improved wildly, now everything except AstroCache is documented. See <a class="reference internal" href="index.html"><em>Welcome to AstroObject!</em></a>.</li>
-<li>Header handling is greatly improved. See <a class="reference internal" href="AstroObject.html#astroobjectapi"><em>AstroObjectBase – AstroObject API</em></a></li>
-<li>Write-only attributes are now properties. Frame labels cannot be changed, instead, frame must be copied. See <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="AstroObject.AstroObjectBase.BaseFrame"><tt class="xref py py-meth docutils literal"><span class="pre">BaseFrame()</span></tt></a></li>
+<li>Header handling is greatly improved. See <a class="reference internal" href="AstroObject.html#astroobjectapi"><em>base – AstroObject API</em></a></li>
+<li>Write-only attributes are now properties. Frame labels cannot be changed, instead, frame must be copied. See <tt class="xref py py-meth docutils literal"><span class="pre">BaseFrame()</span></tt></li>
 </ul>
 </dd>
 </dl>
@@ -130,7 +154,7 @@
 <li><dl class="first docutils">
 <dt>0.3.4</dt>
 <dd><ul class="first last simple">
-<li>Simulator can collect stages automatically. See <a class="reference internal" href="AstroSimulator.html#AstroObject.AstroSimulator.Simulator.collect" title="AstroObject.AstroSimulator.Simulator.collect"><tt class="xref py py-meth docutils literal"><span class="pre">AstroObject.AstroSimulator.Simulator.collect()</span></tt></a></li>
+<li>Simulator can collect stages automatically. See <tt class="xref py py-meth docutils literal"><span class="pre">AstroObject.AstroSimulator.Simulator.collect()</span></tt></li>
 <li>Simualtor can be setup using decorators on functions. See <a class="reference internal" href="AstroSimulator.html#simulator-decorators"><em>Decorators</em></a></li>
 <li>Simulator can produces stage timing profiles. See <em class="xref std std-option">--profile</em>.</li>
 </ul>
@@ -140,8 +164,8 @@
 <li><dl class="first docutils">
 <dt>0.3.3</dt>
 <dd><ul class="first last simple">
-<li>Stages provide description from function&#8217;s docstring if no description is given. <a class="reference internal" href="AstroSimulator.html#module-AstroObject.AstroSimulator" title="AstroObject.AstroSimulator"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSimulator</span></tt></a></li>
-<li>Default keyword is used to set default stage operation. <a class="reference internal" href="AstroSimulator.html#module-AstroObject.AstroSimulator" title="AstroObject.AstroSimulator"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSimulator</span></tt></a></li>
+<li>Stages provide description from function&#8217;s docstring if no description is given. <tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSimulator</span></tt></li>
+<li>Default keyword is used to set default stage operation. <tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSimulator</span></tt></li>
 </ul>
 </dd>
 </dl>
@@ -151,10 +175,10 @@
 <dd><ul class="first last simple">
 <li>Documentation, Documentation, Documentation.</li>
 <li>Added a <tt class="docutils literal"><span class="pre">select</span></tt> parameter to the save() function to allow the user to prevent automatic selection. See <tt class="xref py py-class docutils literal"><span class="pre">AstroObject.AstroObjectBase.BaseObject</span></tt></li>
-<li>Pass <tt class="docutils literal"><span class="pre">**kwargs</span></tt> through a <tt class="xref py py-meth docutils literal"><span class="pre">data()</span></tt> call to <a class="reference internal" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame.__call__" title="AstroObject.AstroObjectBase.BaseFrame.__call__"><tt class="xref py py-meth docutils literal"><span class="pre">__call__()</span></tt></a>. See <tt class="xref py py-meth docutils literal"><span class="pre">AstroObject.AstroObjectBase.BaseObject.data()</span></tt></li>
+<li>Pass <tt class="docutils literal"><span class="pre">**kwargs</span></tt> through a <tt class="xref py py-meth docutils literal"><span class="pre">data()</span></tt> call to <tt class="xref py py-meth docutils literal"><span class="pre">__call__()</span></tt>. See <tt class="xref py py-meth docutils literal"><span class="pre">AstroObject.AstroObjectBase.BaseObject.data()</span></tt></li>
 <li>Uniform <tt class="docutils literal"><span class="pre">KeyError</span></tt> formatting support. See <tt class="xref py py-class docutils literal"><span class="pre">AstroObject.AstroObjectBase.BaseObject</span></tt></li>
-<li>Simulator differentiates between stages which have been satisfied (<tt class="docutils literal"><span class="pre">complete</span></tt>) and stages which have actually run (<tt class="docutils literal"><span class="pre">done</span></tt>). See <a class="reference internal" href="AstroSimulator.html#module-AstroObject.AstroSimulator" title="AstroObject.AstroSimulator"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSimulator</span></tt></a></li>
-<li>Simulator stage dependents will always run in simulator-registration order. See <a class="reference internal" href="AstroSimulator.html#module-AstroObject.AstroSimulator" title="AstroObject.AstroSimulator"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSimulator</span></tt></a></li>
+<li>Simulator differentiates between stages which have been satisfied (<tt class="docutils literal"><span class="pre">complete</span></tt>) and stages which have actually run (<tt class="docutils literal"><span class="pre">done</span></tt>). See <tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSimulator</span></tt></li>
+<li>Simulator stage dependents will always run in simulator-registration order. See <tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSimulator</span></tt></li>
 </ul>
 </dd>
 </dl>
@@ -164,9 +188,9 @@
 <dd><ul class="first last simple">
 <li>Dictionary methods for AstroObject (do things like <tt class="docutils literal"><span class="pre">AstroObject[&quot;Label&quot;]</span> <span class="pre">=</span> <span class="pre">Frame</span></tt>). See <tt class="xref py py-class docutils literal"><span class="pre">AstroObject.AstroObjectBase.BaseObject</span></tt>.</li>
 <li>Unified InterpolatedSpectrum model with various methods. See <tt class="xref py py-class docutils literal"><span class="pre">AstroObject.AnalyticSpectrum.InterpolatedSpectrum</span></tt>.</li>
-<li>Simulator has better options controls (for configuration and arbitrary functions). See <a class="reference internal" href="AstroSimulator.html#module-AstroObject.AstroSimulator" title="AstroObject.AstroSimulator"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSimulator</span></tt></a>.</li>
+<li>Simulator has better options controls (for configuration and arbitrary functions). See <tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroSimulator</span></tt>.</li>
 <li>Cache module has been re-written. Now has a dict-like interface.</li>
-<li>New configuration module. See <a class="reference internal" href="AstroConfig.html#module-AstroObject.AstroConfig" title="AstroObject.AstroConfig"><tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroConfig</span></tt></a>.</li>
+<li>New configuration module. See <tt class="xref py py-mod docutils literal"><span class="pre">AstroObject.AstroConfig</span></tt>.</li>
 <li>Unicode text in Simulator and AnalyticSpectra.</li>
 </ul>
 </dd>
@@ -440,7 +464,7 @@
         <li class="right" >
           <a href="future.html" title="16. Development Plans"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.6.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

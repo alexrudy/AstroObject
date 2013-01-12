@@ -1,0 +1,15 @@
+<map id="inheritanced7b18e0820" name="inheritanced7b18e0820">
+<area shape="rect" id="node9" href="#AstroObject.anaspec.UnitarySpectrum" title="UnitarySpectrum" alt="" coords="638,291,750,313"/>
+<area shape="rect" id="node19" href="#AstroObject.anaspec.InterpolatedSpectrum" title="InterpolatedSpectrum" alt="" coords="624,68,763,89"/>
+<area shape="rect" id="node25" href="#AstroObject.anaspec.Resolver" title="Resolver" alt="" coords="661,4,726,26"/>
+<area shape="rect" id="node2" href="#AstroObject.anaspec.AnalyticSpectrum" title="AnalyticSpectrum" alt="" coords="260,143,375,165"/>
+<area shape="rect" id="node42" href="#AstroObject.anaspec.CompositeSpectra" title="CompositeSpectra" alt="" coords="440,121,561,143"/>
+<area shape="rect" id="node4" href="AstroObject.html#AstroObject.base.BaseFrame" title="BaseFrame" alt="" coords="122,79,203,101"/>
+<area shape="rect" id="node20" href="AstroSpectra.html#AstroObject.spectra.SpectraFrame" title="SpectraFrame" alt="" coords="269,36,366,58"/>
+<area shape="rect" id="node6" href="AstroObject.html#AstroObject.spectra.SpectraMixin" title="SpectraMixin" alt="" coords="119,164,207,185"/>
+<area shape="rect" id="node7" href="AstroObject.html#AstroObject.base.Mixin" title="Mixin" alt="" coords="5,121,66,143"/>
+<area shape="rect" id="node14" href="AstroObject.html#AstroObject.base.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="107,37,219,59"/>
+<area shape="rect" id="node16" href="AstroObject.html#AstroObject.base.NoHDUMixin" title="NoHDUMixin" alt="" coords="119,206,207,227"/>
+<area shape="rect" id="node23" href="AstroObject.html#AstroObject.base.NoDataMixin" title="NoDataMixin" alt="" coords="119,121,207,143"/>
+<area shape="rect" id="node10" href="AstroObject.html#AstroObject.base.AnalyticMixin" title="AnalyticMixin" alt="" coords="273,206,362,227"/>
+</map>

@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>12. AstroConfig — YAML-based Configuration Dictionaries &mdash; AstroObject 0.6 documentation</title>
+    <title>12. config — YAML-based Configuration Dictionaries &mdash; AstroObject 0.6.1 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.6',
+        VERSION:     '0.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,9 +24,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.6 documentation" href="index.html" />
-    <link rel="next" title="13. AstroObjectLogging — Structured Configuration Logging" href="AstroObjectLogging.html" />
-    <link rel="prev" title="11. AstroSimulator — Complex Task Management" href="AstroSimulator.html" /> 
+    <link rel="top" title="AstroObject 0.6.1 documentation" href="index.html" />
+    <link rel="next" title="13. logging — Structured Configuration Logging" href="AstroObjectLogging.html" />
+    <link rel="prev" title="11. simulator — Complex Task Management" href="AstroSimulator.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,12 +39,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="AstroObjectLogging.html" title="13. AstroObjectLogging — Structured Configuration Logging"
+          <a href="AstroObjectLogging.html" title="13. logging — Structured Configuration Logging"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="AstroSimulator.html" title="11. AstroSimulator — Complex Task Management"
+          <a href="AstroSimulator.html" title="11. simulator — Complex Task Management"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.6.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -53,20 +53,20 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <span class="target" id="module-AstroObject.AstroConfig"></span><div class="section" id="astroconfig-yaml-based-configuration-dictionaries">
-<h1>12. <tt class="xref py py-mod docutils literal"><span class="pre">AstroConfig</span></tt> — YAML-based Configuration Dictionaries<a class="headerlink" href="#astroconfig-yaml-based-configuration-dictionaries" title="Permalink to this headline">¶</a></h1>
+  <span class="target" id="module-AstroObject.config"></span><div class="section" id="config-yaml-based-configuration-dictionaries">
+<h1>12. <tt class="xref py py-mod docutils literal"><span class="pre">config</span></tt> — YAML-based Configuration Dictionaries<a class="headerlink" href="#config-yaml-based-configuration-dictionaries" title="Permalink to this headline">¶</a></h1>
 <p>This module provides structured, YAML based, deep dictionary configuration objects. The objects have a built-in deep-update function and use deep-update behavior by default. They act otherwise like dictionaries, and handle thier internal operation using a storage dictionary. The objects also provide a YAML configuration file reading and writing interface.</p>
 <p class="graphviz">
-<img src="_images/inheritance-ce327ea4494260e8ab827df8f3a049990d064b9e.png" alt="Inheritance diagram of AstroObject.AstroConfig.Configuration, AstroObject.AstroConfig.StructuredConfiguration" usemap="#inheritancef2927a0a08" class="inheritance"/>
-<map id="inheritancef2927a0a08" name="inheritancef2927a0a08">
-<area shape="rect" id="node1" href="#AstroObject.AstroConfig.Configuration" title="Configuration" alt="" coords="346,42,430,62"/>
-<area shape="rect" id="node5" href="#AstroObject.AstroConfig.DottedConfiguration" title="DottedConfiguration" alt="" coords="468,42,587,62"/>
-<area shape="rect" id="node4" href="#AstroObject.AstroConfig.StructuredConfiguration" title="StructuredConfiguration" alt="" coords="626,42,763,62"/>
+<img src="_images/inheritance-2db160b0c6ea79b45f2d3711dd662f90a4645123.png" alt="Inheritance diagram of AstroObject.config.Configuration, AstroObject.config.StructuredConfiguration" usemap="#inheritanced997253cf7" class="inheritance"/>
+<map id="inheritanced997253cf7" name="inheritanced997253cf7">
+<area shape="rect" id="node13" href="#AstroObject.config.Configuration" title="Configuration" alt="" coords="346,42,430,62"/>
+<area shape="rect" id="node10" href="#AstroObject.config.StructuredConfiguration" title="StructuredConfiguration" alt="" coords="626,42,763,62"/>
+<area shape="rect" id="node11" href="#AstroObject.config.DottedConfiguration" title="DottedConfiguration" alt="" coords="468,42,587,62"/>
 </map>
 </p>
 <dl class="function">
-<dt id="AstroObject.AstroConfig.reformat">
-<tt class="descclassname">AstroObject.AstroConfig.</tt><tt class="descname">reformat</tt><big>(</big><em>d</em>, <em>nt</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroConfig.html#reformat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroConfig.reformat" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.reformat">
+<tt class="descclassname">AstroObject.config.</tt><tt class="descname">reformat</tt><big>(</big><em>d</em>, <em>nt</em><big>)</big><a class="reference internal" href="_modules/AstroObject/config.html#reformat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.config.reformat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Recursive extraction method for changing the type of nested dictionary objects.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -83,41 +83,41 @@
 </dd></dl>
 
 <div class="section" id="basic-configurations-configuration">
-<h2>12.1. Basic Configurations: <a class="reference internal" href="#AstroObject.AstroConfig.Configuration" title="AstroObject.AstroConfig.Configuration"><tt class="xref py py-class docutils literal"><span class="pre">Configuration</span></tt></a><a class="headerlink" href="#basic-configurations-configuration" title="Permalink to this headline">¶</a></h2>
+<h2>12.1. Basic Configurations: <a class="reference internal" href="#AstroObject.config.Configuration" title="AstroObject.config.Configuration"><tt class="xref py py-class docutils literal"><span class="pre">Configuration</span></tt></a><a class="headerlink" href="#basic-configurations-configuration" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="AstroObject.AstroConfig.Configuration">
-<em class="property">class </em><tt class="descclassname">AstroObject.AstroConfig.</tt><tt class="descname">Configuration</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroConfig.html#Configuration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroConfig.Configuration" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.Configuration">
+<em class="property">class </em><tt class="descclassname">AstroObject.config.</tt><tt class="descname">Configuration</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/config.html#Configuration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.config.Configuration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds extra methods to dictionary for configuration</p>
 <dl class="attribute">
-<dt id="AstroObject.AstroConfig.Configuration.dt">
-<tt class="descname">dt</tt><a class="headerlink" href="#AstroObject.AstroConfig.Configuration.dt" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.Configuration.dt">
+<tt class="descname">dt</tt><a class="headerlink" href="#AstroObject.config.Configuration.dt" title="Permalink to this definition">¶</a></dt>
 <dd><p>Exctraction nesting dictionary setting. This class will be used to create deep nesting structures when this object is extracted.</p>
 <p>alias of <tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="AstroObject.AstroConfig.Configuration.dn">
-<tt class="descname">dn</tt><a class="reference internal" href="_modules/AstroObject/AstroConfig.html#Configuration.dn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroConfig.Configuration.dn" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.Configuration.dn">
+<tt class="descname">dn</tt><a class="reference internal" href="_modules/AstroObject/config.html#Configuration.dn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.config.Configuration.dn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deep nesting attribute reader</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="AstroObject.AstroConfig.Configuration.name">
-<tt class="descname">name</tt><em class="property"> = 'Configuration'</em><a class="headerlink" href="#AstroObject.AstroConfig.Configuration.name" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.Configuration.name">
+<tt class="descname">name</tt><em class="property"> = 'Configuration'</em><a class="headerlink" href="#AstroObject.config.Configuration.name" title="Permalink to this definition">¶</a></dt>
 <dd><p>The name/type of this configuration.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroConfig.Configuration.update">
-<tt class="descname">update</tt><big>(</big><em>other</em>, <em>deep=True</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroConfig.html#Configuration.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroConfig.Configuration.update" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the dictionary using <a class="reference internal" href="#AstroObject.AstroConfig.Configuration.merge" title="AstroObject.AstroConfig.Configuration.merge"><tt class="xref py py-meth docutils literal"><span class="pre">merge()</span></tt></a>.</p>
+<dt id="AstroObject.config.Configuration.update">
+<tt class="descname">update</tt><big>(</big><em>other</em>, <em>deep=True</em><big>)</big><a class="reference internal" href="_modules/AstroObject/config.html#Configuration.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.config.Configuration.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the dictionary using <a class="reference internal" href="#AstroObject.config.Configuration.merge" title="AstroObject.config.Configuration.merge"><tt class="xref py py-meth docutils literal"><span class="pre">merge()</span></tt></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>other</strong> (<em>dict-like</em>) &#8211; The other dictionary to be merged.</li>
-<li><strong>deep</strong> (<em>bool</em>) &#8211; Whether to use deep merge (<a class="reference internal" href="#AstroObject.AstroConfig.Configuration.merge" title="AstroObject.AstroConfig.Configuration.merge"><tt class="xref py py-meth docutils literal"><span class="pre">merge()</span></tt></a>) or shallow update.</li>
+<li><strong>deep</strong> (<em>bool</em>) &#8211; Whether to use deep merge (<a class="reference internal" href="#AstroObject.config.Configuration.merge" title="AstroObject.config.Configuration.merge"><tt class="xref py py-meth docutils literal"><span class="pre">merge()</span></tt></a>) or shallow update.</li>
 </ul>
 </td>
 </tr>
@@ -126,8 +126,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroConfig.Configuration.merge">
-<tt class="descname">merge</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroConfig.html#Configuration.merge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroConfig.Configuration.merge" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.Configuration.merge">
+<tt class="descname">merge</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="_modules/AstroObject/config.html#Configuration.merge"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.config.Configuration.merge" title="Permalink to this definition">¶</a></dt>
 <dd><p>Merge another configuration into this one (the master).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -140,8 +140,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroConfig.Configuration.save">
-<tt class="descname">save</tt><big>(</big><em>filename</em>, <em>silent=True</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroConfig.html#Configuration.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroConfig.Configuration.save" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.Configuration.save">
+<tt class="descname">save</tt><big>(</big><em>filename</em>, <em>silent=True</em><big>)</big><a class="reference internal" href="_modules/AstroObject/config.html#Configuration.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.config.Configuration.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save this configuration as a YAML file. YAML files generally have the <tt class="docutils literal"><span class="pre">.yaml</span></tt> or <tt class="docutils literal"><span class="pre">.yml</span></tt> extension. If the filename ends in <tt class="docutils literal"><span class="pre">.dat</span></tt>, the configuration will be saved as a raw dictionary literal.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -158,8 +158,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroConfig.Configuration.load">
-<tt class="descname">load</tt><big>(</big><em>filename</em>, <em>silent=True</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroConfig.html#Configuration.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroConfig.Configuration.load" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.Configuration.load">
+<tt class="descname">load</tt><big>(</big><em>filename</em>, <em>silent=True</em><big>)</big><a class="reference internal" href="_modules/AstroObject/config.html#Configuration.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.config.Configuration.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads a configuration from a yaml file, and merges it into the master configuration.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -182,20 +182,20 @@
 </dd></dl>
 
 <dl class="attribute">
-<dt id="AstroObject.AstroConfig.Configuration.store">
-<tt class="descname">store</tt><a class="reference internal" href="_modules/AstroObject/AstroConfig.html#Configuration.store"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroConfig.Configuration.store" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.Configuration.store">
+<tt class="descname">store</tt><a class="reference internal" href="_modules/AstroObject/config.html#Configuration.store"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.config.Configuration.store" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dictionary representing this configuration. This property should be used if you wish to have a &#8216;true&#8217; dictionary object. It is used internally to write this configuration to a YAML file.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroConfig.Configuration.renest">
-<tt class="descname">renest</tt><big>(</big><em>deep_nest_type=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroConfig.html#Configuration.renest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroConfig.Configuration.renest" title="Permalink to this definition">¶</a></dt>
-<dd><p>Re-nest this object. This method applies the <a class="reference internal" href="#AstroObject.AstroConfig.Configuration.dn" title="AstroObject.AstroConfig.Configuration.dn"><tt class="xref py py-attr docutils literal"><span class="pre">dn</span></tt></a> deep-nesting attribute to each nesting level in the configuration object.</p>
+<dt id="AstroObject.config.Configuration.renest">
+<tt class="descname">renest</tt><big>(</big><em>deep_nest_type=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/config.html#Configuration.renest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.config.Configuration.renest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Re-nest this object. This method applies the <a class="reference internal" href="#AstroObject.config.Configuration.dn" title="AstroObject.config.Configuration.dn"><tt class="xref py py-attr docutils literal"><span class="pre">dn</span></tt></a> deep-nesting attribute to each nesting level in the configuration object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>deep_nest_type</strong> &#8211; mapping nesting type, will set <a class="reference internal" href="#AstroObject.AstroConfig.Configuration.dn" title="AstroObject.AstroConfig.Configuration.dn"><tt class="xref py py-attr docutils literal"><span class="pre">dn</span></tt></a>.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>deep_nest_type</strong> &#8211; mapping nesting type, will set <a class="reference internal" href="#AstroObject.config.Configuration.dn" title="AstroObject.config.Configuration.dn"><tt class="xref py py-attr docutils literal"><span class="pre">dn</span></tt></a>.</td>
 </tr>
 </tbody>
 </table>
@@ -203,21 +203,21 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroConfig.Configuration.extract">
-<tt class="descname">extract</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroConfig.html#Configuration.extract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroConfig.Configuration.extract" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.Configuration.extract">
+<tt class="descname">extract</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/config.html#Configuration.extract"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.config.Configuration.extract" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract the dictionary from this object.</p>
 <p class="deprecated">
-<span class="versionmodified">Deprecated since version 0.4: </span>use <a class="reference internal" href="#AstroObject.AstroConfig.Configuration.store" title="AstroObject.AstroConfig.Configuration.store"><tt class="xref py py-attr docutils literal"><span class="pre">store</span></tt></a></p>
+<span class="versionmodified">Deprecated since version 0.4: </span>use <a class="reference internal" href="#AstroObject.config.Configuration.store" title="AstroObject.config.Configuration.store"><tt class="xref py py-attr docutils literal"><span class="pre">store</span></tt></a></p>
 </dd></dl>
 
 </dd></dl>
 
 </div>
 <div class="section" id="dotted-configurations-configuration">
-<h2>12.2. Dotted Configurations: <a class="reference internal" href="#AstroObject.AstroConfig.Configuration" title="AstroObject.AstroConfig.Configuration"><tt class="xref py py-class docutils literal"><span class="pre">Configuration</span></tt></a><a class="headerlink" href="#dotted-configurations-configuration" title="Permalink to this headline">¶</a></h2>
+<h2>12.2. Dotted Configurations: <a class="reference internal" href="#AstroObject.config.Configuration" title="AstroObject.config.Configuration"><tt class="xref py py-class docutils literal"><span class="pre">Configuration</span></tt></a><a class="headerlink" href="#dotted-configurations-configuration" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="AstroObject.AstroConfig.DottedConfiguration">
-<em class="property">class </em><tt class="descclassname">AstroObject.AstroConfig.</tt><tt class="descname">DottedConfiguration</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroConfig.html#DottedConfiguration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroConfig.DottedConfiguration" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.DottedConfiguration">
+<em class="property">class </em><tt class="descclassname">AstroObject.config.</tt><tt class="descname">DottedConfiguration</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/config.html#DottedConfiguration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.config.DottedConfiguration" title="Permalink to this definition">¶</a></dt>
 <dd><p>A configuration which can use dotted accessor methods.</p>
 <p>Configuration variables can be accessed and set with dot-qualified names. E.g.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Config</span> <span class="o">=</span> <span class="n">DottedConfiguration</span><span class="p">(</span> <span class="p">{</span> <span class="s">&quot;Data&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&quot;Value&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&quot;ResultA&quot;</span> <span class="p">:</span> <span class="mi">10</span> <span class="p">},</span> <span class="p">},</span> <span class="p">})</span>
@@ -240,28 +240,28 @@
 </pre></div>
 </div>
 <dl class="attribute">
-<dt id="AstroObject.AstroConfig.DottedConfiguration.dn">
-<tt class="descname">dn</tt><a class="headerlink" href="#AstroObject.AstroConfig.DottedConfiguration.dn" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.DottedConfiguration.dn">
+<tt class="descname">dn</tt><a class="headerlink" href="#AstroObject.config.DottedConfiguration.dn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deep nesting attribute reader</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="AstroObject.AstroConfig.DottedConfiguration.dt">
-<tt class="descname">dt</tt><a class="headerlink" href="#AstroObject.AstroConfig.DottedConfiguration.dt" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.DottedConfiguration.dt">
+<tt class="descname">dt</tt><a class="headerlink" href="#AstroObject.config.DottedConfiguration.dt" title="Permalink to this definition">¶</a></dt>
 <dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroConfig.DottedConfiguration.extract">
-<tt class="descname">extract</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.AstroConfig.DottedConfiguration.extract" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.DottedConfiguration.extract">
+<tt class="descname">extract</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.config.DottedConfiguration.extract" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract the dictionary from this object.</p>
 <p class="deprecated">
-<span class="versionmodified">Deprecated since version 0.4: </span>use <a class="reference internal" href="#AstroObject.AstroConfig.DottedConfiguration.store" title="AstroObject.AstroConfig.DottedConfiguration.store"><tt class="xref py py-attr docutils literal"><span class="pre">store</span></tt></a></p>
+<span class="versionmodified">Deprecated since version 0.4: </span>use <a class="reference internal" href="#AstroObject.config.DottedConfiguration.store" title="AstroObject.config.DottedConfiguration.store"><tt class="xref py py-attr docutils literal"><span class="pre">store</span></tt></a></p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroConfig.DottedConfiguration.load">
-<tt class="descname">load</tt><big>(</big><em>filename</em>, <em>silent=True</em><big>)</big><a class="headerlink" href="#AstroObject.AstroConfig.DottedConfiguration.load" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.DottedConfiguration.load">
+<tt class="descname">load</tt><big>(</big><em>filename</em>, <em>silent=True</em><big>)</big><a class="headerlink" href="#AstroObject.config.DottedConfiguration.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads a configuration from a yaml file, and merges it into the master configuration.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -284,8 +284,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroConfig.DottedConfiguration.merge">
-<tt class="descname">merge</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#AstroObject.AstroConfig.DottedConfiguration.merge" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.DottedConfiguration.merge">
+<tt class="descname">merge</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#AstroObject.config.DottedConfiguration.merge" title="Permalink to this definition">¶</a></dt>
 <dd><p>Merge another configuration into this one (the master).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -298,14 +298,14 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroConfig.DottedConfiguration.renest">
-<tt class="descname">renest</tt><big>(</big><em>deep_nest_type=None</em><big>)</big><a class="headerlink" href="#AstroObject.AstroConfig.DottedConfiguration.renest" title="Permalink to this definition">¶</a></dt>
-<dd><p>Re-nest this object. This method applies the <a class="reference internal" href="#AstroObject.AstroConfig.DottedConfiguration.dn" title="AstroObject.AstroConfig.DottedConfiguration.dn"><tt class="xref py py-attr docutils literal"><span class="pre">dn</span></tt></a> deep-nesting attribute to each nesting level in the configuration object.</p>
+<dt id="AstroObject.config.DottedConfiguration.renest">
+<tt class="descname">renest</tt><big>(</big><em>deep_nest_type=None</em><big>)</big><a class="headerlink" href="#AstroObject.config.DottedConfiguration.renest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Re-nest this object. This method applies the <a class="reference internal" href="#AstroObject.config.DottedConfiguration.dn" title="AstroObject.config.DottedConfiguration.dn"><tt class="xref py py-attr docutils literal"><span class="pre">dn</span></tt></a> deep-nesting attribute to each nesting level in the configuration object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>deep_nest_type</strong> &#8211; mapping nesting type, will set <a class="reference internal" href="#AstroObject.AstroConfig.DottedConfiguration.dn" title="AstroObject.AstroConfig.DottedConfiguration.dn"><tt class="xref py py-attr docutils literal"><span class="pre">dn</span></tt></a>.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>deep_nest_type</strong> &#8211; mapping nesting type, will set <a class="reference internal" href="#AstroObject.config.DottedConfiguration.dn" title="AstroObject.config.DottedConfiguration.dn"><tt class="xref py py-attr docutils literal"><span class="pre">dn</span></tt></a>.</td>
 </tr>
 </tbody>
 </table>
@@ -313,8 +313,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroConfig.DottedConfiguration.save">
-<tt class="descname">save</tt><big>(</big><em>filename</em>, <em>silent=True</em><big>)</big><a class="headerlink" href="#AstroObject.AstroConfig.DottedConfiguration.save" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.DottedConfiguration.save">
+<tt class="descname">save</tt><big>(</big><em>filename</em>, <em>silent=True</em><big>)</big><a class="headerlink" href="#AstroObject.config.DottedConfiguration.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save this configuration as a YAML file. YAML files generally have the <tt class="docutils literal"><span class="pre">.yaml</span></tt> or <tt class="docutils literal"><span class="pre">.yml</span></tt> extension. If the filename ends in <tt class="docutils literal"><span class="pre">.dat</span></tt>, the configuration will be saved as a raw dictionary literal.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -331,22 +331,22 @@
 </dd></dl>
 
 <dl class="attribute">
-<dt id="AstroObject.AstroConfig.DottedConfiguration.store">
-<tt class="descname">store</tt><a class="headerlink" href="#AstroObject.AstroConfig.DottedConfiguration.store" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.DottedConfiguration.store">
+<tt class="descname">store</tt><a class="headerlink" href="#AstroObject.config.DottedConfiguration.store" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dictionary representing this configuration. This property should be used if you wish to have a &#8216;true&#8217; dictionary object. It is used internally to write this configuration to a YAML file.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroConfig.DottedConfiguration.update">
-<tt class="descname">update</tt><big>(</big><em>other</em>, <em>deep=True</em><big>)</big><a class="headerlink" href="#AstroObject.AstroConfig.DottedConfiguration.update" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the dictionary using <a class="reference internal" href="#AstroObject.AstroConfig.DottedConfiguration.merge" title="AstroObject.AstroConfig.DottedConfiguration.merge"><tt class="xref py py-meth docutils literal"><span class="pre">merge()</span></tt></a>.</p>
+<dt id="AstroObject.config.DottedConfiguration.update">
+<tt class="descname">update</tt><big>(</big><em>other</em>, <em>deep=True</em><big>)</big><a class="headerlink" href="#AstroObject.config.DottedConfiguration.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the dictionary using <a class="reference internal" href="#AstroObject.config.DottedConfiguration.merge" title="AstroObject.config.DottedConfiguration.merge"><tt class="xref py py-meth docutils literal"><span class="pre">merge()</span></tt></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>other</strong> (<em>dict-like</em>) &#8211; The other dictionary to be merged.</li>
-<li><strong>deep</strong> (<em>bool</em>) &#8211; Whether to use deep merge (<a class="reference internal" href="#AstroObject.AstroConfig.DottedConfiguration.merge" title="AstroObject.AstroConfig.DottedConfiguration.merge"><tt class="xref py py-meth docutils literal"><span class="pre">merge()</span></tt></a>) or shallow update.</li>
+<li><strong>deep</strong> (<em>bool</em>) &#8211; Whether to use deep merge (<a class="reference internal" href="#AstroObject.config.DottedConfiguration.merge" title="AstroObject.config.DottedConfiguration.merge"><tt class="xref py py-meth docutils literal"><span class="pre">merge()</span></tt></a>) or shallow update.</li>
 </ul>
 </td>
 </tr>
@@ -358,14 +358,14 @@
 
 </div>
 <div class="section" id="structured-configurations-structuredconfiguration">
-<h2>12.3. Structured Configurations: <a class="reference internal" href="#AstroObject.AstroConfig.StructuredConfiguration" title="AstroObject.AstroConfig.StructuredConfiguration"><tt class="xref py py-class docutils literal"><span class="pre">StructuredConfiguration</span></tt></a><a class="headerlink" href="#structured-configurations-structuredconfiguration" title="Permalink to this headline">¶</a></h2>
+<h2>12.3. Structured Configurations: <a class="reference internal" href="#AstroObject.config.StructuredConfiguration" title="AstroObject.config.StructuredConfiguration"><tt class="xref py py-class docutils literal"><span class="pre">StructuredConfiguration</span></tt></a><a class="headerlink" href="#structured-configurations-structuredconfiguration" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="AstroObject.AstroConfig.StructuredConfiguration">
-<em class="property">class </em><tt class="descclassname">AstroObject.AstroConfig.</tt><tt class="descname">StructuredConfiguration</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroConfig.html#StructuredConfiguration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroConfig.StructuredConfiguration" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.StructuredConfiguration">
+<em class="property">class </em><tt class="descclassname">AstroObject.config.</tt><tt class="descname">StructuredConfiguration</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/config.html#StructuredConfiguration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.config.StructuredConfiguration" title="Permalink to this definition">¶</a></dt>
 <dd><p>A structured configuration with some basic defaults for AstroObject-type classes.</p>
 <p>This class does two things differently for configurations:</p>
 <ol class="arabic">
-<li><p class="first">Configurations are stored in a &#8220;Configurations&#8221; variable set. They can then be loaded by configuration key instead of filename, using the <a class="reference internal" href="#AstroObject.AstroConfig.StructuredConfiguration.setFile" title="AstroObject.AstroConfig.StructuredConfiguration.setFile"><tt class="xref py py-meth docutils literal"><span class="pre">setFile()</span></tt></a> method to set the filename, and then calling <a class="reference internal" href="#AstroObject.AstroConfig.StructuredConfiguration.load" title="AstroObject.AstroConfig.StructuredConfiguration.load"><tt class="xref py py-meth docutils literal"><span class="pre">load()</span></tt></a> or meth:<cite>save</cite> with no arguments.</p>
+<li><p class="first">Configurations are stored in a &#8220;Configurations&#8221; variable set. They can then be loaded by configuration key instead of filename, using the <a class="reference internal" href="#AstroObject.config.StructuredConfiguration.setFile" title="AstroObject.config.StructuredConfiguration.setFile"><tt class="xref py py-meth docutils literal"><span class="pre">setFile()</span></tt></a> method to set the filename, and then calling <a class="reference internal" href="#AstroObject.config.StructuredConfiguration.load" title="AstroObject.config.StructuredConfiguration.load"><tt class="xref py py-meth docutils literal"><span class="pre">load()</span></tt></a> or meth:<cite>save</cite> with no arguments.</p>
 </li>
 <li><p class="first">Configuration variables can be accessed and set with dot-qualified names. E.g.:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Config</span> <span class="o">=</span> <span class="n">StructuredConfigruation</span><span class="p">(</span> <span class="p">{</span> <span class="s">&quot;Data&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&quot;Value&quot;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&quot;ResultA&quot;</span> <span class="p">:</span> <span class="mi">10</span> <span class="p">},</span> <span class="p">},</span> <span class="p">})</span>
@@ -387,28 +387,28 @@
 </pre></div>
 </div>
 <dl class="attribute">
-<dt id="AstroObject.AstroConfig.StructuredConfiguration.dn">
-<tt class="descname">dn</tt><a class="headerlink" href="#AstroObject.AstroConfig.StructuredConfiguration.dn" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.StructuredConfiguration.dn">
+<tt class="descname">dn</tt><a class="headerlink" href="#AstroObject.config.StructuredConfiguration.dn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deep nesting attribute reader</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="AstroObject.AstroConfig.StructuredConfiguration.dt">
-<tt class="descname">dt</tt><a class="headerlink" href="#AstroObject.AstroConfig.StructuredConfiguration.dt" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.StructuredConfiguration.dt">
+<tt class="descname">dt</tt><a class="headerlink" href="#AstroObject.config.StructuredConfiguration.dt" title="Permalink to this definition">¶</a></dt>
 <dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroConfig.StructuredConfiguration.extract">
-<tt class="descname">extract</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.AstroConfig.StructuredConfiguration.extract" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.StructuredConfiguration.extract">
+<tt class="descname">extract</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.config.StructuredConfiguration.extract" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract the dictionary from this object.</p>
 <p class="deprecated">
-<span class="versionmodified">Deprecated since version 0.4: </span>use <a class="reference internal" href="#AstroObject.AstroConfig.StructuredConfiguration.store" title="AstroObject.AstroConfig.StructuredConfiguration.store"><tt class="xref py py-attr docutils literal"><span class="pre">store</span></tt></a></p>
+<span class="versionmodified">Deprecated since version 0.4: </span>use <a class="reference internal" href="#AstroObject.config.StructuredConfiguration.store" title="AstroObject.config.StructuredConfiguration.store"><tt class="xref py py-attr docutils literal"><span class="pre">store</span></tt></a></p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroConfig.StructuredConfiguration.merge">
-<tt class="descname">merge</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#AstroObject.AstroConfig.StructuredConfiguration.merge" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.StructuredConfiguration.merge">
+<tt class="descname">merge</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#AstroObject.config.StructuredConfiguration.merge" title="Permalink to this definition">¶</a></dt>
 <dd><p>Merge another configuration into this one (the master).</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -421,14 +421,14 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroConfig.StructuredConfiguration.renest">
-<tt class="descname">renest</tt><big>(</big><em>deep_nest_type=None</em><big>)</big><a class="headerlink" href="#AstroObject.AstroConfig.StructuredConfiguration.renest" title="Permalink to this definition">¶</a></dt>
-<dd><p>Re-nest this object. This method applies the <a class="reference internal" href="#AstroObject.AstroConfig.StructuredConfiguration.dn" title="AstroObject.AstroConfig.StructuredConfiguration.dn"><tt class="xref py py-attr docutils literal"><span class="pre">dn</span></tt></a> deep-nesting attribute to each nesting level in the configuration object.</p>
+<dt id="AstroObject.config.StructuredConfiguration.renest">
+<tt class="descname">renest</tt><big>(</big><em>deep_nest_type=None</em><big>)</big><a class="headerlink" href="#AstroObject.config.StructuredConfiguration.renest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Re-nest this object. This method applies the <a class="reference internal" href="#AstroObject.config.StructuredConfiguration.dn" title="AstroObject.config.StructuredConfiguration.dn"><tt class="xref py py-attr docutils literal"><span class="pre">dn</span></tt></a> deep-nesting attribute to each nesting level in the configuration object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>deep_nest_type</strong> &#8211; mapping nesting type, will set <a class="reference internal" href="#AstroObject.AstroConfig.StructuredConfiguration.dn" title="AstroObject.AstroConfig.StructuredConfiguration.dn"><tt class="xref py py-attr docutils literal"><span class="pre">dn</span></tt></a>.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>deep_nest_type</strong> &#8211; mapping nesting type, will set <a class="reference internal" href="#AstroObject.config.StructuredConfiguration.dn" title="AstroObject.config.StructuredConfiguration.dn"><tt class="xref py py-attr docutils literal"><span class="pre">dn</span></tt></a>.</td>
 </tr>
 </tbody>
 </table>
@@ -436,22 +436,22 @@
 </dd></dl>
 
 <dl class="attribute">
-<dt id="AstroObject.AstroConfig.StructuredConfiguration.store">
-<tt class="descname">store</tt><a class="headerlink" href="#AstroObject.AstroConfig.StructuredConfiguration.store" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.StructuredConfiguration.store">
+<tt class="descname">store</tt><a class="headerlink" href="#AstroObject.config.StructuredConfiguration.store" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dictionary representing this configuration. This property should be used if you wish to have a &#8216;true&#8217; dictionary object. It is used internally to write this configuration to a YAML file.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroConfig.StructuredConfiguration.update">
-<tt class="descname">update</tt><big>(</big><em>other</em>, <em>deep=True</em><big>)</big><a class="headerlink" href="#AstroObject.AstroConfig.StructuredConfiguration.update" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the dictionary using <a class="reference internal" href="#AstroObject.AstroConfig.StructuredConfiguration.merge" title="AstroObject.AstroConfig.StructuredConfiguration.merge"><tt class="xref py py-meth docutils literal"><span class="pre">merge()</span></tt></a>.</p>
+<dt id="AstroObject.config.StructuredConfiguration.update">
+<tt class="descname">update</tt><big>(</big><em>other</em>, <em>deep=True</em><big>)</big><a class="headerlink" href="#AstroObject.config.StructuredConfiguration.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the dictionary using <a class="reference internal" href="#AstroObject.config.StructuredConfiguration.merge" title="AstroObject.config.StructuredConfiguration.merge"><tt class="xref py py-meth docutils literal"><span class="pre">merge()</span></tt></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>other</strong> (<em>dict-like</em>) &#8211; The other dictionary to be merged.</li>
-<li><strong>deep</strong> (<em>bool</em>) &#8211; Whether to use deep merge (<a class="reference internal" href="#AstroObject.AstroConfig.StructuredConfiguration.merge" title="AstroObject.AstroConfig.StructuredConfiguration.merge"><tt class="xref py py-meth docutils literal"><span class="pre">merge()</span></tt></a>) or shallow update.</li>
+<li><strong>deep</strong> (<em>bool</em>) &#8211; Whether to use deep merge (<a class="reference internal" href="#AstroObject.config.StructuredConfiguration.merge" title="AstroObject.config.StructuredConfiguration.merge"><tt class="xref py py-meth docutils literal"><span class="pre">merge()</span></tt></a>) or shallow update.</li>
 </ul>
 </td>
 </tr>
@@ -460,16 +460,16 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroConfig.StructuredConfiguration.setFile">
-<tt class="descname">setFile</tt><big>(</big><em>filename=None</em>, <em>name=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroConfig.html#StructuredConfiguration.setFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroConfig.StructuredConfiguration.setFile" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.StructuredConfiguration.setFile">
+<tt class="descname">setFile</tt><big>(</big><em>filename=None</em>, <em>name=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/config.html#StructuredConfiguration.setFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.config.StructuredConfiguration.setFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Depricated Method</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroConfig.StructuredConfiguration.set_file">
-<tt class="descname">set_file</tt><big>(</big><em>filename=None</em>, <em>name=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroConfig.html#StructuredConfiguration.set_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroConfig.StructuredConfiguration.set_file" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.config.StructuredConfiguration.set_file">
+<tt class="descname">set_file</tt><big>(</big><em>filename=None</em>, <em>name=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/config.html#StructuredConfiguration.set_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.config.StructuredConfiguration.set_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the default/current configuration file for this configuration.</p>
-<p>The configuration file set by this method will be used next time <a class="reference internal" href="#AstroObject.AstroConfig.StructuredConfiguration.load" title="AstroObject.AstroConfig.StructuredConfiguration.load"><tt class="xref py py-meth docutils literal"><span class="pre">load()</span></tt></a> or <a class="reference internal" href="#AstroObject.AstroConfig.StructuredConfiguration.save" title="AstroObject.AstroConfig.StructuredConfiguration.save"><tt class="xref py py-meth docutils literal"><span class="pre">save()</span></tt></a> is called with no filename.</p>
+<p>The configuration file set by this method will be used next time <a class="reference internal" href="#AstroObject.config.StructuredConfiguration.load" title="AstroObject.config.StructuredConfiguration.load"><tt class="xref py py-meth docutils literal"><span class="pre">load()</span></tt></a> or <a class="reference internal" href="#AstroObject.config.StructuredConfiguration.save" title="AstroObject.config.StructuredConfiguration.save"><tt class="xref py py-meth docutils literal"><span class="pre">save()</span></tt></a> is called with no filename.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -485,9 +485,9 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroConfig.StructuredConfiguration.save">
-<tt class="descname">save</tt><big>(</big><em>filename=None</em>, <em>silent=True</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroConfig.html#StructuredConfiguration.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroConfig.StructuredConfiguration.save" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save the configuration to a YAML file. If <tt class="docutils literal"><span class="pre">filename</span></tt> is not provided, the configuration will use the file set by <a class="reference internal" href="#AstroObject.AstroConfig.StructuredConfiguration.setFile" title="AstroObject.AstroConfig.StructuredConfiguration.setFile"><tt class="xref py py-meth docutils literal"><span class="pre">setFile()</span></tt></a>.</p>
+<dt id="AstroObject.config.StructuredConfiguration.save">
+<tt class="descname">save</tt><big>(</big><em>filename=None</em>, <em>silent=True</em><big>)</big><a class="reference internal" href="_modules/AstroObject/config.html#StructuredConfiguration.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.config.StructuredConfiguration.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the configuration to a YAML file. If <tt class="docutils literal"><span class="pre">filename</span></tt> is not provided, the configuration will use the file set by <a class="reference internal" href="#AstroObject.config.StructuredConfiguration.setFile" title="AstroObject.config.StructuredConfiguration.setFile"><tt class="xref py py-meth docutils literal"><span class="pre">setFile()</span></tt></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -496,13 +496,13 @@
 </tr>
 </tbody>
 </table>
-<p>Uses <a class="reference internal" href="#AstroObject.AstroConfig.Configuration.save" title="AstroObject.AstroConfig.Configuration.save"><tt class="xref py py-meth docutils literal"><span class="pre">Configuration.save()</span></tt></a>.</p>
+<p>Uses <a class="reference internal" href="#AstroObject.config.Configuration.save" title="AstroObject.config.Configuration.save"><tt class="xref py py-meth docutils literal"><span class="pre">Configuration.save()</span></tt></a>.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroConfig.StructuredConfiguration.load">
-<tt class="descname">load</tt><big>(</big><em>filename=None</em>, <em>silent=True</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroConfig.html#StructuredConfiguration.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroConfig.StructuredConfiguration.load" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load the configuration to a YAML file. If <tt class="docutils literal"><span class="pre">filename</span></tt> is not provided, the configuration will use the file set by <a class="reference internal" href="#AstroObject.AstroConfig.StructuredConfiguration.setFile" title="AstroObject.AstroConfig.StructuredConfiguration.setFile"><tt class="xref py py-meth docutils literal"><span class="pre">setFile()</span></tt></a>.</p>
+<dt id="AstroObject.config.StructuredConfiguration.load">
+<tt class="descname">load</tt><big>(</big><em>filename=None</em>, <em>silent=True</em><big>)</big><a class="reference internal" href="_modules/AstroObject/config.html#StructuredConfiguration.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.config.StructuredConfiguration.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the configuration to a YAML file. If <tt class="docutils literal"><span class="pre">filename</span></tt> is not provided, the configuration will use the file set by <a class="reference internal" href="#AstroObject.config.StructuredConfiguration.setFile" title="AstroObject.config.StructuredConfiguration.setFile"><tt class="xref py py-meth docutils literal"><span class="pre">setFile()</span></tt></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -515,7 +515,7 @@
 </tr>
 </tbody>
 </table>
-<p>Uses <a class="reference internal" href="#AstroObject.AstroConfig.Configuration.load" title="AstroObject.AstroConfig.Configuration.load"><tt class="xref py py-meth docutils literal"><span class="pre">Configuration.load()</span></tt></a>.</p>
+<p>Uses <a class="reference internal" href="#AstroObject.config.Configuration.load" title="AstroObject.config.Configuration.load"><tt class="xref py py-meth docutils literal"><span class="pre">Configuration.load()</span></tt></a>.</p>
 </dd></dl>
 
 </dd></dl>
@@ -531,7 +531,7 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">12. <tt class="docutils literal"><span class="pre">AstroConfig</span></tt> — YAML-based Configuration Dictionaries</a><ul>
+<li><a class="reference internal" href="#">12. <tt class="docutils literal"><span class="pre">config</span></tt> — YAML-based Configuration Dictionaries</a><ul>
 <li><a class="reference internal" href="#basic-configurations-configuration">12.1. Basic Configurations: <tt class="docutils literal"><span class="pre">Configuration</span></tt></a></li>
 <li><a class="reference internal" href="#dotted-configurations-configuration">12.2. Dotted Configurations: <tt class="docutils literal"><span class="pre">Configuration</span></tt></a></li>
 <li><a class="reference internal" href="#structured-configurations-structuredconfiguration">12.3. Structured Configurations: <tt class="docutils literal"><span class="pre">StructuredConfiguration</span></tt></a></li>
@@ -541,10 +541,10 @@
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="AstroSimulator.html"
-                        title="previous chapter">11. <tt class="docutils literal"><span class="pre">AstroSimulator</span></tt> — Complex Task Management</a></p>
+                        title="previous chapter">11. <tt class="docutils literal"><span class="pre">simulator</span></tt> — Complex Task Management</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="AstroObjectLogging.html"
-                        title="next chapter">13. <tt class="docutils literal"><span class="pre">AstroObjectLogging</span></tt> — Structured Configuration Logging</a></p>
+                        title="next chapter">13. <tt class="docutils literal"><span class="pre">logging</span></tt> — Structured Configuration Logging</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/AstroConfig.txt"
@@ -577,12 +577,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="AstroObjectLogging.html" title="13. AstroObjectLogging — Structured Configuration Logging"
+          <a href="AstroObjectLogging.html" title="13. logging — Structured Configuration Logging"
              >next</a> |</li>
         <li class="right" >
-          <a href="AstroSimulator.html" title="11. AstroSimulator — Complex Task Management"
+          <a href="AstroSimulator.html" title="11. simulator — Complex Task Management"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.6.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

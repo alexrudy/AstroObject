@@ -1,1 +1,1 @@
-.. automodule:: AstroObject.AstroConfig
+.. automodule:: AstroObject.config

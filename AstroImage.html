@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>4. AstroImage — Image Stacks and Storage &mdash; AstroObject 0.6 documentation</title>
+    <title>4. image — Image Stacks and Storage &mdash; AstroObject 0.6.1 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.6',
+        VERSION:     '0.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,9 +24,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.6 documentation" href="index.html" />
-    <link rel="next" title="5. AstroSpectra — Raw Spectrum Management" href="AstroSpectra.html" />
-    <link rel="prev" title="3. AstroFITS – Empty FITS HDUs" href="AstroFITS.html" /> 
+    <link rel="top" title="AstroObject 0.6.1 documentation" href="index.html" />
+    <link rel="next" title="5. spectra — Raw Spectrum Management" href="AstroSpectra.html" />
+    <link rel="prev" title="3. fits – Empty FITS HDUs" href="AstroFITS.html" /> 
   </head>
   <body>
     <div class="related">
@@ -39,12 +39,12 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="AstroSpectra.html" title="5. AstroSpectra — Raw Spectrum Management"
+          <a href="AstroSpectra.html" title="5. spectra — Raw Spectrum Management"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="AstroFITS.html" title="3. AstroFITS – Empty FITS HDUs"
+          <a href="AstroFITS.html" title="3. fits – Empty FITS HDUs"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.6.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -53,44 +53,44 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <span class="target" id="module-AstroObject.AstroImage"></span><div class="section" id="astroimage-image-stacks-and-storage">
-<h1>4. <tt class="xref py py-mod docutils literal"><span class="pre">AstroImage</span></tt> — Image Stacks and Storage<a class="headerlink" href="#astroimage-image-stacks-and-storage" title="Permalink to this headline">¶</a></h1>
-<p><strong>Stacks</strong> and <strong>frames</strong> for manipulating and managing images. Images are simply defined as a two-dimensional numpy array. Image <strong>stacks</strong> have two special methods, <a class="reference internal" href="#AstroObject.AstroImage.ImageStack.loadFromFile" title="AstroObject.AstroImage.ImageStack.loadFromFile"><tt class="xref py py-meth docutils literal"><span class="pre">ImageStack.loadFromFile()</span></tt></a> and <a class="reference internal" href="#AstroObject.AstroImage.ImageStack.show3D" title="AstroObject.AstroImage.ImageStack.show3D"><tt class="xref py py-meth docutils literal"><span class="pre">ImageStack.show3D()</span></tt></a>.</p>
+  <span class="target" id="module-AstroObject.image"></span><div class="section" id="image-image-stacks-and-storage">
+<h1>4. <tt class="xref py py-mod docutils literal"><span class="pre">image</span></tt> — Image Stacks and Storage<a class="headerlink" href="#image-image-stacks-and-storage" title="Permalink to this headline">¶</a></h1>
+<p><strong>Stacks</strong> and <strong>frames</strong> for manipulating and managing images. Images are simply defined as a two-dimensional numpy array. Image <strong>stacks</strong> have two special methods, <a class="reference internal" href="#AstroObject.image.ImageStack.loadFromFile" title="AstroObject.image.ImageStack.loadFromFile"><tt class="xref py py-meth docutils literal"><span class="pre">ImageStack.loadFromFile()</span></tt></a> and <a class="reference internal" href="#AstroObject.image.ImageStack.show3D" title="AstroObject.image.ImageStack.show3D"><tt class="xref py py-meth docutils literal"><span class="pre">ImageStack.show3D()</span></tt></a>.</p>
 <p>To understand IRAF integration of this module, see the methods provided by <a class="reference internal" href="iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a>, including <a class="reference internal" href="iraftools.html#AstroObject.iraftools.UseIRAFTools" title="AstroObject.iraftools.UseIRAFTools"><tt class="xref py py-func docutils literal"><span class="pre">UseIRAFTools()</span></tt></a>.</p>
 <p class="graphviz">
-<img src="_images/inheritance-c3cb721bec78d2f2418d770f90de579069152a8a.png" alt="Inheritance diagram of AstroObject.AstroImage.ImageStack, AstroObject.AstroImage.ImageFrame" usemap="#inheritance3acb2a5145" class="inheritance"/>
-<map id="inheritance3acb2a5145" name="inheritance3acb2a5145">
-<area shape="rect" id="node1" href="AstroObject.html#AstroObject.AstroObjectBase.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="139,103,269,129"/>
-<area shape="rect" id="node7" href="#AstroObject.AstroImage.ImageFrame" title="ImageFrame" alt="" coords="330,127,433,153"/>
-<area shape="rect" id="node2" href="AstroObject.html#AstroObject.AstroObjectBase.Mixin" title="Mixin" alt="" coords="12,153,84,178"/>
-<area shape="rect" id="node4" href="AstroObject.html#AstroObject.AstroObjectBase.BaseFrame" title="BaseFrame" alt="" coords="157,153,251,178"/>
-<area shape="rect" id="node11" href="AstroObject.html#AstroObject.AstroObjectBase.BaseStack" title="BaseStack" alt="" coords="493,54,584,79"/>
-<area shape="rect" id="node16" href="#AstroObject.AstroImage.ImageStack" title="ImageStack" alt="" coords="632,54,731,79"/>
+<img src="_images/inheritance-8b8687c3a134644769585ebd6f57df23bed71e7a.png" alt="Inheritance diagram of AstroObject.image.ImageStack, AstroObject.image.ImageFrame" usemap="#inheritance480af19e7b" class="inheritance"/>
+<map id="inheritance480af19e7b" name="inheritance480af19e7b">
+<area shape="rect" id="node1" href="AstroObject.html#AstroObject.base.HDUHeaderMixin" title="HDUHeaderMixin" alt="" coords="139,103,269,129"/>
+<area shape="rect" id="node11" href="#AstroObject.image.ImageFrame" title="ImageFrame" alt="" coords="330,127,433,153"/>
+<area shape="rect" id="node2" href="AstroObject.html#AstroObject.base.Mixin" title="Mixin" alt="" coords="12,153,84,178"/>
+<area shape="rect" id="node13" href="AstroObject.html#AstroObject.base.BaseFrame" title="BaseFrame" alt="" coords="157,153,251,178"/>
+<area shape="rect" id="node9" href="AstroObject.html#AstroObject.base.BaseStack" title="BaseStack" alt="" coords="493,54,584,79"/>
+<area shape="rect" id="node8" href="#AstroObject.image.ImageStack" title="ImageStack" alt="" coords="632,54,731,79"/>
 </map>
 </p>
 <div class="section" id="imagestack-image-stacks">
-<h2>4.1. <a class="reference internal" href="#AstroObject.AstroImage.ImageStack" title="AstroObject.AstroImage.ImageStack"><tt class="xref py py-class docutils literal"><span class="pre">ImageStack</span></tt></a> — Image <strong>stacks</strong><a class="headerlink" href="#imagestack-image-stacks" title="Permalink to this headline">¶</a></h2>
+<h2>4.1. <a class="reference internal" href="#AstroObject.image.ImageStack" title="AstroObject.image.ImageStack"><tt class="xref py py-class docutils literal"><span class="pre">ImageStack</span></tt></a> — Image <strong>stacks</strong><a class="headerlink" href="#imagestack-image-stacks" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="AstroObject.AstroImage.ImageStack">
-<em class="property">class </em><tt class="descclassname">AstroObject.AstroImage.</tt><tt class="descname">ImageStack</tt><big>(</big><em>array=None, dataClasses=[&lt;class 'AstroObject.AstroImage.ImageFrame'&gt;], **kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroImage.html#ImageStack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroImage.ImageStack" title="Permalink to this definition">¶</a></dt>
-<dd><p>This object tracks a number of data frames. This class is a simple subclass of <tt class="xref py py-class docutils literal"><span class="pre">AstroObjectBase.BaseStack</span></tt> and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the <a class="reference internal" href="#AstroObject.AstroImage.ImageFrame" title="AstroObject.AstroImage.ImageFrame"><tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt></a> class for data. As well, it accepts an array in the initializer that will be saved immediately.</p>
+<dt id="AstroObject.image.ImageStack">
+<em class="property">class </em><tt class="descclassname">AstroObject.image.</tt><tt class="descname">ImageStack</tt><big>(</big><em>array=None, dataClasses=[&lt;class 'AstroObject.image.ImageFrame'&gt;], **kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/image.html#ImageStack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.image.ImageStack" title="Permalink to this definition">¶</a></dt>
+<dd><p>This object tracks a number of data frames. This class is a simple subclass of <tt class="xref py py-class docutils literal"><span class="pre">base.BaseStack</span></tt> and usese all of the special methods implemented in that base class. This object sets up an image object class which has two special features. First, it uses only the <a class="reference internal" href="#AstroObject.image.ImageFrame" title="AstroObject.image.ImageFrame"><tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt></a> class for data. As well, it accepts an array in the initializer that will be saved immediately.</p>
 <dl class="method">
-<dt id="AstroObject.AstroImage.ImageStack.loadFromFile">
-<tt class="descname">loadFromFile</tt><big>(</big><em>filename=None</em>, <em>framename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroImage.html#ImageStack.loadFromFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroImage.ImageStack.loadFromFile" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.image.ImageStack.loadFromFile">
+<tt class="descname">loadFromFile</tt><big>(</big><em>filename=None</em>, <em>framename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/image.html#ImageStack.loadFromFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.image.ImageStack.loadFromFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function can be used to load an image file (but not a FITS file) into this image frame. Image files should be formats accepatble to the Python Image Library, but that generally applies to most common image formats, such as .png and .jpg .
 This method takes a <em>filename</em> and a <em>framename</em> parameter. If either is not given, they will be generated using sensible defaults.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroImage.ImageStack.show3D">
-<tt class="descname">show3D</tt><big>(</big><em>framename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroImage.html#ImageStack.show3D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroImage.ImageStack.show3D" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.image.ImageStack.show3D">
+<tt class="descname">show3D</tt><big>(</big><em>framename=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/image.html#ImageStack.show3D"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.image.ImageStack.show3D" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shows a 3D contour of the image</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroImage.ImageStack.mask">
-<tt class="descname">mask</tt><big>(</big><em>left</em>, <em>top</em>, <em>right=None</em>, <em>bottom=None</em>, <em>label=None</em>, <em>clobber=True</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroImage.html#ImageStack.mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroImage.ImageStack.mask" title="Permalink to this definition">¶</a></dt>
-<dd><p>Masks the image by the distances provided. This function masks the current frame. Use <a class="reference internal" href="#AstroObject.AstroImage.ImageStack.select" title="AstroObject.AstroImage.ImageStack.select"><tt class="xref py py-meth docutils literal"><span class="pre">select()</span></tt></a> to change which frame this method acts on. Masks cut out the edges of images by the specified width.</p>
+<dt id="AstroObject.image.ImageStack.mask">
+<tt class="descname">mask</tt><big>(</big><em>left</em>, <em>top</em>, <em>right=None</em>, <em>bottom=None</em>, <em>label=None</em>, <em>clobber=True</em><big>)</big><a class="reference internal" href="_modules/AstroObject/image.html#ImageStack.mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.image.ImageStack.mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Masks the image by the distances provided. This function masks the current frame. Use <a class="reference internal" href="#AstroObject.image.ImageStack.select" title="AstroObject.image.ImageStack.select"><tt class="xref py py-meth docutils literal"><span class="pre">select()</span></tt></a> to change which frame this method acts on. Masks cut out the edges of images by the specified width.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -110,8 +110,8 @@ This method takes a <em>filename</em> and a <em>framename</em> parameter. If eit
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroImage.ImageStack.crop">
-<tt class="descname">crop</tt><big>(</big><em>x</em>, <em>y</em>, <em>xsize</em>, <em>ysize=None</em>, <em>label=None</em>, <em>clobber=True</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroImage.html#ImageStack.crop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroImage.ImageStack.crop" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.image.ImageStack.crop">
+<tt class="descname">crop</tt><big>(</big><em>x</em>, <em>y</em>, <em>xsize</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/image.html#ImageStack.crop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.image.ImageStack.crop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Crops the provided image to twice the specified size, centered around the x and y coordinates provided.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -132,14 +132,33 @@ This method takes a <em>filename</em> and a <em>framename</em> parameter. If eit
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroImage.ImageStack.add_data_class">
-<tt class="descname">add_data_class</tt><big>(</big><em>data_class</em><big>)</big><a class="headerlink" href="#AstroObject.AstroImage.ImageStack.add_data_class" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.image.ImageStack.showds9">
+<tt class="descname">showds9</tt><big>(</big><em>*framenames</em><big>)</big><a class="reference internal" href="_modules/AstroObject/image.html#ImageStack.showds9"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.image.ImageStack.showds9" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the frames in DS9.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Params frames:</th><td class="field-body">All the frames that should be displayed in DS9.</td>
+</tr>
+</tbody>
+</table>
+<p>Frames are displayed in DS9 using pyds9 and XPA access methods for the DS9 application. If the object was set up with <a class="reference internal" href="iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a>, then temporary fits files will be used to preserve header data in DS9. If not, then numpy arrays will be sent.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This method is a Stack method to allow for the use of <a class="reference internal" href="iraftools.html#module-AstroObject.iraftools" title="AstroObject.iraftools"><tt class="xref py py-mod docutils literal"><span class="pre">iraftools</span></tt></a> which are not accessible at the Frame level. There is not a good way to retrieve the IRAFTools controller from an individual frame, and there aren&#8217;t good ways to write files from individual frames.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="AstroObject.image.ImageStack.add_data_class">
+<tt class="descname">add_data_class</tt><big>(</big><em>data_class</em><big>)</big><a class="headerlink" href="#AstroObject.image.ImageStack.add_data_class" title="Permalink to this definition">¶</a></dt>
 <dd><p>Insert a data class into the list of acceptable data classes for this object.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroImage.ImageStack.clear">
-<tt class="descname">clear</tt><big>(</big><em>delete=False</em><big>)</big><a class="headerlink" href="#AstroObject.AstroImage.ImageStack.clear" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.image.ImageStack.clear">
+<tt class="descname">clear</tt><big>(</big><em>delete=False</em><big>)</big><a class="headerlink" href="#AstroObject.image.ImageStack.clear" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clears all frames from this object. Returns an empty list representing the currently known frames.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -154,8 +173,8 @@ This method takes a <em>filename</em> and a <em>framename</em> parameter. If eit
 </dd></dl>
 
 <dl class="attribute">
-<dt id="AstroObject.AstroImage.ImageStack.d">
-<tt class="descname">d</tt><a class="headerlink" href="#AstroObject.AstroImage.ImageStack.d" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.image.ImageStack.d">
+<tt class="descname">d</tt><a class="headerlink" href="#AstroObject.image.ImageStack.d" title="Permalink to this definition">¶</a></dt>
 <dd><p>The data for the selected FITS frame. Equivalent to:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Stack</span><span class="o">.</span><span class="n">data</span><span class="p">()</span>
 </pre></div>
@@ -163,8 +182,8 @@ This method takes a <em>filename</em> and a <em>framename</em> parameter. If eit
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroImage.ImageStack.data">
-<tt class="descname">data</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroImage.ImageStack.data" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.image.ImageStack.data">
+<tt class="descname">data</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.image.ImageStack.data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the raw data for the current frame. This is done through the <tt class="xref py py-meth docutils literal"><span class="pre">FITSFrame.__call__()</span></tt> method, which should return basic data in as raw a form as possible. The purpose of this call is to allow the user get at the most recent piece of data as easily as possible.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -188,14 +207,14 @@ This method takes a <em>filename</em> and a <em>framename</em> parameter. If eit
 </dd></dl>
 
 <dl class="attribute">
-<dt id="AstroObject.AstroImage.ImageStack.data_classes">
-<tt class="descname">data_classes</tt><a class="headerlink" href="#AstroObject.AstroImage.ImageStack.data_classes" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.image.ImageStack.data_classes">
+<tt class="descname">data_classes</tt><a class="headerlink" href="#AstroObject.image.ImageStack.data_classes" title="Permalink to this definition">¶</a></dt>
 <dd><p>The list of acceptable data classes. This is a</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="AstroObject.AstroImage.ImageStack.f">
-<tt class="descname">f</tt><a class="headerlink" href="#AstroObject.AstroImage.ImageStack.f" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.image.ImageStack.f">
+<tt class="descname">f</tt><a class="headerlink" href="#AstroObject.image.ImageStack.f" title="Permalink to this definition">¶</a></dt>
 <dd><p>The selected FITS frame. This frame is usually the last modified frame in the system. Equivalent to:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Stack</span><span class="o">.</span><span class="n">frame</span><span class="p">()</span>
 </pre></div>
@@ -203,8 +222,8 @@ This method takes a <em>filename</em> and a <em>framename</em> parameter. If eit
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroImage.ImageStack.frame">
-<tt class="descname">frame</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroImage.ImageStack.frame" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.image.ImageStack.frame">
+<tt class="descname">frame</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.image.ImageStack.frame" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the FITSFrame Specfied. This method give you the raw frame object to play with, and can be useful for transferring frames around, or if your API is built to work with frames rather than raw data.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -235,15 +254,21 @@ This method takes a <em>filename</em> and a <em>framename</em> parameter. If eit
 </dd></dl>
 
 <dl class="attribute">
-<dt id="AstroObject.AstroImage.ImageStack.framename">
-<tt class="descname">framename</tt><a class="headerlink" href="#AstroObject.AstroImage.ImageStack.framename" title="Permalink to this definition">¶</a></dt>
-<dd><p>Current frame name. This will normally be the last saved <strong>frame</strong>, but there are some exceptions. First, explicitly using <a class="reference internal" href="#AstroObject.AstroImage.ImageStack.select" title="AstroObject.AstroImage.ImageStack.select"><tt class="xref py py-meth docutils literal"><span class="pre">select()</span></tt></a> will change the framename. Also, deleting the most recent frame will by default change the selected frame to the second oldest. Using the <a class="reference internal" href="#AstroObject.AstroImage.ImageStack.save" title="AstroObject.AstroImage.ImageStack.save"><tt class="xref py py-meth docutils literal"><span class="pre">save()</span></tt></a> function with <tt class="docutils literal"><span class="pre">save(data,</span> <span class="pre">select=False)</span></tt> will skip the selection of that added frame.</p>
+<dt id="AstroObject.image.ImageStack.framename">
+<tt class="descname">framename</tt><a class="headerlink" href="#AstroObject.image.ImageStack.framename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current frame name. This will normally be the last saved <strong>frame</strong>, but there are some exceptions. First, explicitly using <a class="reference internal" href="#AstroObject.image.ImageStack.select" title="AstroObject.image.ImageStack.select"><tt class="xref py py-meth docutils literal"><span class="pre">select()</span></tt></a> will change the framename. Also, deleting the most recent frame will by default change the selected frame to the second oldest. Using the <a class="reference internal" href="#AstroObject.image.ImageStack.save" title="AstroObject.image.ImageStack.save"><tt class="xref py py-meth docutils literal"><span class="pre">save()</span></tt></a> function with <tt class="docutils literal"><span class="pre">save(data,</span> <span class="pre">select=False)</span></tt> will skip the selection of that added frame.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="AstroObject.image.ImageStack.framenames">
+<tt class="descname">framenames</tt><a class="headerlink" href="#AstroObject.image.ImageStack.framenames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of all framenames in this object.</p>
 </dd></dl>
 
 <dl class="classmethod">
-<dt id="AstroObject.AstroImage.ImageStack.fromAtFile">
-<em class="property">classmethod </em><tt class="descname">fromAtFile</tt><big>(</big><em>filename</em>, <em>framename=None</em><big>)</big><a class="headerlink" href="#AstroObject.AstroImage.ImageStack.fromAtFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a new object create from an &#64;file. This method is a factory shortcut for <a class="reference internal" href="#AstroObject.AstroImage.ImageStack.readAtFile" title="AstroObject.AstroImage.ImageStack.readAtFile"><tt class="xref py py-meth docutils literal"><span class="pre">readAtFile()</span></tt></a>.</p>
+<dt id="AstroObject.image.ImageStack.fromAtFile">
+<em class="property">classmethod </em><tt class="descname">fromAtFile</tt><big>(</big><em>filename</em>, <em>framename=None</em><big>)</big><a class="headerlink" href="#AstroObject.image.ImageStack.fromAtFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new object create from an &#64;file. This method is a factory shortcut for <a class="reference internal" href="#AstroObject.image.ImageStack.readAtFile" title="AstroObject.image.ImageStack.readAtFile"><tt class="xref py py-meth docutils literal"><span class="pre">readAtFile()</span></tt></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -259,9 +284,9 @@ This method takes a <em>filename</em> and a <em>framename</em> parameter. If eit
 </dd></dl>
 
 <dl class="classmethod">
-<dt id="AstroObject.AstroImage.ImageStack.fromFile">
-<em class="property">classmethod </em><tt class="descname">fromFile</tt><big>(</big><em>filename</em>, <em>framename=None</em><big>)</big><a class="headerlink" href="#AstroObject.AstroImage.ImageStack.fromFile" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrun a new object created from a filename. This method is a shortcut factory for <a class="reference internal" href="#AstroObject.AstroImage.ImageStack.read" title="AstroObject.AstroImage.ImageStack.read"><tt class="xref py py-meth docutils literal"><span class="pre">read()</span></tt></a>.</p>
+<dt id="AstroObject.image.ImageStack.fromFile">
+<em class="property">classmethod </em><tt class="descname">fromFile</tt><big>(</big><em>filename</em>, <em>framename=None</em><big>)</big><a class="headerlink" href="#AstroObject.image.ImageStack.fromFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrun a new object created from a filename. This method is a shortcut factory for <a class="reference internal" href="#AstroObject.image.ImageStack.read" title="AstroObject.image.ImageStack.read"><tt class="xref py py-meth docutils literal"><span class="pre">read()</span></tt></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -282,8 +307,8 @@ This method takes a <em>filename</em> and a <em>framename</em> parameter. If eit
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroImage.ImageStack.keep">
-<tt class="descname">keep</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroImage.ImageStack.keep" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.image.ImageStack.keep">
+<tt class="descname">keep</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.image.ImageStack.keep" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes all frames except the specified frame(s) in the object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -303,8 +328,8 @@ This method takes a <em>filename</em> and a <em>framename</em> parameter. If eit
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroImage.ImageStack.list">
-<tt class="descname">list</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.AstroImage.ImageStack.list" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.image.ImageStack.list">
+<tt class="descname">list</tt><big>(</big><big>)</big><a class="headerlink" href="#AstroObject.image.ImageStack.list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provides a list of the available frames, by label.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -317,8 +342,8 @@ This method takes a <em>filename</em> and a <em>framename</em> parameter. If eit
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroImage.ImageStack.read">
-<tt class="descname">read</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroImage.ImageStack.read" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.image.ImageStack.read">
+<tt class="descname">read</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.image.ImageStack.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>This reader takes a FITS file, and trys to render each HDU within that FITS file as a frame in this Object. As such, it might read multiple frames. This method will return a list of Frames that it read. It uses the <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> <tt class="xref py py-meth docutils literal"><span class="pre">FITSFrame.__read__()</span></tt> method to return a valid Frame object for each HDU.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -342,8 +367,8 @@ This method takes a <em>filename</em> and a <em>framename</em> parameter. If eit
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroImage.ImageStack.readAtFile">
-<tt class="descname">readAtFile</tt><big>(</big><em>atfile</em>, <em>framename=None</em>, <em>clobber=False</em>, <em>select=True</em><big>)</big><a class="headerlink" href="#AstroObject.AstroImage.ImageStack.readAtFile" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.image.ImageStack.readAtFile">
+<tt class="descname">readAtFile</tt><big>(</big><em>atfile</em>, <em>framename=None</em>, <em>clobber=False</em>, <em>select=True</em><big>)</big><a class="headerlink" href="#AstroObject.image.ImageStack.readAtFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read an atfile into this object. The name of the atfile can include a starting &#8220;&#64;&#8221; which is stripped. The file is then loaded, and each line is assumed to contain a single fully-qualified part-name.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -362,8 +387,8 @@ This method takes a <em>filename</em> and a <em>framename</em> parameter. If eit
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroImage.ImageStack.remove">
-<tt class="descname">remove</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroImage.ImageStack.remove" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.image.ImageStack.remove">
+<tt class="descname">remove</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.image.ImageStack.remove" title="Permalink to this definition">¶</a></dt>
 <dd><p>Removes the specified frame(s) from the object.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -383,8 +408,8 @@ This method takes a <em>filename</em> and a <em>framename</em> parameter. If eit
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroImage.ImageStack.save">
-<tt class="descname">save</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroImage.ImageStack.save" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.image.ImageStack.save">
+<tt class="descname">save</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.image.ImageStack.save" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves the given data to this object. If the data is an instance of one of the acceptable <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> then this method will simply save the data. Otherwise, it will attempt to cast the data into one of the acceptable <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> using their <tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt> mehtod.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -412,8 +437,8 @@ This method takes a <em>filename</em> and a <em>framename</em> parameter. If eit
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroImage.ImageStack.select">
-<tt class="descname">select</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroImage.ImageStack.select" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.image.ImageStack.select">
+<tt class="descname">select</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.image.ImageStack.select" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the default frame to the given framename. Normally, the default frame is the one that was last saved.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -427,8 +452,8 @@ This method takes a <em>filename</em> and a <em>framename</em> parameter. If eit
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroImage.ImageStack.write">
-<tt class="descname">write</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.AstroImage.ImageStack.write" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.image.ImageStack.write">
+<tt class="descname">write</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#AstroObject.image.ImageStack.write" title="Permalink to this definition">¶</a></dt>
 <dd><p>Writes a FITS file for this object. Generally, the FITS file will include all frames curretnly available in the system. If you specify <tt class="docutils literal"><span class="pre">frames</span></tt> then only those frames will be used. <tt class="docutils literal"><span class="pre">primaryFrame</span></tt> should be the frame of the front HDU. When not specified, the latest frame will be used. It uses the <tt class="xref py py-attr docutils literal"><span class="pre">dataClasses</span></tt> <tt class="xref py py-meth docutils literal"><span class="pre">FITSFrame.__hdu__()</span></tt> method to return a valid HDU object for each Frame.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -462,35 +487,35 @@ This method takes a <em>filename</em> and a <em>framename</em> parameter. If eit
 
 </div>
 <div class="section" id="imageframe-image-frames">
-<h2>4.2. <a class="reference internal" href="#AstroObject.AstroImage.ImageFrame" title="AstroObject.AstroImage.ImageFrame"><tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt></a> — Image <strong>frames</strong><a class="headerlink" href="#imageframe-image-frames" title="Permalink to this headline">¶</a></h2>
+<h2>4.2. <a class="reference internal" href="#AstroObject.image.ImageFrame" title="AstroObject.image.ImageFrame"><tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt></a> — Image <strong>frames</strong><a class="headerlink" href="#imageframe-image-frames" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
-<dt id="AstroObject.AstroImage.ImageFrame">
-<em class="property">class </em><tt class="descclassname">AstroObject.AstroImage.</tt><tt class="descname">ImageFrame</tt><big>(</big><em>data=None</em>, <em>label=None</em>, <em>header=None</em>, <em>metadata=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroImage.html#ImageFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroImage.ImageFrame" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.image.ImageFrame">
+<em class="property">class </em><tt class="descclassname">AstroObject.image.</tt><tt class="descname">ImageFrame</tt><big>(</big><em>data=None</em>, <em>label=None</em>, <em>header=None</em>, <em>metadata=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/AstroObject/image.html#ImageFrame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.image.ImageFrame" title="Permalink to this definition">¶</a></dt>
 <dd><p>A single frame of a FITS image.
 Frames are known as Header Data Units, or HDUs when written to a FITS file.
 This frame accepts (generally) 2-dimensional numpy arrays (<tt class="docutils literal"><span class="pre">ndarray</span></tt>), and will show those arrays as images. Currently, the system makes no attempt to ensure/check the data type of your data arrays. As such, data saved will often be saved as <tt class="docutils literal"><span class="pre">np.float</span></tt> rather than more compact data types such as <tt class="docutils literal"><span class="pre">np.int16</span></tt>. Pyfits handles the typing of your data automatically, so saving an array with the correct type will generate the proper FITS file.
 This object requires <em>array</em>, the data, a <em>label</em>, and can optionally take <em>headers</em> and <em>metadata</em>.</p>
 <dl class="method">
-<dt id="AstroObject.AstroImage.ImageFrame.__call__">
-<tt class="descname">__call__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroImage.html#ImageFrame.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroImage.ImageFrame.__call__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.image.ImageFrame.__call__">
+<tt class="descname">__call__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/image.html#ImageFrame.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.image.ImageFrame.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the data for this frame, which should be a <tt class="docutils literal"><span class="pre">numpy.ndarray</span></tt>.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroImage.ImageFrame.__valid__">
-<tt class="descname">__valid__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroImage.html#ImageFrame.__valid__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroImage.ImageFrame.__valid__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.image.ImageFrame.__valid__">
+<tt class="descname">__valid__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/image.html#ImageFrame.__valid__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.image.ImageFrame.__valid__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs a series of assertions which ensure that the data for this frame is valid</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroImage.ImageFrame.__hdu__">
-<tt class="descname">__hdu__</tt><big>(</big><em>primary=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroImage.html#ImageFrame.__hdu__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroImage.ImageFrame.__hdu__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.image.ImageFrame.__hdu__">
+<tt class="descname">__hdu__</tt><big>(</big><em>primary=False</em><big>)</big><a class="reference internal" href="_modules/AstroObject/image.html#ImageFrame.__hdu__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.image.ImageFrame.__hdu__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retruns an HDU which represents this frame. HDUs are either <tt class="docutils literal"><span class="pre">pyfits.PrimaryHDU</span></tt> or <tt class="docutils literal"><span class="pre">pyfits.ImageHDU</span></tt> depending on the <em>primary</em> keyword.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroImage.ImageFrame.__show__">
-<tt class="descname">__show__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroImage.html#ImageFrame.__show__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroImage.ImageFrame.__show__" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.image.ImageFrame.__show__">
+<tt class="descname">__show__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/image.html#ImageFrame.__show__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.image.ImageFrame.__show__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plots the image in this frame using matplotlib&#8217;s <tt class="docutils literal"><span class="pre">imshow</span></tt> function. The color map is set to an inverted binary, as is often useful when looking at astronomical images. The figure object is returned, and can be manipulated further.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -498,18 +523,24 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
 </div>
 </dd></dl>
 
+<dl class="method">
+<dt id="AstroObject.image.ImageFrame.__showds9__">
+<tt class="descname">__showds9__</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/image.html#ImageFrame.__showds9__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.image.ImageFrame.__showds9__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show this frame using DS9 and array tools.</p>
+</dd></dl>
+
 <dl class="classmethod">
-<dt id="AstroObject.AstroImage.ImageFrame.__save__">
-<em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>data</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroImage.html#ImageFrame.__save__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroImage.ImageFrame.__save__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attempts to create a <a class="reference internal" href="#AstroObject.AstroImage.ImageFrame" title="AstroObject.AstroImage.ImageFrame"><tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt></a> object from the provided data. This requres some type checking to ensure that the provided data meets the general sense of such an image. If the data does not appear to be correct, this method will raise an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> with a message describing why the data did not validate. Generally, this error will be intercepted by the caller, and simply provides an indication that this is not the right class for a particular piece of data.</p>
-<p>If the data is saved successfully, this method will return an object of type <a class="reference internal" href="#AstroObject.AstroImage.ImageFrame" title="AstroObject.AstroImage.ImageFrame"><tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt></a></p>
+<dt id="AstroObject.image.ImageFrame.__save__">
+<em class="property">classmethod </em><tt class="descname">__save__</tt><big>(</big><em>data</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/image.html#ImageFrame.__save__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.image.ImageFrame.__save__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempts to create a <a class="reference internal" href="#AstroObject.image.ImageFrame" title="AstroObject.image.ImageFrame"><tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt></a> object from the provided data. This requres some type checking to ensure that the provided data meets the general sense of such an image. If the data does not appear to be correct, this method will raise an <tt class="xref py py-exc docutils literal"><span class="pre">NotImplementedError</span></tt> with a message describing why the data did not validate. Generally, this error will be intercepted by the caller, and simply provides an indication that this is not the right class for a particular piece of data.</p>
+<p>If the data is saved successfully, this method will return an object of type <a class="reference internal" href="#AstroObject.image.ImageFrame" title="AstroObject.image.ImageFrame"><tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt></a></p>
 <p>The validation requires that the data be a type <tt class="docutils literal"><span class="pre">numpy.ndarray</span></tt> and that the data have 2 and only 2 dimensions.</p>
 </dd></dl>
 
 <dl class="classmethod">
-<dt id="AstroObject.AstroImage.ImageFrame.__read__">
-<em class="property">classmethod </em><tt class="descname">__read__</tt><big>(</big><em>HDU</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroImage.html#ImageFrame.__read__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroImage.ImageFrame.__read__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Attempts to convert a given HDU into an object of type <a class="reference internal" href="#AstroObject.AstroImage.ImageFrame" title="AstroObject.AstroImage.ImageFrame"><tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt></a>. This method is similar to the <a class="reference internal" href="#AstroObject.AstroImage.ImageFrame.__save__" title="AstroObject.AstroImage.ImageFrame.__save__"><tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt></a> method, but instead of taking data as input, it takes a full HDU. The use of a full HDU allows this method to check for the correct type of HDU, and to gather header information from the HDU. When reading data from a FITS file, this is the prefered method to initialize a new frame.</p>
+<dt id="AstroObject.image.ImageFrame.__read__">
+<em class="property">classmethod </em><tt class="descname">__read__</tt><big>(</big><em>HDU</em>, <em>label</em><big>)</big><a class="reference internal" href="_modules/AstroObject/image.html#ImageFrame.__read__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.image.ImageFrame.__read__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attempts to convert a given HDU into an object of type <a class="reference internal" href="#AstroObject.image.ImageFrame" title="AstroObject.image.ImageFrame"><tt class="xref py py-class docutils literal"><span class="pre">ImageFrame</span></tt></a>. This method is similar to the <a class="reference internal" href="#AstroObject.image.ImageFrame.__save__" title="AstroObject.image.ImageFrame.__save__"><tt class="xref py py-meth docutils literal"><span class="pre">__save__()</span></tt></a> method, but instead of taking data as input, it takes a full HDU. The use of a full HDU allows this method to check for the correct type of HDU, and to gather header information from the HDU. When reading data from a FITS file, this is the prefered method to initialize a new frame.</p>
 </dd></dl>
 
 </dd></dl>
@@ -525,7 +556,7 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
         <div class="sphinxsidebarwrapper">
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">4. <tt class="docutils literal"><span class="pre">AstroImage</span></tt> — Image Stacks and Storage</a><ul>
+<li><a class="reference internal" href="#">4. <tt class="docutils literal"><span class="pre">image</span></tt> — Image Stacks and Storage</a><ul>
 <li><a class="reference internal" href="#imagestack-image-stacks">4.1. <tt class="docutils literal"><span class="pre">ImageStack</span></tt> — Image <strong>stacks</strong></a></li>
 <li><a class="reference internal" href="#imageframe-image-frames">4.2. <tt class="docutils literal"><span class="pre">ImageFrame</span></tt> — Image <strong>frames</strong></a></li>
 </ul>
@@ -534,10 +565,10 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
 
   <h4>Previous topic</h4>
   <p class="topless"><a href="AstroFITS.html"
-                        title="previous chapter">3. <tt class="docutils literal docutils literal"><span class="pre">AstroFITS</span></tt> – Empty FITS HDUs</a></p>
+                        title="previous chapter">3. <tt class="docutils literal docutils literal"><span class="pre">fits</span></tt> – Empty FITS HDUs</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="AstroSpectra.html"
-                        title="next chapter">5. <tt class="docutils literal docutils literal"><span class="pre">AstroSpectra</span></tt> — Raw Spectrum Management</a></p>
+                        title="next chapter">5. <tt class="docutils literal docutils literal"><span class="pre">spectra</span></tt> — Raw Spectrum Management</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/AstroImage.txt"
@@ -570,12 +601,12 @@ This object requires <em>array</em>, the data, a <em>label</em>, and can optiona
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="AstroSpectra.html" title="5. AstroSpectra — Raw Spectrum Management"
+          <a href="AstroSpectra.html" title="5. spectra — Raw Spectrum Management"
              >next</a> |</li>
         <li class="right" >
-          <a href="AstroFITS.html" title="3. AstroFITS – Empty FITS HDUs"
+          <a href="AstroFITS.html" title="3. fits – Empty FITS HDUs"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.6.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

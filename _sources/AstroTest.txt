@@ -1,2 +1,2 @@
 .. automodule::
-	tests.AstroTest
+	tests.apitests

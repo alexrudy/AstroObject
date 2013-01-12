@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>13. AstroObjectLogging — Structured Configuration Logging &mdash; AstroObject 0.6 documentation</title>
+    <title>13. logging — Structured Configuration Logging &mdash; AstroObject 0.6.1 documentation</title>
     
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.6',
+        VERSION:     '0.6.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,9 +24,9 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="AstroObject 0.6 documentation" href="index.html" />
+    <link rel="top" title="AstroObject 0.6.1 documentation" href="index.html" />
     <link rel="next" title="14. file - File IO" href="file.html" />
-    <link rel="prev" title="12. AstroConfig — YAML-based Configuration Dictionaries" href="AstroConfig.html" /> 
+    <link rel="prev" title="12. config — YAML-based Configuration Dictionaries" href="AstroConfig.html" /> 
   </head>
   <body>
     <div class="related">
@@ -42,9 +42,9 @@
           <a href="file.html" title="14. file - File IO"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="AstroConfig.html" title="12. AstroConfig — YAML-based Configuration Dictionaries"
+          <a href="AstroConfig.html" title="12. config — YAML-based Configuration Dictionaries"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.6.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -53,8 +53,8 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <span class="target" id="module-AstroObject.AstroObjectLogging"></span><div class="section" id="astroobjectlogging-structured-configuration-logging">
-<h1>13. <tt class="xref py py-mod docutils literal"><span class="pre">AstroObjectLogging</span></tt> — Structured Configuration Logging<a class="headerlink" href="#astroobjectlogging-structured-configuration-logging" title="Permalink to this headline">¶</a></h1>
+  <span class="target" id="module-AstroObject.loggers"></span><div class="section" id="logging-structured-configuration-logging">
+<h1>13. <tt class="xref py py-mod docutils literal"><span class="pre">logging</span></tt> — Structured Configuration Logging<a class="headerlink" href="#logging-structured-configuration-logging" title="Permalink to this headline">¶</a></h1>
 <p>This module provides basic access to logging functions. It elimiates much of the variablity in logging, replacing it with the simple logging configuration options that AstroObject is constantly using. It is, however, built on the normal logging module, and so shouldn&#8217;t break any other logging schemes. &lt;<a class="reference external" href="http://docs.python.org/library/logging.html">http://docs.python.org/library/logging.html</a>&gt;</p>
 <p>Other than a simpler set of possible configuration options, this object has the advantage that it allows for dynamic configurations which vary from run to run. As is common in complex programs, a lot happens before reading a configuration file. However, without the configuration file, the system can&#8217;t start logging. This logger holds all the messages it recieves pre-configuration for use once the logger starts, preserving these messages for later debugging.</p>
 <p>To use the logging:</p>
@@ -71,127 +71,127 @@
 </pre></div>
 </div>
 <dl class="class">
-<dt id="AstroObject.AstroObjectLogging.AstroLogger">
-<em class="property">class </em><tt class="descclassname">AstroObject.AstroObjectLogging.</tt><tt class="descname">AstroLogger</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectLogging.html#AstroLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectLogging.AstroLogger" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.loggers.AstroLogger">
+<em class="property">class </em><tt class="descclassname">AstroObject.loggers.</tt><tt class="descname">AstroLogger</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/AstroObject/loggers.html#AstroLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.loggers.AstroLogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>A customized logging class. This class is automatically used whenever you are using an AstroObject module elsewhere in your program. It subsumes other logging classes, regardless of the situation. This logger provides many specialized functions useful for logging, but can be used just like a normal logger. By default, the logger starts in buffering mode, collecting messages until it is configured. The configuration then allows it to write messages to the console and to a log file.</p>
 <dl class="attribute">
-<dt id="AstroObject.AstroObjectLogging.AstroLogger.config">
-<tt class="descname">config</tt><a class="reference internal" href="_modules/AstroObject/AstroObjectLogging.html#AstroLogger.config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectLogging.AstroLogger.config" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.loggers.AstroLogger.config">
+<tt class="descname">config</tt><a class="reference internal" href="_modules/AstroObject/loggers.html#AstroLogger.config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.loggers.AstroLogger.config" title="Permalink to this definition">¶</a></dt>
 <dd><p>A read only element that is the configuration for this system.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectLogging.AstroLogger.configure_from_file">
-<tt class="descname">configure_from_file</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectLogging.html#AstroLogger.configure_from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectLogging.AstroLogger.configure_from_file" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.loggers.AstroLogger.configure_from_file">
+<tt class="descname">configure_from_file</tt><big>(</big><em>filename</em><big>)</big><a class="reference internal" href="_modules/AstroObject/loggers.html#AstroLogger.configure_from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.loggers.AstroLogger.configure_from_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>docstring for configure_from_file</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectLogging.AstroLogger.configure">
-<tt class="descname">configure</tt><big>(</big><em>configuration=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectLogging.html#AstroLogger.configure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectLogging.AstroLogger.configure" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.loggers.AstroLogger.configure">
+<tt class="descname">configure</tt><big>(</big><em>configuration=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/loggers.html#AstroLogger.configure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.loggers.AstroLogger.configure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Configure this logging object using a configuration dictionary. Configuration dictionaries can be provided by a YAML file or directly to the configuration argument. If both are provided, the YAML file will over-ride the explicit dictionary.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectLogging.AstroLogger.start">
-<tt class="descname">start</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectLogging.html#AstroLogger.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectLogging.AstroLogger.start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Starts this logger running, using the configuration set using <a class="reference internal" href="#AstroObject.AstroObjectLogging.AstroLogger.configure" title="AstroObject.AstroObjectLogging.AstroLogger.configure"><tt class="xref py py-meth docutils literal"><span class="pre">configure()</span></tt></a>. The configuration can configure a file handler and a console handler. Arbitrary configurations are not possible at this point.</p>
+<dt id="AstroObject.loggers.AstroLogger.start">
+<tt class="descname">start</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/loggers.html#AstroLogger.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.loggers.AstroLogger.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts this logger running, using the configuration set using <a class="reference internal" href="#AstroObject.loggers.AstroLogger.configure" title="AstroObject.loggers.AstroLogger.configure"><tt class="xref py py-meth docutils literal"><span class="pre">configure()</span></tt></a>. The configuration can configure a file handler and a console handler. Arbitrary configurations are not possible at this point.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectLogging.AstroLogger.setup_handlers">
-<tt class="descname">setup_handlers</tt><big>(</big><em>*handlers</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectLogging.html#AstroLogger.setup_handlers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectLogging.AstroLogger.setup_handlers" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.loggers.AstroLogger.setup_handlers">
+<tt class="descname">setup_handlers</tt><big>(</big><em>*handlers</em><big>)</big><a class="reference internal" href="_modules/AstroObject/loggers.html#AstroLogger.setup_handlers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.loggers.AstroLogger.setup_handlers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets up the handlers based on the configuration</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectLogging.AstroLogger.setup_handler">
-<tt class="descname">setup_handler</tt><big>(</big><em>handler</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectLogging.html#AstroLogger.setup_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectLogging.AstroLogger.setup_handler" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.loggers.AstroLogger.setup_handler">
+<tt class="descname">setup_handler</tt><big>(</big><em>handler</em><big>)</big><a class="reference internal" href="_modules/AstroObject/loggers.html#AstroLogger.setup_handler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.loggers.AstroLogger.setup_handler" title="Permalink to this definition">¶</a></dt>
 <dd><p>docstring for setup_handler</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectLogging.AstroLogger.useConsole">
-<tt class="descname">useConsole</tt><big>(</big><em>use=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectLogging.html#AstroLogger.useConsole"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectLogging.AstroLogger.useConsole" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.loggers.AstroLogger.useConsole">
+<tt class="descname">useConsole</tt><big>(</big><em>use=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/loggers.html#AstroLogger.useConsole"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.loggers.AstroLogger.useConsole" title="Permalink to this definition">¶</a></dt>
 <dd><p>Turn on or off the console logging. Specify the parameter <cite>use</cite> to force console logging into one state or the other. If the <cite>use</cite> parameter is not given, console logging will be toggled.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectLogging.AstroLogger.init_buffer">
-<tt class="descname">init_buffer</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectLogging.html#AstroLogger.init_buffer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectLogging.AstroLogger.init_buffer" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.loggers.AstroLogger.init_buffer">
+<tt class="descname">init_buffer</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/loggers.html#AstroLogger.init_buffer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.loggers.AstroLogger.init_buffer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets up an initialization buffer</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
-<dt id="AstroObject.AstroObjectLogging.GrowlHandler">
-<em class="property">class </em><tt class="descclassname">AstroObject.AstroObjectLogging.</tt><tt class="descname">GrowlHandler</tt><big>(</big><em>name=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectLogging.html#GrowlHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectLogging.GrowlHandler" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.loggers.GrowlHandler">
+<em class="property">class </em><tt class="descclassname">AstroObject.loggers.</tt><tt class="descname">GrowlHandler</tt><big>(</big><em>name=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/loggers.html#GrowlHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.loggers.GrowlHandler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handler that emits growl notifications using the gntp module.</p>
 <p>Growl notifications are displayed by the growl framework application on desktop computers. They can also be sent over a network to notify a remote host. This logger turns log messages into growl notifications.</p>
 <dl class="method">
-<dt id="AstroObject.AstroObjectLogging.GrowlHandler.emit">
-<tt class="descname">emit</tt><big>(</big><em>record</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectLogging.html#GrowlHandler.emit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectLogging.GrowlHandler.emit" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.loggers.GrowlHandler.emit">
+<tt class="descname">emit</tt><big>(</big><em>record</em><big>)</big><a class="reference internal" href="_modules/AstroObject/loggers.html#GrowlHandler.emit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.loggers.GrowlHandler.emit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Emits a growl notification</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
-<dt id="AstroObject.AstroObjectLogging.ConsoleFilter">
-<em class="property">class </em><tt class="descclassname">AstroObject.AstroObjectLogging.</tt><tt class="descname">ConsoleFilter</tt><big>(</big><em>on=True</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectLogging.html#ConsoleFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectLogging.ConsoleFilter" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.loggers.ConsoleFilter">
+<em class="property">class </em><tt class="descclassname">AstroObject.loggers.</tt><tt class="descname">ConsoleFilter</tt><big>(</big><em>on=True</em><big>)</big><a class="reference internal" href="_modules/AstroObject/loggers.html#ConsoleFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.loggers.ConsoleFilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>A simple filter to control console-based output.</p>
 <dl class="method">
-<dt id="AstroObject.AstroObjectLogging.ConsoleFilter.filter">
-<tt class="descname">filter</tt><big>(</big><em>record</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectLogging.html#ConsoleFilter.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectLogging.ConsoleFilter.filter" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.loggers.ConsoleFilter.filter">
+<tt class="descname">filter</tt><big>(</big><em>record</em><big>)</big><a class="reference internal" href="_modules/AstroObject/loggers.html#ConsoleFilter.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.loggers.ConsoleFilter.filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filter this record based on whether the console is on.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
-<dt id="AstroObject.AstroObjectLogging.RedirectionHandler">
-<em class="property">class </em><tt class="descclassname">AstroObject.AstroObjectLogging.</tt><tt class="descname">RedirectionHandler</tt><big>(</big><em>*targets</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectLogging.html#RedirectionHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectLogging.RedirectionHandler" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.loggers.RedirectionHandler">
+<em class="property">class </em><tt class="descclassname">AstroObject.loggers.</tt><tt class="descname">RedirectionHandler</tt><big>(</big><em>*targets</em><big>)</big><a class="reference internal" href="_modules/AstroObject/loggers.html#RedirectionHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.loggers.RedirectionHandler" title="Permalink to this definition">¶</a></dt>
 <dd><p>docstring for ManyTargetHandler</p>
 <dl class="method">
-<dt id="AstroObject.AstroObjectLogging.RedirectionHandler.setTarget">
-<tt class="descname">setTarget</tt><big>(</big><em>target</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectLogging.html#RedirectionHandler.setTarget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectLogging.RedirectionHandler.setTarget" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.loggers.RedirectionHandler.setTarget">
+<tt class="descname">setTarget</tt><big>(</big><em>target</em><big>)</big><a class="reference internal" href="_modules/AstroObject/loggers.html#RedirectionHandler.setTarget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.loggers.RedirectionHandler.setTarget" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add another target to the handler</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectLogging.RedirectionHandler.handle">
-<tt class="descname">handle</tt><big>(</big><em>record</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectLogging.html#RedirectionHandler.handle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectLogging.RedirectionHandler.handle" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.loggers.RedirectionHandler.handle">
+<tt class="descname">handle</tt><big>(</big><em>record</em><big>)</big><a class="reference internal" href="_modules/AstroObject/loggers.html#RedirectionHandler.handle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.loggers.RedirectionHandler.handle" title="Permalink to this definition">¶</a></dt>
 <dd><p>Handle this record by redirecting</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectLogging.RedirectionHandler.close">
-<tt class="descname">close</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectLogging.html#RedirectionHandler.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectLogging.RedirectionHandler.close" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.loggers.RedirectionHandler.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/loggers.html#RedirectionHandler.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.loggers.RedirectionHandler.close" title="Permalink to this definition">¶</a></dt>
 <dd><p>Close the handler</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
-<dt id="AstroObject.AstroObjectLogging.ManyTargetHandler">
-<em class="property">class </em><tt class="descclassname">AstroObject.AstroObjectLogging.</tt><tt class="descname">ManyTargetHandler</tt><big>(</big><em>capacity</em>, <em>flushLevel=40</em>, <em>target=None</em>, <em>targets=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectLogging.html#ManyTargetHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectLogging.ManyTargetHandler" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.loggers.ManyTargetHandler">
+<em class="property">class </em><tt class="descclassname">AstroObject.loggers.</tt><tt class="descname">ManyTargetHandler</tt><big>(</big><em>capacity</em>, <em>flushLevel=40</em>, <em>target=None</em>, <em>targets=None</em><big>)</big><a class="reference internal" href="_modules/AstroObject/loggers.html#ManyTargetHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.loggers.ManyTargetHandler" title="Permalink to this definition">¶</a></dt>
 <dd><p>docstring for ManyTargetHandler</p>
 <dl class="method">
-<dt id="AstroObject.AstroObjectLogging.ManyTargetHandler.setTarget">
-<tt class="descname">setTarget</tt><big>(</big><em>target</em><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectLogging.html#ManyTargetHandler.setTarget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectLogging.ManyTargetHandler.setTarget" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.loggers.ManyTargetHandler.setTarget">
+<tt class="descname">setTarget</tt><big>(</big><em>target</em><big>)</big><a class="reference internal" href="_modules/AstroObject/loggers.html#ManyTargetHandler.setTarget"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.loggers.ManyTargetHandler.setTarget" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add another target to the handler</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectLogging.ManyTargetHandler.flush">
-<tt class="descname">flush</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectLogging.html#ManyTargetHandler.flush"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectLogging.ManyTargetHandler.flush" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.loggers.ManyTargetHandler.flush">
+<tt class="descname">flush</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/loggers.html#ManyTargetHandler.flush"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.loggers.ManyTargetHandler.flush" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flush out this handler</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="AstroObject.AstroObjectLogging.ManyTargetHandler.close">
-<tt class="descname">close</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/AstroObjectLogging.html#ManyTargetHandler.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.AstroObjectLogging.ManyTargetHandler.close" title="Permalink to this definition">¶</a></dt>
+<dt id="AstroObject.loggers.ManyTargetHandler.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/AstroObject/loggers.html#ManyTargetHandler.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#AstroObject.loggers.ManyTargetHandler.close" title="Permalink to this definition">¶</a></dt>
 <dd><p>Close the handler</p>
 </dd></dl>
 
@@ -207,7 +207,7 @@
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
   <p class="topless"><a href="AstroConfig.html"
-                        title="previous chapter">12. <tt class="docutils literal docutils literal"><span class="pre">AstroConfig</span></tt> — YAML-based Configuration Dictionaries</a></p>
+                        title="previous chapter">12. <tt class="docutils literal docutils literal"><span class="pre">config</span></tt> — YAML-based Configuration Dictionaries</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="file.html"
                         title="next chapter">14. <tt class="docutils literal"><span class="pre">file</span></tt> - File IO</a></p>
@@ -246,9 +246,9 @@
           <a href="file.html" title="14. file - File IO"
              >next</a> |</li>
         <li class="right" >
-          <a href="AstroConfig.html" title="12. AstroConfig — YAML-based Configuration Dictionaries"
+          <a href="AstroConfig.html" title="12. config — YAML-based Configuration Dictionaries"
              >previous</a> |</li>
-        <li><a href="index.html">AstroObject 0.6 documentation</a> &raquo;</li> 
+        <li><a href="index.html">AstroObject 0.6.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
