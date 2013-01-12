@@ -159,6 +159,7 @@ from scipy.linalg import norm
 import math, copy, sys, time, logging, os
 import tempfile
 import shutil
+import warnings
 
 # Submodules from this system
 from .util import getVersion
@@ -193,12 +194,40 @@ class IRAFTools(object):
         self._collect = {}
         if IRAFFrame not in self.object.data_classes:
             self.object.add_data_class(IRAFFrame)
+        self.__check_iraf()
     
     def __del__(self):
         """Remove the reference to object, to prevent circularity"""
         del self.object
         del self.module
         del self.FileSet
+    
+    def __check_iraf(self):
+        """Check for the presence of IRAF"""
+        if "pyraf" in sys.modules:
+            self._iraf = True
+        else:
+            self._iraf = False
+        return self._iraf
+    
+    def __make_filename(self,filename):
+        """Make a filename, warning about IRAF things."""
+        filename = os.path.normpath(filename)
+        if not self.__check_iraf():
+            return filename
+        elif len(filename) < 40:
+            return filename
+        elif len(os.path.relpath(filename)) < 40:
+            return os.path.relpath(filename)
+        else:
+            warnings.warn("Unable to generate a filename less than 40 characters long. \
+            \nIRAF sometimes breaks with long filepaths. \nPath: %r" % filename)
+            if len(os.path.relpath(filename)) < len(filename):
+                return os.path.relpath(filename)
+            else:
+                return filename
+            
+        
     
     @property
     def active(self):
@@ -259,7 +288,7 @@ class IRAFTools(object):
         filename = self.set.filename(extension=extension,prefix=framename)
         self.object.write(frames=[framename],filename=filename,clobber=True)
         self.log.log(2,"Created infile for frame %s named %s" % (framename,filename))
-        return os.path.relpath(filename)
+        return self.__make_filename(filename)
     
     infile = inpfile
         
@@ -284,7 +313,7 @@ class IRAFTools(object):
         self.object.save(IRAFFrame(data=None,label=framename),select=False)
         self._collect[framename] = filename
         self.log.log(2,"Created outfile for frame %s named %s" % (framename,filename))
-        return os.path.relpath(filename)
+        return self.__make_filename(filename)
         
     def modfile(self,framename,newframename=None,append=None,extension='.fits',**kwargs):
         """Returns a filename for a ``fits`` file from the given framename which can be used as input for IRAF tasks which modify a file in-place. The file will be reloaded when :meth:`done` is called.
@@ -307,7 +336,7 @@ class IRAFTools(object):
             self.object.save(IRAFFrame(data=None,label=newframename),select=False)
         self.log.log(2,"Created modfile for frame %s named %s" % (framename,filename))
         self._collect[newframename] = filename
-        return filename
+        return self.__make_filename(filename)
         
     def _atfile(self,*framenames,**kwargs):
         """Generic atfile creation routine"""
@@ -324,7 +353,7 @@ class IRAFTools(object):
                 filename = function(framename,**kwargs)
                 stream.write("%s\n" % filename)
         self.log.log(2,"Created atlist for frames %s named %s" % (framenames,atlist))
-        return "@" + atlist
+        return "@" + self.__make_filename(atlist)
 
     def modatlist(self,*framenames,**kwargs):
         """File list for modification"""
